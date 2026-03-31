@@ -7,6 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Voćnjak">
 <meta name="theme-color" content="#1a3320">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>Dnevnik Voćnjaka</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -258,7 +260,7 @@ const KEY = "vocnjak_v3";
 // Filter scheduled tasks — skipYear preskače zadatak u toj godini
 function getScheduled() {
   const y = new Date().getFullYear();
-  return getScheduled().filter(t => !t.skipYear || t.skipYear !== y);
+  return SCHEDULED.filter(t => !t.skipYear || t.skipYear !== y);
 }
 
 function defaultData() {
@@ -882,6 +884,11 @@ function importData() {
 // ── HELPERS ──
 function formatDate(d) {
   return new Date(d).toLocaleDateString("hr-HR", { day: "numeric", month: "long", year: "numeric" });
+}
+
+// ── SERVICE WORKER ──
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 </script>
 </body>
