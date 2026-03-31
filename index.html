@@ -229,11 +229,11 @@ const ENTRY_TYPES = ["bilješka","prskanje","rezidba","sadnja","berba","navodnja
 
 // ── SCHEDULED TASKS ── month 0-based, with due date for sorting
 const SCHEDULED = [
-  { month: 1, day: 1,  plant: "sve",          text: "Bijelo mineralno ulje – sve voćke + smreka + Lagerstroemia + Photinia", urgent: true },
+  { month: 1, day: 1,  plant: "sve",          text: "Bijelo mineralno ulje – sve voćke + smreka + Lagerstroemia + Photinia", urgent: true, skipYear: 2026 },
   { month: 1, day: 15, plant: "sve",          text: "Cuprablau Z 35 WG – voćnjak + Lagerstroemia + Photinia", urgent: false },
   { month: 2, day: 1,  plant: "sve",          text: "Rezidba – sve voćke",               urgent: false },
   { month: 2, day: 5,  plant: "sve",          text: "Bakar na rane (1–2 dana nakon rezidbe)", urgent: false },
-  { month: 2, day: 10, plant: "magnolija",    text: "Rezidba magnolije – maks. 20–25% grana, Lac Balsam na rane", urgent: false },
+  { month: 4, day: 20, plant: "magnolija",    text: "Rezidba magnolije nakon cvatnje – maks. 20–25% grana, Lac Balsam na rane", urgent: false },
   { month: 2, day: 10, plant: "japtresnja",   text: "Rezidba japanske trešnje – Lac Balsam na velike rane", urgent: false },
   { month: 3, day: 25, plant: "tresnja",      text: "Postavi žute ljepljive ploče (2–3/stablo)", urgent: false },
   { month: 3, day: 25, plant: "jabuka",       text: "Postavi feromonsku klopku za jabučnog savijača", urgent: false },
@@ -254,6 +254,12 @@ const SCHEDULED = [
 ];
 
 const KEY = "vocnjak_v3";
+
+// Filter scheduled tasks — skipYear preskače zadatak u toj godini
+function getScheduled() {
+  const y = new Date().getFullYear();
+  return getScheduled().filter(t => !t.skipYear || t.skipYear !== y);
+}
 
 function defaultData() {
   const base = (todos, entries) => ({ todos, entries });
@@ -323,6 +329,10 @@ let dismissedAlerts = [];
     data = r ? JSON.parse(r) : defaultData();
     // ensure new plants exist
     PLANTS.forEach(p => { if(!data[p.id]) data[p.id] = { entries: [], todos: [] }; });
+    // 2026: preskočeno bijelo ulje (stabla mlada, nije stiglo) — ukloni iz todos samo za ovu godinu
+    if(new Date().getFullYear() === 2026) {
+      PLANTS.forEach(p => { data[p.id].todos = data[p.id].todos.filter(t => !t.toLowerCase().includes("mineralno ulje")); });
+    }
     const da = localStorage.getItem(KEY + "_alerts");
     if(da) dismissedAlerts = JSON.parse(da);
   } catch { data = defaultData(); }
@@ -392,7 +402,7 @@ function renderOverview() {
   const m = now.getMonth();
 
   const allTodos = PLANTS.reduce((s,p) => s + (data[p.id]?.todos?.length||0), 0);
-  const monthTasks = SCHEDULED.filter(t => t.month === m).length;
+  const monthTasks = getScheduled().filter(t => t.month === m).length;
   const hitnoPlants = PLANTS.filter(p => data[p.id]?.entries?.[0]?.status === "hitno").length;
   const totalPlants = PLANTS.length;
 
@@ -463,12 +473,8 @@ function getActiveAlerts() {
   const d = now.getDate();
   const alerts = [];
 
-  // Check todos for urgent keywords
-  const hasUlje = PLANTS.some(p => data[p.id]?.todos?.some(t => t.toLowerCase().includes("ulje")));
-  const hasBakar = PLANTS.some(p => data[p.id]?.todos?.some(t => t.toLowerCase().includes("bakar") || t.toLowerCase().includes("cuprablau")));
-
-  if(hasUlje) alerts.push({ id:"ulje", title:"Bijelo mineralno ulje čeka", body:"Treba prskati sve voćke, smreku, Lagerstroemiju i Photiniju. Minimumo 7–10 dana od zadnjeg bakra.", screen:"calendar", actionLabel:"Pogledaj kalendar" });
-  if(hasBakar) alerts.push({ id:"bakar", title:"Tretman bakrom na rasporedu", body:"Cuprablau Z 35 WG – voćnjak + Lagerstroemia + Photinia. Ne prskati smreku ni pampas!", screen:"calendar", actionLabel:"Pogledaj kalendar" });
+  // Soft reminder for 2nd copper only if wet spring (May)
+  if(m === 4 && !dismissedAlerts.includes("bakar2_svibanj")) alerts.push({ id:"bakar2_svibanj", title:"Kišovito proljeće?", body:"Ako je travanj/svibanj bio vlažan, preporučuje se 2. tretman bakrom za nektarinu (razmak 7–10 dana od prvog). Provjeri prognozu.", screen:"plants", actionLabel:"Idi na nektarinu" });
 
   // Seasonal
   if(m === 2 && d < 15 && !dismissedAlerts.includes("rezidba_ozujak")) alerts.push({ id:"rezidba_ozujak", title:"Sezona rezidbe", body:"Ožujak – idealno vrijeme za rezidbu svih voćki. Koristiti Lac Balsam na većim rezovima.", screen:"plants", actionLabel:"Idi na biljke" });
@@ -511,7 +517,7 @@ function showDetailView(type) {
     const now = new Date();
     const m = now.getMonth();
     const monthNames = ["Siječanj","Veljača","Ožujak","Travanj","Svibanj","Lipanj","Srpanj","Kolovoz","Rujan","Listopad","Studeni","Prosinac"];
-    const tasks = SCHEDULED.filter(t => t.month === m).sort((a,b) => a.day - b.day);
+    const tasks = getScheduled().filter(t => t.month === m).sort((a,b) => a.day - b.day);
     mc.innerHTML = `
       <div class="detail-header">
         <button class="back-btn" onclick="showScreen('overview')">← Natrag</button>
@@ -754,7 +760,7 @@ function renderCalendar() {
   let startDow = (firstDay.getDay() + 6) % 7;
 
   const taskDays = {};
-  SCHEDULED.forEach(t => {
+  getScheduled().forEach(t => {
     if(t.month === calMonth) { if(!taskDays[t.day]) taskDays[t.day] = false; if(t.urgent) taskDays[t.day] = true; }
   });
 
@@ -767,7 +773,7 @@ function renderCalendar() {
     daysHTML += `<div class="cal-day ${isToday?'today':''} ${hasTask?(isUrgent?'has-urgent':'has-task'):''}" onclick="selectCalDay(${d})"><div class="cal-day-num">${d}</div></div>`;
   }
 
-  const monthTasks = SCHEDULED.filter(t => t.month === calMonth).sort((a,b) => a.day - b.day);
+  const monthTasks = getScheduled().filter(t => t.month === calMonth).sort((a,b) => a.day - b.day);
 
   mc.innerHTML = `
     <div class="card">
@@ -799,7 +805,7 @@ function calNav(dir) {
 }
 
 function selectCalDay(d) {
-  const tasks = SCHEDULED.filter(t => t.month===calMonth && t.day===d);
+  const tasks = getScheduled().filter(t => t.month===calMonth && t.day===d);
   if(!tasks.length) return;
   const monthNames = ["Siječanj","Veljača","Ožujak","Travanj","Svibanj","Lipanj","Srpanj","Kolovoz","Rujan","Listopad","Studeni","Prosinac"];
   showToast(`${d}. ${monthNames[calMonth]}: ${tasks.length} zadatak${tasks.length>1?'a':''}`);
