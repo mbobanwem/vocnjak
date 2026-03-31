@@ -22,8 +22,6 @@
     --amber-pale: #fef3c7;
     --red: #b91c1c;
     --red-pale: #fee2e2;
-    --blue: #1d4ed8;
-    --blue-pale: #dbeafe;
     --indigo: #4338ca;
     --indigo-pale: #e0e7ff;
     --text: #1c1a14;
@@ -38,161 +36,53 @@
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); min-height: 100vh; min-height: -webkit-fill-available; overflow-x: hidden; user-select: none; -webkit-user-select: none; }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--text);
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-    overflow-x: hidden;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-
-  /* ── HEADER ── */
-  .header {
-    background: var(--green-deep);
-    padding: calc(var(--safe-top) + 14px) 20px 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.25);
-  }
-  .header-title { font-family: 'Playfair Display', serif; color: #fff; font-size: 20px; letter-spacing: 0.3px; }
+  .header { background: var(--green-deep); padding: calc(var(--safe-top) + 14px) 20px 14px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(0,0,0,0.25); }
+  .header-title { font-family: 'Playfair Display', serif; color: #fff; font-size: 20px; }
   .header-sub { font-size: 10px; color: #7aad7a; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 2px; }
-  .header-right { display: flex; align-items: center; gap: 8px; }
-  .today-badge {
-    background: rgba(255,255,255,0.12);
-    color: #c8e6c8;
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-  }
+  .today-badge { background: rgba(255,255,255,0.12); color: #c8e6c8; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 500; }
 
-  /* ── NAV TABS ── */
-  .nav-tabs {
-    display: flex;
-    background: var(--green-mid);
-    padding: 0 6px;
-    gap: 2px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
+  .nav-tabs { display: flex; background: var(--green-mid); padding: 0 6px; gap: 2px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .nav-tabs::-webkit-scrollbar { display: none; }
-  .tab-btn {
-    background: transparent;
-    border: none;
-    color: #c8e6c8;
-    padding: 9px 14px 7px;
-    font-size: 11px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    cursor: pointer;
-    border-radius: 6px 6px 0 0;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: background 0.15s, color 0.15s;
-    position: relative;
-    flex-shrink: 0;
-  }
-  .tab-btn.active {
-    background: var(--cream);
-    color: var(--green-deep);
-    font-weight: 700;
-  }
-  .tab-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
+  .tab-btn { background: transparent; border: none; color: #c8e6c8; padding: 9px 14px 7px; font-size: 11px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; border-radius: 6px 6px 0 0; white-space: nowrap; display: flex; align-items: center; gap: 5px; transition: background 0.15s, color 0.15s; flex-shrink: 0; }
+  .tab-btn.active { background: var(--cream); color: var(--green-deep); font-weight: 700; }
+  .tab-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
-  /* ── BOTTOM NAV ── */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0; right: 0;
-    background: var(--white);
-    border-top: 1px solid var(--border);
-    display: flex;
-    padding-bottom: var(--safe-bottom);
-    z-index: 100;
-    box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
-  }
-  .bnav-btn {
-    flex: 1;
-    background: none;
-    border: none;
-    padding: 10px 4px 8px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    color: var(--text-light);
-    font-size: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    transition: color 0.15s;
-  }
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); border-top: 1px solid var(--border); display: flex; padding-bottom: var(--safe-bottom); z-index: 100; box-shadow: 0 -2px 16px rgba(0,0,0,0.08); }
+  .bnav-btn { flex: 1; background: none; border: none; padding: 10px 4px 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-light); font-size: 10px; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: color 0.15s; }
   .bnav-btn.active { color: var(--green-mid); }
   .bnav-btn svg { width: 22px; height: 22px; }
 
-  /* ── MAIN SCROLL AREA ── */
-  .main {
-    padding: 16px 16px calc(72px + var(--safe-bottom)) 16px;
-    max-width: 520px;
-    margin: 0 auto;
-  }
+  .main { padding: 16px 16px calc(72px + var(--safe-bottom)) 16px; max-width: 520px; margin: 0 auto; }
 
-  /* ── SECTION LABEL ── */
-  .section-label {
-    font-size: 10px;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: var(--text-light);
-    font-weight: 500;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .section-label { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text-light); font-weight: 500; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
   .section-label::after { content:''; flex:1; height:1px; background: var(--border); }
 
-  /* ── CARDS ── */
-  .card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    margin-bottom: 10px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-  }
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); margin-bottom: 10px; overflow: hidden; box-shadow: var(--shadow); }
 
-  /* ── PLANT CARD (overview) ── */
-  .plant-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    margin-bottom: 10px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    display: flex;
-    align-items: stretch;
-    cursor: pointer;
-    transition: box-shadow 0.15s, transform 0.1s;
-    active-scale: 0.98;
-  }
+  /* ── STAT CARDS — clickable ── */
+  .overview-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; box-shadow: var(--shadow); text-align: center; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
+  .stat-card:active { transform: scale(0.97); box-shadow: none; }
+  .stat-card.clickable:hover { border-color: var(--green-mid); }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--green-mid); line-height: 1; }
+  .stat-num.red { color: var(--red); }
+  .stat-label { font-size: 11px; color: var(--text-light); margin-top: 4px; font-weight: 500; }
+  .stat-arrow { font-size: 10px; color: var(--green-light); margin-top: 2px; }
+
+  /* ── ALERT BANNER ── */
+  .alert-banner { background: linear-gradient(135deg, #1a3320 0%, #2d5a2d 100%); color: #fff; padding: 14px 16px; border-radius: var(--r); margin-bottom: 14px; box-shadow: var(--shadow-lg); position: relative; }
+  .alert-title { font-family: 'Playfair Display', serif; font-size: 15px; margin-bottom: 4px; padding-right: 28px; }
+  .alert-body { font-size: 12px; color: #c8e6c8; line-height: 1.5; padding-right: 28px; }
+  .alert-action { margin-top: 10px; display: flex; gap: 8px; }
+  .alert-btn { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; padding: 6px 14px; font-size: 12px; font-family: 'DM Sans', sans-serif; cursor: pointer; font-weight: 500; }
+  .alert-btn:active { background: rgba(255,255,255,0.25); }
+  .alert-dismiss { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.12); border: none; color: #fff; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+
+  /* ── PLANT CARD ── */
+  .plant-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); margin-bottom: 10px; overflow: hidden; box-shadow: var(--shadow); display: flex; align-items: stretch; cursor: pointer; transition: box-shadow 0.15s, transform 0.1s; }
   .plant-card:active { transform: scale(0.98); box-shadow: none; }
   .plant-card-accent { width: 5px; flex-shrink: 0; }
   .plant-card-body { padding: 12px 14px; flex: 1; }
@@ -201,336 +91,72 @@
   .plant-card-sub { font-size: 11px; color: var(--text-light); margin-bottom: 6px; }
   .plant-card-todos { font-size: 12px; color: var(--text-mid); }
 
-  /* ── STATUS BADGE ── */
-  .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 3px 9px;
-    border-radius: 20px;
-    font-family: 'DM Sans', sans-serif;
-    letter-spacing: 0.3px;
-  }
+  .status-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 20px; font-family: 'DM Sans', sans-serif; letter-spacing: 0.3px; }
   .status-dot { width: 5px; height: 5px; border-radius: 50%; }
-  .s-dobro { background: #d1fae5; color: #065f46; }
-  .s-dobro .status-dot { background: #10b981; }
-  .s-prati { background: var(--amber-pale); color: #92400e; }
-  .s-prati .status-dot { background: var(--amber); }
-  .s-hitno { background: var(--red-pale); color: var(--red); }
-  .s-hitno .status-dot { background: var(--red); }
-  .s-odradjeno { background: var(--indigo-pale); color: var(--indigo); }
-  .s-odradjeno .status-dot { background: var(--indigo); }
+  .s-dobro { background: #d1fae5; color: #065f46; } .s-dobro .status-dot { background: #10b981; }
+  .s-prati { background: var(--amber-pale); color: #92400e; } .s-prati .status-dot { background: var(--amber); }
+  .s-hitno { background: var(--red-pale); color: var(--red); } .s-hitno .status-dot { background: var(--red); }
+  .s-odradjeno { background: var(--indigo-pale); color: var(--indigo); } .s-odradjeno .status-dot { background: var(--indigo); }
 
-  /* ── TODO ITEM ── */
-  .todo-item {
-    background: #fffbf0;
-    border: 1px solid #fde68a;
-    border-radius: var(--r-sm);
-    padding: 9px 12px;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 7px;
-  }
+  /* ── TODO / ENTRY ── */
+  .todo-item { background: #fffbf0; border: 1px solid #fde68a; border-radius: var(--r-sm); padding: 9px 12px; display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; }
   .todo-text { flex: 1; font-size: 13px; color: #78350f; line-height: 1.45; }
-  .todo-urgent {
-    background: #fff5f5;
-    border-color: #fca5a5;
-  }
-  .todo-urgent .todo-text { color: #7f1d1d; }
-  .btn-icon {
-    background: none;
-    border: none;
-    width: 28px; height: 28px;
-    border-radius: 6px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    font-size: 14px;
-    flex-shrink: 0;
-    transition: background 0.12s;
-  }
-  .btn-done { color: #059669; }
-  .btn-done:active { background: #d1fae5; }
-  .btn-del { color: #dc2626; }
-  .btn-del:active { background: #fee2e2; }
+  .todo-meta { font-size: 10px; color: var(--text-light); margin-top: 2px; }
+  .btn-icon { background: none; border: none; width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; flex-shrink: 0; transition: background 0.12s; }
+  .btn-done { color: #059669; } .btn-done:active { background: #d1fae5; }
+  .btn-del { color: #dc2626; } .btn-del:active { background: #fee2e2; }
 
-  /* ── JOURNAL ENTRY ── */
-  .entry-item {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--r-sm);
-    padding: 10px 12px;
-    display: flex;
-    gap: 10px;
-    margin-bottom: 8px;
-    align-items: flex-start;
-  }
+  .entry-item { background: var(--white); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 12px; display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
   .entry-stripe { width: 3px; border-radius: 4px; align-self: stretch; flex-shrink: 0; }
   .entry-date { font-size: 11px; color: var(--text-light); margin-bottom: 4px; }
   .entry-tags { display: flex; gap: 5px; margin-bottom: 5px; flex-wrap: wrap; }
-  .tag {
-    font-size: 10px;
-    padding: 1px 7px;
-    border-radius: 10px;
-    background: var(--cream-dark);
-    color: var(--text-mid);
-    font-weight: 500;
-    letter-spacing: 0.3px;
-  }
+  .tag { font-size: 10px; padding: 1px 7px; border-radius: 10px; background: var(--cream-dark); color: var(--text-mid); font-weight: 500; }
   .entry-note { font-size: 13px; color: var(--text); line-height: 1.5; }
-  .btn-del-sm {
-    background: none; border: none;
-    color: #ccc; cursor: pointer;
-    font-size: 15px; padding: 2px;
-    flex-shrink: 0;
-    transition: color 0.12s;
-  }
+  .btn-del-sm { background: none; border: none; color: #ccc; cursor: pointer; font-size: 15px; padding: 2px; flex-shrink: 0; }
   .btn-del-sm:active { color: var(--red); }
 
   /* ── CALENDAR ── */
-  .cal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 16px 12px;
-  }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 12px; }
   .cal-month { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--text); }
-  .cal-nav-btn {
-    background: var(--cream-dark);
-    border: none;
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.12s;
-    color: var(--text);
-  }
-  .cal-nav-btn:active { background: var(--border); }
-  .cal-grid-header {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    padding: 0 8px;
-    margin-bottom: 4px;
-  }
-  .cal-day-name {
-    text-align: center;
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--text-light);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 4px 0;
-  }
-  .cal-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    padding: 0 8px 16px;
-    gap: 2px;
-  }
-  .cal-day {
-    aspect-ratio: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    cursor: pointer;
-    position: relative;
-    transition: background 0.12s;
-    gap: 2px;
-  }
+  .cal-nav-btn { background: var(--cream-dark); border: none; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; color: var(--text); }
+  .cal-grid-header { display: grid; grid-template-columns: repeat(7, 1fr); padding: 0 8px; margin-bottom: 4px; }
+  .cal-day-name { text-align: center; font-size: 10px; font-weight: 600; color: var(--text-light); letter-spacing: 1px; text-transform: uppercase; padding: 4px 0; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); padding: 0 8px 16px; gap: 2px; }
+  .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; position: relative; transition: background 0.12s; gap: 2px; }
   .cal-day:active { background: var(--cream-dark); }
   .cal-day.empty { cursor: default; }
-  .cal-day.today .cal-day-num {
-    background: var(--green-mid);
-    color: #fff;
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .cal-day.has-task::after {
-    content: '';
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--amber);
-    position: absolute;
-    bottom: 3px;
-  }
+  .cal-day.today .cal-day-num { background: var(--green-mid); color: #fff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .cal-day.has-task::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--amber); position: absolute; bottom: 3px; }
   .cal-day.has-urgent::after { background: var(--red); }
   .cal-day-num { font-size: 13px; font-weight: 500; color: var(--text); line-height: 26px; }
-  .cal-day.other-month .cal-day-num { color: var(--border); }
-
-  /* ── CALENDAR TASKS LIST ── */
-  .cal-tasks-header {
-    padding: 12px 16px 8px;
-    border-top: 1px solid var(--border);
-    font-family: 'Playfair Display', serif;
-    font-size: 16px;
-    color: var(--text);
-  }
-  .cal-task-item {
-    margin: 0 16px 8px;
-    background: var(--cream);
-    border-radius: var(--r-sm);
-    padding: 10px 12px;
-    border-left: 3px solid var(--green-mid);
-  }
+  .cal-task-item { margin: 0 0 8px; background: var(--cream); border-radius: var(--r-sm); padding: 10px 12px; border-left: 3px solid var(--green-mid); }
   .cal-task-item.urgent { border-left-color: var(--red); background: var(--red-pale); }
   .cal-task-plant { font-size: 10px; color: var(--text-light); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
   .cal-task-text { font-size: 13px; color: var(--text); line-height: 1.4; }
 
   /* ── FORMS ── */
-  .form-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 16px;
-    margin-bottom: 12px;
-    box-shadow: var(--shadow);
-  }
+  .form-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
   .form-row-3 { grid-template-columns: 1fr 1fr 1fr; }
   .form-group { display: flex; flex-direction: column; gap: 4px; }
-  .form-label {
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text-light);
-    font-weight: 600;
-  }
-  .form-input, .form-select, .form-textarea {
-    border: 1.5px solid var(--border);
-    border-radius: var(--r-sm);
-    padding: 9px 11px;
-    font-size: 14px;
-    font-family: 'DM Sans', sans-serif;
-    color: var(--text);
-    background: var(--cream);
-    outline: none;
-    transition: border-color 0.15s, background 0.15s;
-    -webkit-appearance: none;
-    width: 100%;
-  }
-  .form-input:focus, .form-select:focus, .form-textarea:focus {
-    border-color: var(--green-mid);
-    background: var(--white);
-  }
+  .form-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-light); font-weight: 600; }
+  .form-input, .form-select, .form-textarea { border: 1.5px solid var(--border); border-radius: var(--r-sm); padding: 9px 11px; font-size: 14px; font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--cream); outline: none; transition: border-color 0.15s; -webkit-appearance: none; width: 100%; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--green-mid); background: var(--white); }
   .form-textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
   .form-btns { display: flex; gap: 8px; margin-top: 12px; }
-  .btn-primary {
-    background: var(--green-mid);
-    color: #fff;
-    border: none;
-    border-radius: var(--r-sm);
-    padding: 10px 20px;
-    font-size: 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 600;
-    cursor: pointer;
-    flex: 1;
-    transition: background 0.15s;
-  }
+  .btn-primary { background: var(--green-mid); color: #fff; border: none; border-radius: var(--r-sm); padding: 10px 20px; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 600; cursor: pointer; flex: 1; }
   .btn-primary:active { background: var(--green-deep); }
-  .btn-secondary {
-    background: var(--cream-dark);
-    color: var(--text-mid);
-    border: none;
-    border-radius: var(--r-sm);
-    padding: 10px 16px;
-    font-size: 14px;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .btn-secondary:active { background: var(--border); }
+  .btn-secondary { background: var(--cream-dark); color: var(--text-mid); border: none; border-radius: var(--r-sm); padding: 10px 16px; font-size: 14px; font-family: 'DM Sans', sans-serif; cursor: pointer; }
 
-  /* ── ADD BUTTON (FAB) ── */
-  .fab {
-    position: fixed;
-    bottom: calc(64px + var(--safe-bottom) + 12px);
-    right: 20px;
-    width: 52px; height: 52px;
-    background: var(--green-mid);
-    border: none;
-    border-radius: 50%;
-    color: #fff;
-    font-size: 24px;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(45,90,45,0.40);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 99;
-    transition: transform 0.15s, background 0.15s;
-  }
-  .fab:active { transform: scale(0.92); background: var(--green-deep); }
+  /* ── DETAIL VIEW ── */
+  .detail-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .back-btn { background: var(--cream-dark); border: none; border-radius: 8px; padding: 8px 12px; font-size: 13px; cursor: pointer; color: var(--text-mid); font-family: 'DM Sans', sans-serif; }
 
-  /* ── SMART ALERT ── */
-  .alert-banner {
-    background: linear-gradient(135deg, #1a3320 0%, #2d5a2d 100%);
-    color: #fff;
-    padding: 14px 16px;
-    border-radius: var(--r);
-    margin-bottom: 14px;
-    box-shadow: var(--shadow-lg);
-  }
-  .alert-title { font-family: 'Playfair Display', serif; font-size: 15px; margin-bottom: 4px; }
-  .alert-body { font-size: 12px; color: #c8e6c8; line-height: 1.5; }
-
-  /* ── OVERVIEW SCREEN ── */
-  .overview-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  .stat-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 14px;
-    box-shadow: var(--shadow);
-    text-align: center;
-  }
-  .stat-num { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--green-mid); line-height: 1; }
-  .stat-label { font-size: 11px; color: var(--text-light); margin-top: 4px; font-weight: 500; }
-
-  /* ── INLINE PLANT DETAIL ── */
-  .plant-detail-header {
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 16px 12px;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    sticky: top;
-  }
-
-  /* ── EMPTY STATE ── */
   .empty { text-align: center; color: var(--text-light); font-size: 13px; font-style: italic; padding: 20px 0; }
 
-  /* ── TOAST ── */
-  .toast {
-    position: fixed;
-    bottom: calc(72px + var(--safe-bottom) + 16px);
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--green-deep);
-    color: #fff;
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 500;
-    opacity: 0;
-    transition: opacity 0.2s, transform 0.2s;
-    pointer-events: none;
-    white-space: nowrap;
-    z-index: 200;
-  }
+  .toast { position: fixed; bottom: calc(72px + var(--safe-bottom) + 16px); left: 50%; transform: translateX(-50%) translateY(20px); background: var(--green-deep); color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; white-space: nowrap; z-index: 200; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  /* scrollbar */
   ::-webkit-scrollbar { width: 0; }
 </style>
 </head>
@@ -539,20 +165,16 @@
 <div class="header">
   <div>
     <div class="header-sub">Voćnjak · Zagreb</div>
-    <div class="header-title">Dnevnik vrta</div>
+    <div class="header-title" id="headerTitle">Dnevnik vrta</div>
   </div>
-  <div class="header-right">
+  <div>
     <div class="today-badge" id="todayBadge"></div>
   </div>
 </div>
 
-<!-- Plant tabs (only visible on plant screen) -->
 <div class="nav-tabs" id="plantTabs"></div>
-
-<!-- Main content -->
 <div class="main" id="mainContent"></div>
 
-<!-- Bottom nav -->
 <div class="bottom-nav">
   <button class="bnav-btn active" id="bnav-overview" onclick="showScreen('overview')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -560,7 +182,7 @@
   </button>
   <button class="bnav-btn" id="bnav-plants" onclick="showScreen('plants')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12C12 12 8 10 6 6c4 0 6 4 6 6z"/><path d="M12 12C12 12 16 10 18 6c-4 0-6 4-6 6z"/><path d="M12 12C12 12 10 16 6 18c0-4 4-6 6-6z"/><path d="M12 12C12 12 14 16 18 18c0-4-4-6-6-6z"/></svg>
-    Voćke
+    Biljke
   </button>
   <button class="bnav-btn" id="bnav-calendar" onclick="showScreen('calendar')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -572,21 +194,28 @@
   </button>
   <button class="bnav-btn" id="bnav-sync" onclick="showScreen('sync')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0115-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 01-15 6.7L3 16"/></svg>
-    Sinkroniziraj
+    Sync
   </button>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── DATA ──────────────────────────────────────────────────────────
-
+// ── PLANTS ──
 const PLANTS = [
-  { id: "tresnja",   name: "Trešnja Kordia",    emoji: "🍒", subtitle: "Gisela 5 · berba kraj lipnja",        rootstock: "Gisela 5" },
-  { id: "nektarina", name: "Nektarina Fantasia", emoji: "🍑", subtitle: "Prunus persica · berba sredina kol.", rootstock: "Prunus persica" },
-  { id: "jabuka",    name: "Jabuka Fuji",        emoji: "🍎", subtitle: "MM106 · berba rujan–listopad",        rootstock: "MM106" },
-  { id: "sljiva",    name: "Šljiva Stanley",     emoji: "🫐", subtitle: "Myrobalana · berba kraj kolovoza",    rootstock: "Myrobalana" },
-  { id: "smreka",    name: "Patuljasta smreka",  emoji: "🌲", subtitle: "Picea glauca 'Conica' · prednji vrt", rootstock: "" },
+  // Donji vrt — voćke 2026
+  { id: "tresnja",    name: "Trešnja Kordia",       emoji: "🍒", subtitle: "Gisela 5 · berba kraj lipnja",         grupa: "Donji vrt — voćke 2026" },
+  { id: "nektarina",  name: "Nektarina Fantasia",    emoji: "🍑", subtitle: "Prunus persica · berba sredina kol.",  grupa: "Donji vrt — voćke 2026" },
+  { id: "jabuka",     name: "Jabuka Fuji",           emoji: "🍎", subtitle: "MM106 · berba rujan–listopad",         grupa: "Donji vrt — voćke 2026" },
+  { id: "sljiva",     name: "Šljiva Stanley",        emoji: "🫐", subtitle: "Myrobalana · berba kraj kolovoza",     grupa: "Donji vrt — voćke 2026" },
+  // Donji vrt — stara stabla
+  { id: "magnolija",  name: "Magnolija",             emoji: "🌸", subtitle: "~40 god. · donji vrt",                grupa: "Donji vrt — stara stabla" },
+  { id: "japtresnja", name: "Japanska trešnja",      emoji: "🌳", subtitle: "~20 god. · 6m+ visine · donji vrt",   grupa: "Donji vrt — stara stabla" },
+  // Gornji vrt
+  { id: "lagerstroemia", name: "Indijski jorgovan",  emoji: "💜", subtitle: "Lagerstroemia × 5 kom · gornji vrt",  grupa: "Gornji vrt" },
+  { id: "photinia",   name: "Photinia Red Robin",    emoji: "🔴", subtitle: "Photinia × fraseri · gornji vrt",     grupa: "Gornji vrt" },
+  { id: "smreka",     name: "Patuljasta smreka",     emoji: "🌲", subtitle: "Picea glauca 'Conica' · gornji vrt",  grupa: "Gornji vrt" },
+  { id: "pampas",     name: "Pampas trava",          emoji: "🌾", subtitle: "Cortaderia selloana · gornji vrt",    grupa: "Gornji vrt" },
 ];
 
 const STATUS_COLORS = {
@@ -596,93 +225,84 @@ const STATUS_COLORS = {
   odradjeno: { cls: "s-odradjeno", dot: "#6366f1", stripe: "#6366f1" },
 };
 const STATUS_LABELS = { dobro: "Dobro", prati: "Pratiti", hitno: "Hitno", odradjeno: "Odrađeno" };
+const ENTRY_TYPES = ["bilješka","prskanje","rezidba","sadnja","berba","navodnjavanje","gnojidba","odrađeno","tretman"];
 
-const ENTRY_TYPES = ["bilješka","prskanje","rezidba","sadnja","berba","navodnjavanje","gnojidba","odrađeno"];
-
-// ── SCHEDULED TASKS (calendar) ── month 0-based
+// ── SCHEDULED TASKS ── month 0-based, with due date for sorting
 const SCHEDULED = [
-  { month: 1, day: 1,  plant: "sve",       text: "Bijelo mineralno ulje – sve voćke + smreka",       urgent: true },
-  { month: 1, day: 15, plant: "sve",       text: "Cuprablau Z 35 WG – voćnjak + Lagerstroemia + Photinia", urgent: false },
-  { month: 2, day: 1,  plant: "sve",       text: "Rezidba – sve voćke",                               urgent: false },
-  { month: 2, day: 5,  plant: "sve",       text: "Bakar na rane (1–2 dana nakon rezidbe)",            urgent: false },
-  { month: 3, day: 25, plant: "tresnja",   text: "Postavi žute ljepljive ploče (2–3/stablo)",         urgent: false },
-  { month: 3, day: 25, plant: "jabuka",    text: "Postavi feromonsku klopku za jabučnog savijača",    urgent: false },
-  { month: 3, day: 25, plant: "sljiva",    text: "Postavi feromonsku klopku za šljivinog savijača",   urgent: false },
-  { month: 4, day: 10, plant: "jabuka",    text: "Score 250 EC + Mospilan 20 SP (nakon cvatnje)",     urgent: true },
-  { month: 4, day: 10, plant: "sljiva",    text: "Score 250 EC + Mospilan 20 SP (nakon cvatnje)",     urgent: true },
-  { month: 5, day: 15, plant: "tresnja",   text: "Postavi mrežu protiv ptica (2–3 tj. prije berbe)",  urgent: false },
-  { month: 5, day: 20, plant: "jabuka",    text: "Mospilan 20 SP – 2. generacija savijača",           urgent: false },
-  { month: 5, day: 20, plant: "sljiva",    text: "Mospilan 20 SP – 2. generacija savijača",           urgent: false },
-  { month: 6, day: 1,  plant: "tresnja",   text: "🍒 Berba Trešnja Kordia",                           urgent: false },
-  { month: 6, day: 15, plant: "tresnja",   text: "Skini mrežu nakon berbe",                           urgent: false },
-  { month: 6, day: 1,  plant: "sve",       text: "Ljetna rezidba (1–15.7)",                           urgent: false },
-  { month: 7, day: 1,  plant: "nektarina", text: "🍑 Berba Nektarina Fantasia",                       urgent: false },
-  { month: 7, day: 20, plant: "sljiva",    text: "🫐 Berba Šljiva Stanley",                           urgent: false },
-  { month: 8, day: 25, plant: "jabuka",    text: "🍎 Berba Jabuka Fuji",                              urgent: false },
-  { month: 4, day: 1,  plant: "smreka",    text: "Provjeri aktivnost grinja – Vertimec ako treba",    urgent: false },
-  { month: 5, day: 1,  plant: "smreka",    text: "Procjena oporavka smreke",                          urgent: false },
+  { month: 1, day: 1,  plant: "sve",          text: "Bijelo mineralno ulje – sve voćke + smreka + Lagerstroemia + Photinia", urgent: true },
+  { month: 1, day: 15, plant: "sve",          text: "Cuprablau Z 35 WG – voćnjak + Lagerstroemia + Photinia", urgent: false },
+  { month: 2, day: 1,  plant: "sve",          text: "Rezidba – sve voćke",               urgent: false },
+  { month: 2, day: 5,  plant: "sve",          text: "Bakar na rane (1–2 dana nakon rezidbe)", urgent: false },
+  { month: 2, day: 10, plant: "magnolija",    text: "Rezidba magnolije – maks. 20–25% grana, Lac Balsam na rane", urgent: false },
+  { month: 2, day: 10, plant: "japtresnja",   text: "Rezidba japanske trešnje – Lac Balsam na velike rane", urgent: false },
+  { month: 3, day: 25, plant: "tresnja",      text: "Postavi žute ljepljive ploče (2–3/stablo)", urgent: false },
+  { month: 3, day: 25, plant: "jabuka",       text: "Postavi feromonsku klopku za jabučnog savijača", urgent: false },
+  { month: 3, day: 25, plant: "sljiva",       text: "Postavi feromonsku klopku za šljivinog savijača", urgent: false },
+  { month: 4, day: 10, plant: "jabuka",       text: "Score 250 EC + Mospilan 20 SP (nakon cvatnje)", urgent: true },
+  { month: 4, day: 10, plant: "sljiva",       text: "Score 250 EC + Mospilan 20 SP (nakon cvatnje)", urgent: true },
+  { month: 4, day: 1,  plant: "smreka",       text: "Provjeri aktivnost grinja – Vertimec ako treba", urgent: false },
+  { month: 5, day: 1,  plant: "smreka",       text: "Procjena oporavka smreke",           urgent: false },
+  { month: 5, day: 15, plant: "tresnja",      text: "Postavi mrežu protiv ptica (2–3 tj. prije berbe)", urgent: false },
+  { month: 5, day: 20, plant: "jabuka",       text: "Mospilan 20 SP – 2. generacija savijača", urgent: false },
+  { month: 5, day: 20, plant: "sljiva",       text: "Mospilan 20 SP – 2. generacija savijača", urgent: false },
+  { month: 6, day: 1,  plant: "tresnja",      text: "🍒 Berba Trešnja Kordia (kraj lipnja – poč. srpnja)", urgent: false },
+  { month: 6, day: 15, plant: "tresnja",      text: "Skini mrežu protiv ptica nakon berbe", urgent: false },
+  { month: 6, day: 1,  plant: "sve",          text: "Ljetna rezidba (1–15. srpnja)",      urgent: false },
+  { month: 7, day: 1,  plant: "nektarina",    text: "🍑 Berba Nektarina Fantasia (sredina kol.)", urgent: false },
+  { month: 7, day: 20, plant: "sljiva",       text: "🫐 Berba Šljiva Stanley (kraj kolovoza)", urgent: false },
+  { month: 8, day: 25, plant: "jabuka",       text: "🍎 Berba Jabuka Fuji (rujan–listopad)", urgent: false },
 ];
 
-// ── STORAGE KEY ──
-const KEY = "vocnjak_v2";
+const KEY = "vocnjak_v3";
 
 function defaultData() {
+  const base = (todos, entries) => ({ todos, entries });
   return {
-    tresnja: {
-      entries: [
-        { id: 1, date: "2025-03-01", type: "sadnja",    note: "Posađena sadnica iz rasadnika, bez grana.", status: "prati" },
-        { id: 2, date: "2025-03-22", type: "prskanje",  note: "Prskano bakrom (Cuprablau Z 35 WG) – zimski tretman.", status: "dobro" },
-      ],
-      todos: [
-        "Bijelo mineralno ulje (7–10 dana nakon bakra)",
-        "Postaviti žute ljepljive ploče (kraj travnja)",
-        "Postaviti mrežu protiv ptica 2–3 tj. prije berbe",
-      ],
-    },
-    nektarina: {
-      entries: [
-        { id: 1, date: "2025-03-01", type: "sadnja",    note: "Posađena sadnica iz rasadnika, bez grana.", status: "prati" },
-        { id: 2, date: "2025-03-22", type: "prskanje",  note: "Prskano bakrom (Cuprablau Z 35 WG) – zimski tretman.", status: "dobro" },
-      ],
-      todos: [
-        "Bijelo mineralno ulje (7–10 dana nakon bakra)",
-        "2. tretman bakrom ako je proljeće vlažno (razmak 7–10 dana)",
-      ],
-    },
-    jabuka: {
-      entries: [
-        { id: 1, date: "2025-03-01", type: "sadnja",    note: "Posađena sadnica iz rasadnika, bez grana.", status: "prati" },
-        { id: 2, date: "2025-03-22", type: "prskanje",  note: "Prskano bakrom (Cuprablau Z 35 WG) – zimski tretman.", status: "dobro" },
-      ],
-      todos: [
-        "Bijelo mineralno ulje (7–10 dana nakon bakra)",
-        "Feromonska klopka za savijača (kraj travnja)",
-        "Score 250 EC + Mospilan 20 SP (nakon cvatnje, svibanj)",
-      ],
-    },
-    sljiva: {
-      entries: [
-        { id: 1, date: "2025-03-01", type: "sadnja",    note: "Posađena sadnica iz rasadnika, bez grana.", status: "prati" },
-        { id: 2, date: "2025-03-22", type: "prskanje",  note: "Prskano bakrom (Cuprablau Z 35 WG) – zimski tretman.", status: "dobro" },
-      ],
-      todos: [
-        "Bijelo mineralno ulje (7–10 dana nakon bakra)",
-        "Feromonska klopka za šljivinog savijača (kraj travnja)",
-        "Mospilan 20 SP (lipanj, 2. generacija savijača)",
-      ],
-    },
-    smreka: {
-      entries: [
-        { id: 1, date: "2023-01-01", type: "bilješka",  note: "Počelo smeđenje i propadanje iglica – vjerojatno grinje (Oligonychus ununguis).", status: "hitno" },
-        { id: 2, date: "2025-03-22", type: "bilješka",  note: "Vidljivi novi zeleni pupoljci – biljka živa. Unutarnji smeđi dijelovi mrtvi, neće se oporaviti.", status: "prati" },
-      ],
-      todos: [
-        "Bijelo mineralno ulje – prskati zajedno s voćkama",
-        "Ukloniti mrtve smeđe grane iznutra",
-        "Akaricid (Vertimec) ako grinje aktivne travanj/svibanj",
-        "Procijeniti stanje lipanj/srpanj 2025.",
-      ],
-    },
+    tresnja: base(
+      ["Bijelo mineralno ulje (7–10 dana nakon bakra)", "Postaviti žute ljepljive ploče (kraj travnja)", "Postaviti mrežu protiv ptica 2–3 tj. prije berbe"],
+      [{ id:1, date:"2026-03-01", type:"sadnja", note:"Posađena sadnica iz rasadnika, bez grana.", status:"prati" },
+       { id:2, date:"2026-03-22", type:"prskanje", note:"Prskano bakrom (Cuprablau Z 35 WG) – zimski tretman.", status:"dobro" }]
+    ),
+    nektarina: base(
+      ["Bijelo mineralno ulje (7–10 dana nakon bakra)", "2. tretman bakrom ako je proljeće vlažno"],
+      [{ id:1, date:"2026-03-01", type:"sadnja", note:"Posađena sadnica iz rasadnika, bez grana.", status:"prati" },
+       { id:2, date:"2026-03-22", type:"prskanje", note:"Prskano bakrom (Cuprablau Z 35 WG) – zimski tretman.", status:"dobro" }]
+    ),
+    jabuka: base(
+      ["Bijelo mineralno ulje (7–10 dana nakon bakra)", "Feromonska klopka za savijača (kraj travnja)", "Score 250 EC + Mospilan 20 SP (nakon cvatnje, svibanj)"],
+      [{ id:1, date:"2026-03-01", type:"sadnja", note:"Posađena sadnica iz rasadnika, bez grana.", status:"prati" },
+       { id:2, date:"2026-03-22", type:"prskanje", note:"Prskano bakrom (Cuprablau Z 35 WG) – zimski tretman.", status:"dobro" }]
+    ),
+    sljiva: base(
+      ["Bijelo mineralno ulje (7–10 dana nakon bakra)", "Feromonska klopka za šljivinog savijača (kraj travnja)", "Mospilan 20 SP (lipanj, 2. generacija savijača)"],
+      [{ id:1, date:"2026-03-01", type:"sadnja", note:"Posađena sadnica iz rasadnika, bez grana.", status:"prati" },
+       { id:2, date:"2026-03-22", type:"prskanje", note:"Prskano bakrom (Cuprablau Z 35 WG) – zimski tretman.", status:"dobro" }]
+    ),
+    magnolija: base(
+      ["Rezidba nakon cvatnje – maks. 20–25% grana", "Lac Balsam na sve veće rane od rezidbe"],
+      [{ id:1, date:"2026-01-01", type:"bilješka", note:"Stara magnolija ~40 godina, donji vrt. Redovna godišnja rezidba.", status:"dobro" }]
+    ),
+    japtresnja: base(
+      ["Rezidba – planirati pažljivo zbog visine 6m+", "Lac Balsam na sve veće rane"],
+      [{ id:1, date:"2026-01-01", type:"bilješka", note:"Japanska trešnja ~20 godina, visina preko 6m. Zanemarena rezidba.", status:"prati" }]
+    ),
+    lagerstroemia: base(
+      ["Bijelo mineralno ulje zajedno s voćkama (veljača)", "Cuprablau Z 35 WG zajedno s voćkama (veljača)"],
+      [{ id:1, date:"2026-01-01", type:"bilješka", note:"5 mladih sadnica indijskog jorgovana u gornjem vrtu.", status:"dobro" }]
+    ),
+    photinia: base(
+      ["Bijelo mineralno ulje zajedno s voćkama (veljača)", "Cuprablau Z 35 WG zajedno s voćkama (veljača)"],
+      [{ id:1, date:"2026-01-01", type:"bilješka", note:"Photinia × fraseri 'Red Robin' – gornji vrt.", status:"dobro" }]
+    ),
+    smreka: base(
+      ["Bijelo mineralno ulje – SAMO ulje, NIKAD bakar", "Ukloniti mrtve smeđe grane iznutra", "Vertimec 018 EC ako grinje aktivne (travanj/svibanj)", "Procijeniti stanje lipanj/srpanj 2026."],
+      [{ id:1, date:"2026-01-01", type:"bilješka", note:"Smeđenje 60–70% iglica – grinje (Oligonychus ununguis) ili zimska isušenost. Novi zeleni pupoljci vidljivi.", status:"hitno" },
+       { id:2, date:"2026-03-22", type:"bilješka", note:"Vidljivi novi zeleni pupoljci – biljka živa. Unutarnji smeđi dijelovi neće se oporaviti.", status:"prati" }]
+    ),
+    pampas: base(
+      ["Proljetno čišćenje – ukloniti suhe listove", "NIKAD prskati bakrom ni uljem"],
+      [{ id:1, date:"2026-01-01", type:"bilješka", note:"Cortaderia selloana – veliki trs. Ne treba fungicide ni bijelo ulje.", status:"dobro" }]
+    ),
   };
 }
 
@@ -694,23 +314,24 @@ let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 let addFormVisible = false;
 let addTodoFormVisible = false;
-let addFormPlantId = "tresnja";
+let dismissedAlerts = [];
 
 // ── INIT ──
-(async () => {
+(() => {
   try {
     const r = localStorage.getItem(KEY);
     data = r ? JSON.parse(r) : defaultData();
+    // ensure new plants exist
+    PLANTS.forEach(p => { if(!data[p.id]) data[p.id] = { entries: [], todos: [] }; });
+    const da = localStorage.getItem(KEY + "_alerts");
+    if(da) dismissedAlerts = JSON.parse(da);
   } catch { data = defaultData(); }
   initUI();
 })();
 
 function initUI() {
-  // today badge
   const d = new Date();
-  document.getElementById("todayBadge").textContent =
-    d.toLocaleDateString("hr-HR", { day: "numeric", month: "short" });
-
+  document.getElementById("todayBadge").textContent = d.toLocaleDateString("hr-HR", { day: "numeric", month: "short" });
   buildPlantTabs();
   showScreen("overview");
 }
@@ -731,12 +352,11 @@ function showToast(msg) {
 function buildPlantTabs() {
   const tabs = document.getElementById("plantTabs");
   tabs.innerHTML = PLANTS.map(p => {
-    const pd = data[p.id];
-    const st = pd.entries[0]?.status || "dobro";
-    const dot = STATUS_COLORS[st].dot;
+    if(!data[p.id]) return "";
+    const st = data[p.id].entries[0]?.status || "dobro";
+    const dot = STATUS_COLORS[st]?.dot || "#10b981";
     return `<button class="tab-btn ${p.id === activePlantId ? 'active' : ''}" onclick="setActivePlant('${p.id}')">
-      <span>${p.emoji}</span>
-      <span class="tab-dot" style="background:${dot}"></span>
+      <span>${p.emoji}</span><span class="tab-dot" style="background:${dot}"></span>
     </button>`;
   }).join("");
 }
@@ -747,19 +367,16 @@ function setActivePlant(id) {
   renderPlantScreen();
 }
 
-// ── SCREEN SWITCHING ──
+// ── SCREEN ──
 function showScreen(name) {
   currentScreen = name;
   addFormVisible = false;
   addTodoFormVisible = false;
-
   ["overview","plants","calendar","add","sync"].forEach(s => {
-    const b = document.getElementById(`bnav-${s}`);
-    if(b) b.classList.toggle("active", s === name);
+    document.getElementById(`bnav-${s}`)?.classList.toggle("active", s === name);
   });
-
-  const tabs = document.getElementById("plantTabs");
-  tabs.style.display = name === "plants" ? "flex" : "none";
+  document.getElementById("plantTabs").style.display = name === "plants" ? "flex" : "none";
+  document.getElementById("headerTitle").textContent = name === "overview" ? "Dnevnik vrta" : name === "plants" ? "Biljke" : name === "calendar" ? "Kalendar" : name === "sync" ? "Sinkroniziraj" : "Dodaj";
 
   if(name === "overview") renderOverview();
   else if(name === "plants") renderPlantScreen();
@@ -770,46 +387,60 @@ function showScreen(name) {
 // ── OVERVIEW ──
 function renderOverview() {
   const mc = document.getElementById("mainContent");
+  document.getElementById("headerTitle").textContent = "Dnevnik vrta";
   const now = new Date();
-  const thisMonth = now.getMonth();
+  const m = now.getMonth();
 
-  // count upcoming tasks this month
-  const upcoming = SCHEDULED.filter(t => t.month === thisMonth);
   const allTodos = PLANTS.reduce((s,p) => s + (data[p.id]?.todos?.length||0), 0);
-  const hitno = PLANTS.filter(p => (data[p.id]?.entries?.[0]?.status) === "hitno").length;
+  const monthTasks = SCHEDULED.filter(t => t.month === m).length;
+  const hitnoPlants = PLANTS.filter(p => data[p.id]?.entries?.[0]?.status === "hitno").length;
+  const totalPlants = PLANTS.length;
 
-  // smart suggestion
-  let smart = getSmartSuggestion();
+  const alerts = getActiveAlerts();
+  const alertsHTML = alerts.map(a => `
+    <div class="alert-banner" id="alert-${a.id}">
+      <button class="alert-dismiss" onclick="dismissAlert('${a.id}')">✕</button>
+      <div class="alert-title">📌 ${a.title}</div>
+      <div class="alert-body">${a.body}</div>
+      <div class="alert-action">
+        <button class="alert-btn" onclick="showScreen('${a.screen || 'calendar'}')">${a.actionLabel || 'Pogledaj kalendar'}</button>
+        <button class="alert-btn" onclick="dismissAlert('${a.id}')">Zanemari</button>
+      </div>
+    </div>
+  `).join("");
 
   mc.innerHTML = `
-    ${smart ? `<div class="alert-banner"><div class="alert-title">📌 Preporučeno sada</div><div class="alert-body">${smart}</div></div>` : ""}
+    ${alertsHTML}
 
     <div class="overview-stats">
-      <div class="stat-card">
+      <div class="stat-card clickable" onclick="showDetailView('todos')">
         <div class="stat-num">${allTodos}</div>
         <div class="stat-label">Otvoreni zadaci</div>
+        <div class="stat-arrow">Pogledaj sve →</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-num">${upcoming.length}</div>
-        <div class="stat-label">U ovom mjesecu</div>
+      <div class="stat-card clickable" onclick="showDetailView('month')">
+        <div class="stat-num">${monthTasks}</div>
+        <div class="stat-label">Ovaj mjesec</div>
+        <div class="stat-arrow">Raspored →</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-num">${hitno}</div>
+      <div class="stat-card clickable" onclick="showDetailView('hitno')">
+        <div class="stat-num ${hitnoPlants > 0 ? 'red' : ''}">${hitnoPlants}</div>
         <div class="stat-label">Hitno</div>
+        <div class="stat-arrow">${hitnoPlants > 0 ? 'Pogledaj →' : 'Sve uredno'}</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-num">${PLANTS.length}</div>
+      <div class="stat-card clickable" onclick="showScreen('plants')">
+        <div class="stat-num">${totalPlants}</div>
         <div class="stat-label">Biljke</div>
+        <div class="stat-arrow">Pogledaj sve →</div>
       </div>
     </div>
 
-    <div class="section-label">Stanje voćki</div>
-
+    <div class="section-label">Stanje biljki</div>
     ${PLANTS.map(p => {
-      const pd = data[p.id];
-      const st = pd.entries[0]?.status || "dobro";
+      if(!data[p.id]) return "";
+      const st = data[p.id].entries[0]?.status || "dobro";
       const sc = STATUS_COLORS[st];
-      const todoCount = pd.todos.length;
+      const tc = data[p.id].todos.length;
       return `<div class="plant-card" onclick="showScreen('plants'); setActivePlant('${p.id}')">
         <div class="plant-card-accent" style="background:${sc.stripe}"></div>
         <div class="plant-card-body">
@@ -818,47 +449,115 @@ function renderOverview() {
             <div class="status-badge ${sc.cls}"><span class="status-dot"></span>${STATUS_LABELS[st]}</div>
           </div>
           <div class="plant-card-sub">${p.subtitle}</div>
-          ${todoCount > 0 ? `<div class="plant-card-todos">📋 ${todoCount} zadatak${todoCount > 1 ? (todoCount < 5 ? 'a' : '') : ''}</div>` : ""}
+          ${tc > 0 ? `<div class="plant-card-todos">📋 ${tc} zadatak${tc > 1 ? 'a' : ''}</div>` : ""}
         </div>
       </div>`;
     }).join("")}
-
-    <div class="section-label" style="margin-top:4px">Ovaj tjedan</div>
-    ${getWeekTasks()}
   `;
 }
 
-function getSmartSuggestion() {
+// ── ALERTS ──
+function getActiveAlerts() {
   const now = new Date();
   const m = now.getMonth();
   const d = now.getDate();
+  const alerts = [];
 
-  // Check for urgent tasks
-  for(const p of PLANTS) {
-    const pd = data[p.id];
-    if(pd.todos.some(t => t.toLowerCase().includes("ulje") || t.toLowerCase().includes("bakar"))) {
-      return "Bijelo mineralno ulje čeka na rasporedu. Prskati zajedno voćnjak i smreku.";
-    }
-  }
-  if(m === 2 && d < 20) return "Ožujak: Rezidba svih voćki preporučena u prvoj polovici.";
-  if(m === 3 && d >= 20) return "Kraj travnja: Postavi feromonske klopke i žute ploče.";
-  if(m === 4) return "Svibanj: Score 250 EC + Mospilan 20 SP nakon cvatnje jabuke i šljive.";
-  return "";
+  // Check todos for urgent keywords
+  const hasUlje = PLANTS.some(p => data[p.id]?.todos?.some(t => t.toLowerCase().includes("ulje")));
+  const hasBakar = PLANTS.some(p => data[p.id]?.todos?.some(t => t.toLowerCase().includes("bakar") || t.toLowerCase().includes("cuprablau")));
+
+  if(hasUlje) alerts.push({ id:"ulje", title:"Bijelo mineralno ulje čeka", body:"Treba prskati sve voćke, smreku, Lagerstroemiju i Photiniju. Minimumo 7–10 dana od zadnjeg bakra.", screen:"calendar", actionLabel:"Pogledaj kalendar" });
+  if(hasBakar) alerts.push({ id:"bakar", title:"Tretman bakrom na rasporedu", body:"Cuprablau Z 35 WG – voćnjak + Lagerstroemia + Photinia. Ne prskati smreku ni pampas!", screen:"calendar", actionLabel:"Pogledaj kalendar" });
+
+  // Seasonal
+  if(m === 2 && d < 15 && !dismissedAlerts.includes("rezidba_ozujak")) alerts.push({ id:"rezidba_ozujak", title:"Sezona rezidbe", body:"Ožujak – idealno vrijeme za rezidbu svih voćki. Koristiti Lac Balsam na većim rezovima.", screen:"plants", actionLabel:"Idi na biljke" });
+  if(m === 3 && d >= 20 && !dismissedAlerts.includes("klopke_travanj")) alerts.push({ id:"klopke_travanj", title:"Postavi klopke i ploče", body:"Kraj travnja: feromonske klopke za jabuku i šljivu, žute ljepljive ploče za trešnju.", screen:"calendar", actionLabel:"Pogledaj kalendar" });
+  if(m === 4 && !dismissedAlerts.includes("score_svibanj")) alerts.push({ id:"score_svibanj", title:"Score + Mospilan na rasporedu", body:"Svibanj: Score 250 EC + Mospilan 20 SP za jabuku i šljivu nakon cvatnje. Ne prskati za cvjetanja!", screen:"calendar", actionLabel:"Pogledaj kalendar" });
+
+  return alerts.filter(a => !dismissedAlerts.includes(a.id));
 }
 
-function getWeekTasks() {
-  const now = new Date();
-  const m = now.getMonth();
-  const d = now.getDate();
-  const relevant = SCHEDULED.filter(t => t.month === m && Math.abs(t.day - d) <= 7);
-  if(!relevant.length) return `<div class="empty">Nema zakazanih zadataka ovaj tjedan.</div>`;
-  return relevant.map(t => {
-    const plantName = t.plant === "sve" ? "Sve biljke" : PLANTS.find(p => p.id === t.plant)?.name || t.plant;
-    return `<div class="cal-task-item ${t.urgent ? 'urgent' : ''}">
-      <div class="cal-task-plant">${plantName}</div>
-      <div class="cal-task-text">${t.text}</div>
-    </div>`;
-  }).join("");
+function dismissAlert(id) {
+  dismissedAlerts.push(id);
+  try { localStorage.setItem(KEY + "_alerts", JSON.stringify(dismissedAlerts)); } catch(e) {}
+  const el = document.getElementById("alert-" + id);
+  if(el) { el.style.opacity = "0"; el.style.transform = "scale(0.97)"; el.style.transition = "all 0.2s"; setTimeout(() => el.remove(), 200); }
+}
+
+// ── DETAIL VIEWS (from stat cards) ──
+function showDetailView(type) {
+  const mc = document.getElementById("mainContent");
+  document.getElementById("headerTitle").textContent = type === "todos" ? "Svi zadaci" : type === "month" ? "Ovaj mjesec" : "Hitno";
+
+  if(type === "todos") {
+    // All todos across all plants, grouped by plant
+    const items = PLANTS.flatMap(p => (data[p.id]?.todos||[]).map((t,i) => ({ plant: p, text: t, idx: i })));
+    mc.innerHTML = `
+      <div class="detail-header">
+        <button class="back-btn" onclick="showScreen('overview')">← Natrag</button>
+        <div style="font-family:'Playfair Display',serif; font-size:17px">Svi otvoreni zadaci</div>
+      </div>
+      ${items.length === 0 ? '<div class="empty">Nema otvorenih zadataka.</div>' : items.map(item => `
+        <div class="todo-item">
+          <div style="flex:1">
+            <div class="todo-meta">${item.plant.emoji} ${item.plant.name}</div>
+            <div class="todo-text">${item.text}</div>
+          </div>
+          <button class="btn-icon btn-done" onclick="completeTodoGlobal('${item.plant.id}', ${item.idx})" title="Odrađeno">✓</button>
+        </div>`).join("")}
+    `;
+  } else if(type === "month") {
+    const now = new Date();
+    const m = now.getMonth();
+    const monthNames = ["Siječanj","Veljača","Ožujak","Travanj","Svibanj","Lipanj","Srpanj","Kolovoz","Rujan","Listopad","Studeni","Prosinac"];
+    const tasks = SCHEDULED.filter(t => t.month === m).sort((a,b) => a.day - b.day);
+    mc.innerHTML = `
+      <div class="detail-header">
+        <button class="back-btn" onclick="showScreen('overview')">← Natrag</button>
+        <div style="font-family:'Playfair Display',serif; font-size:17px">${monthNames[m]}</div>
+      </div>
+      ${tasks.length === 0 ? '<div class="empty">Nema zakazanih zadataka.</div>' : tasks.map(t => {
+        const pName = t.plant === "sve" ? "Sve biljke" : PLANTS.find(p => p.id === t.plant)?.name || t.plant;
+        const pEmoji = t.plant === "sve" ? "🌿" : PLANTS.find(p => p.id === t.plant)?.emoji || "";
+        return `<div class="cal-task-item ${t.urgent?'urgent':''}">
+          <div class="cal-task-plant">${String(t.day).padStart(2,'0')}. ${monthNames[m].slice(0,3)} · ${pEmoji} ${pName}</div>
+          <div class="cal-task-text">${t.text}</div>
+        </div>`;
+      }).join("")}
+    `;
+  } else if(type === "hitno") {
+    const hitnoPlants = PLANTS.filter(p => data[p.id]?.entries?.[0]?.status === "hitno");
+    mc.innerHTML = `
+      <div class="detail-header">
+        <button class="back-btn" onclick="showScreen('overview')">← Natrag</button>
+        <div style="font-family:'Playfair Display',serif; font-size:17px">Hitno</div>
+      </div>
+      ${hitnoPlants.length === 0 ? '<div class="empty">Nema hitnih stavki. 🎉</div>' : hitnoPlants.map(p => {
+        const pd = data[p.id];
+        return `<div class="plant-card" onclick="showScreen('plants'); setActivePlant('${p.id}')">
+          <div class="plant-card-accent" style="background:#ef4444"></div>
+          <div class="plant-card-body">
+            <div class="plant-card-top">
+              <div class="plant-card-name">${p.emoji} ${p.name}</div>
+              <div class="status-badge s-hitno"><span class="status-dot"></span>Hitno</div>
+            </div>
+            <div class="plant-card-sub">${pd.entries[0]?.note || ''}</div>
+          </div>
+        </div>`;
+      }).join("")}
+    `;
+  }
+}
+
+function completeTodoGlobal(plantId, idx) {
+  const todo = data[plantId].todos[idx];
+  data[plantId].todos.splice(idx, 1);
+  const today = new Date().toISOString().split("T")[0];
+  const maxId = data[plantId].entries.reduce((m,e) => Math.max(m,e.id), 0);
+  data[plantId].entries.unshift({ id: maxId+1, date: today, type: "odrađeno", note: todo, status: "odradjeno" });
+  saveData();
+  showDetailView("todos");
 }
 
 // ── PLANT SCREEN ──
@@ -866,6 +565,7 @@ function renderPlantScreen() {
   const mc = document.getElementById("mainContent");
   const p = PLANTS.find(x => x.id === activePlantId);
   const pd = data[activePlantId];
+  if(!p || !pd) return;
   const st = pd.entries[0]?.status || "dobro";
   const sc = STATUS_COLORS[st];
 
@@ -873,13 +573,12 @@ function renderPlantScreen() {
     <div class="card" style="margin-bottom:14px">
       <div style="padding:14px 16px 12px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between">
         <div>
-          <div style="font-family:'Playfair Display',serif; font-size:19px; color:var(--text)">${p.emoji} ${p.name}</div>
+          <div style="font-size:10px; color:var(--text-light); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:4px">${p.grupa}</div>
+          <div style="font-family:'Playfair Display',serif; font-size:19px">${p.emoji} ${p.name}</div>
           <div style="font-size:11px; color:var(--text-light); margin-top:3px">${p.subtitle}</div>
         </div>
         <div class="status-badge ${sc.cls}"><span class="status-dot"></span>${STATUS_LABELS[st]}</div>
       </div>
-
-      <!-- TODOS -->
       <div style="padding:12px 14px 4px">
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
           <div class="section-label" style="margin:0">📋 Zadaci (${pd.todos.length})</div>
@@ -895,32 +594,25 @@ function renderPlantScreen() {
       </div>
     </div>
 
-    <!-- ADD ENTRY FORM -->
     <div id="entryFormArea"></div>
 
-    <!-- ENTRIES -->
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
       <div class="section-label" style="margin:0">📖 Dnevnik (${pd.entries.length})</div>
       <button onclick="toggleEntryForm()" style="background:var(--green-mid);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">+ Bilješka</button>
     </div>
-
     ${pd.entries.length === 0 ? '<div class="empty">Nema unosa.</div>' : pd.entries.map(e => {
       const esc = STATUS_COLORS[e.status] || STATUS_COLORS.dobro;
       return `<div class="entry-item">
         <div class="entry-stripe" style="background:${esc.stripe}"></div>
         <div style="flex:1">
           <div class="entry-date">${formatDate(e.date)}</div>
-          <div class="entry-tags">
-            <span class="tag">${e.type}</span>
-            <span class="status-badge ${esc.cls}" style="font-size:9px; padding:1px 7px"><span class="status-dot"></span>${STATUS_LABELS[e.status]}</span>
-          </div>
+          <div class="entry-tags"><span class="tag">${e.type}</span><span class="status-badge ${esc.cls}" style="font-size:9px;padding:1px 7px"><span class="status-dot"></span>${STATUS_LABELS[e.status]}</span></div>
           <div class="entry-note">${e.note}</div>
         </div>
         <button class="btn-del-sm" onclick="removeEntry(${e.id})">✕</button>
       </div>`;
     }).join("")}
   `;
-
   buildPlantTabs();
 }
 
@@ -929,26 +621,20 @@ function toggleTodoForm() {
   const area = document.getElementById("todoFormArea");
   if(!area) return;
   if(addTodoFormVisible) {
-    area.innerHTML = `<div class="form-card" style="margin-bottom:10px">
-      <div style="display:flex;gap:8px">
-        <input id="todoInput" class="form-input" placeholder="Novi zadatak..." style="flex:1" onkeydown="if(event.key==='Enter')saveTodo()">
-        <button onclick="saveTodo()" class="btn-primary" style="flex:0;padding:9px 16px">OK</button>
-        <button onclick="toggleTodoForm()" class="btn-secondary" style="padding:9px 12px">✕</button>
-      </div>
-    </div>`;
+    area.innerHTML = `<div class="form-card" style="margin-bottom:10px"><div style="display:flex;gap:8px">
+      <input id="todoInput" class="form-input" placeholder="Novi zadatak..." style="flex:1" onkeydown="if(event.key==='Enter')saveTodo()">
+      <button onclick="saveTodo()" class="btn-primary" style="flex:0;padding:9px 16px">OK</button>
+      <button onclick="toggleTodoForm()" class="btn-secondary" style="padding:9px 12px">✕</button>
+    </div></div>`;
     document.getElementById("todoInput")?.focus();
-  } else {
-    area.innerHTML = "";
-  }
+  } else { area.innerHTML = ""; }
 }
 
 function saveTodo() {
   const val = document.getElementById("todoInput")?.value?.trim();
   if(!val) return;
   data[activePlantId].todos.push(val);
-  saveData();
-  addTodoFormVisible = false;
-  renderPlantScreen();
+  saveData(); addTodoFormVisible = false; renderPlantScreen();
 }
 
 function completeTodo(idx) {
@@ -957,14 +643,12 @@ function completeTodo(idx) {
   const today = new Date().toISOString().split("T")[0];
   const maxId = data[activePlantId].entries.reduce((m,e) => Math.max(m,e.id), 0);
   data[activePlantId].entries.unshift({ id: maxId+1, date: today, type: "odrađeno", note: todo, status: "odradjeno" });
-  saveData();
-  renderPlantScreen();
+  saveData(); renderPlantScreen();
 }
 
 function removeTodo(idx) {
   data[activePlantId].todos.splice(idx, 1);
-  saveData();
-  renderPlantScreen();
+  saveData(); renderPlantScreen();
 }
 
 function toggleEntryForm() {
@@ -975,22 +659,9 @@ function toggleEntryForm() {
   if(addFormVisible) {
     area.innerHTML = `<div class="form-card">
       <div class="form-row form-row-3">
-        <div class="form-group">
-          <label class="form-label">Datum</label>
-          <input type="date" id="eDate" class="form-input" value="${today}">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Vrsta</label>
-          <select id="eType" class="form-select">
-            ${ENTRY_TYPES.map(t => `<option>${t}</option>`).join("")}
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Status</label>
-          <select id="eStatus" class="form-select">
-            ${Object.entries(STATUS_LABELS).map(([k,v]) => `<option value="${k}">${v}</option>`).join("")}
-          </select>
-        </div>
+        <div class="form-group"><label class="form-label">Datum</label><input type="date" id="eDate" class="form-input" value="${today}"></div>
+        <div class="form-group"><label class="form-label">Vrsta</label><select id="eType" class="form-select">${ENTRY_TYPES.map(t => `<option>${t}</option>`).join("")}</select></div>
+        <div class="form-group"><label class="form-label">Status</label><select id="eStatus" class="form-select">${Object.entries(STATUS_LABELS).map(([k,v]) => `<option value="${k}">${v}</option>`).join("")}</select></div>
       </div>
       <textarea id="eNote" class="form-textarea" placeholder="Bilješka o stanju, zahvatu, zapažanjima..."></textarea>
       <div class="form-btns">
@@ -998,80 +669,54 @@ function toggleEntryForm() {
         <button onclick="toggleEntryForm()" class="btn-secondary">Odustani</button>
       </div>
     </div>`;
-  } else {
-    area.innerHTML = "";
-  }
+  } else { area.innerHTML = ""; }
 }
 
 function saveEntry() {
   const note = document.getElementById("eNote")?.value?.trim();
   if(!note) return;
-  const date = document.getElementById("eDate").value;
-  const type = document.getElementById("eType").value;
-  const status = document.getElementById("eStatus").value;
   const maxId = data[activePlantId].entries.reduce((m,e) => Math.max(m,e.id), 0);
-  data[activePlantId].entries.unshift({ id: maxId+1, date, type, note, status });
+  data[activePlantId].entries.unshift({ id: maxId+1, date: document.getElementById("eDate").value, type: document.getElementById("eType").value, note, status: document.getElementById("eStatus").value });
   data[activePlantId].entries.sort((a,b) => b.date.localeCompare(a.date));
-  saveData();
-  addFormVisible = false;
-  renderPlantScreen();
+  saveData(); addFormVisible = false; renderPlantScreen();
 }
 
 function removeEntry(id) {
   data[activePlantId].entries = data[activePlantId].entries.filter(e => e.id !== id);
-  saveData();
-  renderPlantScreen();
+  saveData(); renderPlantScreen();
 }
 
-// ── ADD ENTRY (from bottom nav) ──
+// ── ADD (from bottom nav) ──
 function showAddEntry() {
   currentScreen = "add";
-  ["overview","plants","calendar"].forEach(s => document.getElementById(`bnav-${s}`)?.classList.remove("active"));
+  ["overview","plants","calendar","sync"].forEach(s => document.getElementById(`bnav-${s}`)?.classList.remove("active"));
   document.getElementById("bnav-add")?.classList.add("active");
   document.getElementById("plantTabs").style.display = "none";
-
+  document.getElementById("headerTitle").textContent = "Dodaj";
   const today = new Date().toISOString().split("T")[0];
   document.getElementById("mainContent").innerHTML = `
     <div class="section-label">Nova bilješka</div>
     <div class="form-card">
       <div class="form-group" style="margin-bottom:12px">
         <label class="form-label">Biljka</label>
-        <select id="aPlant" class="form-select">
-          ${PLANTS.map(p => `<option value="${p.id}">${p.emoji} ${p.name}</option>`).join("")}
-        </select>
+        <select id="aPlant" class="form-select">${PLANTS.map(p => `<option value="${p.id}">${p.emoji} ${p.name}</option>`).join("")}</select>
       </div>
       <div class="form-row form-row-3">
-        <div class="form-group">
-          <label class="form-label">Datum</label>
-          <input type="date" id="aDate" class="form-input" value="${today}">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Vrsta</label>
-          <select id="aType" class="form-select">
-            ${ENTRY_TYPES.map(t => `<option>${t}</option>`).join("")}
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Status</label>
-          <select id="aStatus" class="form-select">
-            ${Object.entries(STATUS_LABELS).map(([k,v]) => `<option value="${k}">${v}</option>`).join("")}
-          </select>
-        </div>
+        <div class="form-group"><label class="form-label">Datum</label><input type="date" id="aDate" class="form-input" value="${today}"></div>
+        <div class="form-group"><label class="form-label">Vrsta</label><select id="aType" class="form-select">${ENTRY_TYPES.map(t => `<option>${t}</option>`).join("")}</select></div>
+        <div class="form-group"><label class="form-label">Status</label><select id="aStatus" class="form-select">${Object.entries(STATUS_LABELS).map(([k,v]) => `<option value="${k}">${v}</option>`).join("")}</select></div>
       </div>
-      <textarea id="aNote" class="form-textarea" placeholder="Bilješka o stanju, zahvatu, zapažanjima..."></textarea>
+      <textarea id="aNote" class="form-textarea" placeholder="Bilješka..."></textarea>
       <div class="form-btns">
         <button onclick="saveNewEntry()" class="btn-primary">Spremi bilješku</button>
         <button onclick="showScreen('overview')" class="btn-secondary">Odustani</button>
       </div>
     </div>
-
     <div class="section-label">Novi zadatak</div>
     <div class="form-card">
       <div class="form-group" style="margin-bottom:12px">
         <label class="form-label">Biljka</label>
-        <select id="tPlant" class="form-select">
-          ${PLANTS.map(p => `<option value="${p.id}">${p.emoji} ${p.name}</option>`).join("")}
-        </select>
+        <select id="tPlant" class="form-select">${PLANTS.map(p => `<option value="${p.id}">${p.emoji} ${p.name}</option>`).join("")}</select>
       </div>
       <div style="display:flex;gap:8px">
         <input id="tText" class="form-input" placeholder="Opis zadatka...">
@@ -1085,14 +730,10 @@ function saveNewEntry() {
   const plantId = document.getElementById("aPlant").value;
   const note = document.getElementById("aNote")?.value?.trim();
   if(!note) return;
-  const date = document.getElementById("aDate").value;
-  const type = document.getElementById("aType").value;
-  const status = document.getElementById("aStatus").value;
   const maxId = data[plantId].entries.reduce((m,e) => Math.max(m,e.id), 0);
-  data[plantId].entries.unshift({ id: maxId+1, date, type, note, status });
+  data[plantId].entries.unshift({ id: maxId+1, date: document.getElementById("aDate").value, type: document.getElementById("aType").value, note, status: document.getElementById("aStatus").value });
   data[plantId].entries.sort((a,b) => b.date.localeCompare(a.date));
-  saveData();
-  showScreen("overview");
+  saveData(); showScreen("overview");
 }
 
 function saveNewTodo() {
@@ -1100,8 +741,7 @@ function saveNewTodo() {
   const text = document.getElementById("tText")?.value?.trim();
   if(!text) return;
   data[plantId].todos.push(text);
-  saveData();
-  showScreen("overview");
+  saveData(); showScreen("overview");
 }
 
 // ── CALENDAR ──
@@ -1109,33 +749,24 @@ function renderCalendar() {
   const mc = document.getElementById("mainContent");
   const now = new Date();
   const monthNames = ["Siječanj","Veljača","Ožujak","Travanj","Svibanj","Lipanj","Srpanj","Kolovoz","Rujan","Listopad","Studeni","Prosinac"];
-
   const firstDay = new Date(calYear, calMonth, 1);
   const lastDay = new Date(calYear, calMonth+1, 0);
-  let startDow = firstDay.getDay(); // 0=Sun
-  startDow = (startDow + 6) % 7; // Mon-first
+  let startDow = (firstDay.getDay() + 6) % 7;
 
-  // which days have tasks
   const taskDays = {};
   SCHEDULED.forEach(t => {
-    if(t.month === calMonth) {
-      if(!taskDays[t.day]) taskDays[t.day] = false;
-      if(t.urgent) taskDays[t.day] = true;
-    }
+    if(t.month === calMonth) { if(!taskDays[t.day]) taskDays[t.day] = false; if(t.urgent) taskDays[t.day] = true; }
   });
 
   let daysHTML = "";
   for(let i=0; i<startDow; i++) daysHTML += `<div class="cal-day empty"></div>`;
   for(let d=1; d<=lastDay.getDate(); d++) {
-    const isToday = calYear === now.getFullYear() && calMonth === now.getMonth() && d === now.getDate();
+    const isToday = calYear===now.getFullYear() && calMonth===now.getMonth() && d===now.getDate();
     const hasTask = taskDays[d] !== undefined;
     const isUrgent = taskDays[d] === true;
-    daysHTML += `<div class="cal-day ${isToday?'today':''} ${hasTask?(isUrgent?'has-urgent':'has-task'):''}" onclick="selectCalDay(${d})">
-      <div class="cal-day-num">${d}</div>
-    </div>`;
+    daysHTML += `<div class="cal-day ${isToday?'today':''} ${hasTask?(isUrgent?'has-urgent':'has-task'):''}" onclick="selectCalDay(${d})"><div class="cal-day-num">${d}</div></div>`;
   }
 
-  // All tasks for month
   const monthTasks = SCHEDULED.filter(t => t.month === calMonth).sort((a,b) => a.day - b.day);
 
   mc.innerHTML = `
@@ -1145,18 +776,15 @@ function renderCalendar() {
         <div class="cal-month">${monthNames[calMonth]} ${calYear}</div>
         <button class="cal-nav-btn" onclick="calNav(1)">›</button>
       </div>
-      <div class="cal-grid-header">
-        ${["Pon","Uto","Sri","Čet","Pet","Sub","Ned"].map(d => `<div class="cal-day-name">${d}</div>`).join("")}
-      </div>
+      <div class="cal-grid-header">${["Pon","Uto","Sri","Čet","Pet","Sub","Ned"].map(d=>`<div class="cal-day-name">${d}</div>`).join("")}</div>
       <div class="cal-grid">${daysHTML}</div>
     </div>
-
     <div class="section-label">Zakazano ovaj mjesec (${monthTasks.length})</div>
-
     ${monthTasks.length === 0 ? '<div class="empty">Nema zakazanih zadataka.</div>' : monthTasks.map(t => {
-      const plantName = t.plant === "sve" ? "Sve biljke" : PLANTS.find(p => p.id === t.plant)?.name || t.plant;
+      const pName = t.plant==="sve" ? "Sve biljke" : PLANTS.find(p=>p.id===t.plant)?.name || t.plant;
+      const pEmoji = t.plant==="sve" ? "🌿" : PLANTS.find(p=>p.id===t.plant)?.emoji || "";
       return `<div class="cal-task-item ${t.urgent?'urgent':''}">
-        <div class="cal-task-plant">${String(t.day).padStart(2,'0')}. ${monthNames[calMonth].slice(0,3)} · ${plantName}</div>
+        <div class="cal-task-plant">${String(t.day).padStart(2,'0')}. ${monthNames[calMonth].slice(0,3)} · ${pEmoji} ${pName}</div>
         <div class="cal-task-text">${t.text}</div>
       </div>`;
     }).join("")}
@@ -1165,113 +793,71 @@ function renderCalendar() {
 
 function calNav(dir) {
   calMonth += dir;
-  if(calMonth < 0) { calMonth = 11; calYear--; }
-  if(calMonth > 11) { calMonth = 0; calYear++; }
+  if(calMonth < 0) { calMonth=11; calYear--; }
+  if(calMonth > 11) { calMonth=0; calYear++; }
   renderCalendar();
 }
 
 function selectCalDay(d) {
-  const tasks = SCHEDULED.filter(t => t.month === calMonth && t.day === d);
+  const tasks = SCHEDULED.filter(t => t.month===calMonth && t.day===d);
   if(!tasks.length) return;
   const monthNames = ["Siječanj","Veljača","Ožujak","Travanj","Svibanj","Lipanj","Srpanj","Kolovoz","Rujan","Listopad","Studeni","Prosinac"];
-  showToast(`${d}. ${monthNames[calMonth]}: ${tasks.length} zadatak${tasks.length > 1 ? 'a' : ''}`);
+  showToast(`${d}. ${monthNames[calMonth]}: ${tasks.length} zadatak${tasks.length>1?'a':''}`);
 }
 
-// ── HELPERS ──
-function formatDate(d) {
-  return new Date(d).toLocaleDateString("hr-HR", { day: "numeric", month: "long", year: "numeric" });
-}
-
-// ── SYNC SCREEN ──
+// ── SYNC ──
 function renderSync() {
   const mc = document.getElementById("mainContent");
-  const exported = JSON.stringify(data, null, 2);
-  const now = new Date().toLocaleDateString("hr-HR", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
-
-  // stats
-  const totalEntries = PLANTS.reduce((s,p) => s + (data[p.id]?.entries?.length||0), 0);
-  const totalTodos = PLANTS.reduce((s,p) => s + (data[p.id]?.todos?.length||0), 0);
+  const now = new Date().toLocaleDateString("hr-HR", { day:"numeric", month:"long", year:"numeric", hour:"2-digit", minute:"2-digit" });
+  const totalEntries = PLANTS.reduce((s,p) => s+(data[p.id]?.entries?.length||0), 0);
+  const totalTodos = PLANTS.reduce((s,p) => s+(data[p.id]?.todos?.length||0), 0);
 
   mc.innerHTML = `
-    <div class="section-label">Za slanje Claudeu</div>
-
     <div class="card" style="padding:16px; margin-bottom:12px">
       <div style="font-family:'Playfair Display',serif; font-size:17px; color:var(--green-deep); margin-bottom:6px">📤 Izvezi dnevnik</div>
-      <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">
-        Kopira sve podatke iz dnevnika u clipboard. Zalijepi u Claude razgovor uz pitanje — Claude će odmah vidjeti cijeli tvoj vrt.
-      </div>
+      <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">Kopira sve podatke u clipboard. Zalijepi u Claude razgovor — Claude odmah vidi cijeli tvoj vrt.</div>
       <div style="background:var(--cream); border:1px solid var(--border); border-radius:var(--r-sm); padding:10px 12px; margin-bottom:12px; font-size:11px; color:var(--text-mid)">
-        📊 ${totalEntries} bilješki · ${totalTodos} zadataka · ${PLANTS.length} biljki<br>
-        🕐 ${now}
+        📊 ${totalEntries} bilješki · ${totalTodos} zadataka · ${PLANTS.length} biljki<br>🕐 ${now}
       </div>
-      <button onclick="exportData()" class="btn-primary" style="width:100%">
-        📋 Kopiraj dnevnik u clipboard
-      </button>
+      <button onclick="exportData()" class="btn-primary" style="width:100%">📋 Kopiraj dnevnik u clipboard</button>
     </div>
-
     <div class="card" style="padding:16px; margin-bottom:12px">
-      <div style="font-family:'Playfair Display',serif; font-size:17px; color:var(--green-deep); margin-bottom:6px">💾 Preuzmi kao datoteku</div>
-      <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">
-        Sprema JSON datoteku na uređaj — backup ili za slanje Claudeu kao prilog.
-      </div>
-      <button onclick="downloadData()" class="btn-primary" style="width:100%">
-        ⬇️ Preuzmi vocnjak-backup.json
-      </button>
+      <div style="font-family:'Playfair Display',serif; font-size:17px; color:var(--green-deep); margin-bottom:6px">💾 Preuzmi backup</div>
+      <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">Sprema JSON datoteku — backup ili za slanje Claudeu kao prilog.</div>
+      <button onclick="downloadData()" class="btn-primary" style="width:100%">⬇️ Preuzmi vocnjak-backup.json</button>
     </div>
-
     <div class="card" style="padding:16px; margin-bottom:12px">
       <div style="font-family:'Playfair Display',serif; font-size:17px; color:var(--green-deep); margin-bottom:6px">📥 Uvezi dnevnik</div>
-      <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">
-        Zalijepi JSON koji si dobio od Claudea (npr. nakon što je dodao bilješke ili ažurirao podatke).
-      </div>
-      <textarea id="importArea" class="form-textarea" placeholder='Zalijepi JSON ovdje...' style="font-size:11px; font-family:monospace; min-height:100px"></textarea>
-      <button onclick="importData()" class="btn-primary" style="width:100%; margin-top:8px">
-        📥 Uvezi podatke
-      </button>
+      <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">Zalijepi JSON koji si dobio od Claudea.</div>
+      <textarea id="importArea" class="form-textarea" placeholder="Zalijepi JSON ovdje..." style="font-size:11px;font-family:monospace;min-height:100px"></textarea>
+      <button onclick="importData()" class="btn-primary" style="width:100%;margin-top:8px">📥 Uvezi podatke</button>
     </div>
-
-    <div class="section-label">Upute za korištenje</div>
     <div class="card" style="padding:16px; margin-bottom:12px">
+      <div style="font-family:'Playfair Display',serif; font-size:17px; color:var(--green-deep); margin-bottom:8px">📖 Kako koristiti</div>
       <div style="font-size:13px; color:var(--text-mid); line-height:1.8">
-        <div style="margin-bottom:8px">1️⃣ Tapni <strong>"Kopiraj dnevnik"</strong></div>
-        <div style="margin-bottom:8px">2️⃣ Otvori Claude razgovor u ovom Projectu</div>
-        <div style="margin-bottom:8px">3️⃣ Zalijepi i napiši pitanje — npr. <em>"Evo stanja vrta, što trebam raditi ovaj tjedan?"</em></div>
-        <div style="margin-bottom:8px">4️⃣ Ako Claude ažurira podatke, kopiraj novi JSON i uvezi ga nazad ovdje</div>
+        <div style="margin-bottom:6px">1️⃣ Tapni <strong>Kopiraj dnevnik</strong></div>
+        <div style="margin-bottom:6px">2️⃣ Otvori <strong>Claude Project</strong> (Voćnjak)</div>
+        <div style="margin-bottom:6px">3️⃣ Zalijepi + napiši pitanje ili priloži sliku voćke</div>
+        <div>4️⃣ Ako Claude ažurira podatke, uvezi JSON nazad ovdje</div>
       </div>
     </div>
   `;
 }
 
 function exportData() {
-  const exported = JSON.stringify(data, null, 2);
   const now = new Date().toLocaleDateString("hr-HR");
-  const text = `DNEVNIK VOĆNJAKA - Zagreb\nExport: ${now}\n\n${exported}`;
-  navigator.clipboard.writeText(text).then(() => {
-    showToast("✓ Kopirano u clipboard!");
-  }).catch(() => {
-    // fallback
-    const ta = document.createElement("textarea");
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    document.body.removeChild(ta);
-    showToast("✓ Kopirano!");
+  const text = `DNEVNIK VOCNJAKA - Zagreb\nExport: ${now}\n\n${JSON.stringify(data, null, 2)}`;
+  navigator.clipboard.writeText(text).then(() => showToast("✓ Kopirano u clipboard!")).catch(() => {
+    const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); showToast("✓ Kopirano!");
   });
 }
 
 function downloadData() {
-  const exported = JSON.stringify(data, null, 2);
   const now = new Date().toISOString().split("T")[0];
-  const blob = new Blob([exported], { type: "application/json" });
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `vocnjak-backup-${now}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  const a = document.createElement("a"); a.href = url; a.download = `vocnjak-backup-${now}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
   showToast("✓ Preuzimanje počelo!");
 }
 
@@ -1279,20 +865,17 @@ function importData() {
   const raw = document.getElementById("importArea")?.value?.trim();
   if(!raw) { showToast("Nema podataka za uvoz"); return; }
   try {
-    // strip header if present
     const jsonStart = raw.indexOf("{");
-    const jsonStr = jsonStart > 0 ? raw.slice(jsonStart) : raw;
-    const parsed = JSON.parse(jsonStr);
-    // validate
+    const parsed = JSON.parse(jsonStart > 0 ? raw.slice(jsonStart) : raw);
     const valid = PLANTS.every(p => parsed[p.id] && Array.isArray(parsed[p.id].entries) && Array.isArray(parsed[p.id].todos));
     if(!valid) { showToast("❌ Neispravni podaci"); return; }
-    data = parsed;
-    saveData();
-    showToast("✓ Podaci uvezeni!");
-    setTimeout(() => showScreen("overview"), 1000);
-  } catch(e) {
-    showToast("❌ Greška pri uvozu");
-  }
+    data = parsed; saveData(); showToast("✓ Podaci uvezeni!"); setTimeout(() => showScreen("overview"), 1000);
+  } catch(e) { showToast("❌ Greška pri uvozu"); }
+}
+
+// ── HELPERS ──
+function formatDate(d) {
+  return new Date(d).toLocaleDateString("hr-HR", { day: "numeric", month: "long", year: "numeric" });
 }
 </script>
 </body>
