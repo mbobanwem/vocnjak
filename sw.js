@@ -29,6 +29,12 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
+  // Navigation requests — always go to network (avoids redirect errors in Safari)
+  if (e.request.mode === 'navigate') {
+    e.respondWith(fetch(e.request));
+    return;
+  }
+
   // Google Fonts — network first, fallback to cache
   if (url.hostname.includes('googleapis.com') || url.hostname.includes('gstatic.com')) {
     e.respondWith(
