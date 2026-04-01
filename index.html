@@ -160,6 +160,16 @@
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   ::-webkit-scrollbar { width: 0; }
+
+  /* ── WEATHER WIDGET ── */
+  .weather-card { background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%); border: 1px solid #bae6fd; border-radius: var(--r); padding: 14px 16px; margin-bottom: 14px; }
+  .weather-row { display: flex; justify-content: space-between; align-items: center; }
+  .weather-day { text-align: center; flex: 1; }
+  .weather-day-label { font-size: 10px; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .weather-temp { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--text); }
+  .weather-rain { font-size: 11px; color: #0369a1; margin-top: 2px; }
+  .weather-divider { width: 1px; height: 40px; background: #bae6fd; margin: 0 8px; flex-shrink: 0; }
+  .weather-warn { background: #fef3c7; border: 1px solid #fde68a; border-radius: var(--r-sm); padding: 8px 12px; margin-top: 10px; font-size: 12px; color: #92400e; line-height: 1.4; }
 </style>
 </head>
 <body>
@@ -323,6 +333,90 @@ let calMonth = new Date().getMonth();
 let addFormVisible = false;
 let addTodoFormVisible = false;
 let dismissedAlerts = [];
+let weatherData = null;
+
+// ── WEATHER ──
+function fetchWeather() {
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=45.815&longitude=15.982&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Europe/Zagreb&forecast_days=3')
+    .then(r => r.json())
+    .then(j => {
+      weatherData = j.daily;
+      if(currentScreen === "overview") renderOverview();
+    })
+    .catch(() => { weatherData = null; });
+}
+
+// ── ICAL SYNC ──
+async function syncIcalOnComplete(todoText) {
+  const token = localStorage.getItem("vocnjak_gh_token");
+  const repo = localStorage.getItem("vocnjak_gh_repo") || "mbobanwem/vocnjak";
+  if(!token) return;
+  try {
+    const [owner, repoName] = repo.split("/");
+    const apiBase = `https://api.github.com/repos/${owner}/${repoName}/contents/vocnjak_kalendar_puni_v2.ics`;
+    const res = await fetch(apiBase, { headers: { "Authorization": `token ${token}`, "Accept": "application/vnd.github.v3+json" } });
+    if(!res.ok) return;
+    const fileData = await res.json();
+    let icsContent = atob(fileData.content.replace(/\n/g, ""));
+    const needle = todoText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').slice(0, 40);
+    const regex = new RegExp(`(SUMMARY:)(.*${needle}.*)`, 'i');
+    if(!regex.test(icsContent)) {
+      const words = todoText.split(/\s+/).filter(w => w.length > 3).slice(0, 3);
+      let matched = false;
+      for(const w of words) {
+        const fuzzy = new RegExp(`(SUMMARY:)(.*${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}.*)`, 'i');
+        if(fuzzy.test(icsContent)) { icsContent = icsContent.replace(fuzzy, '$1✅ $2'); matched = true; break; }
+      }
+      if(!matched) return;
+    } else {
+      icsContent = icsContent.replace(regex, '$1✅ $2');
+    }
+    await fetch(apiBase, {
+      method: "PUT",
+      headers: { "Authorization": `token ${token}`, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" },
+      body: JSON.stringify({ message: `✅ ${todoText.slice(0, 50)}`, content: btoa(unescape(encodeURIComponent(icsContent))), sha: fileData.sha })
+    });
+  } catch(e) { console.log("iCal sync error:", e); }
+}
+
+// ── SUPABASE SYNC ──
+async function supabaseBackup() {
+  const url = localStorage.getItem("vocnjak_sb_url");
+  const key = localStorage.getItem("vocnjak_sb_key");
+  if(!url || !key) return;
+  let userKey = localStorage.getItem("vocnjak_user_key");
+  if(!userKey) { userKey = crypto.randomUUID(); localStorage.setItem("vocnjak_user_key", userKey); }
+  try {
+    await fetch(`${url}/rest/v1/vocnjak_data?user_key=eq.${userKey}`, {
+      method: "DELETE",
+      headers: { "apikey": key, "Authorization": `Bearer ${key}` }
+    });
+    await fetch(`${url}/rest/v1/vocnjak_data`, {
+      method: "POST",
+      headers: { "apikey": key, "Authorization": `Bearer ${key}`, "Content-Type": "application/json", "Prefer": "return=minimal" },
+      body: JSON.stringify({ user_key: userKey, data: data, updated_at: new Date().toISOString() })
+    });
+  } catch(e) { console.log("Supabase backup error:", e); }
+}
+
+async function supabaseRestore() {
+  const url = localStorage.getItem("vocnjak_sb_url");
+  const key = localStorage.getItem("vocnjak_sb_key");
+  if(!url || !key) { showToast("Postavi Supabase URL i key"); return; }
+  let userKey = localStorage.getItem("vocnjak_user_key");
+  if(!userKey) { showToast("Nema backupa"); return; }
+  try {
+    const res = await fetch(`${url}/rest/v1/vocnjak_data?user_key=eq.${userKey}&order=updated_at.desc&limit=1`, {
+      headers: { "apikey": key, "Authorization": `Bearer ${key}`, "Accept": "application/json" }
+    });
+    const rows = await res.json();
+    if(!rows.length) { showToast("Nema backupa u cloudu"); return; }
+    data = rows[0].data;
+    try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e) {}
+    showToast("✓ Podaci vraćeni iz clouda!");
+    setTimeout(() => showScreen("overview"), 1000);
+  } catch(e) { showToast("❌ Greška pri restore-u"); }
+}
 
 // ── INIT ──
 (() => {
@@ -346,11 +440,13 @@ function initUI() {
   document.getElementById("todayBadge").textContent = d.toLocaleDateString("hr-HR", { day: "numeric", month: "short" });
   buildPlantTabs();
   showScreen("overview");
+  fetchWeather();
 }
 
 function saveData() {
   try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e) {}
   showToast("Spremljeno ✓");
+  supabaseBackup();
 }
 
 function showToast(msg) {
@@ -421,7 +517,30 @@ function renderOverview() {
     </div>
   `).join("");
 
+  let weatherHTML = "";
+  if(weatherData) {
+    const dn = ["Danas","Sutra","Prekosutra"];
+    const rainToday = weatherData.precipitation_sum[0];
+    const rainTomorrow = weatherData.precipitation_sum[1];
+    const warnRain = (rainToday > 1 || rainTomorrow > 1);
+    weatherHTML = `<div class="weather-card">
+      <div style="font-size:10px;font-weight:600;color:var(--text-light);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Zagreb — prognoza</div>
+      <div class="weather-row">
+        ${[0,1,2].map((i,idx) => `
+          ${idx > 0 ? '<div class="weather-divider"></div>' : ''}
+          <div class="weather-day">
+            <div class="weather-day-label">${dn[i]}</div>
+            <div class="weather-temp">${Math.round(weatherData.temperature_2m_min[i])}° / ${Math.round(weatherData.temperature_2m_max[i])}°</div>
+            <div class="weather-rain">${weatherData.precipitation_sum[i] > 0 ? '🌧 ' + weatherData.precipitation_sum[i].toFixed(1) + 'mm' : '☀️ suho'}</div>
+          </div>
+        `).join("")}
+      </div>
+      ${warnRain ? `<div class="weather-warn">⚠️ Ne prskaj ${rainToday > 1 ? 'danas' : 'sutra'} — očekuje se kiša (${rainToday > 1 ? rainToday.toFixed(1) : rainTomorrow.toFixed(1)}mm)</div>` : ''}
+    </div>`;
+  }
+
   mc.innerHTML = `
+    ${weatherHTML}
     ${alertsHTML}
 
     <div class="overview-stats">
@@ -565,6 +684,7 @@ function completeTodoGlobal(plantId, idx) {
   const maxId = data[plantId].entries.reduce((m,e) => Math.max(m,e.id), 0);
   data[plantId].entries.unshift({ id: maxId+1, date: today, type: "odrađeno", note: todo, status: "odradjeno" });
   saveData();
+  syncIcalOnComplete(todo);
   showDetailView("todos");
 }
 
@@ -651,7 +771,9 @@ function completeTodo(idx) {
   const today = new Date().toISOString().split("T")[0];
   const maxId = data[activePlantId].entries.reduce((m,e) => Math.max(m,e.id), 0);
   data[activePlantId].entries.unshift({ id: maxId+1, date: today, type: "odrađeno", note: todo, status: "odradjeno" });
-  saveData(); renderPlantScreen();
+  saveData();
+  syncIcalOnComplete(todo);
+  renderPlantScreen();
 }
 
 function removeTodo(idx) {
@@ -839,6 +961,43 @@ function renderSync() {
       <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">Zalijepi JSON koji si dobio od Claudea.</div>
       <textarea id="importArea" class="form-textarea" placeholder="Zalijepi JSON ovdje..." style="font-size:11px;font-family:monospace;min-height:100px"></textarea>
       <button onclick="importData()" class="btn-primary" style="width:100%;margin-top:8px">📥 Uvezi podatke</button>
+    </div>
+    <div class="card" style="padding:16px; margin-bottom:12px">
+      <div style="font-family:'Playfair Display',serif; font-size:17px; color:var(--green-deep); margin-bottom:6px">📅 iCal sync</div>
+      <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">Kad označiš zadatak kao odrađen, automatski ažurira .ics kalendar na GitHubu.</div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">GitHub Personal Access Token</label>
+        <input type="password" id="ghToken" class="form-input" placeholder="ghp_..." value="${localStorage.getItem('vocnjak_gh_token') || ''}" onchange="localStorage.setItem('vocnjak_gh_token', this.value)">
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">GitHub repo</label>
+        <input id="ghRepo" class="form-input" placeholder="mbobanwem/vocnjak" value="${localStorage.getItem('vocnjak_gh_repo') || 'mbobanwem/vocnjak'}" onchange="localStorage.setItem('vocnjak_gh_repo', this.value)">
+      </div>
+      <div style="font-size:11px; color:var(--text-light); line-height:1.6; background:var(--cream); border-radius:var(--r-sm); padding:10px 12px">
+        Token: github.com → Settings → Developer settings → Personal access tokens → Tokens (classic) → <strong>repo</strong> scope
+      </div>
+    </div>
+    <div class="card" style="padding:16px; margin-bottom:12px">
+      <div style="font-family:'Playfair Display',serif; font-size:17px; color:var(--green-deep); margin-bottom:6px">☁️ Cloud backup (Supabase)</div>
+      <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">Automatski backup u cloud svaki put kad spremiš. Besplatni account na supabase.com.</div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Supabase URL</label>
+        <input id="sbUrl" class="form-input" placeholder="https://xxxxx.supabase.co" value="${localStorage.getItem('vocnjak_sb_url') || ''}" onchange="localStorage.setItem('vocnjak_sb_url', this.value)">
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Supabase anon key</label>
+        <input type="password" id="sbKey" class="form-input" placeholder="eyJ..." value="${localStorage.getItem('vocnjak_sb_key') || ''}" onchange="localStorage.setItem('vocnjak_sb_key', this.value)">
+      </div>
+      <div style="display:flex; gap:8px; margin-bottom:12px">
+        <button onclick="supabaseBackup().then(()=>showToast('✓ Backup spreman!'))" class="btn-primary" style="flex:1">💾 Backup u cloud</button>
+        <button onclick="supabaseRestore()" class="btn-primary" style="flex:1;background:var(--indigo)">☁️ Restore iz clouda</button>
+      </div>
+      <div style="font-size:11px; color:var(--text-light); line-height:1.6; background:var(--cream); border-radius:var(--r-sm); padding:10px 12px">
+        <strong>Postavljanje:</strong> supabase.com → novi projekt → Settings → API<br>
+        <strong>SQL za tablicu:</strong><br>
+        <code style="font-size:10px;word-break:break-all">CREATE TABLE vocnjak_data (id SERIAL PRIMARY KEY, user_key TEXT NOT NULL, data JSONB NOT NULL, updated_at TIMESTAMPTZ DEFAULT NOW());</code><br><br>
+        <strong>User key:</strong> ${localStorage.getItem('vocnjak_user_key') || 'generirat će se automatski'}
+      </div>
     </div>
     <div class="card" style="padding:16px; margin-bottom:12px">
       <div style="font-family:'Playfair Display',serif; font-size:17px; color:var(--green-deep); margin-bottom:8px">📖 Kako koristiti</div>
