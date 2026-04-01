@@ -335,6 +335,53 @@ let addTodoFormVisible = false;
 let dismissedAlerts = [];
 let weatherData = null;
 
+// ── ENCRYPTION (AES-GCM via Web Crypto API) ──
+const SECURE_KEYS = ["vocnjak_gh_token", "vocnjak_gh_repo", "vocnjak_sb_url", "vocnjak_sb_key"];
+const ENC_PREFIX = "enc:";
+
+async function _getCryptoKey() {
+  let userKey = localStorage.getItem("vocnjak_user_key");
+  if(!userKey) { userKey = crypto.randomUUID(); localStorage.setItem("vocnjak_user_key", userKey); }
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(userKey), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt: enc.encode("vocnjak_salt_2026"), iterations: 100000, hash: "SHA-256" },
+    keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
+  );
+}
+
+async function secureSet(name, value) {
+  if(!value) { localStorage.removeItem(name); return; }
+  try {
+    const key = await _getCryptoKey();
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(value));
+    const combined = new Uint8Array(iv.length + ciphertext.byteLength);
+    combined.set(iv);
+    combined.set(new Uint8Array(ciphertext), iv.length);
+    localStorage.setItem(name, ENC_PREFIX + btoa(String.fromCharCode(...combined)));
+  } catch(e) { localStorage.setItem(name, value); }
+}
+
+async function secureGet(name) {
+  const raw = localStorage.getItem(name);
+  if(!raw) return "";
+  if(!raw.startsWith(ENC_PREFIX)) return raw;
+  try {
+    const key = await _getCryptoKey();
+    const bytes = Uint8Array.from(atob(raw.slice(ENC_PREFIX.length)), c => c.charCodeAt(0));
+    const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: bytes.slice(0, 12) }, key, bytes.slice(12));
+    return new TextDecoder().decode(decrypted);
+  } catch(e) { return ""; }
+}
+
+async function migrateSecureKeys() {
+  for(const name of SECURE_KEYS) {
+    const val = localStorage.getItem(name);
+    if(val && !val.startsWith(ENC_PREFIX)) await secureSet(name, val);
+  }
+}
+
 // ── WEATHER ──
 function fetchWeather() {
   fetch('https://api.open-meteo.com/v1/forecast?latitude=45.815&longitude=15.982&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Europe/Zagreb&forecast_days=3')
@@ -348,8 +395,8 @@ function fetchWeather() {
 
 // ── ICAL SYNC ──
 async function syncIcalOnComplete(todoText) {
-  const token = localStorage.getItem("vocnjak_gh_token");
-  const repo = localStorage.getItem("vocnjak_gh_repo") || "mbobanwem/vocnjak";
+  const token = await secureGet("vocnjak_gh_token");
+  const repo = (await secureGet("vocnjak_gh_repo")) || "mbobanwem/vocnjak";
   if(!token) return;
   try {
     const [owner, repoName] = repo.split("/");
@@ -381,8 +428,8 @@ async function syncIcalOnComplete(todoText) {
 
 // ── SUPABASE SYNC ──
 async function supabaseBackup() {
-  const url = localStorage.getItem("vocnjak_sb_url");
-  const key = localStorage.getItem("vocnjak_sb_key");
+  const url = await secureGet("vocnjak_sb_url");
+  const key = await secureGet("vocnjak_sb_key");
   if(!url || !key) return;
   let userKey = localStorage.getItem("vocnjak_user_key");
   if(!userKey) { userKey = crypto.randomUUID(); localStorage.setItem("vocnjak_user_key", userKey); }
@@ -397,8 +444,8 @@ async function supabaseBackup() {
 }
 
 async function supabaseRestore() {
-  const url = localStorage.getItem("vocnjak_sb_url");
-  const key = localStorage.getItem("vocnjak_sb_key");
+  const url = await secureGet("vocnjak_sb_url");
+  const key = await secureGet("vocnjak_sb_key");
   if(!url || !key) { showToast("Postavi Supabase URL i key"); return; }
   let userKey = localStorage.getItem("vocnjak_user_key");
   if(!userKey) { showToast("Nema backupa"); return; }
@@ -430,7 +477,7 @@ async function supabaseRestore() {
     const da = localStorage.getItem(KEY + "_alerts");
     if(da) dismissedAlerts = JSON.parse(da);
   } catch { data = defaultData(); }
-  initUI();
+  migrateSecureKeys().then(() => initUI());
 })();
 
 function initUI() {
@@ -965,11 +1012,11 @@ function renderSync() {
       <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">Kad označiš zadatak kao odrađen, automatski ažurira .ics kalendar na GitHubu.</div>
       <div class="form-group" style="margin-bottom:10px">
         <label class="form-label">GitHub Personal Access Token</label>
-        <input type="password" id="ghToken" class="form-input" placeholder="ghp_..." value="${localStorage.getItem('vocnjak_gh_token') || ''}" onchange="localStorage.setItem('vocnjak_gh_token', this.value)">
+        <input type="password" id="ghToken" class="form-input" placeholder="ghp_..." onchange="secureSet('vocnjak_gh_token', this.value)">
       </div>
       <div class="form-group" style="margin-bottom:10px">
         <label class="form-label">GitHub repo</label>
-        <input id="ghRepo" class="form-input" placeholder="mbobanwem/vocnjak" value="${localStorage.getItem('vocnjak_gh_repo') || 'mbobanwem/vocnjak'}" onchange="localStorage.setItem('vocnjak_gh_repo', this.value)">
+        <input id="ghRepo" class="form-input" placeholder="mbobanwem/vocnjak" onchange="secureSet('vocnjak_gh_repo', this.value)">
       </div>
       <div style="font-size:11px; color:var(--text-light); line-height:1.6; background:var(--cream); border-radius:var(--r-sm); padding:10px 12px">
         Token: github.com → Settings → Developer settings → Personal access tokens → Tokens (classic) → <strong>repo</strong> scope
@@ -980,11 +1027,11 @@ function renderSync() {
       <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">Automatski backup u cloud svaki put kad spremiš. Besplatni account na supabase.com.</div>
       <div class="form-group" style="margin-bottom:10px">
         <label class="form-label">Supabase URL</label>
-        <input id="sbUrl" class="form-input" placeholder="https://xxxxx.supabase.co" value="${localStorage.getItem('vocnjak_sb_url') || ''}" onchange="localStorage.setItem('vocnjak_sb_url', this.value)">
+        <input id="sbUrl" class="form-input" placeholder="https://xxxxx.supabase.co" onchange="secureSet('vocnjak_sb_url', this.value)">
       </div>
       <div class="form-group" style="margin-bottom:10px">
         <label class="form-label">Supabase anon key</label>
-        <input type="password" id="sbKey" class="form-input" placeholder="eyJ..." value="${localStorage.getItem('vocnjak_sb_key') || ''}" onchange="localStorage.setItem('vocnjak_sb_key', this.value)">
+        <input type="password" id="sbKey" class="form-input" placeholder="eyJ..." onchange="secureSet('vocnjak_sb_key', this.value)">
       </div>
       <div style="display:flex; gap:8px; margin-bottom:12px">
         <button onclick="supabaseBackup().then(()=>showToast('✓ Backup spreman!'))" class="btn-primary" style="flex:1">💾 Backup u cloud</button>
@@ -1007,6 +1054,11 @@ function renderSync() {
       </div>
     </div>
   `;
+  // Async populate encrypted field values
+  secureGet("vocnjak_gh_token").then(v => { const el = document.getElementById("ghToken"); if(el) el.value = v; });
+  secureGet("vocnjak_gh_repo").then(v => { const el = document.getElementById("ghRepo"); if(el) el.value = v || "mbobanwem/vocnjak"; });
+  secureGet("vocnjak_sb_url").then(v => { const el = document.getElementById("sbUrl"); if(el) el.value = v; });
+  secureGet("vocnjak_sb_key").then(v => { const el = document.getElementById("sbKey"); if(el) el.value = v; });
 }
 
 function exportData() {
