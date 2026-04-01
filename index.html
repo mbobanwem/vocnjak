@@ -387,15 +387,12 @@ async function supabaseBackup() {
   let userKey = localStorage.getItem("vocnjak_user_key");
   if(!userKey) { userKey = crypto.randomUUID(); localStorage.setItem("vocnjak_user_key", userKey); }
   try {
-    await fetch(`${url}/rest/v1/vocnjak_data?user_key=eq.${userKey}`, {
-      method: "DELETE",
-      headers: { "apikey": key, "Authorization": `Bearer ${key}` }
-    });
-    await fetch(`${url}/rest/v1/vocnjak_data`, {
-      method: "POST",
+    const res = await fetch(`${url}/rest/v1/vocnjak_data?user_key=eq.${encodeURIComponent(userKey)}`, {
+      method: "PUT",
       headers: { "apikey": key, "Authorization": `Bearer ${key}`, "Content-Type": "application/json", "Prefer": "return=minimal" },
       body: JSON.stringify({ user_key: userKey, data: data, updated_at: new Date().toISOString() })
     });
+    if(!res.ok) console.log("Supabase backup status:", res.status);
   } catch(e) { console.log("Supabase backup error:", e); }
 }
 
@@ -406,9 +403,10 @@ async function supabaseRestore() {
   let userKey = localStorage.getItem("vocnjak_user_key");
   if(!userKey) { showToast("Nema backupa"); return; }
   try {
-    const res = await fetch(`${url}/rest/v1/vocnjak_data?user_key=eq.${userKey}&order=updated_at.desc&limit=1`, {
+    const res = await fetch(`${url}/rest/v1/vocnjak_data?user_key=eq.${encodeURIComponent(userKey)}&order=updated_at.desc&limit=1&select=data`, {
       headers: { "apikey": key, "Authorization": `Bearer ${key}`, "Accept": "application/json" }
     });
+    if(!res.ok) { showToast("❌ Greška: " + res.status); return; }
     const rows = await res.json();
     if(!rows.length) { showToast("Nema backupa u cloudu"); return; }
     data = rows[0].data;
