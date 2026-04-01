@@ -273,26 +273,64 @@ function getScheduled() {
   return SCHEDULED.filter(t => !t.skipYear || t.skipYear !== y);
 }
 
+// ── TODO HELPERS (backward compatible: string or {text, monthStart, dayStart, monthEnd, dayEnd}) ──
+function todoText(t) { return typeof t === "string" ? t : t.text; }
+
+function todoDateStr(t) {
+  if(typeof t === "string" || !t.monthStart) return "";
+  const mn = ["sij","velj","ožu","tra","svi","lip","srp","kol","ruj","lis","stu","pro"];
+  return `📅 ${t.dayStart}. ${mn[t.monthStart-1]} – ${t.dayEnd}. ${mn[t.monthEnd-1]}`;
+}
+
+function isTodoInWindow(t, daysAhead) {
+  if(typeof t === "string" || !t.monthStart) return false;
+  const now = new Date();
+  const y = now.getFullYear();
+  const start = new Date(y, t.monthStart - 1, t.dayStart);
+  const end = new Date(y, t.monthEnd - 1, t.dayEnd, 23, 59, 59);
+  const futureLimit = new Date(now.getTime() + daysAhead * 86400000);
+  return end >= now && start <= futureLimit;
+}
+
 function defaultData() {
   const base = (todos, entries) => ({ todos, entries });
   return {
     tresnja: base(
-      ["Bijelo mineralno ulje (7–10 dana nakon bakra)", "Postaviti žute ljepljive ploče (kraj travnja)", "Postaviti mrežu protiv ptica 2–3 tj. prije berbe"],
+      [
+        { text:"Bijelo mineralno ulje (7–10 dana nakon bakra)", monthStart:2, dayStart:1, monthEnd:2, dayEnd:14, skipYear:2026 },
+        { text:"Cuprablau Z 35 WG – bakar", monthStart:2, dayStart:15, monthEnd:2, dayEnd:28, skipYear:2026 },
+        { text:"Postaviti žute ljepljive ploče (2–3/stablo)", monthStart:4, dayStart:25, monthEnd:4, dayEnd:30 },
+        { text:"Postaviti mrežu protiv ptica 2–3 tj. prije berbe", monthStart:6, dayStart:1, monthEnd:6, dayEnd:15 },
+      ],
       [{ id:1, date:"2026-03-01", type:"sadnja", note:"Posađena sadnica iz rasadnika, bez grana.", status:"prati" },
        { id:2, date:"2026-03-22", type:"prskanje", note:"Prskano bakrom (Cuprablau Z 35 WG) – zimski tretman.", status:"dobro" }]
     ),
     nektarina: base(
-      ["Bijelo mineralno ulje (7–10 dana nakon bakra)", "2. tretman bakrom ako je proljeće vlažno"],
+      [
+        { text:"Bijelo mineralno ulje (7–10 dana nakon bakra)", monthStart:2, dayStart:1, monthEnd:2, dayEnd:14, skipYear:2026 },
+        { text:"Cuprablau Z 35 WG – bakar", monthStart:2, dayStart:15, monthEnd:2, dayEnd:28, skipYear:2026 },
+        "2. tretman bakrom ako je proljeće vlažno",
+      ],
       [{ id:1, date:"2026-03-01", type:"sadnja", note:"Posađena sadnica iz rasadnika, bez grana.", status:"prati" },
        { id:2, date:"2026-03-22", type:"prskanje", note:"Prskano bakrom (Cuprablau Z 35 WG) – zimski tretman.", status:"dobro" }]
     ),
     jabuka: base(
-      ["Bijelo mineralno ulje (7–10 dana nakon bakra)", "Feromonska klopka za savijača (kraj travnja)", "Score 250 EC + Mospilan 20 SP (nakon cvatnje, svibanj)"],
+      [
+        { text:"Bijelo mineralno ulje (7–10 dana nakon bakra)", monthStart:2, dayStart:1, monthEnd:2, dayEnd:14, skipYear:2026 },
+        { text:"Cuprablau Z 35 WG – bakar", monthStart:2, dayStart:15, monthEnd:2, dayEnd:28, skipYear:2026 },
+        { text:"Feromonska klopka za jabučnog savijača", monthStart:4, dayStart:25, monthEnd:4, dayEnd:30 },
+        { text:"Score 250 EC + Mospilan 20 SP (nakon cvatnje)", monthStart:5, dayStart:10, monthEnd:5, dayEnd:20 },
+      ],
       [{ id:1, date:"2026-03-01", type:"sadnja", note:"Posađena sadnica iz rasadnika, bez grana.", status:"prati" },
        { id:2, date:"2026-03-22", type:"prskanje", note:"Prskano bakrom (Cuprablau Z 35 WG) – zimski tretman.", status:"dobro" }]
     ),
     sljiva: base(
-      ["Bijelo mineralno ulje (7–10 dana nakon bakra)", "Feromonska klopka za šljivinog savijača (kraj travnja)", "Mospilan 20 SP (lipanj, 2. generacija savijača)"],
+      [
+        { text:"Bijelo mineralno ulje (7–10 dana nakon bakra)", monthStart:2, dayStart:1, monthEnd:2, dayEnd:14, skipYear:2026 },
+        { text:"Cuprablau Z 35 WG – bakar", monthStart:2, dayStart:15, monthEnd:2, dayEnd:28, skipYear:2026 },
+        { text:"Feromonska klopka za šljivinog savijača", monthStart:4, dayStart:25, monthEnd:4, dayEnd:30 },
+        { text:"Mospilan 20 SP – 2. generacija savijača", monthStart:6, dayStart:1, monthEnd:6, dayEnd:15 },
+      ],
       [{ id:1, date:"2026-03-01", type:"sadnja", note:"Posađena sadnica iz rasadnika, bez grana.", status:"prati" },
        { id:2, date:"2026-03-22", type:"prskanje", note:"Prskano bakrom (Cuprablau Z 35 WG) – zimski tretman.", status:"dobro" }]
     ),
@@ -305,15 +343,26 @@ function defaultData() {
       [{ id:1, date:"2026-01-01", type:"bilješka", note:"Japanska trešnja ~20 godina, visina preko 6m. Zanemarena rezidba.", status:"prati" }]
     ),
     lagerstroemia: base(
-      ["Bijelo mineralno ulje zajedno s voćkama (veljača)", "Cuprablau Z 35 WG zajedno s voćkama (veljača)"],
+      [
+        { text:"Bijelo mineralno ulje zajedno s voćkama", monthStart:2, dayStart:1, monthEnd:2, dayEnd:14, skipYear:2026 },
+        { text:"Cuprablau Z 35 WG zajedno s voćkama", monthStart:2, dayStart:15, monthEnd:2, dayEnd:28, skipYear:2026 },
+      ],
       [{ id:1, date:"2026-01-01", type:"bilješka", note:"5 mladih sadnica indijskog jorgovana u gornjem vrtu.", status:"dobro" }]
     ),
     photinia: base(
-      ["Bijelo mineralno ulje zajedno s voćkama (veljača)", "Cuprablau Z 35 WG zajedno s voćkama (veljača)"],
+      [
+        { text:"Bijelo mineralno ulje zajedno s voćkama", monthStart:2, dayStart:1, monthEnd:2, dayEnd:14, skipYear:2026 },
+        { text:"Cuprablau Z 35 WG zajedno s voćkama", monthStart:2, dayStart:15, monthEnd:2, dayEnd:28, skipYear:2026 },
+      ],
       [{ id:1, date:"2026-01-01", type:"bilješka", note:"Photinia × fraseri 'Red Robin' – gornji vrt.", status:"dobro" }]
     ),
     smreka: base(
-      ["Bijelo mineralno ulje – SAMO ulje, NIKAD bakar", "Ukloniti mrtve smeđe grane iznutra", "Vertimec 018 EC ako grinje aktivne (travanj/svibanj)", "Procijeniti stanje lipanj/srpanj 2026."],
+      [
+        { text:"Bijelo mineralno ulje – SAMO ulje, NIKAD bakar", monthStart:2, dayStart:1, monthEnd:2, dayEnd:14, skipYear:2026 },
+        "Ukloniti mrtve smeđe grane iznutra",
+        { text:"Vertimec 018 EC ako grinje aktivne", monthStart:4, dayStart:1, monthEnd:5, dayEnd:31 },
+        "Procijeniti stanje lipanj/srpanj 2026.",
+      ],
       [{ id:1, date:"2026-01-01", type:"bilješka", note:"Smeđenje 60–70% iglica – grinje (Oligonychus ununguis) ili zimska isušenost. Novi zeleni pupoljci vidljivi.", status:"hitno" },
        { id:2, date:"2026-03-22", type:"bilješka", note:"Vidljivi novi zeleni pupoljci – biljka živa. Unutarnji smeđi dijelovi neće se oporaviti.", status:"prati" }]
     ),
@@ -470,10 +519,9 @@ async function supabaseRestore() {
     data = r ? JSON.parse(r) : defaultData();
     // ensure new plants exist
     PLANTS.forEach(p => { if(!data[p.id]) data[p.id] = { entries: [], todos: [] }; });
-    // 2026: preskočeno bijelo ulje (stabla mlada, nije stiglo) — ukloni iz todos samo za ovu godinu
-    if(new Date().getFullYear() === 2026) {
-      PLANTS.forEach(p => { data[p.id].todos = data[p.id].todos.filter(t => !t.toLowerCase().includes("mineralno ulje")); });
-    }
+    // Filter todos with skipYear for current year
+    const curYear = new Date().getFullYear();
+    PLANTS.forEach(p => { data[p.id].todos = data[p.id].todos.filter(t => typeof t === "string" || !t.skipYear || t.skipYear !== curYear); });
     const da = localStorage.getItem(KEY + "_alerts");
     if(da) dismissedAlerts = JSON.parse(da);
   } catch { data = defaultData(); }
@@ -568,9 +616,15 @@ function renderOverview() {
     const rainToday = weatherData.precipitation_sum[0];
     const rainTomorrow = weatherData.precipitation_sum[1];
 
-    // Check if any plant has spray-related todos
+    // Check if any plant has spray-related todos within their date window (or next 14 days)
     const sprayKeywords = ["prskanje","ulje","bakar","cuprablau","score","mospilan"];
-    const hasSprayTodos = PLANTS.some(p => (data[p.id]?.todos||[]).some(t => sprayKeywords.some(k => t.toLowerCase().includes(k))));
+    const hasSprayTodos = PLANTS.some(p => (data[p.id]?.todos||[]).some(t => {
+      const txt = todoText(t).toLowerCase();
+      const isSpray = sprayKeywords.some(k => txt.includes(k));
+      if(!isSpray) return false;
+      if(typeof t === "string" || !t.monthStart) return false;
+      return isTodoInWindow(t, 14);
+    }));
 
     // Find dry window (2+ consecutive days with precipitation < 1mm)
     let dryWindowHTML = "";
@@ -692,20 +746,22 @@ function showDetailView(type) {
 
   if(type === "todos") {
     // All todos across all plants, grouped by plant
-    const items = PLANTS.flatMap(p => (data[p.id]?.todos||[]).map((t,i) => ({ plant: p, text: t, idx: i })));
+    const items = PLANTS.flatMap(p => (data[p.id]?.todos||[]).map((t,i) => ({ plant: p, todo: t, idx: i })));
     mc.innerHTML = `
       <div class="detail-header">
         <button class="back-btn" onclick="showScreen('overview')">← Natrag</button>
         <div style="font-family:'Playfair Display',serif; font-size:17px">Svi otvoreni zadaci</div>
       </div>
-      ${items.length === 0 ? '<div class="empty">Nema otvorenih zadataka.</div>' : items.map(item => `
-        <div class="todo-item">
+      ${items.length === 0 ? '<div class="empty">Nema otvorenih zadataka.</div>' : items.map(item => {
+        const ds = todoDateStr(item.todo);
+        return `<div class="todo-item">
           <div style="flex:1">
-            <div class="todo-meta">${item.plant.emoji} ${item.plant.name}</div>
-            <div class="todo-text">${item.text}</div>
+            <div class="todo-meta">${item.plant.emoji} ${item.plant.name}${ds ? ' · '+ds : ''}</div>
+            <div class="todo-text">${todoText(item.todo)}</div>
           </div>
           <button class="btn-icon btn-done" onclick="completeTodoGlobal('${item.plant.id}', ${item.idx})" title="Odrađeno">✓</button>
-        </div>`).join("")}
+        </div>`;
+      }).join("")}
     `;
   } else if(type === "month") {
     const now = new Date();
@@ -752,12 +808,13 @@ function showDetailView(type) {
 
 function completeTodoGlobal(plantId, idx) {
   const todo = data[plantId].todos[idx];
+  const text = todoText(todo);
   data[plantId].todos.splice(idx, 1);
   const today = new Date().toISOString().split("T")[0];
   const maxId = data[plantId].entries.reduce((m,e) => Math.max(m,e.id), 0);
-  data[plantId].entries.unshift({ id: maxId+1, date: today, type: "odrađeno", note: todo, status: "odradjeno" });
+  data[plantId].entries.unshift({ id: maxId+1, date: today, type: "odrađeno", note: text, status: "odradjeno" });
   saveData();
-  syncIcalOnComplete(todo);
+  syncIcalOnComplete(text);
   showDetailView("todos");
 }
 
@@ -786,12 +843,17 @@ function renderPlantScreen() {
           <button onclick="toggleTodoForm()" style="background:var(--green-mid);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">+ Dodaj</button>
         </div>
         <div id="todoFormArea"></div>
-        ${pd.todos.length === 0 ? '<div class="empty">Nema zadataka.</div>' : pd.todos.map((t, i) => `
-          <div class="todo-item">
-            <span class="todo-text">${t}</span>
+        ${pd.todos.length === 0 ? '<div class="empty">Nema zadataka.</div>' : pd.todos.map((t, i) => {
+          const ds = todoDateStr(t);
+          return `<div class="todo-item">
+            <div style="flex:1">
+              <span class="todo-text">${todoText(t)}</span>
+              ${ds ? `<div class="todo-meta">${ds}</div>` : ''}
+            </div>
             <button class="btn-icon btn-done" onclick="completeTodo(${i})" title="Odrađeno">✓</button>
             <button class="btn-icon btn-del" onclick="removeTodo(${i})" title="Ukloni">✕</button>
-          </div>`).join("")}
+          </div>`;
+        }).join("")}
       </div>
     </div>
 
@@ -840,12 +902,13 @@ function saveTodo() {
 
 function completeTodo(idx) {
   const todo = data[activePlantId].todos[idx];
+  const text = todoText(todo);
   data[activePlantId].todos.splice(idx, 1);
   const today = new Date().toISOString().split("T")[0];
   const maxId = data[activePlantId].entries.reduce((m,e) => Math.max(m,e.id), 0);
-  data[activePlantId].entries.unshift({ id: maxId+1, date: today, type: "odrađeno", note: todo, status: "odradjeno" });
+  data[activePlantId].entries.unshift({ id: maxId+1, date: today, type: "odrađeno", note: text, status: "odradjeno" });
   saveData();
-  syncIcalOnComplete(todo);
+  syncIcalOnComplete(text);
   renderPlantScreen();
 }
 
