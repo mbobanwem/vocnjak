@@ -1,3 +1,4 @@
+<!-- GIT TEST OK -->
 <!DOCTYPE html>
 <html lang="hr">
 <head>
@@ -130,6 +131,8 @@
   .cal-day.today .cal-day-num { background: var(--green-mid); color: #fff; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
   .cal-day.has-task::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--amber); position: absolute; bottom: 3px; }
   .cal-day.has-urgent::after { background: var(--red); }
+  .cal-day.has-done::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green-light); position: absolute; bottom: 3px; }
+  .cal-day.has-skipped::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #9ca3af; position: absolute; bottom: 3px; }
   .cal-day-num { font-size: 13px; font-weight: 500; color: var(--text); line-height: 26px; }
   .cal-task-item { margin: 0 0 8px; background: var(--cream); border-radius: var(--r-sm); padding: 10px 12px; border-left: 3px solid var(--green-mid); }
   .cal-task-item.urgent { border-left-color: var(--red); background: var(--red-pale); }
@@ -512,6 +515,105 @@ async function supabaseRestore() {
   } catch(e) { showToast("❌ Greška pri restore-u"); }
 }
 
+// ── MIGRATION v3 → v4 ──
+
+const TYPE_MAP = {
+  prskanje: "spraying", tretman: "spraying",
+  rezidba: "pruning", sadnja: "planting", berba: "harvest",
+  navodnjavanje: "watering", gnojidba: "fertilizing",
+  bilješka: "observation", "odrađeno": "observation", analiza: "observation"
+};
+
+const STATUS_MAP_PLANT = { dobro: "forming", prati: "forming", hitno: "issue", odradjeno: "forming" };
+
+function _genActId()  { return "act_"  + Date.now() + "_" + Math.random().toString(36).slice(2,7); }
+function _genPlanId() { return "plan_" + Date.now() + "_" + Math.random().toString(36).slice(2,7); }
+
+function _migratePlants(v3) {
+  const plants = {};
+  PLANTS.forEach(p => {
+    const entries = v3[p.id]?.entries || [];
+    const rawStatus = entries[0]?.status || "";
+    plants["plant_" + p.id] = {
+      id:          "plant_" + p.id,
+      name:        p.name        || "",
+      variety:     p.variety     || "",
+      rootstock:   p.rootstock   || "",
+      plantedDate: p.plantedDate || "",
+      status:      STATUS_MAP_PLANT[rawStatus] || "forming",
+      legacyStatus: rawStatus,
+      notes:       p.notes      || ""
+    };
+  });
+  return plants;
+}
+
+function _migrateActivities(v3) {
+  const activities = [];
+  PLANTS.forEach(p => {
+    (v3[p.id]?.entries || []).forEach(entry => {
+      activities.push({
+        id:       _genActId(),
+        type:     TYPE_MAP[entry.type] || "observation",
+        date:     entry.date  || "",
+        status:   "done",
+        plantIds: ["plant_" + p.id],
+        product:  "",
+        notes:    entry.note  || ""
+      });
+    });
+  });
+  return activities;
+}
+
+function _migratePlans(v3) {
+  const plans = [];
+  PLANTS.forEach(p => {
+    (v3[p.id]?.todos || []).forEach(todo => {
+      if(typeof todo === "string" || !todo.monthStart) return;
+      plans.push({
+        id:           _genPlanId(),
+        title:        todo.text    || "",
+        activityType: "",
+        appliesToAll: false,
+        plantIds:     ["plant_" + p.id],
+        monthStart:   todo.monthStart,
+        dayStart:     todo.dayStart  || "",
+        monthEnd:     todo.monthEnd  || "",
+        dayEnd:       todo.dayEnd    || "",
+        skipYear:     todo.skipYear  || "",
+        notes:        ""
+      });
+    });
+  });
+  return plans;
+}
+
+function migrateV3toV4() {
+  const raw = localStorage.getItem("vocnjak_v3");
+  if(!raw) { console.warn("migrateV3toV4: vocnjak_v3 not found, skipping"); return; }
+  if(localStorage.getItem("vocnjak_v4")) { console.warn("migrateV3toV4: vocnjak_v4 already exists, skipping"); return; }
+
+  localStorage.setItem("vocnjak_v3_premigration", raw);
+  console.log("migrateV3toV4: backup saved to vocnjak_v3_premigration");
+
+  let v3;
+  try { v3 = JSON.parse(raw); } catch(e) { console.error("migrateV3toV4: failed to parse vocnjak_v3", e); return; }
+
+  const plants     = _migratePlants(v3);
+  const activities = _migrateActivities(v3);
+  const plans      = _migratePlans(v3);
+
+  if(typeof plants !== "object" || Array.isArray(plants) || Object.keys(plants).length === 0) {
+    console.error("Migration failed: plants is empty or not an object"); return;
+  }
+  if(!Array.isArray(activities)) { console.error("Migration failed: activities is not an array"); return; }
+  if(!Array.isArray(plans))      { console.error("Migration failed: plans is not an array"); return; }
+
+  localStorage.setItem("vocnjak_v4", JSON.stringify({ plants, activities, plans }));
+  console.log("Migration complete — plants:", Object.keys(plants).length, "activities:", activities.length, "plans:", plans.length);
+}
+
 // ── INIT ──
 (() => {
   try {
@@ -525,6 +627,7 @@ async function supabaseRestore() {
     const da = localStorage.getItem(KEY + "_alerts");
     if(da) dismissedAlerts = JSON.parse(da);
   } catch { data = defaultData(); }
+  if(localStorage.getItem("vocnjak_v3") && !localStorage.getItem("vocnjak_v4")) migrateV3toV4();
   migrateSecureKeys().then(() => initUI());
 })();
 
@@ -585,10 +688,75 @@ function showScreen(name) {
   else if(name === "sync") renderSync();
 }
 
+// ── OVERVIEW v4 HELPERS ──
+function _loadV4() {
+  try {
+    const raw = localStorage.getItem("vocnjak_v4");
+    if(!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function _v4PlansThisMonth(plans) {
+  const month = new Date().getMonth() + 1; // 1-based
+  return plans.filter(pl => {
+    const start = pl.monthStart;
+    const end   = pl.monthEnd || pl.monthStart;
+    return month >= start && month <= end;
+  }).length;
+}
+
+function _v4ActivitiesThisWeek(activities) {
+  const now   = new Date();
+  const day   = now.getDay(); // 0=Sun
+  const diff  = (day === 0 ? -6 : 1 - day); // shift to Monday
+  const mon   = new Date(now); mon.setDate(now.getDate() + diff); mon.setHours(0,0,0,0);
+  const sun   = new Date(mon); sun.setDate(mon.getDate() + 6); sun.setHours(23,59,59,999);
+  return activities.filter(a => {
+    if(!a.date) return false;
+    const d = new Date(a.date);
+    return d >= mon && d <= sun;
+  }).length;
+}
+
 // ── OVERVIEW ──
 function renderOverview() {
   const mc = document.getElementById("mainContent");
   document.getElementById("headerTitle").textContent = "Dnevnik vrta";
+
+  const v4 = _loadV4();
+  if(v4) {
+    _renderOverviewV4(mc, v4);
+  } else {
+    _renderOverviewLegacy(mc);
+  }
+}
+
+function _renderOverviewV4(mc, v4) {
+  const { plants = {}, activities = [], plans = [] } = v4;
+  const plantCount    = Object.keys(plants).length;
+  const plansMonth    = _v4PlansThisMonth(plans);
+  const activitiesWeek = _v4ActivitiesThisWeek(activities);
+
+  mc.innerHTML = `
+    <div class="overview-stats" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="stat-card">
+        <div class="stat-num">${plantCount}</div>
+        <div class="stat-label">Biljke</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${plansMonth}</div>
+        <div class="stat-label">Planovi ovaj mjesec</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${activitiesWeek}</div>
+        <div class="stat-label">Aktivnosti ovaj tjedan</div>
+      </div>
+    </div>
+  `;
+}
+
+function _renderOverviewLegacy(mc) {
   const now = new Date();
   const m = now.getMonth();
 
@@ -616,7 +784,6 @@ function renderOverview() {
     const rainToday = weatherData.precipitation_sum[0];
     const rainTomorrow = weatherData.precipitation_sum[1];
 
-    // Check if any plant has spray-related todos within their date window (or next 14 days)
     const sprayKeywords = ["prskanje","ulje","bakar","cuprablau","score","mospilan"];
     const hasSprayTodos = PLANTS.some(p => (data[p.id]?.todos||[]).some(t => {
       const txt = todoText(t).toLowerCase();
@@ -626,7 +793,6 @@ function renderOverview() {
       return isTodoInWindow(t, 14);
     }));
 
-    // Find dry window (2+ consecutive days with precipitation < 1mm)
     let dryWindowHTML = "";
     if(hasSprayTodos) {
       const precip = weatherData.precipitation_sum;
@@ -821,6 +987,68 @@ function completeTodoGlobal(plantId, idx) {
 // ── PLANT SCREEN ──
 function renderPlantScreen() {
   const mc = document.getElementById("mainContent");
+  const v4 = _loadV4();
+
+  if(v4 && v4.plants && v4.activities) {
+    // ── v4 branch ──
+    const plantId = "plant_" + activePlantId;
+    const plant   = v4.plants[plantId];
+    const p       = PLANTS.find(x => x.id === activePlantId);
+
+    if(!plant) {
+      mc.innerHTML = `<div class="empty">Biljka nije pronađena u v4 podacima.</div>`;
+      buildPlantTabs();
+      return;
+    }
+
+    const V4_STATUS = {
+      forming: { cls: "s-dobro", stripe: "#10b981", label: "Razvija se" },
+      issue:   { cls: "s-hitno", stripe: "#ef4444", label: "Problem"    }
+    };
+    const sc = V4_STATUS[plant.status] || V4_STATUS.forming;
+
+    const activities = v4.activities
+      .filter(a => Array.isArray(a.plantIds) && a.plantIds.includes(plantId))
+      .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+
+    mc.innerHTML = `
+      <div class="card" style="margin-bottom:14px">
+        <div style="padding:14px 16px 12px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between">
+          <div>
+            <div style="font-size:10px; color:var(--text-light); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:4px">${p?.grupa || ""}</div>
+            <div style="font-family:'Playfair Display',serif; font-size:19px">${p?.emoji || ""} ${plant.name}</div>
+            <div style="font-size:11px; color:var(--text-light); margin-top:3px">${p?.subtitle || ""}</div>
+          </div>
+          <div class="status-badge ${sc.cls}"><span class="status-dot"></span>${sc.label}</div>
+        </div>
+        <div style="padding:12px 14px 4px">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
+            <div class="section-label" style="margin:0">📋 Zadaci (0)</div>
+          </div>
+          <div class="empty">Zadaci nisu dostupni u v4 modelu.</div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
+        <div class="section-label" style="margin:0">📖 Dnevnik (${activities.length})</div>
+      </div>
+      ${activities.length === 0 ? '<div class="empty">Nema unosa.</div>' : activities.map(a => {
+        const stripe = sc.stripe;
+        return `<div class="entry-item">
+          <div class="entry-stripe" style="background:${stripe}"></div>
+          <div style="flex:1">
+            <div class="entry-date">${formatDate(a.date)}</div>
+            <div class="entry-tags"><span class="tag">${a.type}</span></div>
+            <div class="entry-note">${a.notes}</div>
+          </div>
+        </div>`;
+      }).join("")}
+    `;
+    buildPlantTabs();
+    return;
+  }
+
+  // ── legacy branch (untouched) ──
   const p = PLANTS.find(x => x.id === activePlantId);
   const pd = data[activePlantId];
   if(!p || !pd) return;
@@ -1010,6 +1238,38 @@ function saveNewTodo() {
   saveData(); showScreen("overview");
 }
 
+// ── CALENDAR v4 HELPER ──
+function getCalendarItemsV4(v4, year, month) {
+  // month is 0-based; plan fields are 1-based
+  const month1 = month + 1;
+  const items = [];
+
+  // Plans → "planned"
+  (v4.plans || []).forEach(pl => {
+    // Exclude plans skipped for this year
+    if(pl.skipYear === year) return;
+    const start = pl.monthStart;
+    const end   = pl.monthEnd || pl.monthStart;
+    if(month1 < start || month1 > end) return;
+    // Anchor day: use dayStart if this is the start month and dayStart exists, else day 1
+    const day = (month1 === start && pl.dayStart) ? pl.dayStart : 1;
+    const plantIds = pl.appliesToAll ? [] : (pl.plantIds || []);
+    items.push({ day, type: "planned", title: pl.title || "", plantIds });
+  });
+
+  // Activities → "done" or "skipped" only
+  (v4.activities || []).forEach(a => {
+    if(!a.date) return;
+    const d = new Date(a.date);
+    if(isNaN(d.getTime())) return;
+    if(d.getFullYear() !== year || d.getMonth() !== month) return;
+    if(a.status !== "done" && a.status !== "skipped") return;
+    items.push({ day: d.getDate(), type: a.status, title: a.type || "", plantIds: a.plantIds || [] });
+  });
+
+  return items;
+}
+
 // ── CALENDAR ──
 function renderCalendar() {
   const mc = document.getElementById("mainContent");
@@ -1019,6 +1279,58 @@ function renderCalendar() {
   const lastDay = new Date(calYear, calMonth+1, 0);
   let startDow = (firstDay.getDay() + 6) % 7;
 
+  const v4 = _loadV4();
+  const useV4 = v4 && typeof v4.plants === "object" && Array.isArray(v4.activities) && Array.isArray(v4.plans);
+
+  if(useV4) {
+    const items = getCalendarItemsV4(v4, calYear, calMonth);
+
+    // Single dot per day — priority: done(3) > planned(2) > skipped(1)
+    const PRIORITY = { done: 3, planned: 2, skipped: 1 };
+    const dayType = {};
+    items.forEach(item => {
+      const prev = dayType[item.day];
+      if(!prev || (PRIORITY[item.type] || 0) > (PRIORITY[prev] || 0)) {
+        dayType[item.day] = item.type;
+      }
+    });
+
+    let daysHTML = "";
+    for(let i=0; i<startDow; i++) daysHTML += `<div class="cal-day empty"></div>`;
+    for(let d=1; d<=lastDay.getDate(); d++) {
+      const isToday = calYear===now.getFullYear() && calMonth===now.getMonth() && d===now.getDate();
+      const t = dayType[d];
+      const dotClass = t === "done" ? "has-done" : t === "planned" ? "has-task" : t === "skipped" ? "has-skipped" : "";
+      daysHTML += `<div class="cal-day ${isToday?'today':''} ${dotClass}" onclick="selectCalDay(${d})"><div class="cal-day-num">${d}</div></div>`;
+    }
+
+    const monthItems = items.slice().sort((a,b) => a.day - b.day);
+
+    mc.innerHTML = `
+      <div class="card">
+        <div class="cal-header">
+          <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
+          <div class="cal-month">${monthNames[calMonth]} ${calYear}</div>
+          <button class="cal-nav-btn" onclick="calNav(1)">›</button>
+        </div>
+        <div class="cal-grid-header">${["Pon","Uto","Sri","Čet","Pet","Sub","Ned"].map(d=>`<div class="cal-day-name">${d}</div>`).join("")}</div>
+        <div class="cal-grid">${daysHTML}</div>
+      </div>
+      <div class="section-label">Ovaj mjesec (${monthItems.length})</div>
+      ${monthItems.length === 0 ? '<div class="empty">Nema stavki.</div>' : monthItems.map(item => {
+        const plantLabel = item.plantIds.length === 0
+          ? "Sve biljke"
+          : item.plantIds.map(id => v4.plants[id]?.name || id).join(", ");
+        return `<div class="cal-task-item">
+          <div class="cal-task-plant">${String(item.day).padStart(2,'0')}. ${monthNames[calMonth].slice(0,3)} · ${plantLabel}</div>
+          <div class="cal-task-text">${item.title}</div>
+        </div>`;
+      }).join("")}
+    `;
+    return;
+  }
+
+  // ── legacy path (untouched) ──
   const taskDays = {};
   getScheduled().forEach(t => {
     if(t.month === calMonth) { if(!taskDays[t.day]) taskDays[t.day] = false; if(t.urgent) taskDays[t.day] = true; }
