@@ -685,10 +685,75 @@ function showScreen(name) {
   else if(name === "sync") renderSync();
 }
 
+// ── OVERVIEW v4 HELPERS ──
+function _loadV4() {
+  try {
+    const raw = localStorage.getItem("vocnjak_v4");
+    if(!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function _v4PlansThisMonth(plans) {
+  const month = new Date().getMonth() + 1; // 1-based
+  return plans.filter(pl => {
+    const start = pl.monthStart;
+    const end   = pl.monthEnd || pl.monthStart;
+    return month >= start && month <= end;
+  }).length;
+}
+
+function _v4ActivitiesThisWeek(activities) {
+  const now   = new Date();
+  const day   = now.getDay(); // 0=Sun
+  const diff  = (day === 0 ? -6 : 1 - day); // shift to Monday
+  const mon   = new Date(now); mon.setDate(now.getDate() + diff); mon.setHours(0,0,0,0);
+  const sun   = new Date(mon); sun.setDate(mon.getDate() + 6); sun.setHours(23,59,59,999);
+  return activities.filter(a => {
+    if(!a.date) return false;
+    const d = new Date(a.date);
+    return d >= mon && d <= sun;
+  }).length;
+}
+
 // ── OVERVIEW ──
 function renderOverview() {
   const mc = document.getElementById("mainContent");
   document.getElementById("headerTitle").textContent = "Dnevnik vrta";
+
+  const v4 = _loadV4();
+  if(v4) {
+    _renderOverviewV4(mc, v4);
+  } else {
+    _renderOverviewLegacy(mc);
+  }
+}
+
+function _renderOverviewV4(mc, v4) {
+  const { plants = {}, activities = [], plans = [] } = v4;
+  const plantCount    = Object.keys(plants).length;
+  const plansMonth    = _v4PlansThisMonth(plans);
+  const activitiesWeek = _v4ActivitiesThisWeek(activities);
+
+  mc.innerHTML = `
+    <div class="overview-stats" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="stat-card">
+        <div class="stat-num">${plantCount}</div>
+        <div class="stat-label">Biljke</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${plansMonth}</div>
+        <div class="stat-label">Planovi ovaj mjesec</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${activitiesWeek}</div>
+        <div class="stat-label">Aktivnosti ovaj tjedan</div>
+      </div>
+    </div>
+  `;
+}
+
+function _renderOverviewLegacy(mc) {
   const now = new Date();
   const m = now.getMonth();
 
@@ -716,7 +781,6 @@ function renderOverview() {
     const rainToday = weatherData.precipitation_sum[0];
     const rainTomorrow = weatherData.precipitation_sum[1];
 
-    // Check if any plant has spray-related todos within their date window (or next 14 days)
     const sprayKeywords = ["prskanje","ulje","bakar","cuprablau","score","mospilan"];
     const hasSprayTodos = PLANTS.some(p => (data[p.id]?.todos||[]).some(t => {
       const txt = todoText(t).toLowerCase();
@@ -726,7 +790,6 @@ function renderOverview() {
       return isTodoInWindow(t, 14);
     }));
 
-    // Find dry window (2+ consecutive days with precipitation < 1mm)
     let dryWindowHTML = "";
     if(hasSprayTodos) {
       const precip = weatherData.precipitation_sum;
