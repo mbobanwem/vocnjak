@@ -512,6 +512,105 @@ async function supabaseRestore() {
   } catch(e) { showToast("❌ Greška pri restore-u"); }
 }
 
+// ── MIGRATION v3 → v4 ──
+
+const TYPE_MAP = {
+  prskanje: "spraying", tretman: "spraying",
+  rezidba: "pruning", sadnja: "planting", berba: "harvest",
+  navodnjavanje: "watering", gnojidba: "fertilizing",
+  bilješka: "observation", "odrađeno": "observation", analiza: "observation"
+};
+
+const STATUS_MAP_PLANT = { dobro: "forming", prati: "forming", hitno: "issue", odradjeno: "forming" };
+
+function _genActId()  { return "act_"  + Date.now() + "_" + Math.random().toString(36).slice(2,7); }
+function _genPlanId() { return "plan_" + Date.now() + "_" + Math.random().toString(36).slice(2,7); }
+
+function _migratePlants(v3) {
+  const plants = {};
+  PLANTS.forEach(p => {
+    const entries = v3[p.id]?.entries || [];
+    const rawStatus = entries[0]?.status || "";
+    plants["plant_" + p.id] = {
+      id:          "plant_" + p.id,
+      name:        p.name        || "",
+      variety:     p.variety     || "",
+      rootstock:   p.rootstock   || "",
+      plantedDate: p.plantedDate || "",
+      status:      STATUS_MAP_PLANT[rawStatus] || "forming",
+      legacyStatus: rawStatus,
+      notes:       p.notes      || ""
+    };
+  });
+  return plants;
+}
+
+function _migrateActivities(v3) {
+  const activities = [];
+  PLANTS.forEach(p => {
+    (v3[p.id]?.entries || []).forEach(entry => {
+      activities.push({
+        id:       _genActId(),
+        type:     TYPE_MAP[entry.type] || "observation",
+        date:     entry.date  || "",
+        status:   "done",
+        plantIds: ["plant_" + p.id],
+        product:  "",
+        notes:    entry.note  || ""
+      });
+    });
+  });
+  return activities;
+}
+
+function _migratePlans(v3) {
+  const plans = [];
+  PLANTS.forEach(p => {
+    (v3[p.id]?.todos || []).forEach(todo => {
+      if(typeof todo === "string" || !todo.monthStart) return;
+      plans.push({
+        id:           _genPlanId(),
+        title:        todo.text    || "",
+        activityType: "",
+        appliesToAll: false,
+        plantIds:     ["plant_" + p.id],
+        monthStart:   todo.monthStart,
+        dayStart:     todo.dayStart  || "",
+        monthEnd:     todo.monthEnd  || "",
+        dayEnd:       todo.dayEnd    || "",
+        skipYear:     todo.skipYear  || "",
+        notes:        ""
+      });
+    });
+  });
+  return plans;
+}
+
+function migrateV3toV4() {
+  const raw = localStorage.getItem("vocnjak_v3");
+  if(!raw) { console.warn("migrateV3toV4: vocnjak_v3 not found, skipping"); return; }
+  if(localStorage.getItem("vocnjak_v4")) { console.warn("migrateV3toV4: vocnjak_v4 already exists, skipping"); return; }
+
+  localStorage.setItem("vocnjak_v3_premigration", raw);
+  console.log("migrateV3toV4: backup saved to vocnjak_v3_premigration");
+
+  let v3;
+  try { v3 = JSON.parse(raw); } catch(e) { console.error("migrateV3toV4: failed to parse vocnjak_v3", e); return; }
+
+  const plants     = _migratePlants(v3);
+  const activities = _migrateActivities(v3);
+  const plans      = _migratePlans(v3);
+
+  if(typeof plants !== "object" || Array.isArray(plants) || Object.keys(plants).length === 0) {
+    console.error("Migration failed: plants is empty or not an object"); return;
+  }
+  if(!Array.isArray(activities)) { console.error("Migration failed: activities is not an array"); return; }
+  if(!Array.isArray(plans))      { console.error("Migration failed: plans is not an array"); return; }
+
+  localStorage.setItem("vocnjak_v4", JSON.stringify({ plants, activities, plans }));
+  console.log("Migration complete — plants:", Object.keys(plants).length, "activities:", activities.length, "plans:", plans.length);
+}
+
 // ── INIT ──
 (() => {
   try {
@@ -525,6 +624,7 @@ async function supabaseRestore() {
     const da = localStorage.getItem(KEY + "_alerts");
     if(da) dismissedAlerts = JSON.parse(da);
   } catch { data = defaultData(); }
+  if(localStorage.getItem("vocnjak_v3") && !localStorage.getItem("vocnjak_v4")) migrateV3toV4();
   migrateSecureKeys().then(() => initUI());
 })();
 
