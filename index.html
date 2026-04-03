@@ -984,6 +984,68 @@ function completeTodoGlobal(plantId, idx) {
 // ── PLANT SCREEN ──
 function renderPlantScreen() {
   const mc = document.getElementById("mainContent");
+  const v4 = _loadV4();
+
+  if(v4 && v4.plants && v4.activities) {
+    // ── v4 branch ──
+    const plantId = "plant_" + activePlantId;
+    const plant   = v4.plants[plantId];
+    const p       = PLANTS.find(x => x.id === activePlantId);
+
+    if(!plant) {
+      mc.innerHTML = `<div class="empty">Biljka nije pronađena u v4 podacima.</div>`;
+      buildPlantTabs();
+      return;
+    }
+
+    const V4_STATUS = {
+      forming: { cls: "s-dobro", stripe: "#10b981", label: "Razvija se" },
+      issue:   { cls: "s-hitno", stripe: "#ef4444", label: "Problem"    }
+    };
+    const sc = V4_STATUS[plant.status] || V4_STATUS.forming;
+
+    const activities = v4.activities
+      .filter(a => Array.isArray(a.plantIds) && a.plantIds.includes(plantId))
+      .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+
+    mc.innerHTML = `
+      <div class="card" style="margin-bottom:14px">
+        <div style="padding:14px 16px 12px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between">
+          <div>
+            <div style="font-size:10px; color:var(--text-light); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:4px">${p?.grupa || ""}</div>
+            <div style="font-family:'Playfair Display',serif; font-size:19px">${p?.emoji || ""} ${plant.name}</div>
+            <div style="font-size:11px; color:var(--text-light); margin-top:3px">${p?.subtitle || ""}</div>
+          </div>
+          <div class="status-badge ${sc.cls}"><span class="status-dot"></span>${sc.label}</div>
+        </div>
+        <div style="padding:12px 14px 4px">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
+            <div class="section-label" style="margin:0">📋 Zadaci (0)</div>
+          </div>
+          <div class="empty">Zadaci nisu dostupni u v4 modelu.</div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
+        <div class="section-label" style="margin:0">📖 Dnevnik (${activities.length})</div>
+      </div>
+      ${activities.length === 0 ? '<div class="empty">Nema unosa.</div>' : activities.map(a => {
+        const stripe = sc.stripe;
+        return `<div class="entry-item">
+          <div class="entry-stripe" style="background:${stripe}"></div>
+          <div style="flex:1">
+            <div class="entry-date">${formatDate(a.date)}</div>
+            <div class="entry-tags"><span class="tag">${a.type}</span></div>
+            <div class="entry-note">${a.notes}</div>
+          </div>
+        </div>`;
+      }).join("")}
+    `;
+    buildPlantTabs();
+    return;
+  }
+
+  // ── legacy branch (untouched) ──
   const p = PLANTS.find(x => x.id === activePlantId);
   const pd = data[activePlantId];
   if(!p || !pd) return;
