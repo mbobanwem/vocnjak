@@ -16,6 +16,11 @@
 - Do NOT introduce new features unless explicitly asked
 - Do NOT make assumptions about missing data or logic
 
+IMPORTANT:
+- POLISH_BACKLOG.md contains non-critical UI issues
+- Do NOT implement items from this file unless explicitly instructed
+- Never open a session just to fix items from POLISH_BACKLOG.md
+
 If unsure → STOP
 
 ---
