@@ -83,6 +83,23 @@ Allow user to manage activity records, not only add them.
 - delete activity (minimal)
 - safe refresh after update/delete
 
+### Additional scope — Plant Details (READ ONLY)
+
+Display basic plant information on plant detail screen:
+
+- plant type (e.g. jabuka)
+- variety (if exists)
+- planting date (if exists)
+
+Rules:
+- read-only only
+- no editing
+- no new data model fields
+- show placeholder (e.g. "—") if data is missing
+
+Goal:
+User must understand basic context of the plant without entering edit mode.
+
 ### Out of scope
 - bulk editing
 - advanced filtering
