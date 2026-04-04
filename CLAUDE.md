@@ -67,10 +67,46 @@ If something is unclear:
 
 ---
 
-## SOURCE OF TRUTH
+### SOURCE OF TRUTH
 
-Always read before implementation:
-- MIGRATION_PLAN_V1.md
-- TARGET_ARCHITECTURE_V1.md
-- CURRENT_STATE.md
-- UX_IMPROVEMENTS.md
+Always read these files BEFORE making changes:
+
+1. MIGRATION_PLAN_V1.md (STRICT RULES — LOCKED)
+2. TARGET_ARCHITECTURE_V1.md
+3. CURRENT_STATE.md
+
+Additional context files:
+
+4. DOMAIN_RULES_V1.md (behavior rules aligned with V1 model)
+5. EXECUTION_ROADMAP_V1.md (session order and execution plan)
+6. STORE_READY_ROADMAP_V1.md (store readiness and monetization direction)
+7. UX_IMPROVEMENTS.md (UX direction and improvements)
+8. VALIDATION_CONTEXT.md (validation and decision context)
+
+Future context (DO NOT IMPLEMENT without approval):
+
+9. DOMAIN_DIRECTION_V2.md
+
+---
+
+## CRITICAL NOTES
+
+- MIGRATION_PLAN_V1.md is LOCKED
+- Do NOT change data model, field names, or structure
+
+- DOMAIN_RULES_V1.md defines allowed behavior within V1
+- DOMAIN_DIRECTION_V2.md is FUTURE context only
+
+IMPORTANT:
+- NEVER implement anything from DOMAIN_DIRECTION_V2.md unless explicitly instructed
+- If unsure whether something belongs to V1 or V2 → STOP and ask
+
+---
+
+## IMPLEMENTATION PRIORITY
+
+1. MIGRATION_PLAN_V1.md (absolute truth)
+2. DOMAIN_RULES_V1.md (behavior rules)
+3. TARGET_ARCHITECTURE_V1.md
+4. UX_IMPROVEMENTS.md
+5. Everything else
