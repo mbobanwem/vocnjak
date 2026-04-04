@@ -285,6 +285,122 @@ If unsure:
 - no new entities such as products, tools, gardens, zones
 
 ---
+# 9. ACTIVITY VALIDATION & SAFETY RULES (SESSION 9)
+
+These rules define strict behavior for activity creation and storage.
+
+---
+
+## 9.1 Required fields
+
+An activity MUST NOT be saved if:
+
+- `type` is missing
+- `plantIds` is empty
+- `date` is missing or invalid
+
+Validation messages must follow UX rules.
+
+---
+
+## 9.2 Defaults
+
+When creating activity:
+
+- `date` defaults to today (ISO format)
+- `product` defaults to empty string ""
+- `notes` defaults to empty string ""
+
+---
+
+## 9.3 Type rules
+
+- `type` must be one of V1 allowed values:
+  - spraying
+  - pruning
+  - planting
+  - harvest
+  - watering
+  - fertilizing
+  - observation
+  - problem
+
+- UI labels may be localized
+- stored value MUST remain English internal value
+
+---
+
+## 9.4 Plant selection rules
+
+- at least one plant must be selected
+- `plantIds` must contain only valid existing plant ids
+- no duplicates in `plantIds`
+
+---
+
+## 9.5 Date rules
+
+- must be valid ISO format: YYYY-MM-DD
+- must not be malformed
+- future dates are allowed (no restriction in V1)
+
+---
+
+## 9.6 Status rules
+
+- all newly created activities must have:
+  - `status: "done"`
+
+- do NOT introduce other statuses in V1 without approval
+
+---
+
+## 9.7 Duplicate handling
+
+If an activity is created with:
+
+- same `type`
+- same `date`
+- same `plantIds`
+
+Then:
+
+- allow creation (no blocking)
+- do NOT auto-merge
+- do NOT auto-deduplicate
+
+Reason:
+- keep logic simple in V1
+- user control is preferred
+
+---
+
+## 9.8 Save guarantees
+
+After saving activity:
+
+- activity MUST appear immediately in:
+  - plant detail screen
+  - calendar (correct date)
+  - dashboard (recent activity)
+
+- no manual refresh required
+
+---
+
+## 9.9 Strict rule
+
+Agents MUST:
+
+- NOT save invalid activity
+- NOT create partial objects
+- NOT introduce new fields
+- NOT mutate structure
+
+If validation fails:
+→ DO NOT SAVE
+→ show validation message
+---
 
 # FINAL PRINCIPLE
 
