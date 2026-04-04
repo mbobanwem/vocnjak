@@ -7,8 +7,6 @@
 @VISION_AND_STRATEGY.md
 @VALIDATION_CONTEXT.md
 
----
-
 ## CRITICAL RULES
 
 - MIGRATION_PLAN_V1.md is LOCKED
@@ -21,9 +19,10 @@
 - Never open a session for small UI/cosmetic fixes
 - If a change is not functionally required → it belongs in POLISH_BACKLOG.md
 
-If unsure → STOP and ask for clarification
+- Focus strictly on the explicitly requested scope
+- Do NOT include extra improvements, even if they seem obvious
 
----
+If unsure → STOP and ask for clarification
 
 ## COMMIT RULE (CRITICAL)
 
