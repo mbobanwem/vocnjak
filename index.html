@@ -659,7 +659,19 @@ function showToast(msg) {
 function buildPlantTabs() {
   const tabs = document.getElementById("plantTabs");
   const v4 = _loadV4();
-  if(v4 && Object.keys(v4.plants).length === 0) { tabs.innerHTML = ""; return; }
+  if(v4 && typeof v4.plants === "object" && !Array.isArray(v4.plants)) {
+    const plantKeys = Object.keys(v4.plants);
+    if(plantKeys.length === 0) { tabs.innerHTML = ""; return; }
+    if(!plantKeys.includes(activePlantId)) activePlantId = plantKeys[0];
+    tabs.innerHTML = plantKeys.map(id => {
+      const p = v4.plants[id];
+      const label = ((p.name || "").trim() || "?").slice(0, 2);
+      return `<button class="tab-btn ${id === activePlantId ? 'active' : ''}" onclick="setActivePlant('${id}')">
+        <span>${label}</span>
+      </button>`;
+    }).join("");
+    return;
+  }
   tabs.innerHTML = PLANTS.map(p => {
     if(!data[p.id]) return "";
     const st = data[p.id].entries[0]?.status || "dobro";
@@ -1065,11 +1077,12 @@ function renderPlantScreen() {
   if(v4 && v4.plants && v4.activities) {
     // ── v4 branch ──
     if(Object.keys(v4.plants).length === 0) {
-      mc.innerHTML = '<div class="empty">Još nema biljaka.</div>';
+      mc.innerHTML = `<div class="empty">Još nema biljaka.</div>
+        <div class="form-btns"><button onclick="showAddPlant()" class="btn-primary">Dodaj biljku</button></div>`;
       buildPlantTabs();
       return;
     }
-    const plantId = "plant_" + activePlantId;
+    const plantId = activePlantId.startsWith("plant_") ? activePlantId : "plant_" + activePlantId;
     const plant   = v4.plants[plantId];
     const p       = PLANTS.find(x => x.id === activePlantId);
 
@@ -1330,7 +1343,10 @@ function showAddEntryV4(v4) {
     document.getElementById("mainContent").innerHTML = `
       <div class="section-label">Nova aktivnost</div>
       <div class="empty">Dodaj biljke prije prve aktivnosti.</div>
-      <div class="form-btns"><button onclick="showScreen('overview')" class="btn-secondary">Natrag</button></div>
+      <div class="form-btns">
+        <button onclick="showAddPlant()" class="btn-primary">Dodaj biljku</button>
+        <button onclick="showScreen('overview')" class="btn-secondary">Natrag</button>
+      </div>
     `;
     return;
   }
@@ -1416,6 +1432,69 @@ function saveNewActivityV4() {
   } catch(e) { showToast("❌ Greška pri spremanju"); return; }
   showToast("Spremljeno ✓");
   showScreen("overview");
+}
+
+// ── ADD PLANT (v4) ──
+function showAddPlant() {
+  currentScreen = "plants";
+  ["overview","plants","calendar","add","sync"].forEach(s => document.getElementById(`bnav-${s}`)?.classList.remove("active"));
+  document.getElementById("bnav-plants")?.classList.add("active");
+  document.getElementById("plantTabs").style.display = "none";
+  document.getElementById("headerTitle").textContent = "Nova biljka";
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("mainContent").innerHTML = `
+    <div class="section-label">Nova biljka</div>
+    <div class="form-card">
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Ime biljke *</label>
+        <input id="apName" class="form-input" placeholder="npr. Trešnja Kordia">
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Sorta</label>
+        <input id="apVariety" class="form-input" placeholder="npr. Kordia">
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Podloga</label>
+        <input id="apRootstock" class="form-input" placeholder="npr. Gisela 5">
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Datum sadnje</label>
+        <input type="date" id="apPlantedDate" class="form-input" value="${today}">
+      </div>
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Bilješka</label>
+        <textarea id="apNotes" class="form-textarea" placeholder="Bilješka..."></textarea>
+      </div>
+      <div class="form-btns">
+        <button onclick="saveNewPlant()" class="btn-primary">Spremi biljku</button>
+        <button onclick="showScreen('plants')" class="btn-secondary">Odustani</button>
+      </div>
+    </div>
+  `;
+}
+
+function saveNewPlant() {
+  const name = document.getElementById("apName")?.value?.trim();
+  if(!name) { showToast("Upiši ime biljke"); return; }
+  const variety = document.getElementById("apVariety")?.value?.trim() || "";
+  const rootstock = document.getElementById("apRootstock")?.value?.trim() || "";
+  const plantedDate = document.getElementById("apPlantedDate")?.value || "";
+  const notes = document.getElementById("apNotes")?.value?.trim() || "";
+  const id = "plant_" + Date.now();
+  const plant = { id, name, variety, rootstock, plantedDate, status: "forming", legacyStatus: "", notes };
+  let v4;
+  try {
+    const raw = localStorage.getItem("vocnjak_v4");
+    v4 = raw ? JSON.parse(raw) : null;
+    if(!v4 || typeof v4.plants !== "object") { showToast("Podaci nisu dostupni"); return; }
+  } catch(e) { showToast("Greška pri čitanju podataka"); return; }
+  v4.plants[id] = plant;
+  try {
+    localStorage.setItem("vocnjak_v4", JSON.stringify(v4));
+  } catch(e) { showToast("Greška pri spremanju"); return; }
+  activePlantId = id;
+  showToast("Spremljeno ✓");
+  showScreen("plants");
 }
 
 // ── CALENDAR v4 HELPER ──
