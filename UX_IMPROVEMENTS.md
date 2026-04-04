@@ -3,12 +3,32 @@
 ## Core principle
 App must be fast and usable on iPhone with one hand.
 
----
+## Priority areas
 
-## Post-usable improvements (after Session 1–4)
+### 1. Dashboard
+- show today
+- show upcoming
+- show recent activity
+- reduce noise
 
-### Add Activity
+### 2. Add Activity
+- must be fastest flow in app
+- minimal steps
+- multi-select plants
+- quick save
 
-- default state: no plants selected (avoid accidental multi-logging)
-- increase tap target size for plant selection (entire row clickable, not just checkbox)
-- pre-fill plants based on active plan (calendar → activity flow) — NOT in V1 core
+### 3. Plant Detail
+- clear status
+- activity history
+- quick actions
+
+### 4. Calendar
+- distinguish planned / done / skipped
+- easy overview
+- not just visual
+
+## Anti-patterns
+- too many inputs
+- hidden actions
+- desktop-style UI
+- decorative UI without function

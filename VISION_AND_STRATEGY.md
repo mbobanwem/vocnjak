@@ -1,72 +1,42 @@
-# VISION AND STRATEGY
+# VOĆNJAK APP — VISION & STRATEGY
 
-## What is Vocnjak
+## Purpose
+Build a simple, fast, orchard-first app that can become a real product.
 
-iPhone-first PWA for tracking orchard activities — spraying, pruning, harvest, observations.
+## Target
+- usable daily tool
+- iPhone-first UX
+- potentially App Store ready
+- monetizable (freemium)
 
----
+## Positioning
+Not:
+- generic garden app
+- complex farm software
 
-## Core principle
+But:
+- simple orchard app for real usage
 
-The app exists to answer two questions quickly:
-1. What do I need to do today/this week?
-2. What did I do to this plant and when?
+## Core value
+User must be able to:
+1. see what to do today
+2. quickly log activity
+3. view plant history
+4. track work over time
 
----
+## UX philosophy
+- minimal taps
+- no thinking required
+- one-handed usage
 
-## Target user
+## Development strategy
+1. core workflow first
+2. stable data model
+3. UX polish
+4. then expansion
 
-Solo orchard owner in Zagreb, Croatia. Opens the app daily on iPhone. Needs to log activities in under 30 seconds while standing in the garden.
+## Biggest risk
+Turning this into a complex system instead of a usable tool.
 
----
-
-## Technical strategy
-
-- Single HTML file (no build step, no framework)
-- PWA for iPhone home screen installation
-- Local-first (localStorage) with optional Supabase sync
-- Vanilla JS — no dependencies except Google Fonts
-- Deploy = git push to GitHub Pages
-
----
-
-## Product priorities (ordered)
-
-1. Fast activity logging (one hand, few taps)
-2. Plant history (open plant → see everything)
-3. Calendar (planned vs done vs overdue)
-4. Dashboard (today, this week, what's late)
-5. Sync / backup (Supabase, export)
-
----
-
-## Out of scope
-
-- Generic garden management
-- Lawn tracking
-- Multi-user collaboration
-- IoT / irrigation control
-- Complex analytics
-- Desktop-first design
-
----
-
-## Migration strategy
-
-V3 (note-based, per-plant) → V4 (structured, global activities)
-
-- V3 data is never deleted
-- V4 runs alongside V3
-- Migration is one-time, safe, with backup
-- UI detects V4 and renders accordingly
-- Legacy V3 UI paths preserved as fallback
-
----
-
-## Quality bar
-
-- App must work offline
-- App must not lose data
-- Add activity must take < 30 seconds
-- No form should have more than 5 fields
-- Every screen must be usable with one thumb
+## Rule
+Keep it simple and practical.
