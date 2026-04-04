@@ -20,6 +20,36 @@ If unsure → STOP
 
 ---
 
+## COMMIT RULE (CRITICAL)
+
+- NEVER commit or push unless explicitly told:
+  "Approved for commit"
+
+- After implementation:
+  ALWAYS stop and wait for review
+
+- Even if code is correct:
+  DO NOT commit automatically
+
+- Default state after coding:
+  WAIT FOR APPROVAL
+
+---
+
+## IMPLEMENTATION MODE
+
+When implementing:
+- do EXACTLY what is approved
+- do NOT expand scope
+- do NOT refactor unrelated code
+- do NOT "improve" anything outside task
+
+If something is unclear:
+- STOP
+- ASK
+
+---
+
 ## SCOPE
 
 - Work ONLY on the currently approved session
@@ -35,142 +65,8 @@ If unsure → STOP
 
 ## SOURCE OF TRUTH
 
-If conflict exists:
-
-- MIGRATION_PLAN_V1.md wins
-- then TARGET_ARCHITECTURE_V1.md
-- then CURRENT_STATE.md
-- then UX_IMPROVEMENTS.md
-- then VISION_AND_STRATEGY.md
-- VALIDATION_CONTEXT.md is for validation only, not for changing schema or logic
-
----
-
-## DEVELOPMENT RULES
-
-- Prefer the smallest safe change
-- Do NOT refactor unrelated code
-- Do NOT redesign UI
-- Keep iPhone-first UX
-- Keep minimal taps
-- Follow existing structure in index.html
-- Preserve legacy fallback paths unless explicitly instructed otherwise
-
----
-
-## GIT RULES
-
-- Never commit .DS_Store
-- Never commit .claude or .claude/worktrees
-- Never commit nested git repositories or submodules
-- Always use targeted git add for exact changed project files
-- Always run git status before commit
-- If unexpected files appear → STOP and report them
-
-Commit flow:
-- git add <specific files>
-- git commit -m "<clear message>"
-- git push
-
-If push fails:
-- report exact error
-- STOP
-
-Assume git credentials are already configured unless git proves otherwise.
-
----
-
-## SAFETY
-
-- Never modify MIGRATION_PLAN_V1.md
-- Never change data model structure
-- Never write to vocnjak_v3 in new v4 code paths
-- Never call saveData() from v4 logic
-- Never refactor unrelated code
-- Never introduce UI redesign unless explicitly requested
-- Never introduce new features unless explicitly requested
-
-If scope exceeds request → STOP
-
----
-
-## V4 RULES
-
-When working with vocnjak_v4:
-
-- Always read from localStorage key "vocnjak_v4"
-- Always write ONLY to "vocnjak_v4" in v4 code paths
-- Never mix v3 and v4 data in the same logic path
-- activities are global, not per plant
-- plantIds must contain v4 keys like "plant_tresnja"
-
-Activity object MUST be exactly:
-
-{
-  id: "act_" + Date.now() + "_" + Math.random().toString(36).slice(2,7),
-  type,
-  date,
-  status: "done",
-  plantIds,
-  product,
-  notes
-}
-
-Allowed activity type values ONLY:
-
-- spraying
-- pruning
-- fertilizing
-- watering
-- planting
-- harvest
-- observation
-- problem
-
----
-
-## EXECUTION MODE
-
-Claude Code is running with permission to modify files, commit, and push.
-
-This does NOT allow broad changes.
-
-Allowed:
-- exact scoped implementation of the approved task
-- commit and push after approved changes
-
-Not allowed:
-- broad cleanup
-- speculative improvements
-- hidden refactors
-- changes outside approved scope
-
-If scope is unclear → STOP
-
----
-
-## WHEN TO STOP
-
-STOP immediately if:
-
-- requirements are unclear
-- git status shows unexpected files
-- change affects multiple unrelated areas
-- data model might be impacted
-- migration logic might be impacted
-- legacy fallback might be broken
-
-When in doubt → STOP
-
----
-
-## OUTPUT
-
-After implementation:
-
-1. Short summary of what was done
-2. Code diff summary
-3. Verification checklist against requirements
-4. Commit and push
-5. Return commit hash and branch name
-6. STOP
+Always read before implementation:
+- MIGRATION_PLAN_V1.md
+- TARGET_ARCHITECTURE_V1.md
+- CURRENT_STATE.md
+- UX_IMPROVEMENTS.md
