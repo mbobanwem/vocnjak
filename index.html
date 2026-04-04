@@ -628,6 +628,9 @@ function migrateV3toV4() {
     if(da) dismissedAlerts = JSON.parse(da);
   } catch { data = defaultData(); }
   if(localStorage.getItem("vocnjak_v3") && !localStorage.getItem("vocnjak_v4")) migrateV3toV4();
+  if(!localStorage.getItem("vocnjak_v4")) {
+    localStorage.setItem("vocnjak_v4", JSON.stringify({ plants: {}, activities: [], plans: [] }));
+  }
   migrateSecureKeys().then(() => initUI());
 })();
 
@@ -655,6 +658,8 @@ function showToast(msg) {
 // ── TABS ──
 function buildPlantTabs() {
   const tabs = document.getElementById("plantTabs");
+  const v4 = _loadV4();
+  if(v4 && Object.keys(v4.plants).length === 0) { tabs.innerHTML = ""; return; }
   tabs.innerHTML = PLANTS.map(p => {
     if(!data[p.id]) return "";
     const st = data[p.id].entries[0]?.status || "dobro";
@@ -1059,6 +1064,11 @@ function renderPlantScreen() {
 
   if(v4 && v4.plants && v4.activities) {
     // ── v4 branch ──
+    if(Object.keys(v4.plants).length === 0) {
+      mc.innerHTML = '<div class="empty">Još nema biljaka.</div>';
+      buildPlantTabs();
+      return;
+    }
     const plantId = "plant_" + activePlantId;
     const plant   = v4.plants[plantId];
     const p       = PLANTS.find(x => x.id === activePlantId);
@@ -1316,6 +1326,14 @@ function showAddEntryV4(v4) {
   document.getElementById("bnav-add")?.classList.add("active");
   document.getElementById("plantTabs").style.display = "none";
   document.getElementById("headerTitle").textContent = "Dodaj";
+  if(Object.keys(v4.plants).length === 0) {
+    document.getElementById("mainContent").innerHTML = `
+      <div class="section-label">Nova aktivnost</div>
+      <div class="empty">Dodaj biljke prije prve aktivnosti.</div>
+      <div class="form-btns"><button onclick="showScreen('overview')" class="btn-secondary">Natrag</button></div>
+    `;
+    return;
+  }
   const today = new Date().toISOString().split("T")[0];
   const V4_TYPES = [
     { value: "spraying",    label: "Prskanje" },
