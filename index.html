@@ -1472,10 +1472,23 @@ function calNav(dir) {
 }
 
 function selectCalDay(d) {
+  const v4 = _loadV4();
+  const useV4 = v4 && typeof v4.plants === "object" && Array.isArray(v4.activities) && Array.isArray(v4.plans);
+  if(useV4) { selectCalDayV4(v4, d); return; }
+
   const tasks = getScheduled().filter(t => t.month===calMonth && t.day===d);
   if(!tasks.length) return;
   const monthNames = ["Siječanj","Veljača","Ožujak","Travanj","Svibanj","Lipanj","Srpanj","Kolovoz","Rujan","Listopad","Studeni","Prosinac"];
   showToast(`${d}. ${monthNames[calMonth]}: ${tasks.length} zadatak${tasks.length>1?'a':''}`);
+}
+
+function selectCalDayV4(v4, d) {
+  const items = getCalendarItemsV4(v4, calYear, calMonth).filter(item => item.day === d);
+  if(!items.length) return;
+  const monthNames = ["Siječanj","Veljača","Ožujak","Travanj","Svibanj","Lipanj","Srpanj","Kolovoz","Rujan","Listopad","Studeni","Prosinac"];
+  const n = items.length;
+  const plural = n === 1 ? "stavka" : n < 5 ? "stavke" : "stavki";
+  showToast(`${d}. ${monthNames[calMonth]}: ${n} ${plural}`);
 }
 
 // ── SYNC ──
