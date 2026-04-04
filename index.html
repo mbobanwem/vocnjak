@@ -1327,10 +1327,9 @@ function showAddEntryV4(v4) {
     { value: "observation", label: "Opservacija" },
     { value: "problem",     label: "Problem" },
   ];
-  const preCheckId = "plant_" + activePlantId;
   const plantsHTML = Object.entries(v4.plants).map(([id, p]) =>
-    `<label style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;cursor:pointer">
-      <input type="checkbox" class="v4-plant-check" value="${id}"${id === preCheckId && v4.plants[preCheckId] ? " checked" : ""}> ${p.name || id}
+    `<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border)">
+      <input type="checkbox" class="v4-plant-check" value="${id}"> ${p.name || id}
     </label>`
   ).join("");
   document.getElementById("mainContent").innerHTML = `
