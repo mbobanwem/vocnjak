@@ -123,6 +123,8 @@ Varieties are included ONLY when:
 - timing significantly differs
 - adds real value
 
+---
+
 ### Timing constraint
 
 Allowed timing values:
@@ -134,21 +136,31 @@ Allowed timing values:
 No combined values (e.g. early_mid) are allowed.
 
 Reason:
+
 - keeps engine simple
 - avoids ambiguity
 
+---
+
 ### Example (Apple)
 
-- Fuji → Late
-- Gala → Early–Mid
-- Granny Smith → Late
+- Fuji → late
+- Gala → mid
+- Granny Smith → late
+
+---
 
 ### Rule
 
 Each variety must map to:
 
-- timing group
+- one timing group (early / mid / late)
 - optional offsets (future)
+
+If variety is selected:
+
+- fallback selection is NOT required
+- timing is derived automatically from catalog
 
 ---
 
@@ -184,26 +196,23 @@ Example structure:
 
 ## 10. Citrus Special Handling
 
-Citrus is grouped but keeps subtype.
+Citrus is grouped but uses a different timing model.
+
+---
+
+### Data model
 
 ```json
 {
   "citrus": {
     "label": "Citrus",
     "subtypes": {
-      "lemon": { "timing": "multi_cycle" },
-      "orange": { "timing": "winter" },
-      "mandarin": { "timing": "autumn" }
+      "lemon": { "seasonProfile": "multi_cycle" },
+      "orange": { "seasonProfile": "winter" },
+      "mandarin": { "seasonProfile": "autumn" }
     }
   }
 }
-```
-
-### Rules
-
-- user selects citrus → subtype required
-- citrus does NOT use Early/Mid/Late
-- uses predefined seasonal logic
 
 ---
 
