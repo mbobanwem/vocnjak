@@ -372,7 +372,7 @@ Early execution:
 - no strict lower bound in V1
 - do not enforce early restriction in logic
 
-## 5.7 Late Work Rule
+## 5.7 Late / Missed Work Rule
 
 If:
 - plan window has passed
@@ -387,6 +387,43 @@ If:
 Then:
 - do not show it in active work list
 - show it only through history / completed state rendering
+
+## 5.8 Weather & Safety Constraints
+
+V1 does NOT implement weather-aware or safety-aware decision logic yet.
+
+Rules:
+- do NOT block activities based on weather in V1
+- do NOT block activities based on bloom / pollinator risk in V1
+- do NOT block activities based on pre-harvest interval in V1
+- weather, bee safety, and harvest safety remain future advisory logic only
+
+Display principle:
+- V1 may show general contextual prompts later
+- V1 must NOT enforce safety decisions automatically
+
+Future direction:
+- weather-aware timing
+- avoid spraying during bloom / pollinator activity
+- avoid spraying too close to harvest
+
+## 5.9 Interval Flexibility Rule
+
+V1 recognizes that real orchard work may compress ideal spacing between operations.
+
+Rules:
+- real execution may shorten the ideal gap between consecutive operations
+- this does NOT globally shift the full seasonal plan
+- this affects only local interpretation of the next relevant operation
+- V1 does NOT implement full dependency recalculation
+
+Principle:
+- preserve original seasonal timing as much as possible
+- allow practical real-world flexibility when work is delayed by rain or similar constraints
+
+Examples:
+- if one spraying activity is delayed by weather, the next relevant operation may still be considered valid with a shortened practical interval
+- V1 should not assume the entire yearly schedule moves forward
 
 ---
 
