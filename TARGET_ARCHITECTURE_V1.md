@@ -61,13 +61,12 @@ Plan execution state is ALWAYS derived from activities.
 - active
 - done
 - missed
-- late
 
 #### Rules
 
 - based on plan window (month/day)
-- based on matching activity (DOMAIN_RULES 5.5)
-- based on tolerance (DOMAIN_RULES 5.6)
+- based on matching activity (DOMAIN_RULES)
+- based on tolerance
 
 #### Storage rules
 
