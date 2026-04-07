@@ -60,20 +60,20 @@ Core loop:
 ## Session 9 — Activities Complete
 
 ### Goal
-Make the activity flow robust and consistent.
+Make the activity flow robust, deterministic, and safe.
 
 ---
 
 ## Activity Validation Rule (STRICT)
 
-Activity MUST be valid before save:
+Activity MUST be valid before save.
 
-Required:
-- type (non-empty)
-- date (valid ISO date string)
-- plantIds (non-empty array)
+Required fields:
+- type (non-empty string)
+- date (valid ISO date string, format: YYYY-MM-DD)
+- plantIds (non-empty array of strings)
 
-Optional:
+Optional fields:
 - product
 - notes
 
@@ -81,10 +81,7 @@ Rules:
 - invalid activity MUST NOT be saved
 - no silent fallback values
 - no auto-generated plantIds
-
-Type rule:
-- type MUST match predefined list
-- no free text types allowed
+- validation MUST run before every save attempt
 
 ---
 
@@ -102,23 +99,121 @@ Allowed types:
 - problem
 
 Rules:
-- type MUST be one of the above
+- type MUST be one of the above values
 - no additional types allowed
-- labels must be consistent across UI
+- no free text types allowed
+- type values MUST match exactly (case-sensitive)
+- UI MUST use the same exact values as validation (single source of truth)
 
 ---
 
-### Scope
-- improve Add Activity safety/defaults
-- ensure consistent type labels across screens
-- harden save flow
-- confirm plant detail history is stable
+## plantIds Validation Rule (MANDATORY)
 
-### Done when
-- Add Activity is reliable
-- history is consistent
-- no obvious activity edge-case crashes
+plantIds MUST:
+- be an array
+- contain at least one element
+- contain only valid plant IDs existing in v4.plants
 
+Rules:
+- if any plantId does not exist → activity is invalid
+- validation MUST check existence against v4.plants object keys
+
+---
+
+## Date Validation Rule (MANDATORY)
+
+date MUST:
+- be a valid ISO date string (YYYY-MM-DD)
+- represent a real calendar date
+
+Rules:
+- invalid or malformed dates MUST reject save
+- no automatic date correction allowed
+- no time component allowed
+
+---
+
+## Save Flow Rule (STRICT)
+
+On save attempt:
+
+1. validate type
+2. validate date
+3. validate plantIds
+4. if ANY validation fails → STOP and do NOT save
+5. only if ALL validations pass:
+   - create activity object
+   - append to v4.activities
+
+Rules:
+- no partial saves
+- no fallback values
+- no mutation of input data during validation
+
+---
+
+## Activity Object Structure (LOCKED)
+
+Activity MUST follow this structure:
+
+{
+  id: string,
+  type: string,
+  date: string,
+  plantIds: string[],
+  product?: string,
+  notes?: string
+}
+
+Rules:
+- id MUST follow pattern: "act_" + Date.now() + random string
+- id MUST be unique
+- plantIds MUST NOT be transformed during save
+- no additional fields allowed
+
+---
+
+## Type Consistency Rule (MANDATORY)
+
+Activity type MUST be consistent across:
+
+- Add Activity form
+- Plant detail history
+- Calendar rendering
+- Plan matching logic
+
+Rules:
+- labels and values MUST match exactly
+- no aliasing or mapping at activity level
+- normalization (if needed) happens ONLY at plan layer
+
+---
+
+## Scope
+
+- improve Add Activity safety and validation
+- enforce strict type consistency
+- ensure stable save behavior
+- confirm plant detail history reads from v4.activities correctly
+
+---
+
+## Out of Scope
+
+- editing activities
+- deleting activities
+- filtering or sorting improvements
+- UI redesign beyond validation-related fixes
+
+---
+
+## Done when
+
+- invalid activities cannot be saved
+- activity type is always valid and consistent
+- plantIds always reference existing plants
+- activity list renders without crashes
+- no edge-case activity corrupts the data model
 ---
 
 ## Session 10 — Activity Management
