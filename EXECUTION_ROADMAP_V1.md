@@ -88,21 +88,25 @@ Allow user to manage activity records, not only add them.
 
 Display basic plant information on plant detail screen:
 
-- plant type (e.g. jabuka)
-- variety (if exists)
-- planting date (if exists)
+- plant name
+- derived plant type (display only)
+- variety
+- rootstock
+- planted date
+- status
 
 Rules:
 - read-only only
-- no editing
+- no plant editing in this session
 - no new data model fields
-- show placeholder (e.g. "—") if data is missing
+- derived type is display-only and must NOT be stored
+- show placeholder `—` if value is missing
 - editing must NOT change activity structure
 - editing must NOT introduce new fields
 - editing must preserve valid ISO date
 
 Goal:
-User must understand basic context of the plant without entering edit mode.
+User must understand the basic context of the plant without entering edit mode.
 
 ### Out of scope
 - bulk editing
@@ -306,13 +310,28 @@ Prepare the app to become a real product, not just a personal tool.
 Collect the minimum data needed for meaningful recommendations.
 
 ### Scope
-- language
-- location
-- first plants
+- mandatory onboarding on first launch
+- language selection
+- climate zone selection
+- first plant creation from predefined catalog
+- optional variety selection
+- optional timing-group fallback
 - simple first-run path
 
+Rules:
+- onboarding is required
+- user must complete at least one plant entry
+- plant type must be selected from predefined catalog (no free text)
+- if variety is unknown, timing-group fallback may be used
+- if timing is also unknown, default species profile is used
+- selected language must be persisted
+- onboarding must remain simple and low-friction
+
 ### Done when
-- new user can start cleanly without confusion
+- first launch always shows onboarding
+- user can complete onboarding without confusion
+- chosen language is saved
+- at least one plant exists after onboarding
 
 ---
 
@@ -367,27 +386,28 @@ Decide whether subscription makes sense and what exactly is paid.
 
 ## Session 24 — Subscription Model Design
 ### Goal
-Define the business model before implementing payments.
+Define monetization only after assistant-level value is proven.
 
-### Main options
-1. Freemium
-2. Premium-only
-3. Hybrid (free limited usage + paid intelligence)
+### Scope
+- document future pricing model only
+- do NOT implement paywall
+- do NOT implement subscriptions yet
 
-### Recommendation
-Start with freemium:
-- free:
-  - plants
-  - activities
-  - basic calendar/dashboard
-- paid:
-  - smart recommendations
-  - weather-aware orchard guidance
-  - equipment guidance
-  - advanced planning assistance
+Rules:
+- subscription must NOT be introduced before:
+  - weather-aware recommendations exist
+  - disease-aware guidance exists
+- basic logging and planning remain free
+- subscription, when introduced, should monetize assistant-level value
+
+Current direction:
+- 3€ / month
+- 25€ / year
 
 ### Done when
-- clear free vs paid boundary exists
+- monetization direction is documented
+- no payment implementation exists
+- no paywall is introduced before weather + disease layer
 
 ---
 
@@ -453,25 +473,21 @@ Resolve minor UI / copy / spacing issues only after the main flows are done.
 
 # SUBSCRIPTION DECISION — CURRENT VIEW
 
-Subscription can make sense ONLY if the app becomes a true assistant.
+Subscription is NOT a current implementation priority.
 
-If the app remains only:
-- plant logger
-- activity logger
-- basic calendar
+It should be reconsidered only after the app provides assistant-level value through:
+- weather-aware recommendations
+- disease-aware guidance
+- time-saving orchard intelligence
 
-subscription will likely feel weak.
+Until then:
+- core logging remains free
+- no paywall should be introduced
+- monetization stays as future direction only
 
-Subscription becomes realistic when the app offers:
-- what to do now
-- what is overdue / missed
-- what tools are needed
-- weather-aware orchard guidance
-- time-saving recommendations
-
-So:
-- logging should stay free
-- intelligence is the strongest paid candidate
+Current future pricing direction:
+- 3€ / month
+- 25€ / year
 
 ---
 
