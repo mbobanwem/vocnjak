@@ -242,7 +242,7 @@ Restore weather widget in a way that actually supports orchard usage.
 
 ### Scope
 - restore weather widget
-- only show when there is active spraying context
+- show only when there is relevant orchard context (e.g. spraying, disease risk, timing-sensitive operations)
 - connect to spray window logic, not generic weather
 
 ### Done when
