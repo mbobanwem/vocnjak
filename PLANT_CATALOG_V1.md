@@ -13,10 +13,22 @@ Plant catalog defines:
 Catalog is NOT logic.
 
 Catalog provides structured input for:
-- plan generation
+- plan matching context
 - timing adjustments
 - UX consistency
 
+---
+
+## V1 Storage Rules (CRITICAL)
+
+The catalog is a UI/input layer ONLY.
+
+Rules:
+- catalog data is NOT stored directly in the v4 plant model
+- plant.type does NOT exist as a stored field in V1
+- selected catalog values may populate existing fields (name, variety) only
+- no new plant fields may be introduced without explicit approval
+- timing profiles and region offsets are future features — do NOT implement in V1
 ---
 
 ## 2. Design Principles
@@ -174,6 +186,9 @@ If variety is selected:
 ---
 
 ## 8. Regional Influence
+
+> FUTURE — Session 20+. Do NOT implement before onboarding session is opened.
+> Requires region and fine-tuning fields which do not exist in the current V1 data model.
 
 Final timing is calculated as:
 
