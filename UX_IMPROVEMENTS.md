@@ -388,16 +388,24 @@ Must be the fastest interaction.
 
 ---
 
-### Defaults:
+### Defaults
 
 - date = today
 - last used type (optional future)
 
 ---
 
-### Input:
+### Input
 
-- type (required)
+- type (required):
+  - spraying
+  - pruning
+  - fertilizing
+  - watering
+  - planting
+  - harvest
+  - observation
+  - problem
 - plant(s) (multi-select)
 - date
 - optional:
@@ -406,11 +414,21 @@ Must be the fastest interaction.
 
 ---
 
-### Rules:
+### Rules
 
 - no complex forms
 - no validation friction
 - instant save
+
+### Problem type
+
+`problem` is used for:
+- disease suspicion
+- damage
+- anomaly
+- visible issue worth tracking
+
+It behaves like a standard activity type in V1.
 
 ---
 
