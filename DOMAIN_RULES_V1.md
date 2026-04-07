@@ -316,6 +316,8 @@ Allowed derived states:
 - `done`
 - `missed`
 - `late`
+
+Definition:
 - `done` = at least one matching activity exists (see 5.5)
 
 Note:
@@ -354,7 +356,7 @@ Rules:
 V1 allows limited tolerance for real-world delays.
 
 Rule:
-- late completion may still count as valid if activity happens within up to 7 days after plan window after plan window
+- late completion may still count as valid if activity happens within up to 7 days after plan window
 
 Purpose:
 - avoid false missed states due to rain / weather / unavoidable delay
@@ -366,7 +368,7 @@ Rules:
 
 Early execution:
 
-activity may be considered valid if performed before the window
+- activity may be considered valid if performed before the window
 - no strict lower bound in V1
 - do not enforce early restriction in logic
 
