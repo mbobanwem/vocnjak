@@ -34,10 +34,9 @@ Collect minimum data required for meaningful recommendations.
 
 ### SCOPE
 
-Add onboarding flow on first app launch:
+Add onboarding flow on first app launch.
 
 User inputs:
-- Location (simple text, optional)
 - Language selection (HR default, EN optional)
 - Plants:
   - type (required)
@@ -47,8 +46,9 @@ User inputs:
 ### RULES
 
 - Keep it simple (no wizard complexity)
-- Save data ONLY into existing v4 structure
+- Save data ONLY into existing V1-compatible structure
 - MUST NOT introduce new data model fields
+- Location is OUT OF SCOPE for this session
 
 ### DONE CRITERIA
 
