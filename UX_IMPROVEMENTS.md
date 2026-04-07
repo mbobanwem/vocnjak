@@ -82,11 +82,13 @@ Each plant must have:
 
 ---
 
-## 5. Plan Evaluation Engine (CORE)
+## 5. Plan Evaluation Engine (V1 — SIMPLIFIED)
 
-Plans are evaluated dynamically at render time.
+Plans are evaluated dynamically at render time using deterministic rules.
 
-### Plan states:
+---
+
+### Plan states
 
 | State     | Condition |
 |----------|----------|
@@ -95,74 +97,162 @@ Plans are evaluated dynamically at render time.
 | done     | matched activity exists |
 | missed   | window passed + no match |
 
+Rules:
+
+- NO additional states allowed
+- "late" MUST NOT exist
+- state MUST NOT be stored
+- state MUST be derived on each render
+
 ---
 
-### Matching rules (aligned with DOMAIN 5.5):
+### Date normalization (CRITICAL)
+
+All date comparisons MUST be done at DAY level.
+
+Rules:
+
+- ignore time component completely
+- use YYYY-MM-DD comparison
+- currentDate MUST be normalized to day
+- activity.date MUST be normalized
+- plan window dates MUST be normalized
+
+---
+
+### Window calculation
+
+For each plan:
+
+- startDate = construct from (monthStart, dayStart, currentYear)
+- endDate = construct from (monthEnd, dayEnd, currentYear)
+
+Tolerance:
+
+- effectiveStart = startDate - 7 days
+- effectiveEnd = endDate + 7 days
+
+---
+
+### Year handling
+
+Plans DO NOT contain year.
+
+Rules:
+
+- evaluation MUST use current calendar year
+- plans repeat every year
+- no cross-year logic
+
+---
+
+### Type normalization
+
+Before comparison:
+
+- activity.type MUST be normalized
+- plan.activityType MUST be normalized
+
+Normalization rule:
+
+- lowercase
+- trimmed string
+
+---
+
+### Matching rules
 
 A plan is matched if:
 
-- activity.type === plan.activityType (exact match only)
-- activity date is within:
-  - plan window OR
-  - allowed tolerance window (see 5.6)
+- normalized(activity.type) === normalized(plan.activityType)
+- activity.date is within:
+  - effectiveStart AND effectiveEnd
 - AND:
-  - appliesToAll = true
+  - plan.appliesToAll === true
   OR
-  - plant overlap exists
+  - activity.plantIds overlaps with plan.plantIds
 
 Rules:
+
 - one match is enough
 - duplicates allowed
 - no fuzzy matching
+- no partial matching
+- no inference
+- matching MUST be deterministic
 
 ---
 
-### Tolerance window (DOMAIN 5.6)
+### Duplicate handling
 
-Matching is allowed slightly outside plan window.
+Multiple matching activities:
 
-Used when:
-- user delayed activity
-- weather prevented execution
+- DO NOT change state logic
+- state remains "done"
+- logic MUST NOT depend on number of matches
 
 ---
 
-### Delay handling (CRITICAL RULE)
+### Plan state derivation (STRICT ORDER)
 
-If an activity is completed late:
+State MUST be derived in this exact order:
 
-- DO NOT shift entire plan sequence
-- ONLY adjust next interval
-
-Example:
-
-- Oil spray delayed → Feb 12
-- Copper normally 15 days after
-- Next window becomes ~10 days (compressed)
-
-### Sequence dependency (CRITICAL)
-
-Some plans depend on previous activities.
-
-Example sequence:
-- oil spray → copper spray → later treatments
+1. if matching activity exists → state = done
+2. else if currentDate < startDate → state = upcoming
+3. else if currentDate <= endDate → state = active
+4. else if currentDate > effectiveEnd → state = missed
 
 Rules:
 
-- next plan window is calculated based on:
-  - previous matching activity date (if exists)
-  - NOT only fixed calendar date
+- evaluation order MUST NOT change
+- "done" MUST override ALL other states
 
-- if previous activity is missing:
-  - fallback to default plan window
+---
 
-- if previous activity is delayed:
-  - next window is recalculated (see Delay handling)
+### Multi-day evaluation
 
-Goal:
-- reflect real-world spraying sequences
-- avoid rigid calendar behavior
+Plans that span multiple days MUST be evaluated per calendar day.
 
+Rules:
+
+- each day is evaluated independently
+- same plan appears on multiple days
+- state is derived per day using same rules
+
+---
+
+### Plan independence rule (CRITICAL)
+
+Each plan MUST be evaluated independently.
+
+Rules:
+
+- NO dependency between plans
+- NO sequence logic
+- NO recalculation of future plan windows
+- NO shifting of plan timing
+
+---
+
+### Forbidden
+
+The engine MUST NOT:
+
+- infer missing data
+- apply heuristics
+- adjust timing dynamically
+- depend on previous activities
+- introduce new states
+- mutate plans
+
+---
+
+### Goal
+
+- deterministic
+- predictable
+- simple
+- stable for further extension
 ---
 
 ## 6. Context Rules
