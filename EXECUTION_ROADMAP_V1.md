@@ -204,23 +204,28 @@ Rules:
 ### Goal
 Make plans visible and correctly interpreted in calendar.
 
-### Scope
+---
+
+## Scope
 - render plans in calendar using:
   - plan window (month/day)
   - matching logic (defined below)
   - tolerance logic (defined below)
 
-Derived plan states:
+---
+
+## Derived Plan States
 
 - upcoming
 - active
 - done
 - missed
 
-Rule:
+Rules:
 - "skipped" MUST NOT exist
 - no additional states allowed
-- do NOT store derived states
+- state MUST NOT be stored
+- state MUST be derived on each render
 - no heuristic shortcuts
 
 ---
@@ -234,7 +239,12 @@ A plan is considered DONE if:
 - AND activity.date is within:
   plan window ± tolerance
 
-No fuzzy matching allowed.
+Rules:
+- matching MUST be exact (no fuzzy matching)
+- activity type MUST match predefined type set
+- plant matching MUST be explicit (via plantIds)
+
+---
 
 ## Multi-Plant Matching Rule
 
@@ -245,6 +255,35 @@ If activity.plantIds contains multiple plants:
 Rules:
 - one activity can satisfy multiple plans (one per plant)
 - matching MUST NOT require 1:1 activity-plan mapping
+
+---
+
+## Date Normalization Rule (MANDATORY)
+
+All date comparisons MUST use normalized dates:
+
+- use date-only format (YYYY-MM-DD)
+- ignore time component
+
+Rules:
+- activity.date MUST be normalized before comparison
+- plan window boundaries MUST be normalized
+- timezone differences MUST NOT affect matching
+
+---
+
+## Plan Window Definition (STRICT)
+
+Plan window MUST be:
+
+- start date = inclusive
+- end date = inclusive
+
+Rules:
+- activity on start date = valid
+- activity on end date = valid
+- tolerance is applied after this window
+
 ---
 
 ## Tolerance Rule (STRICT)
@@ -270,6 +309,7 @@ State MUST be derived as:
 - missed → window + tolerance passed AND no matching activity
 
 Rules:
+- "done" MUST override all other states
 - state MUST NOT be stored
 - state MUST be recalculated on each render
 
@@ -288,10 +328,13 @@ Rules:
 - timing MUST always resolve to a single deterministic window
 - no UI should expose this complexity
 
+---
+
 ### Done when
 - calendar correctly shows plan states
 - done is derived only via activity matching
 - tolerance works (±7 days)
+- no edge-case inconsistencies exist
 
 ---
 
@@ -300,22 +343,9 @@ Rules:
 ### Goal
 Connect plans and activities without introducing new data.
 
-## Plan State Priority Rule
+---
 
-If activity match exists:
-
-- state MUST be "done"
-- even if activity is late within tolerance
-
-If no activity match:
-
-- state becomes "missed" only after:
-  window + tolerance
-
-Rules:
-- "done" always overrides "missed"
-
-Plan State Rule (ENFORCEMENT)
+## Plan State Rule (ENFORCEMENT)
 
 Allowed states:
 
@@ -328,13 +358,34 @@ Rules:
 - states MUST be derived only
 - no "skipped"
 - no manual override
+- no additional plan state fields allowed
+
+---
+
+## Plan State Priority Rule
+
+If activity match exists:
+
+- state MUST be "done"
+- even if activity is late within tolerance
+
+If no activity match:
+
+- state becomes "missed" only after:
+  - window + tolerance
+
+Rules:
+- "done" always overrides "missed"
+
+---
 
 ### Scope
 - derive plan completion from activities
 - do NOT modify plans
-- do NOT introduce "skipped" or new statuses
+- do NOT introduce new statuses
+- do NOT allow manual plan state manipulation
 
-Rules:
+### Rules
 - completion = matching activity exists
 - missed = no match within window + tolerance
 - no explicit user action for marking completion
@@ -344,13 +395,6 @@ Rules:
 - plan state is fully derived from activities
 - no additional plan fields exist
 - no manual plan state manipulation exists
-
----
-
-# PHASE 2 — ORCHARD INTELLIGENCE
-
-Goal:
-Move from logger to assistant.
 
 ---
 
@@ -434,15 +478,18 @@ Inputs:
 ---
 
 ## Session 16 — Weather-Aware Spray Layer
+
 ### Goal
 Restore weather widget in a way that actually supports orchard usage.
+
+---
 
 ## Weather Visibility Rule (STRICT)
 
 Weather MUST be shown ONLY if:
 
 - there is an active plan where:
-  activityType = "spraying"
+  - activityType = "spraying"
 
 Rules:
 - activityType MUST match predefined type set
@@ -450,20 +497,17 @@ Rules:
 - no always-on widget
 - must be context-driven
 
-### Scope
-- restore weather widget
-- show only when there is relevant orchard context (e.g. spraying, disease risk, timing-sensitive operations)
-- connect to spray window logic, not generic weather
-
-### Done when
-- spraying-related decisions have meaningful weather context
-
 ---
 
-# PHASE 3 — DATA SAFETY / RESTORE FEATURES
+### Scope
+- restore weather widget
+- show weather only for active spraying context
+- connect weather to spray-related plan timing
+- do NOT introduce generic weather dashboard behavior
 
-Goal:
-Restore important support features after the core loop is stable.
+### Done when
+- weather is shown only when spraying context exists
+- spraying-related decisions have meaningful weather context
 
 ---
 
@@ -516,8 +560,11 @@ Prepare the app to become a real product, not just a personal tool.
 ---
 
 ## Session 20 — First-Run Onboarding
+
 ### Goal
 Collect the minimum data needed for meaningful recommendations.
+
+---
 
 ## Plant Catalog Constraint
 
@@ -531,6 +578,29 @@ Rules:
 - catalog is single source of truth
 - no fallback to free text
 
+---
+
+## Plant Creation Rule (MANDATORY)
+
+Plant MUST be created using PLANT_CATALOG_V1:
+
+- plant type must be selected from catalog
+- free text plant type is NOT allowed
+- variety selection is optional
+- timing fallback must follow catalog rules
+- variety and timing fallback are mutually exclusive
+
+Rules:
+- if variety is selected:
+  - timing is derived from catalog
+  - fallback is NOT allowed
+- if variety is not selected:
+  - timing-group fallback may be used
+- if timing is also unknown:
+  - default species profile is used
+
+---
+
 ### Scope
 - mandatory onboarding on first launch
 - language selection
@@ -540,23 +610,11 @@ Rules:
 - optional timing-group fallback
 - simple first-run path
 
-Rules:
+### Rules
 - onboarding is required
 - user must complete at least one plant entry
-- plant type must be selected from predefined catalog (no free text)
-- if variety is unknown, timing-group fallback may be used
-- if timing is also unknown, default species profile is used
 - selected language must be persisted
 - onboarding must remain simple and low-friction
-
-Plant Creation Rule (MANDATORY)
-
-Plant MUST be created using PLANT_CATALOG_V1:
-
-- plant type must be selected from catalog
-- free text plant type is NOT allowed
-- variety selection is optional
-- timing fallback must follow catalog rules
 
 ### Done when
 - first launch always shows onboarding
