@@ -31,6 +31,8 @@ Does NOT:
 
 ## 3. Onboarding (MANDATORY)
 
+> FUTURE — Session 20. Do NOT implement before that session.
+
 User MUST complete onboarding before using the app.
 
 ### Minimum required:
@@ -43,8 +45,13 @@ User MUST complete onboarding before using the app.
 2. Fine tuning (optional but recommended)
    - slider: -14 to +14 days seasonal shift
 
-3. Add at least 1 plant
-   - if user skips → create placeholder plant
+3. Add at least 1 plant (REQUIRED — cannot be skipped)
+
+Rules:
+- onboarding MUST NOT be skippable
+- user must create at least one real plant
+- no placeholder plants
+- onboarding completion state may be stored outside the plant model
 
 ---
 
