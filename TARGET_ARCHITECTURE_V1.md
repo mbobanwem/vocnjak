@@ -109,22 +109,25 @@ Activities define reality.
 
 ---
 
-## Plant Catalog (Future Layer)
+## Plant Catalog (Future UI Layer)
 
-Plants should be selected from a predefined catalog (UI layer).
+Plants may be selected from a predefined catalog at input time.
 
 ### Catalog defines
 
-- plant type (apple, cherry, plum)
+- plant type
 - optional varieties
 - optional rootstocks
 - future timing profiles
 
 ### Rules
 
-- catalog is NOT stored in v4 data model
-- plant type in storage remains a string
-- catalog is used only for input consistency
+- catalog is a UI/input layer
+- catalog is NOT stored directly in current V1 v4 data model
+- current V1 plant model has NO dedicated type field
+- derived type may be shown in UI only
+- selected catalog values may populate existing fields such as name and variety
+- dedicated stored plant type or timing fields require explicit approval
 
 ### Purpose
 
@@ -167,15 +170,17 @@ The app must support first-run onboarding.
 ### Rules
 
 - onboarding is triggered when no plants exist
-- onboarding collects:
+- onboarding may collect:
   - language
   - first plant(s)
+- onboarding must remain compatible with current V1 model
+- plant selection may use catalog as a UI constraint only
+- no new plant fields may be introduced without explicit approval
 
 ### Constraints
 
 - user must create at least one plant
-- plant type must come from catalog (UI constraint)
-- onboarding completion must be stored
+- onboarding completion and language may be stored outside the plant model
 
 ### Principle
 
