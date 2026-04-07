@@ -18,7 +18,7 @@ Goal:
 
 ## IMPORTANT
 
-This file does NOT change the V1 data model.
+This file does NOT change the V1 data model. This file defines behavior only.
 
 If any conflict exists:
 - MIGRATION_PLAN_V1.md wins
@@ -274,6 +274,7 @@ The app should surface:
 The app should NOT surface:
 - completed work inside active work list
 - artificial "today-only" tasks
+- completed plans must be excluded from active work list
 
 Empty state should communicate:
 - no active work currently
@@ -281,7 +282,7 @@ Empty state should communicate:
 ## 5.2 Young Plant Rule
 
 A plant is considered young if:
-- `plantedDate` is within last 12 months
+- plantedDate is within last 12 months from current date
 OR
 - `status === "forming"`
 
@@ -301,7 +302,7 @@ If unsure:
 ## 5.3 Watering Gap Rule
 
 Watering gap prompt may be shown only if:
-- current month is 4–9
+- current month is between April (4) and September (9)
 AND
 - no `watering` activity exists in last 14 days
 
@@ -315,6 +316,7 @@ Allowed derived states:
 - `done`
 - `missed`
 - `late`
+- `done` = at least one matching activity exists (see 5.5)
 
 Note:
 V1 does not account for rainfall or weather conditions.
@@ -326,7 +328,9 @@ Rules:
 
 ## 5.5 Matching Activity Rule
 
-# 5.5 Matching Activity Rule
+Priority:
+- activity within plan window has priority over tolerance match
+- if multiple valid activities exist, prefer the closest to plan window
 
 A plan is matched by an activity only if:
 - `activity.type === plan.activityType`
@@ -350,7 +354,7 @@ Rules:
 V1 allows limited tolerance for real-world delays.
 
 Rule:
-- late completion may still count as valid if activity happens within approximately 7 days after plan window
+- late completion may still count as valid if activity happens within up to 7 days after plan window after plan window
 
 Purpose:
 - avoid false missed states due to rain / weather / unavoidable delay
@@ -362,9 +366,9 @@ Rules:
 
 Early execution:
 
-- activity may be considered valid if performed slightly before window,
-  if agronomically acceptable (no strict rule in V1)
-- do not over-restrict early execution in V1
+activity may be considered valid if performed before the window
+- no strict lower bound in V1
+- do not enforce early restriction in logic
 
 ## 5.7 Late Work Rule
 
