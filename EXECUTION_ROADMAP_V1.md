@@ -208,13 +208,16 @@ Make plans visible and correctly interpreted in calendar.
 
 ## Scope
 - render plans in calendar using:
-  - plan window (month/day)
-  - matching logic (defined below)
-  - tolerance logic (defined below)
+  - resolved plan window
+  - strict matching logic
+  - strict tolerance logic
+  - derived state logic
 
 ---
 
 ## Derived Plan States
+
+Allowed states:
 
 - upcoming
 - active
@@ -230,32 +233,18 @@ Rules:
 
 ---
 
-## Activity ↔ Plan Matching Rule (STRICT)
+## Timing Resolution Rule (MANDATORY)
 
-A plan is considered DONE if:
+Plan timing MUST be resolved in this order:
 
-- activity.type === plan.activityType
-- AND activity.plantIds includes plantId
-- AND activity.date is within:
-  plan window ± tolerance
-
-Rules:
-- matching MUST be exact (no fuzzy matching)
-- activity type MUST match predefined type set
-- plant matching MUST use plantId (string match)
-- no object comparison allowed
-
----
-
-## Multi-Plant Matching Rule
-
-If activity.plantIds contains multiple plants:
-
-- matching MUST be evaluated per plant independently
+1. variety timing (if known)
+2. timing group fallback (if provided)
+3. species default timing
 
 Rules:
-- one activity can satisfy multiple plans (one per plant)
-- matching MUST NOT require 1:1 activity-plan mapping
+- timing MUST NOT be guessed
+- timing MUST always resolve to a single deterministic window
+- no UI should expose this complexity
 
 ---
 
@@ -283,7 +272,6 @@ Plan window MUST be:
 Rules:
 - activity on start date = valid
 - activity on end date = valid
-- tolerance is applied after this window
 
 ---
 
@@ -300,34 +288,75 @@ Rules:
 
 ---
 
+## Tolerance Application Rule (MANDATORY)
+
+Matching MUST be evaluated against:
+
+- effectiveStart = startDate - tolerance
+- effectiveEnd = endDate + tolerance
+
+Rules:
+- activity.date MUST be within effectiveStart and effectiveEnd
+- no separate window + tolerance checks allowed
+
+---
+
+## Activity Type Normalization Rule (MANDATORY)
+
+Plan activity types MUST map to allowed activity types before matching:
+
+- fruit_thinning → pruning
+- fruit_protection → spraying
+- production_pruning → pruning
+
+Rules:
+- matching MUST use normalized activity type
+- normalization MUST happen before comparison
+- UI MUST NOT expose normalization
+
+---
+
+## Activity ↔ Plan Matching Rule (STRICT)
+
+A plan is considered DONE if:
+
+- normalized activity type === normalized plan activity type
+- AND activity.plantIds includes plantId
+- AND activity.date is within effective window
+
+Rules:
+- matching MUST be exact
+- plant matching MUST use plantId string match
+- no fuzzy matching
+- no object comparison allowed
+
+---
+
+## Multi-Plant Matching Rule
+
+If activity.plantIds contains multiple plants:
+
+- matching MUST be evaluated per plant independently
+
+Rules:
+- one activity can satisfy multiple plans (one per plant)
+- matching MUST NOT require 1:1 activity-plan mapping
+
+---
+
 ## Plan State Derivation Rule
 
 State MUST be derived as:
 
-- upcoming → before window
-- active → inside window
+- upcoming → before startDate
+- active → between startDate and endDate
 - done → matching activity exists
-- missed → window + tolerance passed AND no matching activity
+- missed → after effectiveEnd and no matching activity
 
 Rules:
 - "done" MUST override all other states
 - state MUST NOT be stored
 - state MUST be recalculated on each render
-
----
-
-## Timing Resolution Rule (MANDATORY)
-
-Plan timing MUST be resolved in this order:
-
-1. variety timing (if known)
-2. timing group fallback (if provided)
-3. species default timing
-
-Rules:
-- timing MUST NOT be guessed
-- timing MUST always resolve to a single deterministic window
-- no UI should expose this complexity
 
 ---
 
@@ -399,10 +428,10 @@ Rules:
 
 ---
 
-## Session 14 — Context-Aware Filtering
+### Session 14 — Context-Aware Filtering
 
 ### Goal
-Use existing data to suppress irrelevant plans.
+Use existing data to suppress irrelevant plans before rendering.
 
 ---
 
@@ -410,26 +439,41 @@ Use existing data to suppress irrelevant plans.
 
 If plant.status = forming:
 
-HIDE plans where:
+HIDE plans where normalized activity type is:
 
-- activityType = "harvest"
-- activityType = "fruit_thinning"
-- activityType = "fruit_protection"
-- activityType = "production_pruning"
+- harvest
+- pruning (only when plan represents production pruning)
+- spraying (only when plan represents fruit protection)
 
-ALLOW plans where:
+ALLOW plans where normalized activity type is:
 
-- activityType = "pruning"
-- activityType = "spraying"
-- activityType = "watering"
-- activityType = "fertilizing"
-- activityType = "planting"
-- activityType = "observation"
+- planting
+- watering
+- fertilizing
+- observation
+- pruning (when plan represents formation pruning)
+- spraying (when plan represents basic protection)
 
 Rules:
-- filtering MUST be based on activityType
+- filtering MUST be deterministic
+- filtering MUST be based on normalized activity type
 - no category guessing
 - no heuristics
+
+---
+
+## Plan Type Interpretation Rule (MANDATORY)
+
+Because V1 uses a limited activity type set, plan meaning MUST be interpreted as:
+
+- fruit_thinning → pruning
+- fruit_protection → spraying
+- production_pruning → pruning
+
+Rules:
+- interpretation MUST happen before filtering
+- interpretation MUST be internal only
+- UI MUST NOT expose normalized type logic
 
 ---
 
@@ -444,16 +488,19 @@ Citrus plants MUST be handled separately:
 Rules:
 - filtering MUST be based on plant type
 - no heuristic detection
+- citrus MUST NOT inherit deciduous-tree seasonal assumptions
 
 ---
 
-### Scope
+## Scope
 - apply strict filtering before rendering plans
 - do NOT modify plans data
 - do NOT introduce new data fields
 
 ### Done when
-- app no longer shows irrelevant work for young plants or citrus
+- app no longer shows irrelevant work for young plants
+- app no longer applies deciduous assumptions to citrus
+- filtering behavior is deterministic
 
 ---
 
