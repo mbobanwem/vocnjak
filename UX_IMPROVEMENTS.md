@@ -140,6 +140,29 @@ Example:
 - Copper normally 15 days after
 - Next window becomes ~10 days (compressed)
 
+### Sequence dependency (CRITICAL)
+
+Some plans depend on previous activities.
+
+Example sequence:
+- oil spray → copper spray → later treatments
+
+Rules:
+
+- next plan window is calculated based on:
+  - previous matching activity date (if exists)
+  - NOT only fixed calendar date
+
+- if previous activity is missing:
+  - fallback to default plan window
+
+- if previous activity is delayed:
+  - next window is recalculated (see Delay handling)
+
+Goal:
+- reflect real-world spraying sequences
+- avoid rigid calendar behavior
+
 ---
 
 ## 6. Context Rules
@@ -188,6 +211,7 @@ plan base date
 Show warning if:
 - activity = spraying
 - plant is flowering
+- safety warnings do NOT block activity logging
 
 UI:
 "⚠️ Do not spray during flowering (bees active)"
@@ -235,6 +259,9 @@ Monthly overview combining:
 
 - plans (windows)
 - activities
+
+Priority on same day:
+- activities override plans visually
 
 ---
 
