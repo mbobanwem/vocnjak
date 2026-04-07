@@ -38,7 +38,7 @@ The app is now usable for:
 But it is not yet a true orchard assistant.
 It still needs:
 - stronger activity management
-- plans as a real user-facing system
+- plans as a visible read-only system
 - recommendation layer
 - onboarding / multilingual / monetization direction
 
@@ -160,6 +160,7 @@ Rules:
 - do NOT store derived states
 - use activity matching strictly per rules
 - no heuristic shortcuts
+- plan states must follow DOMAIN_RULES 5.4
 
 ### Done when
 - calendar correctly shows plan states
@@ -437,9 +438,9 @@ Resolve minor UI / copy / spacing issues only after the main flows are done.
 ## Highest priority now
 1. Session 9 — Activities Complete
 2. Session 10 — Activity Management
-3. Session 11 — Plans: Create + View
-4. Session 12 — Plans ↔ Calendar
-5. Session 13 — Plan Execution
+3. Session 11 — Plans: Read Model
+4. Session 12 — Plans ↔ Calendar Integration
+5. Session 13 — Plan Execution (Derived Only)
 
 ## Only after that
 - intelligence
