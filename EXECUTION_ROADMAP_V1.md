@@ -235,14 +235,15 @@ Rules:
 A plan is considered DONE if:
 
 - activity.type === plan.activityType
-- AND activity.plantIds includes the plant
+- AND activity.plantIds includes plantId
 - AND activity.date is within:
   plan window ± tolerance
 
 Rules:
 - matching MUST be exact (no fuzzy matching)
 - activity type MUST match predefined type set
-- plant matching MUST be explicit (via plantIds)
+- plant matching MUST use plantId (string match)
+- no object comparison allowed
 
 ---
 
