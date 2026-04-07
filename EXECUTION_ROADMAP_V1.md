@@ -640,76 +640,66 @@ Move from logger to assistant.
 ## Session 14 — Context-Aware Filtering
 
 ### Goal
-Use existing data to suppress irrelevant plans before rendering.
+Suppress plans that are irrelevant for young plants before rendering.
 
 ---
 
-## Young Plant Rule (STRICT)
+### Scope
+- apply young plant filtering at render time
+- do NOT modify plan data
+- do NOT introduce new data model fields
 
-If plant.status = forming:
+---
 
-HIDE plans where normalized activity type is:
+### Young Plant Rule (STRICT)
 
+A plant is considered young if:
+- plantedDate is within last 12 months from current date
+OR
+- status === "forming"
+
+Either condition alone is sufficient.
+
+If plant is young:
+
+HIDE plans where activityType is:
 - harvest
-- pruning (only when plan represents production pruning)
-- spraying (only when plan represents fruit protection)
 
-ALLOW plans where normalized activity type is:
-
-- planting
+SHOW all other plans, including:
 - watering
+- pruning
+- spraying
 - fertilizing
 - observation
-- pruning (when plan represents formation pruning)
-- spraying (when plan represents basic protection)
+- planting
+- problem
 
 Rules:
-- filtering MUST be deterministic
-- filtering MUST be based on normalized activity type
-- no category guessing
-- no heuristics
+- no interpretation of plan intent
+- no distinction between "formation" and "production" pruning
+- no distinction between "basic" and "fruit protection" spraying
+- filtering is based only on activityType value
+- filtering is deterministic
+- filtering applies at render time only
+- do NOT store a derived "young" field
 
 ---
 
-## Plan Type Interpretation Rule (MANDATORY)
+### Citrus Rule
 
-Because V1 uses a limited activity type set, plan meaning MUST be interpreted as:
+DEFERRED.
 
-- fruit_thinning → pruning
-- fruit_protection → spraying
-- production_pruning → pruning
-
-Rules:
-- interpretation MUST happen before filtering
-- interpretation MUST be internal only
-- UI MUST NOT expose normalized type logic
+Citrus-specific filtering requires plant.type to be stored.
+plant.type does NOT exist in the current V1 model.
+This rule must NOT be implemented until plant.type is explicitly approved and added.
 
 ---
-
-## Citrus Rule (MANDATORY)
-
-Citrus plants MUST be handled separately:
-
-- no dormancy logic
-- no winter pruning plans
-- no deciduous-based timing assumptions
-
-Rules:
-- filtering MUST be based on plant type
-- no heuristic detection
-- citrus MUST NOT inherit deciduous-tree seasonal assumptions
-
----
-
-## Scope
-- apply strict filtering before rendering plans
-- do NOT modify plans data
-- do NOT introduce new data fields
 
 ### Done when
-- app no longer shows irrelevant work for young plants
-- app no longer applies deciduous assumptions to citrus
+- harvest plans are hidden for young plants
+- all care plans remain visible for young plants
 - filtering behavior is deterministic
+- no new fields introduced
 
 ---
 
