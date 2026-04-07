@@ -312,6 +312,7 @@ Plan activity types MUST map to allowed activity types before matching:
 Rules:
 - matching MUST use normalized activity type
 - normalization MUST happen before comparison
+- activity.type MUST NOT be normalized
 - UI MUST NOT expose normalization
 
 ---
