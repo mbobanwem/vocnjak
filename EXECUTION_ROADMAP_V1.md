@@ -61,6 +61,28 @@ Core loop:
 ### Goal
 Make the activity flow robust and consistent.
 
+## Activity Validation Rule (STRICT)
+
+Activity MUST be valid before save:
+
+Required:
+- type (non-empty)
+- date (valid ISO date)
+- plantIds (non-empty array)
+
+Optional:
+- product
+- notes
+
+Rules:
+- invalid activity MUST NOT be saved
+- no silent fallback values
+- no auto-generated plantIds
+
+Type rule:
+- type MUST match predefined list
+- no free text types allowed
+
 ### Scope
 - improve Add Activity safety/defaults
 - ensure consistent type labels across screens
@@ -78,6 +100,17 @@ Make the activity flow robust and consistent.
 ## Session 10 — Activity Management
 ### Goal
 Allow user to manage activity records, not only add them.
+
+## Activity Edit Safety Rule
+
+When editing activity:
+
+- id MUST remain unchanged
+- plantIds MUST remain valid array
+- date MUST remain valid ISO string
+
+Rules:
+- editing MUST NOT break matching logic
 
 ### Scope
 - edit activity (minimal)
@@ -236,6 +269,21 @@ Rules:
 ### Goal
 Connect plans and activities without introducing new data.
 
+## Plan State Priority Rule
+
+If activity match exists:
+
+- state MUST be "done"
+- even if activity is late within tolerance
+
+If no activity match:
+
+- state becomes "missed" only after:
+  window + tolerance
+
+Rules:
+- "done" always overrides "missed"
+
 Plan State Rule (ENFORCEMENT)
 
 Allowed states:
@@ -276,10 +324,13 @@ Move from logger to assistant.
 ---
 
 ## Session 14 — Context-Aware Filtering
+
 ### Goal
 Use existing data to suppress irrelevant plans.
 
-Young Plant Rule (STRICT)
+---
+
+## Young Plant Rule (STRICT)
 
 If plant.status = forming:
 
@@ -297,17 +348,7 @@ Rules:
 - MUST be deterministic
 - MUST NOT rely on heuristics
 
-### Scope
-- young tree logic
-- hide fruiting-stage items for establishment-phase plants
-- keep conservative rules only
-
-Rules:
-- must strictly follow DOMAIN_RULES 5.2 (Young Plant Rule)
-- do NOT introduce additional heuristics
-
-### Done when
-- app no longer shows obviously wrong work for young plants
+---
 
 ## Citrus Rule (MANDATORY)
 
@@ -317,7 +358,20 @@ Citrus plants MUST be handled separately:
 - no winter pruning plans
 - no deciduous-based timing assumptions
 
-Filtering MUST respect plant type category.
+Rules:
+- filtering MUST be based on plant type
+- no heuristic detection
+
+---
+
+### Scope
+- apply strict filtering before rendering plans
+- do NOT modify plans data
+- do NOT introduce new data fields
+
+### Done when
+- app no longer shows irrelevant work for young plants or citrus
+
 ---
 
 ## Session 15 — Recommendation Engine V1
@@ -345,11 +399,12 @@ Inputs:
 ### Goal
 Restore weather widget in a way that actually supports orchard usage.
 
-Weather Visibility Rule (STRICT)
+## Weather Visibility Rule (STRICT)
 
 Weather MUST be shown ONLY if:
 
-- there is an active spray-related plan
+- there is an active plan where:
+  plan.activityType === "spraying"
 
 Rules:
 - no generic weather display
@@ -424,6 +479,18 @@ Prepare the app to become a real product, not just a personal tool.
 ## Session 20 — First-Run Onboarding
 ### Goal
 Collect the minimum data needed for meaningful recommendations.
+
+## Plant Catalog Constraint
+
+PLANT_CATALOG_V1 MUST define:
+
+- allowed plant types
+- optional varieties
+- optional timing groups
+
+Rules:
+- catalog is single source of truth
+- no fallback to free text
 
 ### Scope
 - mandatory onboarding on first launch
