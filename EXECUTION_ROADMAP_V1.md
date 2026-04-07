@@ -66,6 +66,7 @@ Make the activity flow robust and consistent.
 - ensure consistent type labels across screens
 - harden save flow
 - confirm plant detail history is stable
+- enforce validation rules from DOMAIN_RULES_V1 section 9
 
 ### Done when
 - Add Activity is reliable
@@ -96,6 +97,9 @@ Rules:
 - no editing
 - no new data model fields
 - show placeholder (e.g. "—") if data is missing
+- editing must NOT change activity structure
+- editing must NOT introduce new fields
+- editing must preserve valid ISO date
 
 Goal:
 User must understand basic context of the plant without entering edit mode.
@@ -111,46 +115,79 @@ User must understand basic context of the plant without entering edit mode.
 
 ---
 
-## Session 11 — Plans: Create + View
+## Session 11 — Plans: Read Model
+
 ### Goal
-Make plans a real part of the app, not only hidden calendar logic.
+Use existing predefined plans as a visible part of the app.
 
 ### Scope
-- minimal add plan flow
-- save to v4.plans
-- show plans in plant context and/or dedicated simple screen
+- read plans from v4.plans
+- do NOT create or modify plans
+- display plans in:
+  - calendar
+  - plant context (if applicable)
+
+Rules:
+- plans are read-only
+- no add/edit/delete plan functionality
+- no changes to plan structure
 
 ### Done when
-- user can create a plan
-- plan is visible in app
-- plan structure matches MIGRATION_PLAN_V1.md exactly
+- plans are visible in UI
+- no plan creation exists
+- plan data strictly matches MIGRATION_PLAN_V1.md
+---
+
+## Session 12 — Plans ↔ Calendar Integration
+
+### Goal
+Make plans visible and correctly interpreted in calendar.
+
+### Scope
+- render plans in calendar using:
+  - plan window (month/day)
+  - matching logic (DOMAIN_RULES 5.5)
+  - tolerance logic (DOMAIN_RULES 5.6)
+
+- derive plan states:
+  - upcoming
+  - active
+  - done
+  - missed
+  - late
+
+Rules:
+- do NOT store derived states
+- use activity matching strictly per rules
+- no heuristic shortcuts
+
+### Done when
+- calendar correctly shows plan states
+- done is derived only via activity matching
+- tolerance works (up to 7 days)
 
 ---
 
-## Session 12 — Plans ↔ Calendar
+## Session 13 — Plan Execution (Derived Only)
+
 ### Goal
-Make plans visible and meaningful in calendar flow.
+Connect plans and activities without introducing new data.
 
 ### Scope
-- ensure created plans appear correctly in calendar
-- keep planned/done/missed logic aligned with UX_IMPROVEMENTS.md
+- derive plan completion from activities
+- do NOT modify plans
+- do NOT introduce "skipped" or new statuses
+
+Rules:
+- completion = matching activity exists
+- missed = no match within window + tolerance
+- no explicit user action for marking completion
+- no "skip" state in storage
 
 ### Done when
-- calendar becomes a real planning view, not only an activity log
-
----
-
-## Session 13 — Plan Execution
-### Goal
-Connect plans and activities into one loop.
-
-### Scope
-- mark plan as completed through activity
-- mark skipped where appropriate
-- derive done/missed consistently
-
-### Done when
-- user understands what was planned, what was done, what was missed
+- plan state is fully derived from activities
+- no additional plan fields exist
+- no manual plan state manipulation exists
 
 ---
 
@@ -169,6 +206,10 @@ Use existing data to suppress irrelevant plans.
 - young tree logic
 - hide fruiting-stage items for establishment-phase plants
 - keep conservative rules only
+
+Rules:
+- must strictly follow DOMAIN_RULES 5.2 (Young Plant Rule)
+- do NOT introduce additional heuristics
 
 ### Done when
 - app no longer shows obviously wrong work for young plants
