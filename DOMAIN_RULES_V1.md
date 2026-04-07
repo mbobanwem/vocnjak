@@ -325,14 +325,23 @@ Allowed derived states:
 - done
 - missed
 
-Definition:
-- done = at least one matching activity exists (see 5.5)
+State MUST be derived in this EXACT order:
+
+1. if matching activity exists → state = done (overrides all other states)
+2. else if currentDate < startDate → state = upcoming
+3. else if currentDate <= endDate → state = active
+4. else if currentDate > effectiveEnd → state = missed
 
 Rules:
+- evaluation order MUST NOT change
+- "done" MUST override ALL other states, including missed
 - do NOT store these states as new V1 fields
 - do NOT introduce "late"
 - do NOT introduce "skipped"
-- derive them from current date, plan window, tolerance, and activities
+- state MUST be recalculated on every render
+
+"Matching activity" definition: see Section 5.5.
+Tolerance window definition: see Section 5.6.
 
 ---
 
