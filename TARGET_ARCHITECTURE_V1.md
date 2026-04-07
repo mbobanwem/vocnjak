@@ -96,6 +96,7 @@ Activities define reality.
 
 - `activity.type === plan.activityType`
 - plant overlap exists OR `appliesToAll === true`
+- exact type match only (no fuzzy matching)
 
 ---
 
