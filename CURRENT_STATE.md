@@ -66,8 +66,8 @@ The following functionality is already implemented:
 - shows:
   - planned (yellow)
   - done (green)
-  - skipped (gray)
 - day click shows relevant items
+- derived plan states (upcoming / active / missed) are not yet implemented
 
 ---
 
