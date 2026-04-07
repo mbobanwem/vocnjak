@@ -297,20 +297,47 @@ Rules:
 ## Session 12 — Plans ↔ Calendar Integration
 
 ### Goal
-Make plans visible and correctly interpreted in calendar.
+
+Integrate plans into the calendar so that each day reflects:
+
+- planned work (from plans)
+- completed work (from activities)
+- skipped work (derived)
+
+All logic MUST follow:
+- DOMAIN_RULES_V1.md
+- TARGET_ARCHITECTURE_V1.md
 
 ---
 
 ## Scope
-- render plans in calendar using:
-  - resolved plan window
-  - strict matching logic
-  - strict tolerance logic
-  - derived state logic
+
+- read from:
+  - v4.plans
+  - v4.activities
+  - v4.plants
+- extend calendar rendering (NO rewrite)
+- NO UI redesign
+- NO new screens
+- NO changes to data model
 
 ---
 
-## Derived Plan States
+## Plan evaluation model (V1)
+
+Plans are evaluated dynamically at render time.
+
+Plan state is NOT stored.
+
+Plan state is derived using:
+
+- plan window (month/day)
+- tolerance window (±7 days)
+- matching activity
+
+---
+
+## Plan states
 
 Allowed states:
 
@@ -320,147 +347,224 @@ Allowed states:
 - missed
 
 Rules:
-- "skipped" MUST NOT exist
-- no additional states allowed
-- state MUST NOT be stored
-- state MUST be derived on each render
-- no heuristic shortcuts
+
+- NO additional states allowed
+- "late" MUST NOT exist
+- state MUST NOT be persisted
+- state MUST be recalculated on each render
 
 ---
 
-## Timing Resolution Rule (MANDATORY)
+## Date normalization (CRITICAL)
 
-Plan timing MUST be resolved in this order:
-
-1. variety timing (if known)
-2. timing group fallback (if provided)
-3. species default timing
+All date comparisons MUST be done at DAY level.
 
 Rules:
-- timing MUST NOT be guessed
-- timing MUST always resolve to a single deterministic window
-- no UI should expose this complexity
+
+- ignore time component completely
+- use YYYY-MM-DD comparison
+- currentDate MUST be normalized to day
+- activity.date MUST be normalized
+- plan window dates MUST be normalized
+
+Example:
+
+2026-04-05T15:23 → 2026-04-05
+
+Purpose:
+
+- avoid timezone bugs
+- ensure deterministic comparisons
 
 ---
 
-## Date Normalization Rule (MANDATORY)
+## Window calculation
 
-All date comparisons MUST use normalized dates:
+For each plan:
 
-- use date-only format (YYYY-MM-DD)
-- ignore time component
+- startDate = construct from (monthStart, dayStart, currentYear)
+- endDate = construct from (monthEnd, dayEnd, currentYear)
 
-Rules:
-- activity.date MUST be normalized before comparison
-- plan window boundaries MUST be normalized
-- timezone differences MUST NOT affect matching
+Tolerance:
 
----
-
-## Plan Window Definition (STRICT)
-
-Plan window MUST be:
-
-- start date = inclusive
-- end date = inclusive
-
-Rules:
-- activity on start date = valid
-- activity on end date = valid
+- effectiveStart = startDate - 7 days
+- effectiveEnd = endDate + 7 days
 
 ---
 
-## Tolerance Rule (STRICT)
+## Year handling (IMPORTANT)
 
-Tolerance window:
-
-- default: ±7 days
+Plans DO NOT contain year.
 
 Rules:
-- tolerance MUST be symmetric
-- tolerance MUST NOT exceed 7 days
-- tolerance MUST NOT be configurable in V1
+
+- evaluation MUST use currently rendered calendar year
+- same plan repeats every year
+- no cross-year logic
+- no persistence of derived dates
 
 ---
 
-## Tolerance Application Rule (MANDATORY)
+## Type normalization
 
-Matching MUST be evaluated against:
+Before comparison:
 
-- effectiveStart = startDate - tolerance
-- effectiveEnd = endDate + tolerance
+- activity.type MUST be normalized
+- plan.activityType MUST be normalized
 
-Rules:
-- activity.date MUST be within effectiveStart and effectiveEnd
-- no separate window + tolerance checks allowed
+Normalization rule:
 
----
+- lowercase
+- trimmed string
 
-## Activity Type Normalization Rule (MANDATORY)
+Example:
 
-Plan activity types MUST map to allowed activity types before matching:
+"Spraying" → "spraying"
 
-- fruit_thinning → pruning
-- fruit_protection → spraying
-- production_pruning → pruning
+Rule:
 
-Rules:
-- matching MUST use normalized activity type
-- normalization MUST happen before comparison
-- activity.type MUST NOT be normalized
-- UI MUST NOT expose normalization
+- matching MUST use normalized values
 
 ---
 
-## Activity ↔ Plan Matching Rule (STRICT)
+## Matching logic
 
-A plan is considered DONE if:
+A plan is matched if ANY activity satisfies:
 
-- normalized activity type === normalized plan activity type
-- AND activity.plantIds includes plantId
-- AND activity.date is within effective window
+- normalized(activity.type) === normalized(plan.activityType)
+- activity.date is within:
+  - effectiveStart AND effectiveEnd
+- AND:
+  - plan.appliesToAll === true
+  OR
+  - activity.plantIds overlaps with plan.plantIds
 
-Rules:
-- matching MUST be exact
-- plant matching MUST use plantId string match
+---
+
+## Matching rules
+
+- one match is enough
+- multiple matches allowed
 - no fuzzy matching
-- no object comparison allowed
+- no partial matching
+- no inference
+- no priority between activities
 
 ---
 
-## Multi-Plant Matching Rule
+## Duplicate handling
 
-If activity.plantIds contains multiple plants:
+Multiple matching activities:
 
-- matching MUST be evaluated per plant independently
-
-Rules:
-- one activity can satisfy multiple plans (one per plant)
-- matching MUST NOT require 1:1 activity-plan mapping
+- DO NOT change state logic
+- state remains "done"
+- UI MAY show multiple activities
+- logic MUST NOT depend on count
 
 ---
 
-## Plan State Derivation Rule
+## Plan State Derivation Rule (STRICT ORDER)
 
-State MUST be derived as:
+State MUST be derived in this exact order:
 
-- upcoming → before startDate
-- active → between startDate and endDate
-- done → matching activity exists
-- missed → after effectiveEnd and no matching activity
+1. if matching activity exists → state = done
+2. else if currentDate < startDate → state = upcoming
+3. else if currentDate <= endDate → state = active
+4. else if currentDate > effectiveEnd → state = missed
 
-Rules:
-- "done" MUST override all other states
+---
+
+## Rules
+
+- evaluation order MUST NOT change
+- "done" MUST override ALL other states
 - state MUST NOT be stored
 - state MUST be recalculated on each render
 
 ---
 
-### Done when
-- calendar correctly shows plan states
-- done is derived only via activity matching
-- tolerance works (±7 days)
-- no edge-case inconsistencies exist
+## Edge cases
+
+- activity before window but within tolerance → done
+- activity after window but within tolerance → done
+- activity outside tolerance → ignored
+- no activity → fallback to time-based state
+
+---
+
+## Multi-day plan rendering
+
+Plans that span multiple days MUST be evaluated for EACH day in the calendar.
+
+Rules:
+
+- for each calendar day:
+  - evaluate plan independently
+- same plan appears on multiple days
+- state is derived per day using same logic
+
+Example:
+
+plan: 01.04 – 10.04  
+→ appears on all days in that range
+
+---
+
+## Calendar integration
+
+Extend existing calendar:
+
+- reuse existing structure
+- reuse existing rendering flow
+
+Add:
+
+- planned indicator (amber/yellow dot)
+- done indicator (green dot)
+- missed indicator (gray dot)
+
+Rules:
+
+- indicators MUST NOT overlap incorrectly
+- state determines indicator
+- rendering MUST be idempotent (no duplication)
+
+---
+
+## Day click behavior
+
+When user clicks a day:
+
+Show:
+
+- activities for that day
+- plans affecting that day
+
+Plan display MUST include:
+
+- plan title
+- derived state
+- matching activity (if exists)
+
+---
+
+## Forbidden
+
+- no plan mutation
+- no state persistence
+- no changes to v4 schema
+- no dependency between plans
+- no shifting of plan windows
+- no sequence logic
+- no heuristic interpretation
+
+---
+
+## Principle
+
+Plans define intent.  
+Activities define reality.  
+UI reflects derived truth.
 
 ---
 
