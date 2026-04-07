@@ -37,18 +37,18 @@ Collect minimum data required for meaningful recommendations.
 Add onboarding flow on first app launch:
 
 User inputs:
-- Location (manual input or simple text, no API yet)
+- Location (simple text, optional)
 - Language selection (HR default, EN optional)
 - Plants:
-  - type (e.g. trešnja, jabuka…)
+  - type (required)
   - variety (optional)
   - planting date (optional)
 
 ### RULES
 
 - Keep it simple (no wizard complexity)
-- Save data into existing v4 structure
-- Do NOT introduce new data model fields unless necessary
+- Save data ONLY into existing v4 structure
+- MUST NOT introduce new data model fields
 
 ### DONE CRITERIA
 
@@ -90,10 +90,10 @@ App starts suggesting what user should do.
 
 ### SCOPE
 
-- Based on:
+- Based ONLY on:
   - plant type
-  - month
-  - basic growth stage
+  - current month
+  - existing activities (history)
 
 Examples:
 - “Vrijeme za bakar”
@@ -104,6 +104,8 @@ Examples:
 
 - No AI, no external API
 - Hardcoded knowledge rules
+- MUST NOT introduce new derived fields (e.g. growth stage)
+- MUST use only data available in V1 model
 
 ### DONE
 
@@ -149,6 +151,12 @@ Connect plans + recommendations + activities
   - upcoming
   - overdue
   - skipped
+
+### RULES
+
+- Plan state MUST be derived (no stored state)
+- MUST use existing plan + activity logic from V1
+- MUST NOT introduce new plan fields
 
 ### DONE
 
