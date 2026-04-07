@@ -205,8 +205,6 @@ Example structure:
 
 ## 10. Citrus Special Handling
 
-## 10. Citrus Special Handling
-
 Citrus is grouped but uses a different timing model.
 
 ---
