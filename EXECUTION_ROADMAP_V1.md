@@ -150,8 +150,8 @@ Make plans visible and correctly interpreted in calendar.
 ### Scope
 - render plans in calendar using:
   - plan window (month/day)
-  - matching logic (DOMAIN_RULES 5.5)
-  - tolerance logic (DOMAIN_RULES 5.6)
+  - matching logic (defined below)
+  - tolerance logic (defined below)
 
 Derived plan states:
 
@@ -166,9 +166,9 @@ Rule:
 
 Rules:
 - do NOT store derived states
-- use activity matching strictly per rules
 - no heuristic shortcuts
-- plan states must follow DOMAIN_RULES 5.4
+
+---
 
 ## Activity ↔ Plan Matching Rule (STRICT)
 
@@ -181,10 +181,35 @@ A plan is considered DONE if:
 
 No fuzzy matching allowed.
 
-### Done when
-- calendar correctly shows plan states
-- done is derived only via activity matching
-- tolerance works (up to 7 days)
+---
+
+## Tolerance Rule (STRICT)
+
+Tolerance window:
+
+- default: ±7 days
+
+Rules:
+- tolerance MUST be symmetric
+- tolerance MUST NOT exceed 7 days
+- tolerance MUST NOT be configurable in V1
+
+---
+
+## Plan State Derivation Rule
+
+State MUST be derived as:
+
+- upcoming → before window
+- active → inside window
+- done → matching activity exists
+- missed → window + tolerance passed AND no matching activity
+
+Rules:
+- state MUST NOT be stored
+- state MUST be recalculated on each render
+
+---
 
 ## Timing Resolution Rule (MANDATORY)
 
@@ -198,6 +223,11 @@ Rules:
 - timing MUST NOT be guessed
 - timing MUST always resolve to a single deterministic window
 - no UI should expose this complexity
+
+### Done when
+- calendar correctly shows plan states
+- done is derived only via activity matching
+- tolerance works (±7 days)
 
 ---
 
