@@ -241,17 +241,16 @@ Commitaj i pushaj.
 ---
 
 ### Sesija 5 — Kalendar
-```
+
 Pročitaj sve .md fileove.
 
 Adaptiraj Calendar screen na vocnjak_v4:
 - plans prikazati kao "planned" (žuta točka)
 - activities sa status "done" prikazati kao "done" (zelena točka)
-- activities sa status "skipped" prikazati kao "skipped" (siva točka)
-  (prikaži skipped vizualno čak i ako add flow ne može još kreirati skipped)
+
+Ne uvoditi "skipped" kao activity status ili storage vrijednost.
 
 Commitaj i pushaj.
-```
 
 ---
 
@@ -302,30 +301,37 @@ Commitaj i pushaj.
 
 Pročitaj sve .md fileove.
 
-Implementiraj plan matching logiku:
+Implementiraj READ-ONLY plan matching i state derivation logiku za UI.
 
-Za svaki plan:
+Za svaki plan i biljku:
 - pronađi matching aktivnosti u activities[]
 
 Matching uvjeti:
 - activity.type == plan.activityType
 - activity.plantIds uključuje plantId (ili plan.appliesToAll == true)
-- activity.date unutar plan windowa (monthStart/dayStart → monthEnd/dayEnd)
+- activity.date je unutar plan windowa uz toleranciju
 
-Izračunaj status po planu i biljci:
-- done → postoji matching activity sa status "done"
-- skipped → prošao window, nema done activity
-- planned → window još traje, nema aktivnosti
+Pravila datuma:
+- koristiti date-only usporedbu (YYYY-MM-DD)
+- ignorirati time component
+- plan window je inclusive
+- tolerancija je simetrična i iznosi ±7 dana
 
-Napomene:
-- matching MUST koristiti već normalizirani activity type (bez UI promjena)
+Izvedeni stateovi:
+- upcoming → prije starta windowa
+- active → unutar windowa
+- done → postoji matching activity
+- missed → prošao je window + tolerancija, a nema matching activity
+
+Pravila:
+- matching MUST koristiti već normalizirani plan activity type
+- activity.type se NE normalizira
 - logika je READ-ONLY (ne spremati ništa u storage)
-- koristiti ovu logiku samo za UI (calendar, plant view, itd.)
-
-Ne uvoditi nove fieldove u model.
+- koristiti ovu logiku samo za UI
+- ne uvoditi nove fieldove u model
+- ne uvoditi "skipped" state
 
 Commitaj i pushaj.
-
 ---
 
 ## Usable milestone
