@@ -123,6 +123,20 @@ Varieties are included ONLY when:
 - timing significantly differs
 - adds real value
 
+### Timing constraint
+
+Allowed timing values:
+
+- early
+- mid
+- late
+
+No combined values (e.g. early_mid) are allowed.
+
+Reason:
+- keeps engine simple
+- avoids ambiguity
+
 ### Example (Apple)
 
 - Fuji → Late
@@ -158,7 +172,7 @@ Example structure:
     "label": "Apple",
     "varieties": {
       "fuji": { "timing": "late" },
-      "gala": { "timing": "early_mid" },
+      "gala": { "timing": "mid" },
       "granny_smith": { "timing": "late" }
     },
     "fallback": ["early", "mid", "late"]
