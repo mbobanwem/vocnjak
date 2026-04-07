@@ -122,6 +122,10 @@ vocnjak_alerts
 
 ## Fazni plan — sesije za Code
 
+> NAPOMENA: Session brojevi u ovom planu su originalni seed plan iz ranog razvoja.
+> Za aktualne session brojeve i redoslijed izvršavanja:
+> → EXECUTION_ROADMAP_V1.md je jedini autoritativni izvor.
+
 ### Sesija 1 — Migration only
 
 Pročitaj sve .md fileove.
