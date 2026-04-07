@@ -82,13 +82,22 @@ Examples:
 
 ---
 
-### Step 3 — Fallback (required if variety unknown)
+### Step 3 — Fallback (required ONLY if variety is NOT selected)
 
 User selects:
 
 - Early
 - Mid
 - Late
+
+---
+
+### Rule
+
+- variety and fallback are mutually exclusive
+- system must enforce exactly one timing source:
+  - variety → timing from catalog
+  - fallback → manual timing group
 
 ---
 
@@ -196,23 +205,49 @@ Example structure:
 
 ## 10. Citrus Special Handling
 
+## 10. Citrus Special Handling
+
 Citrus is grouped but uses a different timing model.
 
 ---
 
 ### Data model
 
-```json
-{
-  "citrus": {
-    "label": "Citrus",
-    "subtypes": {
-      "lemon": { "seasonProfile": "multi_cycle" },
-      "orange": { "seasonProfile": "winter" },
-      "mandarin": { "seasonProfile": "autumn" }
+    {
+      "citrus": {
+        "label": "Citrus",
+        "subtypes": {
+          "lemon": { "seasonProfile": "multi_cycle" },
+          "orange": { "seasonProfile": "winter" },
+          "mandarin": { "seasonProfile": "autumn" }
+        }
+      }
     }
-  }
-}
+
+---
+
+### Rules
+
+- user selects citrus → subtype required
+- citrus does NOT use Early/Mid/Late
+- citrus does NOT use timing
+- uses seasonProfile instead
+
+---
+
+### Reason
+
+Citrus does not follow standard orchard cycle:
+
+- multiple flowering cycles (lemon)
+- winter harvest (orange)
+- different seasonal logic
+
+Separating model avoids:
+
+- complex conditional logic
+- mixing incompatible timing systems
+
 ---
 
 ## 11. UX Constraints
