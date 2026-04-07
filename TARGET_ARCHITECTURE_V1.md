@@ -11,7 +11,7 @@ The goal is to:
 
 ---
 
-# DATA MODEL
+## Data Model
 
 ```js
 {
@@ -19,178 +19,203 @@ The goal is to:
   activities: Activity[],
   plans: Plan[]
 }
+```
 
-Core structure
-	•	plants → object keyed by id
-	•	activities → global array
-	•	plans → predefined array (read-only definitions)
+### Core structure
 
-⸻
+- plants → object keyed by id
+- activities → global array
+- plans → predefined array (read-only definitions)
 
-CORE PRINCIPLES
+---
 
-1. Activities = source of truth
+## Core Principles
+
+### 1. Activities = source of truth
 
 Activities represent real-world actions.
-	•	every real action is stored as an activity
-	•	activities are never derived
-	•	activities drive history, calendar, and execution
 
-⸻
+- every real action is stored as an activity
+- activities are never derived
+- activities drive history, calendar, and execution
 
-2. Plans = intent (NOT execution)
+---
+
+### 2. Plans = intent (NOT execution)
 
 Plans define what should happen, not what did happen.
-	•	plans are read-only
-	•	plans are not modified by user actions
-	•	plans do NOT store execution state
 
-⸻
+- plans are read-only
+- plans are not modified by user actions
+- plans do NOT store execution state
 
-3. Execution is derived
+---
+
+### 3. Execution is derived
 
 Plan execution state is ALWAYS derived from activities.
 
-Derived states include:
-	•	upcoming
-	•	active
-	•	done
-	•	missed
-	•	late
+#### Derived states
 
-Rules:
-	•	based on plan window (month/day)
-	•	based on matching activity (DOMAIN_RULES 5.5)
-	•	based on tolerance (DOMAIN_RULES 5.6)
+- upcoming
+- active
+- done
+- missed
+- late
 
-Storage rules:
-	•	do NOT persist plan state
-	•	do NOT add fields to plans
-	•	do NOT mutate plans
+#### Rules
 
-Principle:
-Plans define intent.
+- based on plan window (month/day)
+- based on matching activity (DOMAIN_RULES 5.5)
+- based on tolerance (DOMAIN_RULES 5.6)
+
+#### Storage rules
+
+- do NOT persist plan state
+- do NOT add fields to plans
+- do NOT mutate plans
+
+#### Principle
+
+Plans define intent.  
 Activities define reality.
 
-⸻
+---
 
-DATA FLOW
+## Data Flow
 
-Plant → Activity → Plan relationship
-	•	plants are independent entities
-	•	activities reference plants via plantIds[]
-	•	plans may target:
-	•	all plants
-	•	specific plants
+### Plant → Activity → Plan relationship
 
-Matching:
-	•	activity.type must match plan.activityType
-	•	plant overlap must exist (or appliesToAll = true)
+- plants are independent entities
+- activities reference plants via `plantIds[]`
+- plans may target:
+  - all plants
+  - specific plants
 
-⸻
+#### Matching
 
-ARCHITECTURAL CONSTRAINTS
-	•	single-file app (index.html)
-	•	no frameworks
-	•	localStorage persistence
-	•	no backend dependency (V1)
-	•	no over-engineering
+- `activity.type === plan.activityType`
+- plant overlap exists OR `appliesToAll === true`
 
-⸻
+---
 
-PLANT CATALOG (FUTURE LAYER)
+## Architectural Constraints
+
+- single-file app (index.html)
+- no frameworks
+- localStorage persistence
+- no backend dependency (V1)
+- no over-engineering
+
+---
+
+## Plant Catalog (Future Layer)
 
 Plants should be selected from a predefined catalog (UI layer).
 
-Catalog defines:
-	•	plant type (apple, cherry, plum…)
-	•	optional varieties
-	•	optional rootstocks
-	•	future timing profiles
+### Catalog defines
 
-Rules:
-	•	catalog is NOT stored in v4 data model
-	•	plant type in storage remains a string
-	•	catalog is used only for input consistency
+- plant type (apple, cherry, plum)
+- optional varieties
+- optional rootstocks
+- future timing profiles
 
-Purpose:
-	•	consistent naming
-	•	enable translation
-	•	enable future recommendations
+### Rules
 
-⸻
+- catalog is NOT stored in v4 data model
+- plant type in storage remains a string
+- catalog is used only for input consistency
 
-TRANSLATION MODEL
+### Purpose
+
+- consistent naming
+- enable translation
+- enable future recommendations
+
+---
+
+## Translation Model
 
 The app uses a dictionary-based translation system.
 
-Rules:
-	•	English (EN) is the source language
-	•	all internal values use EN keys
-	•	UI is translated via dictionary
+### Rules
 
-Example:
-	•	“spraying” → “prskanje” (HR)
+- English (EN) is the source language
+- all internal values use EN keys
+- UI is translated via dictionary
 
-User settings:
-	•	selected language must be stored
-	•	UI renders based on selected language
+### Example
 
-Principle:
-	•	data is language-neutral
-	•	UI is localized
+- "spraying" → "prskanje" (HR)
 
-⸻
+### User settings
 
-ONBOARDING STATE
+- selected language must be stored
+- UI renders based on selected language
+
+### Principle
+
+- data is language-neutral
+- UI is localized
+
+---
+
+## Onboarding State
 
 The app must support first-run onboarding.
 
-Rules:
-	•	onboarding is triggered when no plants exist
-	•	onboarding collects:
-	•	language
-	•	first plant(s)
-	•	onboarding completion must be stored
+### Rules
 
-Constraints:
-	•	user must create at least one plant
-	•	plant type must come from catalog (UI constraint)
+- onboarding is triggered when no plants exist
+- onboarding collects:
+  - language
+  - first plant(s)
 
-Principle:
-	•	no empty app state
-	•	user must enter a valid starting context
+### Constraints
 
-⸻
+- user must create at least one plant
+- plant type must come from catalog (UI constraint)
+- onboarding completion must be stored
 
-WHAT IS NOT IN V1
+### Principle
+
+- no empty app state
+- user must enter a valid starting context
+
+---
+
+## What is NOT in V1
 
 The following are intentionally excluded:
-	•	weather engine
-	•	disease model
-	•	product database
-	•	AI recommendations
-	•	zones / garden hierarchy
-	•	automation / scheduling engine
+
+- weather engine
+- disease model
+- product database
+- AI recommendations
+- zones / garden hierarchy
+- automation / scheduling engine
 
 These are future layers built on top of:
-	•	activities
-	•	plans
-	•	domain rules
 
-⸻
+- activities
+- plans
+- domain rules
 
-FINAL PRINCIPLE
+---
+
+## Final Principle
 
 Keep the model simple.
 
 Do not:
-	•	add unnecessary fields
-	•	introduce derived data into storage
-	•	mutate plans
-	•	over-engineer structure
+
+- add unnecessary fields
+- introduce derived data into storage
+- mutate plans
+- over-engineer structure
 
 Build on top of:
-	•	activities (reality)
-	•	plans (intent)
-	•	domain rules (logic)
+
+- activities (reality)
+- plans (intent)
+- domain rules (logic)
