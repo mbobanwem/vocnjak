@@ -23,6 +23,26 @@ This file does NOT change the V1 data model.
 If any conflict exists:
 - MIGRATION_PLAN_V1.md wins
 
+## LANGUAGE RULES (GLOBAL)
+
+All internal data values MUST remain in English.
+
+Examples:
+- plant type: `apple`
+- activity type: `spraying`
+- timing group: `early`, `mid`, `late`, `unknown`
+
+Rules:
+- UI labels are localized
+- localized labels MUST NEVER be stored in data
+- variety names are not translated
+- internal values are the only source used by logic / matching / engine
+
+Examples:
+- store `apple`, show `Jabuka`
+- store `spraying`, show `Prskanje`
+- store `late`, show `Kasna`
+
 ---
 
 # 1. PLANT MODEL (V1)
@@ -63,6 +83,28 @@ Rule:
 - use `forming` as default safe state
 - use `issue` only for clearly problematic / urgent state
 - do not invent new statuses without explicit approval
+
+## Plant Input Rules (V1 display / UX)
+
+Current V1 storage does NOT include a dedicated `type` field.
+
+Rules:
+- plant `type` may be shown in UI as a derived display value only
+- derived type MUST NOT be stored back into V1 model unless explicitly approved
+- if type cannot be derived safely, show placeholder `—`
+
+Plant detail display fields in V1:
+- `name`
+- derived `type`
+- `variety`
+- `rootstock`
+- `plantedDate`
+- `status`
+
+Display rules:
+- if `variety`, `rootstock`, or `plantedDate` is empty → show `—`
+- `plantedDate` is displayed in localized UI format
+- V1 plant detail is read-only unless explicitly approved otherwise
 
 ---
 
@@ -172,6 +214,12 @@ Defaults:
 - notes default to empty string
 - product defaults to empty string
 
+Rules:
+- internal stored `type` remains English
+- UI labels may be localized
+- save must fail if required fields are invalid
+- save must never create partial activity objects
+
 ## Add Plant
 
 Minimum required user input:
@@ -185,13 +233,32 @@ Defaults:
 If planted date is not changed:
 - today is acceptable default
 
+Rules:
+- V1 plant creation remains compatible with existing V1 fields only
+- no additional plant fields may be introduced without approval
+
 ---
 
 # 5. CURRENT RECOMMENDATION / DISPLAY RULES (V1)
 
 These rules are deterministic and must remain compatible with current V1 fields.
 
-## 5.1 Young Plant Rule
+## 5.1 Active Work Model
+
+V1 does NOT use daily tasks.
+
+The app should surface:
+- active work
+- late work
+
+The app should NOT surface:
+- completed work inside active work list
+- artificial "today-only" tasks
+
+Empty state should communicate:
+- no active work currently
+
+## 5.2 Young Plant Rule
 
 A plant is considered young if:
 - `plantedDate` is within last 12 months
@@ -211,35 +278,72 @@ Then:
 If unsure:
 - show the plan
 
-## 5.2 Watering Gap Rule
+## 5.3 Watering Gap Rule
 
 Watering gap prompt may be shown only if:
 - current month is 4–9
 AND
 - no `watering` activity exists in last 14 days
 
-## 5.3 Plan State Rule
+## 5.4 Plan State Rule
 
-Derived plan states are UI logic only:
+Plan states are derived in UI/runtime only.
 
+Allowed derived states:
 - `upcoming`
 - `active`
 - `done`
 - `missed`
+- `late`
 
-These are derived from:
-- current date
-- plan window
-- matching activity existence
+Rules:
+- do NOT store these states as new V1 fields
+- derive them from current date, plan window, and activities
 
-Do not store these as new fields in V1 unless explicitly approved.
+## 5.5 Matching Activity Rule
 
-## 5.4 Matching Activity Rule
+A plan is matched by an activity only if:
+- `activity.type === plan.activityType`
+- activity date is within plan window
+- AND one of:
+  - `plan.appliesToAll === true`
+  - plant overlap exists between `activity.plantIds` and `plan.plantIds`
 
-A matching activity for a plan means:
-- same `activityType` / `type`
-- activity date within plan window
-- plant overlap OR `appliesToAll === true`
+Rules:
+- exact type match only
+- one matching activity is sufficient
+- one multi-plant activity may satisfy multiple plant-specific plans if overlap exists
+
+## 5.6 Timing Tolerance Rule
+
+V1 allows limited tolerance for real-world delays.
+
+Rule:
+- late completion may still count as valid if activity happens within approximately 7 days after plan window
+
+Purpose:
+- avoid false missed states due to rain / weather / unavoidable delay
+
+Rules:
+- do NOT globally shift all future plan windows
+- tolerance is local to matching logic
+- original seasonal timing should be preserved whenever possible
+
+## 5.7 Late Work Rule
+
+If:
+- plan window has passed
+- no matching activity exists within plan window or tolerance
+
+Then:
+- plan may be shown as late / missed in UI
+
+If:
+- matching activity exists
+
+Then:
+- do not show it in active work list
+- show it only through history / completed state rendering
 
 ---
 
@@ -251,12 +355,16 @@ A matching activity for a plan means:
 - no implicit conversions
 - no hidden fields
 - no alternative naming
+- use internal English values for logic even when UI is localized
+- do not store translated labels in data
 
 Examples:
 - use `plantedDate`, NOT `plantingDate`
 - use `notes`, NOT `note`
 - use `product`, NOT `products`
 - use `type` internal English value, not localized stored value
+- use `apple`, NOT `jabuka`
+- use `late`, NOT `kasna`
 
 ---
 
