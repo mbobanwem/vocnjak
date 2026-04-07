@@ -1,137 +1,370 @@
-# UX IMPROVEMENTS
-
-## Core principle
-App must be fast and usable on iPhone with one hand.
-One core question drives every screen: "Do I need to do something now?"
+# UX IMPROVEMENTS V1 (FINAL)
 
 ---
 
-## Mental model
+## 1. Core Principle
+
+App must be fast, simple, and usable on iPhone with one hand.
+
+Every screen answers one question:
+
+> "Do I need to do something now?"
+
+---
+
+## 2. Mental Model
+
 Seasonal orchard assistant — not a task manager.
 
-Tracks what happened.
-Surfaces what's relevant now.
-Reminds about open work windows.
+- Tracks what happened (activities)
+- Understands seasonal timing (plans)
+- Surfaces what is relevant now
+- Respects real-world constraints (weather, delays, biology)
 
-Does not schedule.
-Does not alert in real-time.
-
----
-
-## Dashboard
-
-**Goal:** Answer "Is there anything open right now?"
-
-**Structure:**
-1. Current month label
-2. Active plan windows (plans whose window includes current date)
-3. Recent activity — minimal: date + type only
-4. Young plant notice — one static line if relevant
-
-**Rules:**
-- "Nothing to do" is a valid and explicit state
-- Never show blank screen
-- No long lists
-- No weekly grouping
-- Do not silently hide items (dataset is expected to stay small)
-- Spray recommendation space is reserved but empty until weather widget is restored
+Does NOT:
+- schedule tasks
+- create artificial deadlines
+- spam notifications
+- behave like a todo app
 
 ---
 
-## Plan states (V1)
+## 3. Onboarding (MANDATORY)
 
-Derived at render time using current date:
+User MUST complete onboarding before using the app.
 
-| State   | Condition |
-|---------|----------|
-| upcoming | current date < window start |
-| active   | current date within window |
-| done     | window passed AND matching activity exists |
-| missed   | window passed AND no matching activity |
+### Minimum required:
 
-**Matching activity:**
-- same activityType (exact match)
-- date within plan window
-- plant overlap OR appliesToAll = true
+1. Select region (coarse)
+   - Continental
+   - Mediterranean
+   - Alpine / Cold
 
-No additional states in V1.
+2. Fine tuning (optional but recommended)
+   - slider: -14 to +14 days seasonal shift
 
----
-
-## Add Activity
-
-Must be the fastest flow in the app.
-
-- Minimal steps
-- Multi-select plants
-- Quick save
-- Default date: today
+3. Add at least 1 plant
+   - if user skips → create placeholder plant
 
 ---
 
-## Plant Detail
+## 4. Plant Catalog (CONTROLLED INPUT)
 
-- Clear status
-- Activity history (newest first)
-- No noise
+User does NOT type plant names.
 
----
+### Selection flow:
 
-## Calendar
+1. Choose plant type:
+   - Apple
+   - Pear
+   - Plum
+   - Cherry
+   - Peach
+   - Nectarine
+   - Apricot
+   - Olive
+   - Fig
+   - Citrus (group)
+     - Lemon
+     - Orange
+     - Mandarin
 
-- Planned windows: visual marker
-- Done activities: visual marker
-- Missed windows: visual marker (derived, not manual)
-- Easy monthly overview
+2. Choose variety (if known)
 
----
+3. OR fallback:
+   - Early
+   - Mid
+   - Late
 
-## Context-aware filtering (young trees)
-
-Trees in establishment phase should not see plans relevant only to mature trees.
-
-**Definition (V1):**
-- plantedDate within last 12 months OR status === "forming"
-
-**Rules:**
-- Hide fruiting-context plans (harvest, traps, nets)
-- Never hide care plans (watering, pruning, spraying, fertilizing, observation)
-- When in doubt → show the plan
-
----
-
-## Contextual prompts
-
-Maximum three types in V1:
-
-1. Active plan window with no logged activity
-2. Young plant notice (single static line)
-3. Watering gap
-
-**Watering gap rule:**
-- no watering activity in last 14 days
-- only during growing season (months 4–9)
-
-Any new prompt type requires explicit decision.
+Each plant must have:
+- type
+- timing profile (derived from variety OR fallback)
 
 ---
 
-## Equipment / tools
+## 5. Plan Evaluation Engine (CORE)
 
-- Static contextual hints only
-- No inventory
-- No new entity
-- No separate screen
+Plans are evaluated dynamically at render time.
+
+### Plan states:
+
+| State     | Condition |
+|----------|----------|
+| upcoming | before window |
+| active   | inside window |
+| done     | matched activity exists |
+| missed   | window passed + no match |
 
 ---
 
-## Anti-patterns
+### Matching rules (aligned with DOMAIN 5.5):
 
-- Task manager UX
-- Weekly planning views
-- Long lists
-- Hidden actions
-- Desktop-style UI
-- Decorative UI without function
-- Prompts that create anxiety
-- Blank states that look like errors
+A plan is matched if:
+
+- activity.type === plan.activityType (exact match only)
+- activity date is within:
+  - plan window OR
+  - allowed tolerance window (see 5.6)
+- AND:
+  - appliesToAll = true
+  OR
+  - plant overlap exists
+
+Rules:
+- one match is enough
+- duplicates allowed
+- no fuzzy matching
+
+---
+
+### Tolerance window (DOMAIN 5.6)
+
+Matching is allowed slightly outside plan window.
+
+Used when:
+- user delayed activity
+- weather prevented execution
+
+---
+
+### Delay handling (CRITICAL RULE)
+
+If an activity is completed late:
+
+- DO NOT shift entire plan sequence
+- ONLY adjust next interval
+
+Example:
+
+- Oil spray delayed → Feb 12
+- Copper normally 15 days after
+- Next window becomes ~10 days (compressed)
+
+---
+
+## 6. Context Rules
+
+---
+
+### 6.1 Young plants
+
+Definition:
+
+- planted within last 12 months
+OR
+- status === "forming"
+
+Rules:
+
+Hide:
+- harvest
+- fruit thinning
+- traps
+- nets
+
+Always show:
+- watering
+- pruning
+- spraying
+- fertilizing
+- observation
+
+---
+
+### 6.2 Region + Fine tuning
+
+Final timing =
+
+plan base date  
++ region offset  
++ user fine tuning
+
+---
+
+### 6.3 Safety layer
+
+#### Bee warning
+
+Show warning if:
+- activity = spraying
+- plant is flowering
+
+UI:
+"⚠️ Do not spray during flowering (bees active)"
+
+---
+
+#### Pre-harvest restriction (Karenca)
+
+If activity too close to harvest:
+
+UI:
+"⚠️ Too close to harvest — check product waiting period"
+
+---
+
+## 7. Dashboard (PRIORITIZED VIEW)
+
+Goal:
+
+> "What matters right now?"
+
+---
+
+### Order of elements:
+
+1. Active plan windows (highest priority)
+2. Warnings (bee / karenca)
+3. Context prompts
+4. Recent activity (minimal)
+
+---
+
+### Rules:
+
+- max 5 visible items
+- no scrolling required
+- "Nothing to do" is valid state
+- never show empty screen
+
+---
+
+## 8. Calendar
+
+Monthly overview combining:
+
+- plans (windows)
+- activities
+
+---
+
+### Visual markers:
+
+- planned → yellow
+- done → green
+- missed → red/gray
+
+---
+
+### Click behavior:
+
+On day click:
+
+Show:
+
+1. Activities (real actions)
+2. Plans (context)
+
+---
+
+### Rules:
+
+- do NOT hide data
+- do NOT group by week
+- keep simple
+
+---
+
+## 9. Add Activity (FASTEST FLOW)
+
+Must be the fastest interaction.
+
+---
+
+### Defaults:
+
+- date = today
+- last used type (optional future)
+
+---
+
+### Input:
+
+- type (required)
+- plant(s) (multi-select)
+- date
+- optional:
+  - product
+  - notes
+
+---
+
+### Rules:
+
+- no complex forms
+- no validation friction
+- instant save
+
+---
+
+## 10. Prompt System (LIMITED)
+
+Max 3 prompt types:
+
+---
+
+### 1. Active plan without activity
+
+Trigger:
+- plan is active
+- no matching activity
+
+---
+
+### 2. Watering gap
+
+Trigger:
+- no watering in last 14 days
+- months 4–9 only
+
+---
+
+### 3. Young plant notice
+
+Static info
+
+---
+
+### Rules:
+
+- max 3 prompts at once
+- no spam
+- no anxiety UX
+
+---
+
+## 11. Equipment / Tools
+
+- static hints only
+- no inventory
+- no tracking
+
+Example:
+"For cherry harvest, consider bird net"
+
+---
+
+## 12. Anti-patterns
+
+NEVER:
+
+- task manager UX
+- weekly planning
+- long lists
+- hidden logic
+- forced workflows
+- desktop UI
+- notification spam
+- artificial urgency
+
+---
+
+## FINAL PRINCIPLE
+
+The app must feel like:
+
+> "A calm expert standing next to you in the orchard"
+
+Not:
+
+> "A system telling you what to do"
