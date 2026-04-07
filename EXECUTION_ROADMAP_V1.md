@@ -426,9 +426,14 @@ Rules:
 - no additional plan fields exist
 - no manual plan state manipulation exists
 
+# PHASE 2 — ORCHARD INTELLIGENCE
+
+Goal:
+Move from logger to assistant.
+
 ---
 
-### Session 14 — Context-Aware Filtering
+## Session 14 — Context-Aware Filtering
 
 ### Goal
 Use existing data to suppress irrelevant plans before rendering.
@@ -505,6 +510,7 @@ Rules:
 ---
 
 ## Session 15 — Recommendation Engine V1
+
 ### Goal
 Show what is relevant now.
 
@@ -556,6 +562,11 @@ Rules:
 ### Done when
 - weather is shown only when spraying context exists
 - spraying-related decisions have meaningful weather context
+
+# PHASE 3 — DATA SAFETY / RESTORE FEATURES
+
+Goal:
+Restore important support features after the core loop is stable.
 
 ---
 
