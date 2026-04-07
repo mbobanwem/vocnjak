@@ -101,9 +101,9 @@ Rules:
 
 - NO additional states allowed
 - "late" MUST NOT exist
+- "skipped" MUST NOT exist
 - state MUST NOT be stored
 - state MUST be derived on each render
-- "skipped" MUST NOT exist
 
 ---
 
