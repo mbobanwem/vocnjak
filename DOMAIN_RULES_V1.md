@@ -160,6 +160,10 @@ Rule:
 - do not invent additional activity statuses in V1 unless explicitly approved
 - skipped/missed logic may be derived in UI, but not invented in storage without approval
 
+Note:
+Detailed validation and behavior rules are defined in section #9.
+Section #2 defines structure and allowed values only.
+
 ---
 
 # 3. PLAN MODEL (REFERENCE ONLY)
@@ -193,6 +197,18 @@ plan = {
 - applicability is defined only by:
   - `appliesToAll`
   - `plantIds`
+
+## Plan Behavior Rules (V1)
+
+- plans are predefined and stored
+- plans are NOT generated dynamically in V1
+- plans are read-only in V1
+- plan execution state is derived at runtime (see section 5)
+
+Strict rules:
+- do NOT mutate plan data
+- do NOT generate new plans without explicit instruction
+- do NOT adjust plan windows in storage
 
 ---
 
@@ -242,6 +258,10 @@ Rules:
 # 5. CURRENT RECOMMENDATION / DISPLAY RULES (V1)
 
 These rules are deterministic and must remain compatible with current V1 fields.
+
+## Principle
+
+Plans represent seasonal guidance, not strict schedules.
 
 ## 5.1 Active Work Model
 
@@ -296,18 +316,29 @@ Allowed derived states:
 - `missed`
 - `late`
 
+Note:
+V1 does not account for rainfall or weather conditions.
+This rule is heuristic only.
+
 Rules:
 - do NOT store these states as new V1 fields
 - derive them from current date, plan window, and activities
 
 ## 5.5 Matching Activity Rule
 
+# 5.5 Matching Activity Rule
+
 A plan is matched by an activity only if:
 - `activity.type === plan.activityType`
-- activity date is within plan window
+- activity date is within plan window OR within allowed tolerance window (see 5.6)
 - AND one of:
   - `plan.appliesToAll === true`
   - plant overlap exists between `activity.plantIds` and `plan.plantIds`
+
+If multiple matching activities exist:
+- first valid match is sufficient
+- do not require unique mapping
+- do not invalidate plan if duplicates exist
 
 Rules:
 - exact type match only
@@ -328,6 +359,12 @@ Rules:
 - do NOT globally shift all future plan windows
 - tolerance is local to matching logic
 - original seasonal timing should be preserved whenever possible
+
+Early execution:
+
+- activity may be considered valid if performed slightly before window,
+  if agronomically acceptable (no strict rule in V1)
+- do not over-restrict early execution in V1
 
 ## 5.7 Late Work Rule
 
@@ -357,6 +394,7 @@ Then:
 - no alternative naming
 - use internal English values for logic even when UI is localized
 - do not store translated labels in data
+- do not infer or derive new fields into stored objects
 
 Examples:
 - use `plantedDate`, NOT `plantingDate`
@@ -518,5 +556,7 @@ V1 must be:
 - predictable
 - explainable
 - migration-safe
+
+Real-world execution always overrides strict calendar assumptions.
 
 Keep it simple.
