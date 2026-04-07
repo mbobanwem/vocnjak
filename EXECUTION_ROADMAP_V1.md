@@ -166,10 +166,34 @@ Rules:
 - no heuristic shortcuts
 - plan states must follow DOMAIN_RULES 5.4
 
+## Activity ↔ Plan Matching Rule (STRICT)
+
+A plan is considered DONE if:
+
+- activity.type === plan.activityType
+- AND activity.plantIds includes the plant
+- AND activity.date is within:
+  plan window ± tolerance
+
+No fuzzy matching allowed.
+
 ### Done when
 - calendar correctly shows plan states
 - done is derived only via activity matching
 - tolerance works (up to 7 days)
+
+## Timing Resolution Rule (MANDATORY)
+
+Plan timing MUST be resolved in this order:
+
+1. variety timing (if known)
+2. timing group fallback (if provided)
+3. species default timing
+
+Rules:
+- timing MUST NOT be guessed
+- timing MUST always resolve to a single deterministic window
+- no UI should expose this complexity
 
 ---
 
@@ -219,11 +243,26 @@ Rules:
 ### Done when
 - app no longer shows obviously wrong work for young plants
 
+## Citrus Rule (MANDATORY)
+
+Citrus plants MUST be handled separately:
+
+- no dormancy logic
+- no winter pruning plans
+- no deciduous-based timing assumptions
+
+Filtering MUST respect plant type category.
 ---
 
 ## Session 15 — Recommendation Engine V1
 ### Goal
 Show what is relevant now.
+
+Inputs:
+- plans (resolved timing)
+- activities
+- plant status
+- current date
 
 ### Scope
 - active plan window prompt
