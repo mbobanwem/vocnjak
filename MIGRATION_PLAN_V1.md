@@ -7,46 +7,48 @@ Status: LOCKED — ne mijenjati bez eksplicitnog odobrenja.
 ## Decisions
 
 ### 1. Plants structure
-Plants je object keyed by id, ne array.  
+Plants je object keyed by id (ne array).  
 Activities i plans su arrays.
 
-Primjer strukture:
-plants:
-  plant_tresnja:
-    id: plant_tresnja
-  plant_jabuka:
-    id: plant_jabuka
-
-activities: []
-plans: []
+Struktura:
+- plants: { [plantId]: plant }
+- activities: []
+- plans: []
 
 ---
 
 ### 2. Plant fields V1
 
-id: plant_tresnja  
-name: Trešnja Kordia  
-variety: Kordia  
-rootstock: Gisela 5  
-plantedDate: 2026-03-15  
-status: forming  
-legacyStatus: prati  
-notes: ""
+Obavezna polja:
+- id
+- name
+- variety
+- rootstock
+- plantedDate
+- status (forming | issue)
+- legacyStatus (originalni status iz v3)
+- notes
+
+Pravilo:
+- legacyStatus se uvijek čuva (ne briše se)
 
 ---
 
 ### 3. Activity fields V1
 
-id: act_abc123  
-type: spraying  
-date: 2026-03-22  
-status: done  
-plantIds: [plant_tresnja, plant_jabuka]  
-product: ""  
-notes: Prskano bakrom (Cuprablau Z 35 WG) – zimski tretman.
+Obavezna polja:
+- id
+- type (spraying, pruning, fertilizing, watering, planting, harvest, observation)
+- date (YYYY-MM-DD)
+- status (done)
+- plantIds (array)
+- product (string, optional)
+- notes (string, original tekst)
 
-Product je uvijek prazan u migraciji.  
-Cijeli originalni tekst ostaje u notes.
+Pravila:
+- product je uvijek prazan u migraciji
+- cijeli originalni tekst ide u notes
+- ne uvoditi nove type-ove
 
 ID format:
 act_ + Date.now() + _ + Math.random().toString(36).slice(2,7)
@@ -55,20 +57,25 @@ act_ + Date.now() + _ + Math.random().toString(36).slice(2,7)
 
 ### 4. Plan fields V1
 
-id: plan_xyz789  
-title: Bijelo ulje  
-activityType: spraying  
-appliesToAll: true  
-plantIds: []  
-monthStart: 2  
-dayStart: 1  
-monthEnd: 2  
-dayEnd: 14  
-skipYear: 2026  
-notes: ""
+Obavezna polja:
+- id
+- title
+- activityType (mora odgovarati activity.type)
+- appliesToAll (boolean)
+- plantIds (array)
+- monthStart
+- dayStart
+- monthEnd
+- dayEnd
+- skipYear (optional)
+- notes
 
-appliesToAll: true za globalne planove  
-plantIds ostaje prazan kad je appliesToAll true
+Pravila:
+- ako appliesToAll = true → plantIds ostaje []
+- render logika: appliesToAll ili plantIds.includes(plantId)
+
+ID format:
+plan_ + Date.now() + _ + Math.random().toString(36).slice(2,7)
 
 ---
 
@@ -79,7 +86,10 @@ prati → forming
 hitno → issue  
 odradjeno → forming  
 
-legacyStatus se uvijek čuva
+Pravila:
+- sumnja → forming
+- issue koristiti samo za hitno
+- legacyStatus čuva original
 
 ---
 
@@ -100,9 +110,9 @@ analiza → observation
 
 ### 7. Storage keys
 
-vocnjak_v3  
-vocnjak_v3_premigration  
-vocnjak_v4  
+vocnjak_v3 (stari model — ne dirati)  
+vocnjak_v3_premigration (backup prije migracije)  
+vocnjak_v4 (novi model)  
 vocnjak_user_key  
 vocnjak_weather_cache  
 vocnjak_alerts  
@@ -116,19 +126,50 @@ vocnjak_alerts
 Pročitaj sve .md fileove.
 
 Napiši migrateV3toV4():
-- ulaz: vocnjak_v3
-- izlaz: plants, activities, plans
 
-- napravi backup vocnjak_v3_premigration
-- validiraj:
-  plants je object
-  activities array
-  plans array
+Ulaz:
+- localStorage.vocnjak_v3
 
-Ako fail → NE spremati vocnjak_v4  
-Ako success → spremi vocnjak_v4  
+Izlaz:
+- { plants: {}, activities: [], plans: [] }
 
-Ne dirati UI.
+Koraci:
+1. Spremi backup:
+   vocnjak_v3 → vocnjak_v3_premigration
+
+2. Migracija:
+- plants:
+  - pretvori u object keyed by "plant_" + stari key
+- entries → activities:
+  - mapiraj type (prema Type mapping)
+  - product = ""
+  - notes = original tekst
+  - status = "done"
+- todos → plans:
+  - monthStart/dayStart logika
+  - appliesToAll ako je bilo "za sve"
+
+3. Status mapping:
+- mapirati prema pravilima
+- legacyStatus spremiti original
+
+4. Validacija:
+- plants je object i nije prazan
+- activities je array
+- plans je array
+
+5. Ako validacija NE prođe:
+- NE spremati vocnjak_v4
+- NE dirati vocnjak_v3
+- console.error("Migration failed")
+
+6. Ako validacija prođe:
+- spremi vocnjak_v4
+- console.log("Migrirano: X plants, Y activities, Z plans")
+
+Pravila:
+- ne dirati UI
+- ne brisati vocnjak_v3
 
 Commitaj i pushaj.
 
@@ -138,12 +179,17 @@ Commitaj i pushaj.
 
 Pročitaj sve .md fileove.
 
-renderOverview:
-- broj biljki
-- planovi ovaj mjesec
-- aktivnosti ovaj tjedan
+Adaptiraj renderOverview():
 
-Bez weather i alertova.
+Prikaz:
+1. broj biljki → Object.keys(plants).length  
+2. broj planova ovaj mjesec  
+3. broj aktivnosti ovaj tjedan  
+
+Pravila:
+- bez weather widgeta
+- bez alertova
+- bez dodatne logike
 
 Commitaj i pushaj.
 
@@ -153,13 +199,14 @@ Commitaj i pushaj.
 
 Pročitaj sve .md fileove.
 
-renderPlantScreen:
-- plant iz plants
-- activities filtrirane po plantId
-- sortiraj desc
-- status badge
+Adaptiraj renderPlantScreen():
 
-Bez add forme.
+- plant iz plants[plantId]
+- activities filtrirane po plantId
+- sortirati po datumu (najnovije prvo)
+- status badge iz plant.status
+
+Bez add activity forme.
 
 Commitaj i pushaj.
 
@@ -170,22 +217,24 @@ Commitaj i pushaj.
 Pročitaj sve .md fileove.
 
 Form:
+- type (spraying, pruning, fertilizing, watering, planting, harvest, observation)
+- multi-select biljke
+- date (default danas)
+- product (optional)
+- notes (optional)
+
+Spremi activity:
+- id (prema formatu)
 - type
-- plants multi-select
 - date
+- status: done
+- plantIds
 - product
 - notes
 
-Spremi activity:
-id  
-type  
-date  
-status: done  
-plantIds  
-product  
-notes  
-
-Bez novih typeova.
+Pravila:
+- ne koristiti externe biblioteke
+- ne uvoditi nove type-ove
 
 Commitaj i pushaj.
 
@@ -195,46 +244,61 @@ Commitaj i pushaj.
 
 Pročitaj sve .md fileove.
 
-Calendar:
-- plans → planned (žuta)
-- activities done → zelena
+Adaptiraj Calendar:
 
-Ne uvoditi skipped.
+- plans → planned (žuta točka)
+- activities status done → zelena točka
 
-Commitaj i pushaj.
-
----
-
-### Sesija 6 — Weather
-
-Pročitaj sve .md fileove.
-
-- koristi plans za spraying window
-- koristi cache
-- prikaz samo ako postoji aktivan plan
+Pravila:
+- ne uvoditi "skipped"
+- ne spremati ništa novo u model
 
 Commitaj i pushaj.
 
 ---
 
-### Sesija 7 — Export/Import
+### Sesija 6 — Weather widget
 
 Pročitaj sve .md fileove.
 
-- export vocnjak_v4
-- import validacija
+- koristiti plans[] za spraying window
+- uzeti samo aktivne planove (window)
+- koristiti cache (vocnjak_weather_cache)
+- prikazati samo ako postoji aktivan spray plan
 
 Commitaj i pushaj.
 
 ---
 
-### Sesija 8 — Supabase
+### Sesija 7 — Export / Import JSON
 
 Pročitaj sve .md fileove.
 
-- backup vocnjak_v4
-- restore
-- upsert user_key
+Export:
+- kopirati vocnjak_v4 JSON
+
+Import:
+- validirati:
+  plants (object)
+  activities (array)
+  plans (array)
+- spremiti kao vocnjak_v4
+
+Dodati:
+- "zadnji export" timestamp
+
+Commitaj i pushaj.
+
+---
+
+### Sesija 8 — Supabase backup
+
+Pročitaj sve .md fileove.
+
+- backup vocnjak_v4 JSON
+- restore vocnjak_v4 JSON
+- upsert po user_key
+- prikaz "zadnji backup" timestamp
 
 Commitaj i pushaj.
 
@@ -244,26 +308,28 @@ Commitaj i pushaj.
 
 Pročitaj sve .md fileove.
 
-READ-ONLY logika:
+Implementirati READ-ONLY logiku za UI.
 
 Matching:
 - activity.type == plan.activityType
-- plantIds match ili appliesToAll
-- date unutar windowa ±7 dana
+- activity.plantIds uključuje plantId ili appliesToAll
+- activity.date unutar plan windowa ±7 dana
 
 Date pravila:
 - koristiti samo YYYY-MM-DD
-- ignorirati time
+- ignorirati time component
 - window je inclusive
 
-State:
-- upcoming
-- active
-- done
-- missed
+State (derived):
+- upcoming → prije starta windowa
+- active → unutar windowa
+- done → postoji matching activity
+- missed → prošao window + tolerancija bez activity
 
-Ne uvoditi skipped  
-Ne spremati ništa u storage  
+Pravila:
+- ne uvoditi "skipped"
+- ne spremati ništa u storage
+- koristiti samo za UI
 
 Commitaj i pushaj.
 
@@ -271,18 +337,23 @@ Commitaj i pushaj.
 
 ## Usable milestone
 
-Sesije 1–4:
-- migration
-- dashboard
-- plant view
-- add activity
+Nakon sesija 1–4 aplikacija je usable:
+- migration sigurna
+- dashboard radi
+- plant detail radi
+- može se dodati activity
+
+Sesije 5–9 su dodatne (non-blocking).
 
 ---
 
 ## Što nije u V1
 
-- products
-- zones
-- AI
-- multilanguage
-- alerts
+- products[] kao entitet  
+- zones[]  
+- gardens[]  
+- AI analiza  
+- multilanguage  
+- App Store  
+- urgent logika  
+- push notifikacije  
