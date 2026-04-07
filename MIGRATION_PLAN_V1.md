@@ -204,28 +204,39 @@ Commitaj i pushaj.
 ---
 
 ### Sesija 4 — Add Activity
-```
+
 Pročitaj sve .md fileove.
 
 Napravi Add Activity flow:
+
 1. odaberi tip (spraying, pruning, fertilizing,
-   watering, planting, harvest, observation, problem)
+   watering, planting, harvest, observation)
+
 2. multi-select biljke (checkbox lista svih plants)
+
 3. datum (default danas)
+
 4. product (text field, optional)
+
 5. notes (optional)
+
 6. spremi activity:
    {
      id: "act_" + Date.now() + "_" + Math.random().toString(36).slice(2,7),
-     type, date, status: "done",
+     type,
+     date,
+     status: "done",
      plantIds: odabrani,
-     product, notes
+     product,
+     notes
    }
 
-Ne koristiti externe biblioteke za ID generaciju.
+Pravila:
+- NE koristiti externe biblioteke za ID generaciju
+- NE dodavati nove activity type-ove
+- koristiti samo definirane type-ove iz modela
 
 Commitaj i pushaj.
-```
 
 ---
 
@@ -287,17 +298,33 @@ Commitaj i pushaj.
 
 ---
 
-### Sesija 9 — iCal sync
-```
+### Sesija 9 — Plan matching + state derivation
+
 Pročitaj sve .md fileove.
 
-Restore iCal sync na novi model:
-- kad activity dobije status "done",
-  nađi odgovarajući plan u plans[]
-  i ažuriraj .ics na GitHubu
+Implementiraj plan matching logiku:
+
+Za svaki plan:
+- pronađi matching aktivnosti u activities[]
+
+Matching uvjeti:
+- activity.type == plan.activityType
+- activity.plantIds uključuje plantId (ili plan.appliesToAll == true)
+- activity.date unutar plan windowa (monthStart/dayStart → monthEnd/dayEnd)
+
+Izračunaj status po planu i biljci:
+- done → postoji matching activity sa status "done"
+- skipped → prošao window, nema done activity
+- planned → window još traje, nema aktivnosti
+
+Napomene:
+- matching MUST koristiti već normalizirani activity type (bez UI promjena)
+- logika je READ-ONLY (ne spremati ništa u storage)
+- koristiti ovu logiku samo za UI (calendar, plant view, itd.)
+
+Ne uvoditi nove fieldove u model.
 
 Commitaj i pushaj.
-```
 
 ---
 
