@@ -290,19 +290,32 @@ A plant is considered young if:
 OR
 - status === "forming"
 
-Then:
-- suppress fruiting-context plans
-- suppress harvest / traps / nets context
-- never suppress care plans:
-  - watering
-  - pruning
-  - spraying
-  - fertilizing
-  - observation
+Either condition alone is sufficient.
+
+If plant is young, apply this filtering:
+
+HIDE plans where activityType is:
+- harvest
+
+SHOW all other plans, including:
+- watering
+- pruning
+- spraying
+- fertilizing
+- observation
+- planting
+- problem
 
 Rules:
-- filtering must remain deterministic
-- if logic cannot be derived safely, do NOT infer new behavior
+- no interpretation of plan intent allowed
+- pruning is always shown for young plants
+- spraying is always shown for young plants
+- filtering is based only on activityType value
+- no title parsing
+- no heuristics
+- filtering applies at render time only
+- do NOT store a derived "young" field
+- if plantedDate is empty, fall back to status check only
 
 ---
 
