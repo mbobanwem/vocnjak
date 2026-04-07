@@ -73,7 +73,7 @@ Required fields:
 - date (valid ISO date string, format: YYYY-MM-DD)
 - plantIds (non-empty array of strings)
 
-Optional fields:
+Optional input fields:
 - product
 - notes
 
@@ -156,64 +156,17 @@ Rules:
 
 Activity MUST follow this structure:
 
+```js
 {
   id: string,
   type: string,
   date: string,
+  status: "done",
   plantIds: string[],
-  product?: string,
-  notes?: string
+  product: string,
+  notes: string
 }
 
-Rules:
-- id MUST follow pattern: "act_" + Date.now() + random string
-- id MUST be unique
-- plantIds MUST NOT be transformed during save
-- no additional fields allowed
-
----
-
-## Type Consistency Rule (MANDATORY)
-
-Activity type MUST be consistent across:
-
-- Add Activity form
-- Plant detail history
-- Calendar rendering
-- Plan matching logic
-
-Rules:
-- labels and values MUST match exactly
-- no aliasing or mapping at activity level
-- normalization (if needed) happens ONLY at plan layer
-
----
-
-## Scope
-
-- improve Add Activity safety and validation
-- enforce strict type consistency
-- ensure stable save behavior
-- confirm plant detail history reads from v4.activities correctly
-
----
-
-## Out of Scope
-
-- editing activities
-- deleting activities
-- filtering or sorting improvements
-- UI redesign beyond validation-related fixes
-
----
-
-## Done when
-
-- invalid activities cannot be saved
-- activity type is always valid and consistent
-- plantIds always reference existing plants
-- activity list renders without crashes
-- no edge-case activity corrupts the data model
 ---
 
 ## Session 10 — Activity Management
@@ -934,6 +887,7 @@ Decide whether subscription makes sense and what exactly is paid.
 ---
 
 ## Session 24 — Subscription Model Design
+
 ### Goal
 Define monetization only after assistant-level value is proven.
 
@@ -942,21 +896,40 @@ Define monetization only after assistant-level value is proven.
 - do NOT implement paywall
 - do NOT implement subscriptions yet
 
-Rules:
-- subscription must NOT be introduced before:
-  - weather-aware recommendations exist
-  - disease-aware guidance exists
-- basic logging and planning remain free
-- subscription, when introduced, should monetize assistant-level value
+### Gate condition
 
-Current direction:
+Subscription MUST NOT be introduced before:
+- weather-aware spray recommendations exist (Session 16)
+- recommendation engine is live (Session 15)
+
+Until then:
+- core logging remains free
+- no paywall should be introduced
+- monetization stays as future direction only
+
+### Free tier (must remain free)
+- plant management
+- activity logging (all types)
+- activity history
+- basic calendar (plan windows visible)
+- export / import
+
+### Paid tier (intelligence layer)
+- plan state surfaced as actionable prompts ("do this now")
+- watering gap prompts
+- young plant contextual guidance
+- weather-aware spray recommendations
+- equipment / tools hints
+
+### Pricing direction
 - 3€ / month
 - 25€ / year
 
 ### Done when
 - monetization direction is documented
+- free vs paid boundary is clearly defined
 - no payment implementation exists
-- no paywall is introduced before weather + disease layer
+- no paywall is introduced before Sessions 15–16 are complete
 
 ---
 
@@ -1025,14 +998,17 @@ Resolve minor UI / copy / spacing issues only after the main flows are done.
 Subscription is NOT a current implementation priority.
 
 It should be reconsidered only after the app provides assistant-level value through:
-- weather-aware recommendations
-- disease-aware guidance
-- time-saving orchard intelligence
+- weather-aware spray recommendations (Session 16)
+- recommendation engine (Session 15)
 
 Until then:
 - core logging remains free
 - no paywall should be introduced
 - monetization stays as future direction only
+
+Boundary:
+- logging is free
+- intelligence is paid
 
 Current future pricing direction:
 - 3€ / month
