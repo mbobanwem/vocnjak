@@ -103,6 +103,7 @@ Rules:
 - "late" MUST NOT exist
 - state MUST NOT be stored
 - state MUST be derived on each render
+- "skipped" MUST NOT exist
 
 ---
 
