@@ -9,7 +9,7 @@ Resolve only in batch sessions.
 ## RULE
 
 If it's not blocking usage → it goes here.
-
+If an item affects data model, execution logic, validation, or plan matching → it does NOT belong here.
 ---
 
 ## PLANTS
