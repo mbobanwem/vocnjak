@@ -213,7 +213,6 @@ Citrus is grouped but uses a different timing model.
     }
   }
 }
-
 ---
 
 ## 11. UX Constraints
