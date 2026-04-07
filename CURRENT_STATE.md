@@ -11,8 +11,6 @@
 
 ## DATA MODEL
 
-The app supports two data modes:
-
 ### v3 (legacy)
 - data[plantId].entries[]
 - data[plantId].todos[]
@@ -29,64 +27,67 @@ Migration from v3 → v4 is implemented.
 
 ## IMPLEMENTED (V1 SESSIONS)
 
-The following functionality is already implemented:
-
 ### Migration (Session 1)
 - v3 → v4 migration
 - backup of old data
 - safe initialization of v4
 
-### Overview / Dashboard (Session 2)
-- displays:
-  - plant count
-  - plans this month
-  - activities this week
+### Overview / Dashboard — baseline (Session 2)
+- plant count, plans this month, activities this week
 - v4-aware rendering
 
 ### Plant Detail (Session 3)
-- reads from:
-  - v4.plants
-  - v4.activities
-- shows:
-  - plant status
-  - activity history
-- no write operations to legacy model
+- reads from v4.plants and v4.activities
+- shows plant status and activity history
+- no write to legacy model
 
 ### Add Activity (Session 4)
 - form-based activity creation
-- supports:
-  - type
-  - date
-  - multiple plants
-  - notes / product
+- type, date, multi-plant, notes, product
 - saves to v4.activities only
 
 ### Calendar (Session 5)
 - v4-based rendering
-- shows:
-  - planned (yellow)
-  - done (green)
+- planned (yellow), done (green)
 - day click shows relevant items
-- derived plan states (upcoming / active / missed) are not yet implemented
+- derived plan states (upcoming / active / done / missed) not yet implemented
+
+### Calendar Day Click Fix (Session 5A)
+- day click correctly wired to v4 data
+
+### Dashboard Orchard-First Rewrite (Session 6)
+- dashboard redesigned around orchard-first UX direction
+- active plan windows surfaced
+- recent activity minimal display
+- young plant notice
+
+### Add Activity UX Polish (Session 7)
+- improved validation feedback
+- flow tightened
+
+### Fresh-State + Add Plant Unblock (Session 8)
+- fresh-state (no data) handled correctly
+- Add Plant flow accessible from fresh state
 
 ---
 
 ## CURRENT LIMITATIONS
 
-- no recommendation engine yet
+- plan state derivation (upcoming / active / done / missed) not yet implemented
+- no activity edit or delete
+- no recommendation engine
 - no onboarding flow
 - no multi-language support
-- no tools/equipment layer
+- no tools / equipment layer
+- no weather integration restored
 - no subscription logic
 
 ---
 
 ## CURRENT FOCUS
 
-Continue implementing V1 execution roadmap.
-
 Next step:
-→ Session 9 (plan matching + state derivation)
+→ Session 9 — Activities Complete (validation, type consistency, save safety)
 
 ---
 
