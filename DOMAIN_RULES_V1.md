@@ -263,28 +263,32 @@ These rules are deterministic and must remain compatible with current V1 fields.
 
 Plans represent seasonal guidance, not strict schedules.
 
+---
+
 ## 5.1 Active Work Model
 
 V1 does NOT use daily tasks.
 
 The app should surface:
 - active work
-- late work
+- missed work
 
 The app should NOT surface:
 - completed work inside active work list
 - artificial "today-only" tasks
-- completed plans must be excluded from active work list
 
-Empty state should communicate:
-- no active work currently
+Rules:
+- completed plans must be excluded from active work list
+- empty state should communicate that no active work currently exists
+
+---
 
 ## 5.2 Young Plant Rule
 
 A plant is considered young if:
 - plantedDate is within last 12 months from current date
 OR
-- `status === "forming"`
+- status === "forming"
 
 Then:
 - suppress fruiting-context plans
@@ -296,60 +300,66 @@ Then:
   - fertilizing
   - observation
 
-If unsure:
-- show the plan
+Rules:
+- filtering must remain deterministic
+- if logic cannot be derived safely, do NOT infer new behavior
+
+---
 
 ## 5.3 Watering Gap Rule
 
 Watering gap prompt may be shown only if:
 - current month is between April (4) and September (9)
 AND
-- no `watering` activity exists in last 14 days
+- no watering activity exists in last 14 days
+
+---
 
 ## 5.4 Plan State Rule
 
 Plan states are derived in UI/runtime only.
 
 Allowed derived states:
-- `upcoming`
-- `active`
-- `done`
-- `missed`
-- `late`
+- upcoming
+- active
+- done
+- missed
 
 Definition:
-- `done` = at least one matching activity exists (see 5.5)
-
-Note:
-V1 does not account for rainfall or weather conditions.
-This rule is heuristic only.
+- done = at least one matching activity exists (see 5.5)
 
 Rules:
 - do NOT store these states as new V1 fields
-- derive them from current date, plan window, and activities
+- do NOT introduce "late"
+- do NOT introduce "skipped"
+- derive them from current date, plan window, tolerance, and activities
+
+---
 
 ## 5.5 Matching Activity Rule
 
-Priority:
-- activity within plan window has priority over tolerance match
-- if multiple valid activities exist, prefer the closest to plan window
-
 A plan is matched by an activity only if:
-- `activity.type === plan.activityType`
-- activity date is within plan window OR within allowed tolerance window (see 5.6)
+- normalized(activity.type) === normalized(plan.activityType)
+- activity date is within allowed tolerance window (see 5.6)
 - AND one of:
-  - `plan.appliesToAll === true`
-  - plant overlap exists between `activity.plantIds` and `plan.plantIds`
+  - plan.appliesToAll === true
+  - plant overlap exists between activity.plantIds and plan.plantIds
 
 If multiple matching activities exist:
-- first valid match is sufficient
+- one valid match is sufficient
 - do not require unique mapping
 - do not invalidate plan if duplicates exist
 
 Rules:
-- exact type match only
+- exact normalized type match only
 - one matching activity is sufficient
 - one multi-plant activity may satisfy multiple plant-specific plans if overlap exists
+
+Normalization rule:
+- lowercase
+- trimmed string
+
+---
 
 ## 5.6 Timing Tolerance Rule
 
@@ -374,58 +384,54 @@ Purpose:
 - keep matching deterministic
 - avoid ambiguity
 
-## 5.7 Late / Missed Work Rule
+---
+
+## 5.7 Missed Work Rule
 
 If:
-- plan window has passed
-- no matching activity exists within plan window or tolerance
+- effectiveEnd has passed
+- no matching activity exists within window + tolerance
 
 Then:
-- plan may be shown as late / missed in UI
+- plan is shown as missed in UI
 
 If:
 - matching activity exists
 
 Then:
+- plan is done
 - do not show it in active work list
-- show it only through history / completed state rendering
+
+---
 
 ## 5.8 Weather & Safety Constraints
 
-V1 does NOT implement weather-aware or safety-aware decision logic yet.
+V1 does NOT implement weather-aware or safety-aware decision logic.
 
 Rules:
 - do NOT block activities based on weather in V1
 - do NOT block activities based on bloom / pollinator risk in V1
 - do NOT block activities based on pre-harvest interval in V1
-- weather, bee safety, and harvest safety remain future advisory logic only
 
 Display principle:
-- V1 may show general contextual prompts later
+- V1 may show advisory prompts later
 - V1 must NOT enforce safety decisions automatically
 
-Future direction:
-- weather-aware timing
-- avoid spraying during bloom / pollinator activity
-- avoid spraying too close to harvest
+---
 
 ## 5.9 Interval Flexibility Rule
 
-V1 recognizes that real orchard work may compress ideal spacing between operations.
+V1 does NOT recalculate future plan windows.
 
 Rules:
-- real execution may shorten the ideal gap between consecutive operations
-- this does NOT globally shift the full seasonal plan
-- this affects only local interpretation of the next relevant operation
-- V1 does NOT implement full dependency recalculation
+- delayed execution may still match ONLY within tolerance
+- future plans do NOT shift automatically
+- no dependency logic between plans
+- no global seasonal drift
 
 Principle:
-- preserve original seasonal timing as much as possible
-- allow practical real-world flexibility when work is delayed by rain or similar constraints
-
-Examples:
-- if one spraying activity is delayed by weather, the next relevant operation may still be considered valid with a shortened practical interval
-- V1 should not assume the entire yearly schedule moves forward
+- preserve original seasonal timing
+- keep execution deterministic
 
 ---
 
