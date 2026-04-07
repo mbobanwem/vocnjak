@@ -38,17 +38,18 @@ Pravilo:
 
 Obavezna polja:
 - id
-- type (spraying, pruning, fertilizing, watering, planting, harvest, observation)
+- type (spraying, pruning, fertilizing, watering, planting, harvest, observation, problem)
 - date (YYYY-MM-DD)
-- status (done)
+- status ("done" — only allowed value in V1)
 - plantIds (array)
 - product (string, optional)
 - notes (string, original tekst)
 
 Pravila:
+- status je uvijek "done" za sve kreirane aktivnosti
 - product je uvijek prazan u migraciji
 - cijeli originalni tekst ide u notes
-- ne uvoditi nove type-ove
+- ne uvoditi nove type-ove izvan definiranog V1 seta
 
 ID format:
 act_ + Date.now() + _ + Math.random().toString(36).slice(2,7)
