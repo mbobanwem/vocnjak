@@ -153,12 +153,16 @@ Make plans visible and correctly interpreted in calendar.
   - matching logic (DOMAIN_RULES 5.5)
   - tolerance logic (DOMAIN_RULES 5.6)
 
-- derive plan states:
-  - upcoming
-  - active
-  - done
-  - missed
-  - late
+Derived plan states:
+
+- upcoming
+- active
+- done
+- missed
+
+Rule:
+- "skipped" MUST NOT exist
+- no additional states allowed
 
 Rules:
 - do NOT store derived states
@@ -202,6 +206,20 @@ Rules:
 ### Goal
 Connect plans and activities without introducing new data.
 
+Plan State Rule (ENFORCEMENT)
+
+Allowed states:
+
+- upcoming
+- active
+- done
+- missed
+
+Rules:
+- states MUST be derived only
+- no "skipped"
+- no manual override
+
 ### Scope
 - derive plan completion from activities
 - do NOT modify plans
@@ -230,6 +248,24 @@ Move from logger to assistant.
 ## Session 14 — Context-Aware Filtering
 ### Goal
 Use existing data to suppress irrelevant plans.
+
+Young Plant Rule (STRICT)
+
+If plant.status = forming:
+
+HIDE:
+- fruiting-related plans
+- harvest-related plans
+- full production pruning
+
+ALLOW:
+- formation pruning
+- basic protection
+- watering
+
+Rules:
+- MUST be deterministic
+- MUST NOT rely on heuristics
 
 ### Scope
 - young tree logic
@@ -278,6 +314,17 @@ Inputs:
 ## Session 16 — Weather-Aware Spray Layer
 ### Goal
 Restore weather widget in a way that actually supports orchard usage.
+
+Weather Visibility Rule (STRICT)
+
+Weather MUST be shown ONLY if:
+
+- there is an active spray-related plan
+
+Rules:
+- no generic weather display
+- no always-on widget
+- must be context-driven
 
 ### Scope
 - restore weather widget
@@ -365,6 +412,15 @@ Rules:
 - if timing is also unknown, default species profile is used
 - selected language must be persisted
 - onboarding must remain simple and low-friction
+
+Plant Creation Rule (MANDATORY)
+
+Plant MUST be created using PLANT_CATALOG_V1:
+
+- plant type must be selected from catalog
+- free text plant type is NOT allowed
+- variety selection is optional
+- timing fallback must follow catalog rules
 
 ### Done when
 - first launch always shows onboarding
