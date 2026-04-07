@@ -166,8 +166,7 @@ Normalization rule:
 A plan is matched if:
 
 - normalized(activity.type) === normalized(plan.activityType)
-- activity.date is within:
-  - effectiveStart AND effectiveEnd
+- activity.date is within effective window (effectiveStart to effectiveEnd)
 - AND:
   - plan.appliesToAll === true
   OR
