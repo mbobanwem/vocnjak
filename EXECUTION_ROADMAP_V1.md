@@ -154,18 +154,68 @@ Rules:
 
 ## Activity Object Structure (LOCKED)
 
-Activity MUST follow this structure:
+Activity object MUST contain:
 
-```js
-{
-  id: string,
-  type: string,
-  date: string,
-  status: "done",
-  plantIds: string[],
-  product: string,
-  notes: string
-}
+- id: string
+- type: string
+- date: string
+- status: "done"
+- plantIds: string[]
+- product: string
+- notes: string
+
+Rules:
+- id MUST follow pattern: act_ + Date.now() + random string
+- id MUST be unique
+- status MUST always be "done"
+- product MUST always be present, even if empty string
+- notes MUST always be present, even if empty string
+- plantIds MUST NOT be transformed during save
+- no additional fields allowed
+
+---
+
+## Type Consistency Rule (MANDATORY)
+
+Activity type MUST be consistent across:
+
+- Add Activity form
+- Plant detail history
+- Calendar rendering
+- Plan matching logic
+
+Rules:
+- labels and values MUST match exactly
+- no aliasing or mapping at activity level
+- normalization (if needed) happens ONLY at plan layer
+
+---
+
+## Scope
+
+- improve Add Activity safety and validation
+- enforce strict type consistency
+- ensure stable save behavior
+- confirm plant detail history reads from v4.activities correctly
+
+---
+
+## Out of Scope
+
+- editing activities
+- deleting activities
+- filtering or sorting improvements
+- UI redesign beyond validation-related fixes
+
+---
+
+## Done when
+
+- invalid activities cannot be saved
+- activity type is always valid and consistent
+- plantIds always reference existing plants
+- activity list renders without crashes
+- no edge-case activity corrupts the data model
 
 ---
 
