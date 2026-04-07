@@ -1,5 +1,15 @@
 # VOCNJAK — STORE READINESS ROADMAP V1
 
+## ⚠️ NOTICE — CONCEPT REFERENCE ONLY
+
+This document is a concept reference.
+Session numbers in this document do NOT match EXECUTION_ROADMAP_V1.md.
+
+For authoritative session numbers and execution sequence:
+→ EXECUTION_ROADMAP_V1.md is the single source of truth
+
+Do NOT use session numbers from this document for implementation planning.
+
 ## PURPOSE
 
 Prepare the app for real users and future App Store / Google Play release.
