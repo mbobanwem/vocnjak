@@ -142,25 +142,26 @@ Help users discover what they need (huge value)
 ## 🔹 Session 21 — PLAN INTELLIGENCE
 
 ### GOAL
-Connect plans + recommendations + activities
+Connect plans + recommendations + activities.
 
 ### SCOPE
 
 - Suggest actions from plans
 - Highlight:
   - upcoming
-  - overdue
-  - skipped
+  - active
+  - missed
 
 ### RULES
 
 - Plan state MUST be derived (no stored state)
 - MUST use existing plan + activity logic from V1
 - MUST NOT introduce new plan fields
+- MUST NOT use "skipped"
 
 ### DONE
 
-- User sees “what to do next”
+- User sees what to do next
 - Calendar + plans feel connected
 
 ---
