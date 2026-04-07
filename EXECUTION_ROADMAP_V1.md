@@ -58,8 +58,11 @@ Core loop:
 ---
 
 ## Session 9 — Activities Complete
+
 ### Goal
 Make the activity flow robust and consistent.
+
+---
 
 ## Activity Validation Rule (STRICT)
 
@@ -67,7 +70,7 @@ Activity MUST be valid before save:
 
 Required:
 - type (non-empty)
-- date (valid ISO date)
+- date (valid ISO date string)
 - plantIds (non-empty array)
 
 Optional:
@@ -83,12 +86,33 @@ Type rule:
 - type MUST match predefined list
 - no free text types allowed
 
+---
+
+## Activity Type Set (MANDATORY)
+
+Allowed types:
+
+- spraying
+- pruning
+- fertilizing
+- watering
+- planting
+- harvest
+- observation
+- problem
+
+Rules:
+- type MUST be one of the above
+- no additional types allowed
+- labels must be consistent across UI
+
+---
+
 ### Scope
 - improve Add Activity safety/defaults
 - ensure consistent type labels across screens
 - harden save flow
 - confirm plant detail history is stable
-- enforce validation rules from DOMAIN_RULES_V1 section 9
 
 ### Done when
 - Add Activity is reliable
@@ -196,8 +220,6 @@ Derived plan states:
 Rule:
 - "skipped" MUST NOT exist
 - no additional states allowed
-
-Rules:
 - do NOT store derived states
 - no heuristic shortcuts
 
@@ -214,6 +236,15 @@ A plan is considered DONE if:
 
 No fuzzy matching allowed.
 
+## Multi-Plant Matching Rule
+
+If activity.plantIds contains multiple plants:
+
+- matching MUST be evaluated per plant independently
+
+Rules:
+- one activity can satisfy multiple plans (one per plant)
+- matching MUST NOT require 1:1 activity-plan mapping
 ---
 
 ## Tolerance Rule (STRICT)
@@ -334,19 +365,26 @@ Use existing data to suppress irrelevant plans.
 
 If plant.status = forming:
 
-HIDE:
-- fruiting-related plans
-- harvest-related plans
-- full production pruning
+HIDE plans where:
 
-ALLOW:
-- formation pruning
-- basic protection
-- watering
+- activityType = "harvest"
+- activityType = "fruit_thinning"
+- activityType = "fruit_protection"
+- activityType = "production_pruning"
+
+ALLOW plans where:
+
+- activityType = "pruning"
+- activityType = "spraying"
+- activityType = "watering"
+- activityType = "fertilizing"
+- activityType = "planting"
+- activityType = "observation"
 
 Rules:
-- MUST be deterministic
-- MUST NOT rely on heuristics
+- filtering MUST be based on activityType
+- no category guessing
+- no heuristics
 
 ---
 
@@ -404,9 +442,10 @@ Restore weather widget in a way that actually supports orchard usage.
 Weather MUST be shown ONLY if:
 
 - there is an active plan where:
-  plan.activityType === "spraying"
+  activityType = "spraying"
 
 Rules:
+- activityType MUST match predefined type set
 - no generic weather display
 - no always-on widget
 - must be context-driven
