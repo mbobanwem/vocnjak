@@ -302,7 +302,7 @@ Integrate plans into the calendar so that each day reflects:
 
 - planned work (from plans)
 - completed work (from activities)
-- skipped work (derived)
+- missed work (derived)
 
 All logic MUST follow:
 - DOMAIN_RULES_V1.md
@@ -350,6 +350,7 @@ Rules:
 
 - NO additional states allowed
 - "late" MUST NOT exist
+- "skipped" MUST NOT exist
 - state MUST NOT be persisted
 - state MUST be recalculated on each render
 
