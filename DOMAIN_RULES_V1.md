@@ -353,24 +353,26 @@ Rules:
 
 ## 5.6 Timing Tolerance Rule
 
-V1 allows limited tolerance for real-world delays.
+V1 uses a fixed symmetric tolerance window.
 
 Rule:
-- late completion may still count as valid if activity happens within up to 7 days after plan window
+- tolerance = ±7 days from plan window
 
-Purpose:
-- avoid false missed states due to rain / weather / unavoidable delay
+Matching condition:
+
+activity.date MUST be within:
+- startDate - 7 days
+- endDate + 7 days
 
 Rules:
-- do NOT globally shift all future plan windows
-- tolerance is local to matching logic
-- original seasonal timing should be preserved whenever possible
+- early execution is allowed ONLY within -7 days
+- late execution is allowed ONLY within +7 days
+- no unlimited early execution
+- no dynamic tolerance
 
-Early execution:
-
-- activity may be considered valid if performed before the window
-- no strict lower bound in V1
-- do not enforce early restriction in logic
+Purpose:
+- keep matching deterministic
+- avoid ambiguity
 
 ## 5.7 Late / Missed Work Rule
 
