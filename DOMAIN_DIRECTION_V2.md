@@ -11,6 +11,8 @@ This file is for:
 
 It is NOT a source of truth for current implementation.
 
+This file defines future direction but must NOT influence V1 execution.
+
 ---
 
 ## IMPORTANT
@@ -38,6 +40,21 @@ Future value should come from:
 - what is overdue
 - what tools are needed
 - what is relevant for this plant, in this season, in this location
+
+---
+
+# 1.1 CORE DOMAIN PRINCIPLES
+
+The system is based on the following principles:
+
+- activities are the only source of truth for real-world events
+- plans are domain knowledge, not user-managed data
+- plan state is always derived from activities
+- no plan state is stored
+- no manual override of plan state exists
+
+All higher-level logic (calendar, dashboard, recommendations)
+must derive from activities.
 
 ---
 
@@ -114,7 +131,7 @@ Potential outputs:
 - what is irrelevant for this plant
 
 Principles:
-- deterministic before AI
+- deterministic, rule-based logic only (no heuristics)
 - explainable to user
 - no black-box behavior
 
@@ -158,7 +175,7 @@ Principle:
 
 Plans should evolve from static windows to contextual work guidance.
 
-Future plan intelligence may include:
+Future plan intelligence (beyond V1, explicit approval required) may include:
 - auto-suggested plans by plant type
 - suppression of irrelevant plans for young plants
 - escalation when plan becomes overdue
