@@ -217,7 +217,7 @@ Commitaj i pushaj.
 Pročitaj sve .md fileove.
 
 Form:
-- type (spraying, pruning, fertilizing, watering, planting, harvest, observation)
+- type (spraying, pruning, fertilizing, watering, planting, harvest, observation, problem)
 - multi-select biljke
 - date (default danas)
 - product (optional)
@@ -234,7 +234,7 @@ Spremi activity:
 
 Pravila:
 - ne koristiti externe biblioteke
-- ne uvoditi nove type-ove
+- ne uvoditi nove type-ove izvan definiranog V1 seta
 
 Commitaj i pushaj.
 
