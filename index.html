@@ -784,6 +784,24 @@ function _v4TypeLabel(type) {
   return map[type] || type;
 }
 
+function _monitoringLabel(notes) {
+  const map = {
+    "monitoring:aphids_none":"Lisne uši: nema",
+    "monitoring:aphids_low":"Lisne uši: malo (1–2)",
+    "monitoring:aphids_medium":"Lisne uši: srednje (3–10)",
+    "monitoring:aphids_high":"Lisne uši: puno (10+)",
+    "monitoring:trap_0":"Feromonska zamka: 0",
+    "monitoring:trap_1_5":"Feromonska zamka: 1–5",
+    "monitoring:trap_6_20":"Feromonska zamka: 6–20",
+    "monitoring:trap_20_plus":"Feromonska zamka: 20+",
+    "monitoring:fungus_none":"Gljivice: nema",
+    "monitoring:fungus_single_leaf":"Gljivice: jedan list",
+    "monitoring:fungus_multiple_leaves":"Gljivice: više listova",
+    "monitoring:unknown":"Monitoring: nisam siguran"
+  };
+  return map[notes] || notes;
+}
+
 // ── TRIGGER ENGINE (V2) ──
 function getRecommendationsV2(v4, plantId, currentDateStr) {
   const { plants = {}, activities = [], plans = [] } = v4;
@@ -1252,12 +1270,6 @@ function renderPlantScreen() {
           </div>
           <div class="status-badge ${sc.cls}"><span class="status-dot"></span>${sc.label}</div>
         </div>
-        <div style="padding:12px 14px 4px">
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
-            <div class="section-label" style="margin:0">📋 Zadaci (0)</div>
-          </div>
-          <div class="empty">Zadaci nisu dostupni u v4 modelu.</div>
-        </div>
       </div>
 
       ${plantRecsHTML}
@@ -1307,7 +1319,7 @@ function renderPlantScreen() {
           <div style="flex:1">
             <div class="entry-date">${formatDate(a.date)}</div>
             <div class="entry-tags"><span class="tag">${_v4TypeLabel(a.type)}</span></div>
-            <div class="entry-note">${a.notes}</div>
+            <div class="entry-note">${a.type === "monitoring" ? _monitoringLabel(a.notes) : a.notes}</div>
           </div>
         </div>`;
       }).join("")}
@@ -1740,8 +1752,8 @@ function showActivityDetail(activityId) {
         <div style="font-size:15px">${activity.product}</div>
       </div>` : ""}
       ${activity.notes ? `<div style="margin-bottom:10px">
-        <div style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Bilješke</div>
-        <div style="font-size:15px">${activity.notes}</div>
+        <div style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">${activity.type === "monitoring" ? "Opažanje" : "Bilješke"}</div>
+        <div style="font-size:15px">${activity.type === "monitoring" ? _monitoringLabel(activity.notes) : activity.notes}</div>
       </div>` : ""}
     </div>
     <div style="margin-top:16px;text-align:center">
