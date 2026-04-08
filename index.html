@@ -1401,22 +1401,39 @@ function showAddEntryV4(v4) {
 }
 
 function saveNewActivityV4() {
+  const ALLOWED_TYPES = ["spraying","pruning","fertilizing","watering","planting","harvest","observation","problem"];
   const type = document.getElementById("v4Type")?.value;
   const date = document.getElementById("v4Date")?.value;
   const product = document.getElementById("v4Product")?.value?.trim() || "";
   const notes = document.getElementById("v4Notes")?.value?.trim() || "";
   const plantIds = [...document.querySelectorAll(".v4-plant-check:checked")].map(cb => cb.value);
-  if(!type) { showToast("Odaberi vrstu aktivnosti"); return; }
-  if(!date) { showToast("Odaberi datum"); return; }
-  if(plantIds.length === 0) { showToast("Odaberi barem jednu biljku"); return; }
+
+  // 1. validate type
+  if(!type || !ALLOWED_TYPES.includes(type)) { showToast("Odaberi tip aktivnosti"); return; }
+
+  // 2. validate date
+  if(!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) { showToast("Upiši ispravan datum"); return; }
+  const [yr, mo, dy] = date.split("-").map(Number);
+  const checkDate = new Date(Date.UTC(yr, mo - 1, dy));
+  if(checkDate.getUTCFullYear() !== yr || checkDate.getUTCMonth() !== mo - 1 || checkDate.getUTCDate() !== dy) { showToast("Upiši ispravan datum"); return; }
+
+  // 3. validate plantIds
+  if(!Array.isArray(plantIds) || plantIds.length === 0) { showToast("Odaberi barem jednu biljku"); return; }
+
+  // 4. load v4 and validate plantIds exist
   let v4;
   try {
     const raw = localStorage.getItem("vocnjak_v4");
     v4 = raw ? JSON.parse(raw) : null;
     if(!v4 || typeof v4.plants !== "object" || Array.isArray(v4.plants) || !Array.isArray(v4.activities)) {
-      showToast("❌ v4 podaci nisu dostupni"); return;
+      showToast("Podaci nisu dostupni"); return;
     }
-  } catch(e) { showToast("❌ Greška pri čitanju podataka"); return; }
+  } catch(e) { showToast("Greška pri čitanju podataka"); return; }
+
+  const invalidPlant = plantIds.find(pid => !v4.plants[pid]);
+  if(invalidPlant) { showToast("Odabrana biljka ne postoji"); return; }
+
+  // 5. all valid — create and save
   const activity = {
     id: "act_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
     type,
@@ -1429,7 +1446,7 @@ function saveNewActivityV4() {
   v4.activities.push(activity);
   try {
     localStorage.setItem("vocnjak_v4", JSON.stringify(v4));
-  } catch(e) { showToast("❌ Greška pri spremanju"); return; }
+  } catch(e) { showToast("Greška pri spremanju"); return; }
   showToast("Spremljeno ✓");
   showScreen("overview");
 }
