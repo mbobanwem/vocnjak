@@ -75,12 +75,18 @@ Migration from v3 → v4 is implemented.
 - allowed activity types are enforced on save
 - invalid activities cannot be stored through Add Activity flow
 
+### Activity Management (Session 10)
+- activity list screen added
+- activity detail screen added
+- delete activity flow added
+- overview includes entry point to all activities
+
 ---
 
 ## CURRENT LIMITATIONS
 
 - plan state derivation (upcoming / active / done / missed) not yet implemented
-- no activity edit or delete
+- no activity edit
 - no recommendation engine
 - no onboarding flow
 - no multi-language support
@@ -93,7 +99,7 @@ Migration from v3 → v4 is implemented.
 ## CURRENT FOCUS
 
 Next step:
-→ Session 10 — Activity Management
+→ Session 11 — Plans: Read Model
 
 ---
 
