@@ -631,11 +631,35 @@ V2 prepares the foundation for:
 - stronger crop-stage-aware logic
 - richer recommendation layer
 
-## Future improvements (post V2.2)
+---
+
+## FUTURE IMPROVEMENTS — PRODUCT / UX
 
 - Show KPI cards only in active season (months 4–9)
 - Display last monitoring value next to KPI thresholds
 - Add quick action link from KPI → Add monitoring activity
+
+---
+
+## FUTURE IMPROVEMENTS — TRIGGER ENGINE (Suggestions backlog)
+
+### Monitoring cadence
+
+- Split monitoring rule:
+  - 7 days → low urgency
+  - 14 days → medium urgency
+
+### Pest logic
+
+- Separate aphids_medium and aphids_high urgency levels
+
+### Safety rules
+
+- Add spraying cooldown rule (e.g. prevent spraying within 3 days)
+
+### Signal interactions
+
+- Consider suppressing trap alerts if recent spraying (<3 days)
 
 ---
 
