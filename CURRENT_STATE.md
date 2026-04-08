@@ -69,6 +69,12 @@ Migration from v3 → v4 is implemented.
 - fresh-state (no data) handled correctly
 - Add Plant flow accessible from fresh state
 
+### Activities Complete (Session 9)
+- strict validation added for type, date, and plantIds
+- safe save flow enforced
+- allowed activity types are enforced on save
+- invalid activities cannot be stored through Add Activity flow
+
 ---
 
 ## CURRENT LIMITATIONS
@@ -87,7 +93,7 @@ Migration from v3 → v4 is implemented.
 ## CURRENT FOCUS
 
 Next step:
-→ Session 9 — Activities Complete (validation, type consistency, save safety)
+→ Session 10 — Activity Management
 
 ---
 
