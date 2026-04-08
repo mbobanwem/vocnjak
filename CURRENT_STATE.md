@@ -98,6 +98,12 @@ Migration from v3 → v4 is implemented.
 - returns structured recommendation objects
 - pure logic, no UI, no storage
 
+### Recommendation UI (Session V2.4)
+- recommendation cards shown on plant detail
+- lightweight recommendation summary shown on overview
+- uses trigger engine output only
+- no storage, no extra logic
+
 ---
 
 ## CURRENT LIMITATIONS
@@ -136,7 +142,8 @@ Next step:
 - Session V2.1 — Monitoring Input (done)
 - Session V2.2 — Monitoring KPI (done)
 - Session V2.3 — Trigger Engine (done)
-- Next: Session V2.4 — Recommendation UI
+- Session V2.4 — Recommendation UI (done)
+- Next: future V2 improvements / backlog
 
 Notes:
 - V2 is an overlay layer (read-only on V1 data)

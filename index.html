@@ -886,6 +886,21 @@ function getRecommendationsV2(v4, plantId, currentDateStr) {
 }
 
 // ── OVERVIEW ──
+function _renderRecCard(r) {
+  const urgencyLabel = { high:"Visoko", medium:"Srednje", low:"Nisko" };
+  const urgencyColor = { high:"#dc2626", medium:"#b45309", low:"var(--text-light)" };
+  const actionLabel = { inspect:"Pregledaj", insecticide:"Razmotri zaštitu", fungicide:"Razmotri fungicid", monitoring:"Prati", wait:"Pričekaj" };
+  const disclaimer = r.productHintLevel === "category" ? '<div style="font-size:11px;color:var(--text-light);margin-top:4px">Provjeri stadij biljke i lokalnu registraciju prije primjene.</div>' : "";
+  return `<div class="card" style="padding:10px 14px;margin-bottom:6px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+      <span style="font-size:11px;font-weight:600;color:${urgencyColor[r.urgency] || "var(--text-light)"}">${urgencyLabel[r.urgency] || r.urgency}</span>
+      <span style="font-size:11px;color:var(--text-mid)">${actionLabel[r.actionCategory] || r.actionCategory}</span>
+    </div>
+    <div style="font-size:13px">${r.message}</div>
+    ${disclaimer}
+  </div>`;
+}
+
 function renderOverview() {
   const mc = document.getElementById("mainContent");
   document.getElementById("headerTitle").textContent = "Dnevnik vrta";
@@ -913,8 +928,26 @@ function _renderOverviewV4(mc, v4) {
 
   const youngTree = _v4HasYoungTree(plants);
 
+  const plantIds = Object.keys(plants);
+  const seen = new Set();
+  const overviewRecs = [];
+  for(const pid of plantIds) {
+    if(overviewRecs.length >= 3) break;
+    const recs = getRecommendationsV2(v4, pid);
+    for(const r of recs) {
+      if(overviewRecs.length >= 3) break;
+      if(seen.has(r.message)) continue;
+      seen.add(r.message);
+      overviewRecs.push(r);
+    }
+  }
+  const overviewRecsHTML = overviewRecs.length > 0
+    ? '<div class="section-label" style="margin-top:16px">Što sada provjeriti</div>' + overviewRecs.map(r => _renderRecCard(r)).join("")
+    : "";
+
   mc.innerHTML = `
     <div class="section-label">${monthNames[now.getMonth()]} ${now.getFullYear()}</div>
+    ${overviewRecsHTML}
     <div class="section-label" style="margin-top:16px">Otvoreni prozori</div>
     ${activePlans.length === 0
       ? '<div class="empty">Nema otvorenih prozora ovaj mjesec.</div>'
@@ -1204,6 +1237,11 @@ function renderPlantScreen() {
       .filter(a => Array.isArray(a.plantIds) && a.plantIds.includes(plantId))
       .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 
+    const plantRecs = getRecommendationsV2(v4, plantId);
+    const plantRecsHTML = plantRecs.length > 0
+      ? '<div class="section-label" style="margin-top:16px;margin-bottom:10px">Preporuke</div>' + plantRecs.map(r => _renderRecCard(r)).join("")
+      : "";
+
     mc.innerHTML = `
       <div class="card" style="margin-bottom:14px">
         <div style="padding:14px 16px 12px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between">
@@ -1221,6 +1259,8 @@ function renderPlantScreen() {
           <div class="empty">Zadaci nisu dostupni u v4 modelu.</div>
         </div>
       </div>
+
+      ${plantRecsHTML}
 
       <div class="section-label" style="margin-top:16px;margin-bottom:10px">Monitoring</div>
       <div class="card" style="padding:14px 16px;margin-bottom:8px">
