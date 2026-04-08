@@ -92,6 +92,12 @@ Migration from v3 → v4 is implemented.
 - no logic, UI only
 - prepares ground for trigger engine
 
+### Trigger Engine (Session V2.3)
+- getRecommendationsV2(v4, plantId) implemented
+- 8 deterministic rules: aphids, trap, fungus, no-monitoring, active plan
+- returns structured recommendation objects
+- pure logic, no UI, no storage
+
 ---
 
 ## CURRENT LIMITATIONS
@@ -129,7 +135,8 @@ Next step:
 ### Protection Engine (V2)
 - Session V2.1 — Monitoring Input (done)
 - Session V2.2 — Monitoring KPI (done)
-- Next: Session V2.3 — Trigger Engine
+- Session V2.3 — Trigger Engine (done)
+- Next: Session V2.4 — Recommendation UI
 
 Notes:
 - V2 is an overlay layer (read-only on V1 data)

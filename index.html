@@ -784,6 +784,107 @@ function _v4TypeLabel(type) {
   return map[type] || type;
 }
 
+// ── TRIGGER ENGINE (V2) ──
+function getRecommendationsV2(v4, plantId, currentDateStr) {
+  const { plants = {}, activities = [], plans = [] } = v4;
+  if(!plants[plantId]) return [];
+
+  // Consistent day-level basis — local YYYY-MM-DD
+  if(!currentDateStr || !/^\d{4}-\d{2}-\d{2}$/.test(currentDateStr)) {
+    const n = new Date();
+    currentDateStr = n.getFullYear() + "-" + String(n.getMonth() + 1).padStart(2, "0") + "-" + String(n.getDate()).padStart(2, "0");
+  }
+  const [curY, curM, curD] = currentDateStr.split("-").map(Number);
+
+  const plantActivities = activities
+    .filter(a => Array.isArray(a.plantIds) && a.plantIds.includes(plantId))
+    .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+
+  function daysAgo(dateStr, n) {
+    if(!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+    const [y, m, d] = dateStr.split("-").map(Number);
+    const actDate = new Date(Date.UTC(y, m - 1, d));
+    const refDate = new Date(Date.UTC(curY, curM - 1, curD));
+    const diff = (refDate - actDate) / (1000 * 60 * 60 * 24);
+    return diff >= 0 && diff <= n;
+  }
+
+  const lastMonitoring = plantActivities.find(a => a.type === "monitoring");
+  const lastSpraying = plantActivities.find(a => a.type === "spraying");
+  const hasRecentSpraying5 = lastSpraying && daysAgo(lastSpraying.date, 5);
+  const hasRecentSpraying7 = lastSpraying && daysAgo(lastSpraying.date, 7);
+  const hasRecentMonitoring14 = lastMonitoring && daysAgo(lastMonitoring.date, 14);
+  const monNotes = lastMonitoring?.notes || "";
+
+  const recs = [];
+
+  // Rule A1 — aphids low
+  if(monNotes === "monitoring:aphids_low" && !hasRecentSpraying5) {
+    recs.push({ kind:"pest", urgency:"medium", actionCategory:"inspect", confidence:"moderate", message:"Niska prisutnost lisnih uši — prati stanje i ponovi pregled.", productHintLevel:"none" });
+  }
+
+  // Rule A2 — aphids medium/high
+  if((monNotes === "monitoring:aphids_medium" || monNotes === "monitoring:aphids_high") && !hasRecentSpraying5) {
+    recs.push({ kind:"pest", urgency:"high", actionCategory:"insecticide", confidence:"moderate", message:"Značajna prisutnost lisnih uši — razmotri tretman ako se ponavlja.", productHintLevel:"category" });
+  }
+
+  // Rule T1 — trap warning
+  if(monNotes === "monitoring:trap_6_20") {
+    recs.push({ kind:"monitoring", urgency:"medium", actionCategory:"inspect", confidence:"moderate", message:"Povećan broj ulova — pregledaj biljku.", productHintLevel:"none" });
+  }
+
+  // Rule T2 — trap action
+  if(monNotes === "monitoring:trap_20_plus") {
+    recs.push({ kind:"pest", urgency:"high", actionCategory:"insecticide", confidence:"moderate", message:"Visok broj ulova — moguća pojava štetnika.", productHintLevel:"category" });
+  }
+
+  // Rule F1 — fungus single leaf
+  if(monNotes === "monitoring:fungus_single_leaf" && !hasRecentSpraying7) {
+    recs.push({ kind:"disease", urgency:"medium", actionCategory:"inspect", confidence:"moderate", message:"Mogući početak bolesti — prati stanje.", productHintLevel:"none" });
+  }
+
+  // Rule F2 — fungus multiple leaves
+  if(monNotes === "monitoring:fungus_multiple_leaves" && !hasRecentSpraying7) {
+    recs.push({ kind:"disease", urgency:"high", actionCategory:"fungicide", confidence:"moderate", message:"Širenje simptoma — razmotri zaštitu.", productHintLevel:"category" });
+  }
+
+  // Rule M1 — no recent monitoring (Apr–Sep only)
+  if(!hasRecentMonitoring14) {
+    if(curM >= 4 && curM <= 9) {
+      recs.push({ kind:"monitoring", urgency:"medium", actionCategory:"inspect", confidence:"moderate", message:"Nema nedavnog pregleda — provjeri stanje biljke.", productHintLevel:"none" });
+    }
+  }
+
+  // Rule P1 — active plan
+  const hasActivePlan = plans.some(pl => {
+    if(pl.skipYear === curY) return false;
+    if(!pl.appliesToAll && !(pl.plantIds || []).includes(plantId)) return false;
+    const wStart = new Date(curY, pl.monthStart - 1, pl.dayStart || 1);
+    const endMonth = pl.monthEnd || pl.monthStart;
+    const endDay = pl.dayEnd || new Date(curY, endMonth, 0).getDate();
+    const wEnd = new Date(curY, endMonth - 1, endDay, 23, 59, 59);
+    const curDate = new Date(curY, curM - 1, curD, 12, 0, 0);
+    return curDate >= wStart && curDate <= wEnd;
+  });
+  if(hasActivePlan) {
+    recs.push({ kind:"plan", urgency:"low", actionCategory:"monitoring", confidence:"moderate", message:"Aktivan plan rada za ovu biljku.", productHintLevel:"none" });
+  }
+
+  // Dedupe by kind + actionCategory + message
+  const seen = new Set();
+  const unique = recs.filter(r => {
+    const key = r.kind + "|" + r.actionCategory + "|" + r.message;
+    if(seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  // Sort by urgency: high → medium → low, limit to 3
+  const urgencyOrder = { high: 0, medium: 1, low: 2 };
+  unique.sort((a, b) => (urgencyOrder[a.urgency] ?? 3) - (urgencyOrder[b.urgency] ?? 3));
+  return unique.slice(0, 3);
+}
+
 // ── OVERVIEW ──
 function renderOverview() {
   const mc = document.getElementById("mainContent");
