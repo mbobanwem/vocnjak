@@ -837,6 +837,7 @@ function _renderOverviewV4(mc, v4) {
             <div style="font-size:11px;color:var(--text-light)">${dateStr}</div>
           </div>`;
         }).join("")}
+    ${activities.length > 0 ? '<div style="margin-top:10px;text-align:center"><button onclick="showActivitiesScreen()" style="background:none;border:none;color:var(--green-deep);font-size:13px;cursor:pointer;text-decoration:underline">Sve aktivnosti →</button></div>' : ''}
     ${youngTree ? '<div style="margin-top:16px;padding:10px 14px;font-size:12px;color:var(--text-mid);background:var(--cream);border-radius:var(--r-sm)">Mlade sadnice zahtijevaju pojačanu pažnju.</div>' : ''}
   `;
 }
@@ -1449,6 +1450,103 @@ function saveNewActivityV4() {
   } catch(e) { showToast("Greška pri spremanju"); return; }
   showToast("Spremljeno ✓");
   showScreen("overview");
+}
+
+// ── ACTIVITY LIST / DETAIL / DELETE (v4) ──
+function _activityPlantLabel(plantIds, plants) {
+  const names = (plantIds || []).map(pid => plants[pid]?.name || "—");
+  if(names.length === 0) return "—";
+  if(names.length <= 2) return names.join(", ");
+  return names.length + " biljki";
+}
+
+function showActivitiesScreen() {
+  const v4 = _loadV4();
+  if(!v4) { showScreen("overview"); return; }
+  const { plants = {}, activities = [] } = v4;
+  const sorted = activities.slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  const mc = document.getElementById("mainContent");
+  document.getElementById("headerTitle").textContent = "Aktivnosti";
+  mc.innerHTML = `
+    <div style="margin-bottom:12px">
+      <button onclick="showScreen('overview')" class="btn-secondary">← Natrag</button>
+    </div>
+    ${sorted.length === 0
+      ? '<div class="empty">Nema aktivnosti.</div>'
+      : sorted.map(a => {
+          const dateParts = (a.date || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+          const dateStr = dateParts ? `${parseInt(dateParts[3])}.${parseInt(dateParts[2])}.${dateParts[1]}.` : "—";
+          const plantLabel = _activityPlantLabel(a.plantIds, plants);
+          return `<div class="card" style="padding:10px 14px;margin-bottom:6px;cursor:pointer" onclick="showActivityDetail('${a.id}')">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-size:13px;font-weight:500">${_v4TypeLabel(a.type)}</div>
+                <div style="font-size:11px;color:var(--text-light)">${plantLabel}</div>
+              </div>
+              <div style="font-size:11px;color:var(--text-light)">${dateStr}</div>
+            </div>
+          </div>`;
+        }).join("")}
+  `;
+}
+
+function showActivityDetail(activityId) {
+  const v4 = _loadV4();
+  if(!v4) { showScreen("overview"); return; }
+  const { plants = {}, activities = [] } = v4;
+  const activity = activities.find(a => a.id === activityId);
+  if(!activity) { showToast("Aktivnost nije pronađena"); showActivitiesScreen(); return; }
+  const plantNames = (activity.plantIds || []).map(pid => plants[pid]?.name || "—").join(", ") || "—";
+  const dateParts = (activity.date || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const dateStr = dateParts ? `${parseInt(dateParts[3])}.${parseInt(dateParts[2])}.${dateParts[1]}.` : "—";
+  const mc = document.getElementById("mainContent");
+  document.getElementById("headerTitle").textContent = "Detalj aktivnosti";
+  mc.innerHTML = `
+    <div style="margin-bottom:12px">
+      <button onclick="showActivitiesScreen()" class="btn-secondary">← Natrag</button>
+    </div>
+    <div class="card" style="padding:14px 16px">
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Tip</div>
+        <div style="font-size:15px;font-weight:500">${_v4TypeLabel(activity.type)}</div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Datum</div>
+        <div style="font-size:15px">${dateStr}</div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Biljke</div>
+        <div style="font-size:15px">${plantNames}</div>
+      </div>
+      ${activity.product ? `<div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Preparat</div>
+        <div style="font-size:15px">${activity.product}</div>
+      </div>` : ""}
+      ${activity.notes ? `<div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Bilješke</div>
+        <div style="font-size:15px">${activity.notes}</div>
+      </div>` : ""}
+    </div>
+    <div style="margin-top:16px;text-align:center">
+      <button onclick="deleteActivity('${activity.id}')" style="background:#ef4444;color:#fff;border:none;padding:10px 24px;border-radius:var(--r-sm);font-size:14px;cursor:pointer">Obriši aktivnost</button>
+    </div>
+  `;
+}
+
+function deleteActivity(activityId) {
+  if(!confirm("Obriši aktivnost?")) return;
+  let v4;
+  try {
+    const raw = localStorage.getItem("vocnjak_v4");
+    v4 = raw ? JSON.parse(raw) : null;
+    if(!v4 || !Array.isArray(v4.activities)) { showToast("Podaci nisu dostupni"); return; }
+  } catch(e) { showToast("Greška pri čitanju podataka"); return; }
+  v4.activities = v4.activities.filter(a => a.id !== activityId);
+  try {
+    localStorage.setItem("vocnjak_v4", JSON.stringify(v4));
+  } catch(e) { showToast("Greška pri spremanju"); return; }
+  showToast("Obrisano ✓");
+  showActivitiesScreen();
 }
 
 // ── ADD PLANT (v4) ──
