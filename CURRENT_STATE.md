@@ -81,6 +81,12 @@ Migration from v3 → v4 is implemented.
 - delete activity flow added
 - overview includes entry point to all activities
 
+### Monitoring Input (Session V2.1)
+- monitoring added as allowed activity type
+- structured monitoring options added to Add Activity
+- canonical monitoring values are stored in notes
+- monitoring validation added
+
 ---
 
 ## CURRENT LIMITATIONS
@@ -116,8 +122,8 @@ Next step:
 - Next: Session 11 — (continue existing roadmap)
 
 ### Protection Engine (V2)
-- Not started
-- Next: Session V2.1 — Monitoring Input
+- Session V2.1 — Monitoring Input (done)
+- Next: Session V2.2 — Monitoring KPI
 
 Notes:
 - V2 is an overlay layer (read-only on V1 data)
