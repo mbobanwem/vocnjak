@@ -102,3 +102,18 @@ Next step:
 - v4 is the active model
 - legacy v3 exists only for migration compatibility
 - all new features must use v4 only
+
+## Parallel Tracks
+
+### Core App (V1)
+- Session 10 — Activity Management (current)
+- Next: Session 11 — (continue existing roadmap)
+
+### Protection Engine (V2)
+- Not started
+- Next: Session V2.1 — Monitoring Input
+
+Notes:
+- V2 is an overlay layer (read-only on V1 data)
+- V2 introduces monitoring, triggers, and recommendations
+- V2 does NOT modify V1 data model structure
