@@ -631,6 +631,12 @@ V2 prepares the foundation for:
 - stronger crop-stage-aware logic
 - richer recommendation layer
 
+## Future improvements (post V2.2)
+
+- Show KPI cards only in active season (months 4–9)
+- Display last monitoring value next to KPI thresholds
+- Add quick action link from KPI → Add monitoring activity
+
 ---
 
 # FINAL PRINCIPLE
