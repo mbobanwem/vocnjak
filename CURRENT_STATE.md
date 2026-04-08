@@ -87,6 +87,11 @@ Migration from v3 → v4 is implemented.
 - canonical monitoring values are stored in notes
 - monitoring validation added
 
+### Monitoring KPI (Session V2.2)
+- added 3 static KPI cards
+- no logic, UI only
+- prepares ground for trigger engine
+
 ---
 
 ## CURRENT LIMITATIONS
@@ -123,7 +128,8 @@ Next step:
 
 ### Protection Engine (V2)
 - Session V2.1 — Monitoring Input (done)
-- Next: Session V2.2 — Monitoring KPI
+- Session V2.2 — Monitoring KPI (done)
+- Next: Session V2.3 — Trigger Engine
 
 Notes:
 - V2 is an overlay layer (read-only on V1 data)
