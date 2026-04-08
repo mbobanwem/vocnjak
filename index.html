@@ -780,7 +780,7 @@ function _v4HasYoungTree(plants) {
 }
 
 function _v4TypeLabel(type) {
-  const map = { spraying:"Prskanje", pruning:"Rezidba", fertilizing:"Gnojidba", watering:"Navodnjavanje", planting:"Sadnja", harvest:"Berba", observation:"Opservacija", problem:"Problem" };
+  const map = { spraying:"Prskanje", pruning:"Rezidba", fertilizing:"Gnojidba", watering:"Navodnjavanje", planting:"Sadnja", harvest:"Berba", observation:"Opservacija", problem:"Problem", monitoring:"Monitoring" };
   return map[type] || type;
 }
 
@@ -1334,6 +1334,14 @@ function saveNewTodo() {
 }
 
 // ── ADD ACTIVITY (v4 path) ──
+function _onV4TypeChange() {
+  const type = document.getElementById("v4Type")?.value;
+  const isMonitoring = type === "monitoring";
+  document.getElementById("v4MonitoringSection").style.display = isMonitoring ? "block" : "none";
+  document.getElementById("v4ProductGroup").style.display = isMonitoring ? "none" : "";
+  document.getElementById("v4NotesGroup").style.display = isMonitoring ? "none" : "";
+}
+
 function showAddEntryV4(v4) {
   currentScreen = "add";
   ["overview","plants","calendar","sync"].forEach(s => document.getElementById(`bnav-${s}`)?.classList.remove("active"));
@@ -1361,6 +1369,7 @@ function showAddEntryV4(v4) {
     { value: "harvest",     label: "Berba" },
     { value: "observation", label: "Opservacija" },
     { value: "problem",     label: "Problem" },
+    { value: "monitoring",  label: "Monitoring" },
   ];
   const plantsHTML = Object.entries(v4.plants).map(([id, p]) =>
     `<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border)">
@@ -1372,7 +1381,7 @@ function showAddEntryV4(v4) {
     <div class="form-card">
       <div class="form-group" style="margin-bottom:12px">
         <label class="form-label">Vrsta</label>
-        <select id="v4Type" class="form-select">
+        <select id="v4Type" class="form-select" onchange="_onV4TypeChange()">
           <option value="">— odaberi vrstu —</option>
           ${V4_TYPES.map(t => `<option value="${t.value}">${t.label}</option>`).join("")}
         </select>
@@ -1385,11 +1394,32 @@ function showAddEntryV4(v4) {
         <label class="form-label">Datum</label>
         <input type="date" id="v4Date" class="form-input" value="${today}">
       </div>
-      <div class="form-group" style="margin-bottom:10px">
+      <div id="v4MonitoringSection" style="display:none;margin-bottom:10px">
+        <div class="section-label" style="margin-bottom:8px">Što si primijetio?</div>
+        <div style="border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden">
+          <div style="padding:6px 12px;font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;background:var(--cream)">Lisne uši</div>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border)"><input type="radio" name="v4Monitoring" value="monitoring:aphids_none"> Nema</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border)"><input type="radio" name="v4Monitoring" value="monitoring:aphids_low"> Malo (1–2)</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border)"><input type="radio" name="v4Monitoring" value="monitoring:aphids_medium"> Srednje (3–10)</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border)"><input type="radio" name="v4Monitoring" value="monitoring:aphids_high"> Puno (10+)</label>
+          <div style="padding:6px 12px;font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;background:var(--cream)">Feromonska zamka</div>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border)"><input type="radio" name="v4Monitoring" value="monitoring:trap_0"> 0</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border)"><input type="radio" name="v4Monitoring" value="monitoring:trap_1_5"> 1–5</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border)"><input type="radio" name="v4Monitoring" value="monitoring:trap_6_20"> 6–20</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border)"><input type="radio" name="v4Monitoring" value="monitoring:trap_20_plus"> 20+</label>
+          <div style="padding:6px 12px;font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;background:var(--cream)">Gljivice</div>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border)"><input type="radio" name="v4Monitoring" value="monitoring:fungus_none"> Nema</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border)"><input type="radio" name="v4Monitoring" value="monitoring:fungus_single_leaf"> Jedan list</label>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border)"><input type="radio" name="v4Monitoring" value="monitoring:fungus_multiple_leaves"> Više listova</label>
+          <div style="padding:6px 12px;font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;background:var(--cream)">Općenito</div>
+          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:13px;cursor:pointer"><input type="radio" name="v4Monitoring" value="monitoring:unknown"> Nisam siguran</label>
+        </div>
+      </div>
+      <div id="v4ProductGroup" class="form-group" style="margin-bottom:10px">
         <label class="form-label">Sredstvo</label>
         <input id="v4Product" class="form-input" placeholder="npr. Cuprablau Z 35 WG">
       </div>
-      <div class="form-group" style="margin-bottom:10px">
+      <div id="v4NotesGroup" class="form-group" style="margin-bottom:10px">
         <label class="form-label">Bilješka</label>
         <textarea id="v4Notes" class="form-textarea" placeholder="Bilješka..."></textarea>
       </div>
@@ -1402,26 +1432,37 @@ function showAddEntryV4(v4) {
 }
 
 function saveNewActivityV4() {
-  const ALLOWED_TYPES = ["spraying","pruning","fertilizing","watering","planting","harvest","observation","problem"];
+  const ALLOWED_TYPES = ["spraying","pruning","fertilizing","watering","planting","harvest","observation","problem","monitoring"];
+  const MONITORING_VALUES = ["monitoring:aphids_none","monitoring:aphids_low","monitoring:aphids_medium","monitoring:aphids_high","monitoring:trap_0","monitoring:trap_1_5","monitoring:trap_6_20","monitoring:trap_20_plus","monitoring:fungus_none","monitoring:fungus_single_leaf","monitoring:fungus_multiple_leaves","monitoring:unknown"];
   const type = document.getElementById("v4Type")?.value;
   const date = document.getElementById("v4Date")?.value;
-  const product = document.getElementById("v4Product")?.value?.trim() || "";
-  const notes = document.getElementById("v4Notes")?.value?.trim() || "";
   const plantIds = [...document.querySelectorAll(".v4-plant-check:checked")].map(cb => cb.value);
 
   // 1. validate type
   if(!type || !ALLOWED_TYPES.includes(type)) { showToast("Odaberi tip aktivnosti"); return; }
 
-  // 2. validate date
+  // 2. validate monitoring selection
+  let product = "";
+  let notes = "";
+  if(type === "monitoring") {
+    const selected = document.querySelector('input[name="v4Monitoring"]:checked');
+    if(!selected || !MONITORING_VALUES.includes(selected.value)) { showToast("Odaberi opažanje"); return; }
+    notes = selected.value;
+  } else {
+    product = document.getElementById("v4Product")?.value?.trim() || "";
+    notes = document.getElementById("v4Notes")?.value?.trim() || "";
+  }
+
+  // 3. validate date
   if(!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) { showToast("Upiši ispravan datum"); return; }
   const [yr, mo, dy] = date.split("-").map(Number);
   const checkDate = new Date(Date.UTC(yr, mo - 1, dy));
   if(checkDate.getUTCFullYear() !== yr || checkDate.getUTCMonth() !== mo - 1 || checkDate.getUTCDate() !== dy) { showToast("Upiši ispravan datum"); return; }
 
-  // 3. validate plantIds
+  // 4. validate plantIds
   if(!Array.isArray(plantIds) || plantIds.length === 0) { showToast("Odaberi barem jednu biljku"); return; }
 
-  // 4. load v4 and validate plantIds exist
+  // 5. load v4 and validate plantIds exist
   let v4;
   try {
     const raw = localStorage.getItem("vocnjak_v4");
@@ -1434,7 +1475,7 @@ function saveNewActivityV4() {
   const invalidPlant = plantIds.find(pid => !v4.plants[pid]);
   if(invalidPlant) { showToast("Odabrana biljka ne postoji"); return; }
 
-  // 5. all valid — create and save
+  // 6. all valid — create and save
   const activity = {
     id: "act_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
     type,
