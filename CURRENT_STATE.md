@@ -2,7 +2,7 @@
 
 ## TECH
 
-- single-file index.html (~1300+ lines)
+- single-file index.html (~2100+ lines)
 - vanilla JS
 - localStorage persistence
 - PWA (manifest + service worker)
@@ -86,6 +86,55 @@ Migration from v3 → v4 is implemented and stable.
 - delete activity flow
 - overview entry point to activity list
 
+### Session 11 — Plans: Read Model
+
+#### Session 11A — Plans UI (rendering only)
+- overview: renamed "Otvoreni prozori" → "Plan rada"
+- overview: capped active plan display to max 2 items
+- plant detail: added "Plan rada" section showing active plans for current plant
+- plant detail: section hidden when no active plans
+- plan cards show title, time window, and scope
+- rendering only — no logic changes
+
+#### Session 11B — Plan logic consolidation
+- shared helper `_getPlanWindow(plan, year)` introduced
+- `_v4DashboardPlans` rewritten to use shared helper
+- plant detail plan rendering rewritten to use shared helper
+- output identical to 11A — pure mechanical refactor
+
+#### Session 11C — Engine alignment
+- trigger engine Rule P1 aligned with `_getPlanWindow` helper
+- no change to rule conditions, thresholds, or messages
+- recommendation output unchanged
+
+### Session 12 — Plans ↔ Calendar Integration
+
+#### Session 12A — Calendar indicators
+- `getCalendarItemsV4` rewritten with full plan state derivation per day
+- uses `_getPlanWindow` for window calculation
+- ±7 day tolerance for activity matching
+- type normalization (toLowerCase/trim) for matching
+- plant overlap matching (plantIds or appliesToAll)
+- done plans excluded from calendar dots
+- calendar dots: green (activity), amber (active/upcoming plan), gray (missed plan)
+- CSS class `.has-missed` added
+
+#### Session 12B — Day click details
+- `selectCalDayV4` rewritten with inline detail section
+- activities shown with green border + type label via `_v4TypeLabel`
+- plans shown with amber/gray border + state label (Aktivan/Predstojeći/Propušteno)
+
+#### Session 12C — Month list consistency
+- month summary shows colored borders and state labels for plan items
+- activities sorted before plans on same day
+
+### Session 13A — Dashboard plan state derivation fix
+- `_v4DashboardPlans` matching logic aligned with DOMAIN_RULES 5.4–5.6
+- activity matching now checks FIRST (done overrides all states)
+- ±7 day tolerance window added
+- type normalization (toLowerCase/trim) added
+- overview display unchanged — still shows only active plans
+
 ---
 
 ## IMPLEMENTED — V2 OVERLAY (PROTECTION ENGINE)
@@ -134,6 +183,45 @@ V2 is an overlay layer:
 - plans are NOT editable
 - plan state is ALWAYS derived (never stored)
 
+### Plan state derivation (implemented)
+
+Plan states are derived at render time only. Never stored.
+
+Allowed states:
+- upcoming — before plan window
+- active — within plan window
+- done — matching activity exists (overrides all other states)
+- missed — past plan window + tolerance, no matching activity
+
+State derivation (strict order):
+
+1. if matching activity exists → done
+2. else if currentDate < startDate → upcoming
+3. else if currentDate <= endDate → active
+4. else if currentDate > effectiveEnd → missed
+
+Matching rules:
+- type normalization: toLowerCase().trim() on both activity.type and plan.activityType
+- plant matching: plan.appliesToAll === true OR activity.plantIds overlaps plan.plantIds
+- tolerance: ±7 days from plan window (effectiveStart = start - 7, effectiveEnd = end + 7)
+
+Date normalization:
+- all comparisons are done at DAY level (YYYY-MM-DD)
+- time component is ignored
+- activity.date, currentDate, and plan window dates must be normalized
+
+Rules:
+- state is NOT stored
+- state is recalculated on every render
+- one matching activity is enough
+- duplicates do not affect state
+
+Implemented in:
+- `_v4DashboardPlans` — derives state for overview (shows only active plans)
+- `getCalendarItemsV4` — derives state per day for calendar dots
+- `selectCalDayV4` — shows state labels on day click
+- plant detail IIFE — shows active plans only (no matching check yet — Session 13B)
+
 ### Monitoring (important)
 
 - monitoring is an approved activity type extension
@@ -142,18 +230,11 @@ V2 is an overlay layer:
 - it MUST NOT be removed or restricted
 - it does NOT change activity structure
 
-### Plans UI (Session 11A)
-- overview: renamed "Otvoreni prozori" → "Plan rada"
-- overview: capped active plan display to max 2 items
-- plant detail: added "Plan rada" section showing active plans for current plant
-- plant detail: section hidden when no active plans
-- rendering only — no logic changes
-
 ---
 
 ## CURRENT LIMITATIONS
 
-- plan state derivation (upcoming / active / done / missed) not implemented yet
+- plant detail plan section does not check for matching activities (Session 13B pending)
 - no activity edit (only create + delete)
 - no onboarding flow
 - no multi-language support
@@ -166,7 +247,7 @@ V2 is an overlay layer:
 ## CURRENT FOCUS
 
 Next step:
-→ Session 11B — Plan logic consolidation
+→ Session 13B — Plant detail plan state derivation fix
 
 ---
 
@@ -174,7 +255,10 @@ Next step:
 
 ### Core App (V1)
 - Session 10 — Activity Management (DONE)
-- Next: Session 11 — Plans: Read Model
+- Session 11 — Plans: Read Model (DONE — 11A, 11B, 11C)
+- Session 12 — Plans ↔ Calendar Integration (DONE — 12A, 12B, 12C)
+- Session 13A — Dashboard plan state fix (DONE)
+- Next: Session 13B — Plant detail plan state fix
 
 ### Protection Engine (V2)
 - V2.1 Monitoring Input — DONE
