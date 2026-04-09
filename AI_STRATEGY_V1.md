@@ -388,6 +388,29 @@ Rules:
 
 ---
 
+### Step 8 — save integration (Add Activity)
+
+If user chooses to save AI result:
+
+- existing "Add Activity" flow must be used
+- form should be prefilled with:
+  - type (observation / problem)
+  - plantId
+  - optional notes (from AI message)
+
+User must:
+- review data
+- confirm manually
+
+Rules:
+
+- no auto-save
+- no separate AI activity form
+- no new activity types
+- must follow existing activity data model
+
+---
+
 ## AI RESULT → ACTIVITY MAPPING
 
 AI result must map ONLY to existing activity types:
