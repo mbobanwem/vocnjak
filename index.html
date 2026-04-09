@@ -802,6 +802,33 @@ function _monitoringLabel(notes) {
   return map[notes] || notes;
 }
 
+function _getActivePlansForPlant(v4, plantId) {
+  const { plans = [] } = v4;
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth();
+  const d = now.getDate();
+  const curDate = new Date(y, m, d, 12, 0, 0);
+  return plans.filter(pl => {
+    if(pl.skipYear === y) return false;
+    if(!pl.appliesToAll && !(pl.plantIds || []).includes(plantId)) return false;
+    const wStart = new Date(y, pl.monthStart - 1, pl.dayStart || 1);
+    const endMonth = pl.monthEnd || pl.monthStart;
+    const endDay = pl.dayEnd || new Date(y, endMonth, 0).getDate();
+    const wEnd = new Date(y, endMonth - 1, endDay, 23, 59, 59);
+    return curDate >= wStart && curDate <= wEnd;
+  });
+}
+
+function _formatPlanWindow(pl) {
+  const ds = pl.dayStart || 1;
+  const ms = pl.monthStart;
+  const me = pl.monthEnd || pl.monthStart;
+  const de = pl.dayEnd || new Date(new Date().getFullYear(), me, 0).getDate();
+  if(ms === me && ds === 1 && de === new Date(new Date().getFullYear(), me, 0).getDate()) return ms + ". mjesec";
+  return ds + "." + ms + ". – " + de + "." + me + ".";
+}
+
 // ── TRIGGER ENGINE (V2) ──
 function getRecommendationsV2(v4, plantId, currentDateStr) {
   const { plants = {}, activities = [], plans = [] } = v4;
@@ -966,10 +993,10 @@ function _renderOverviewV4(mc, v4) {
   mc.innerHTML = `
     <div class="section-label">${monthNames[now.getMonth()]} ${now.getFullYear()}</div>
     ${overviewRecsHTML}
-    <div class="section-label" style="margin-top:16px">Otvoreni prozori</div>
+    <div class="section-label" style="margin-top:16px">Plan rada</div>
     ${activePlans.length === 0
-      ? '<div class="empty">Nema otvorenih prozora ovaj mjesec.</div>'
-      : activePlans.map(p => `<div class="card" style="padding:12px 14px;margin-bottom:8px">
+      ? '<div class="empty">Nema aktivnih planova.</div>'
+      : activePlans.slice(0, 2).map(p => `<div class="card" style="padding:12px 14px;margin-bottom:8px">
           <div style="font-size:14px;font-weight:600;color:var(--green-deep)">${p.title}</div>
           <div style="font-size:12px;color:var(--text-mid);margin-top:2px">${_v4TypeLabel(p.activityType)}</div>
         </div>`).join("")}
@@ -1307,6 +1334,36 @@ function renderPlantScreen() {
         else if(kpiMonth >= 8 && kpiMonth <= 9) cards = [kpiTrap, kpiFungus];
         cards = cards.slice(0, 2);
         return '<div class="section-label" style="margin-top:16px;margin-bottom:10px">Što provjeriti sada</div>' + cards.join("");
+      })()}
+
+      ${(() => {
+        const y = new Date().getFullYear();
+        const now = new Date();
+        const plantPlans = (v4.plans || []).filter(pl => {
+          if(pl.skipYear === y) return false;
+          if(!pl.appliesToAll && !(pl.plantIds || []).includes(plantId)) return false;
+          const wStart = new Date(y, pl.monthStart - 1, pl.dayStart || 1);
+          const endMonth = pl.monthEnd || pl.monthStart;
+          const endDay = pl.dayEnd || new Date(y, endMonth, 0).getDate();
+          const wEnd = new Date(y, endMonth - 1, endDay, 23, 59, 59);
+          return now >= wStart && now <= wEnd;
+        }).slice(0, 2);
+        if(plantPlans.length === 0) return "";
+        return '<div class="section-label" style="margin-top:16px;margin-bottom:10px">Plan rada</div>'
+          + plantPlans.map(pl => {
+            const ds = pl.dayStart || 1;
+            const ms = pl.monthStart;
+            const me = pl.monthEnd || pl.monthStart;
+            const de = pl.dayEnd || new Date(y, me, 0).getDate();
+            const window = (ms === me && ds === 1 && de === new Date(y, me, 0).getDate())
+              ? ms + ". mjesec"
+              : ds + "." + ms + ". – " + de + "." + me + ".";
+            const scope = pl.appliesToAll ? "Sve biljke" : "Ova biljka";
+            return `<div class="card" style="padding:12px 14px;margin-bottom:8px">
+              <div style="font-size:14px;font-weight:600;color:var(--green-deep)">${pl.title}</div>
+              <div style="font-size:12px;color:var(--text-mid);margin-top:2px">${window} · ${scope}</div>
+            </div>`;
+          }).join("");
       })()}
 
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
