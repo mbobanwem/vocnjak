@@ -468,8 +468,8 @@ Olive and Fig do not have a variety-based timing model in V1.
 User selects type only. No fallback, no variety.
 
 ```json
-"olive": { "varieties": null, "fallback": null },
-"fig":   { "varieties": null, "fallback": null }
+"olive": { "group": "mediterranean", "seasonProfile": "mediterranean" },
+"fig":   { "group": "mediterranean", "seasonProfile": "mediterranean" }
 ```
 
 ---
@@ -508,6 +508,20 @@ Citrus uses seasonProfile model — no timing groups, no variety timing.
   }
 }
 ```
+### Citrus Season Profiles
+
+`multi_cycle`
+- multiple flowering cycles per year
+- multiple fruiting waves are possible
+- typical for lemon
+
+`winter`
+- main harvest season is winter
+- typical for orange
+
+`autumn`
+- main harvest season is autumn
+- typical for mandarin
 
 Rules:
 - user selects citrus → subtype required (lemon / orange / mandarin)
@@ -683,7 +697,7 @@ Rules:
 
 ---
 
-## 13. Future Extensions (V2+)
+## 15. Future Extensions (V2+)
 
 Possible future extensions:
 
