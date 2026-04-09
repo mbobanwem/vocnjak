@@ -366,7 +366,6 @@ Backend returns normalized structure:
   "nextAction": "inspect | monitor | consider_treatment",
   "notes": "Plain-language explanation"
 }
-
 ---
 
 ### Step 6 — UI display
