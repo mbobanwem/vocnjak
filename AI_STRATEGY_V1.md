@@ -356,16 +356,11 @@ NO:
 
 ### Step 5 — response
 
-Backend returns normalized structure:
+Backend returns normalized response.
 
-{
-  "kind": "pest | disease | unknown",
-  "label": "possible_aphids",
-  "confidence": "low | medium | high",
-  "message": "Possible aphids detected on young shoots.",
-  "nextAction": "inspect | monitor | consider_treatment",
-  "notes": "Plain-language explanation"
-}
+Response format is defined in:
+- RESPONSE FORMAT (FUTURE DIRECTION)
+
 ---
 
 ### Step 6 — UI display
