@@ -1152,11 +1152,11 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
 # — early / mid / late timing groups
 # — shared block from above
 #
-# Engine MUST branch:
-# IF plant.type IN (olive, fig, citrus)
-#   → use Block 6 templates only
-# ELSE
-#   → use standard templates + shared block
+# # Future generation context:
+# when roadmap opens plan generation scope and catalog selection context is available:
+# - olive / fig use Block 6 Mediterranean templates only
+# - citrus uses Block 6 Citrus subtype templates only
+# - standard fruit trees use shared block + per-species block
 # ══════════════════════════════════════════════════════
 
 ---
@@ -1506,7 +1506,8 @@ Posebna napomena: smokva podnosi do -10°C kratkoročno, ali mlada stabla su osj
 # Citrus uses subtype seasonProfile — NOT standard timing groups.
 # Subtype required: lemon | orange | mandarin
 # Shared block does NOT apply.
-# Engine must use subtype to select the correct template below.
+# Future generation layer may use citrus subtype selection
+# to route the correct template below when that roadmap scope is opened.
 # ══════════════════════════════════════════════════════
 
 ## CITRUS model note
@@ -1866,7 +1867,7 @@ All special logic (young tree, condition-based, timing notes) is in `notes` text
 | Orange    | —         | —    | —         | —          | ✓       | ✓          | ✓ opt | —        | —    | ✓         | ✓     | ✓       | ✓        | —       |
 | Mandarin  | —         | —    | —         | —          | ✓       | ✓          | ✓ opt | —        | —    | ✓         | ✓     | ✓       | ✓        | —       |
 
-Legend: SHARED = covered in shared block | ✓ = defined in species/block section | opt = condition-based | — = not applicable
+Legend: SHARED = covered in shared block | ✓ = defined in species/block section | opt = notes indicate optional / condition-dependent relevance | — = not applicable
 
 ## All 12 plant types confirmed present: ✓
 Apple ✓ | Pear ✓ | Cherry ✓ | Nectarine ✓ | Peach ✓ | Plum ✓ | Apricot ✓
