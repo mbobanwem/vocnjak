@@ -736,16 +736,21 @@ function _v4ActivitiesThisWeek(activities) {
   }).length;
 }
 
+function _getPlanWindow(plan, year) {
+  const start = new Date(year, plan.monthStart - 1, plan.dayStart || 1);
+  const endMonth = plan.monthEnd || plan.monthStart;
+  const endDay = plan.dayEnd || new Date(year, endMonth, 0).getDate();
+  const end = new Date(year, endMonth - 1, endDay, 23, 59, 59);
+  return { start, end };
+}
+
 function _v4DashboardPlans(v4) {
   const now = new Date();
   const year = now.getFullYear();
   const { plans = [], activities = [] } = v4;
   return plans.map(pl => {
     if(pl.skipYear === year) return null;
-    const wStart = new Date(year, pl.monthStart - 1, pl.dayStart || 1);
-    const endMonth = (pl.monthEnd || pl.monthStart);
-    const endDay = pl.dayEnd || new Date(year, endMonth, 0).getDate();
-    const wEnd = new Date(year, endMonth - 1, endDay, 23, 59, 59);
+    const { start: wStart, end: wEnd } = _getPlanWindow(pl, year);
     let state;
     if(now < wStart) {
       state = "upcoming";
@@ -1315,10 +1320,7 @@ function renderPlantScreen() {
         const plantPlans = (v4.plans || []).filter(pl => {
           if(pl.skipYear === y) return false;
           if(!pl.appliesToAll && !(pl.plantIds || []).includes(plantId)) return false;
-          const wStart = new Date(y, pl.monthStart - 1, pl.dayStart || 1);
-          const endMonth = pl.monthEnd || pl.monthStart;
-          const endDay = pl.dayEnd || new Date(y, endMonth, 0).getDate();
-          const wEnd = new Date(y, endMonth - 1, endDay, 23, 59, 59);
+          const { start: wStart, end: wEnd } = _getPlanWindow(pl, y);
           return now >= wStart && now <= wEnd;
         }).slice(0, 2);
         if(plantPlans.length === 0) return "";
