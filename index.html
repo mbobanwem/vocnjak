@@ -1328,6 +1328,21 @@ function renderPlantScreen() {
           if(pl.skipYear === y) return false;
           if(!pl.appliesToAll && !(pl.plantIds || []).includes(plantId)) return false;
           const { start: wStart, end: wEnd } = _getPlanWindow(pl, y);
+          // Exclude done plans — matching activity check (reuse 13A logic)
+          const effectiveStart = new Date(wStart); effectiveStart.setDate(effectiveStart.getDate() - 7);
+          const effectiveEnd = new Date(wEnd); effectiveEnd.setDate(effectiveEnd.getDate() + 7);
+          const pType = (pl.activityType || "").toLowerCase().trim();
+          const hasMatch = (v4.activities || []).some(a => {
+            if(!a.date) return false;
+            const aType = (a.type || "").toLowerCase().trim();
+            if(aType !== pType) return false;
+            const ad = new Date(a.date);
+            if(isNaN(ad.getTime())) return false;
+            if(ad < effectiveStart || ad > effectiveEnd) return false;
+            if(pl.appliesToAll) return true;
+            return (a.plantIds || []).some(pid => (pl.plantIds || []).includes(pid));
+          });
+          if(hasMatch) return false;
           return now >= wStart && now <= wEnd;
         }).slice(0, 2);
         if(plantPlans.length === 0) return "";
