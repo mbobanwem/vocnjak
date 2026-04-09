@@ -163,3 +163,33 @@ You are executing a predefined, deterministic system.
 When in doubt:
 → STOP
 → ASK
+
+---
+
+## DIFF REQUIREMENT (MANDATORY)
+
+After every implementation, you MUST include a minimal diff.
+
+Rules:
+
+- Always show BEFORE and AFTER
+- Always include ONLY the changed code block (not full file)
+- Always include complete logical blocks (e.g. full function or full callback)
+- NEVER summarize changes without showing code
+- NEVER skip diff output
+
+Format:
+
+--- BEFORE ---
+<code>
+
+--- AFTER ---
+<code>
+
+If multiple blocks are changed:
+- show each block separately
+
+Purpose:
+- allow exact verification
+- prevent hidden logic errors
+- ensure deterministic review process
