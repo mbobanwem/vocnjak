@@ -379,4 +379,221 @@ Defined in PLANT_CATALOG_V1.md:
 - dynamic adjustment
 - pest detection triggers
 
+---
+
+# FUTURE SUGGESTIONS — SMART ORCHARD LOGIC (V2+)
+
+## Goal
+
+Transform the orchard calendar from a static schedule into a decision-support system.
+
+The goal is not only to tell the user what to do, but also:
+- when NOT to do it
+- when to delay
+- when to skip entirely
+- when action is critical
+
+This reduces unnecessary treatments and improves real-world outcomes.
+
+---
+
+## 1. WEATHER-AWARE ACTIONS
+
+### Problem
+
+Static calendar ignores real conditions (rain, wind, temperature).
+
+### Solution
+
+Each activity gets execution conditions:
+
+conditions:
+- noRain: true
+- maxWind: 3
+- minTemp: 8
+- dryWindowHours: 6
+
+### UX Behavior
+
+- If conditions NOT met:
+  - Do not apply (rain/wind)
+- Suggest:
+  - Try in 1–2 days
+
+---
+
+## 2. TREE AGE / DEVELOPMENT STAGE
+
+### Problem
+
+Young trees should not follow full production schedule.
+
+### Solution
+
+stage:
+- young
+- developing
+- mature
+
+### Logic Examples
+
+#### Young trees (year 1–2)
+
+- No fungicide programs
+- No pheromone traps
+- No fruit thinning
+- Watering is critical
+- Structure pruning only
+
+#### Developing (year 3–4)
+
+- Light protection
+- First yield management
+
+#### Mature
+
+- Full program
+
+---
+
+## 3. PEST-DRIVEN ACTIONS (TRAPS)
+
+### Problem
+
+Spraying without actual pest pressure.
+
+### Solution
+
+trap status:
+- trap: codling_moth
+- status: active | not_detected
+
+### Behavior
+
+- If NOT detected → skip spraying
+- If detected → trigger action
+
+### UX
+
+- Monitor
+- Action required
+
+---
+
+## 4. PHENOLOGY (REAL TREE STATE)
+
+### Problem
+
+Calendar does not match real plant state.
+
+### Solution
+
+phenology:
+- dormant
+- bud
+- bloom
+- fruit_set
+- ripening
+
+### Effect
+
+- If bloom delayed → delay spraying
+- If early season → shift earlier
+- If late season → shift later
+
+---
+
+## 5. IRRIGATION LOGIC
+
+### Problem
+
+Watering is static or missing.
+
+### Solution
+
+Trigger watering if:
+- no irrigation system
+- temperature above 28°C
+- no rain for several days
+
+Action:
+- Water tree (30–50L)
+
+---
+
+## 6. EQUIPMENT AND MATERIAL GUIDANCE
+
+Each activity includes required equipment:
+
+equipment:
+- sprayer
+- protective gear
+- pheromone trap
+
+---
+
+## 7. AI IMAGE INPUT (FUTURE)
+
+User takes a photo.
+
+System detects:
+- disease
+- pest damage
+- nutrient deficiency
+
+Output:
+- probable issue
+- suggested treatment category
+
+---
+
+## 8. UNCERTAINTY HANDLING
+
+System must not present full certainty.
+
+Use:
+- Likely aphids
+- Possible fungal infection
+- Monitor before treatment
+
+---
+
+## 9. SKIP LOGIC (CRITICAL)
+
+System must explicitly allow skipping actions.
+
+Examples:
+
+- no fruit → no thinning
+- no pest → no spraying
+- young tree → no treatment
+
+---
+
+## 10. IMPLEMENTATION STRATEGY
+
+V1:
+- static calendar
+
+V2:
+- weather + stage
+
+V3:
+- traps + phenology
+
+V4:
+- AI + prediction
+
+---
+
+## FINAL PRINCIPLE
+
+System behaves like an experienced gardener, not a checklist.
+
+- adaptive
+- conservative
+- avoids unnecessary work
+- reduces chemical use
+- prioritizes plant health
+
 (NOT PART OF V1)
