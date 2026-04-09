@@ -362,12 +362,246 @@ Backend returns normalized response (see RESPONSE FORMAT).
 
 ### Step 6 — UI display
 
-Show:
+Show result as a simple, structured card.
 
-- short title (label/message)
+Content:
+
+- primary text (message)
 - confidence indicator
 - next step suggestion
-- optional explanation
+- optional explanation (notes)
+
+---
+
+### Layout
+
+Card structure (top → bottom):
+
+1. Primary message (most prominent)
+2. Confidence indicator
+3. Next action suggestion
+4. Optional explanation (collapsed or secondary)
+
+---
+
+### Primary message
+
+- comes from: message
+- must be short and human-readable
+- must NOT expose internal labels
+
+Examples:
+
+- "Moguće lisne uši na mladim izbojima."
+- "Mogući znakovi gljivične bolesti."
+- "Nije dovoljno jasno — provjeri ponovno."
+
+Rules:
+
+- always visible
+- largest text in the card
+- max 1–2 lines
+
+---
+
+### Confidence indicator
+
+Based on: confidence
+
+Values:
+
+- low
+- medium
+- high
+
+Display:
+
+- low → "Niska sigurnost"
+- medium → "Srednja sigurnost"
+- high → "Visoka sigurnost"
+
+Visual:
+
+- subtle (badge or small text)
+- NOT dominant element
+
+Rules:
+
+- must always be shown
+- must communicate uncertainty clearly
+
+---
+
+### Next action suggestion
+
+Based on: nextAction
+
+Values:
+
+- inspect
+- monitor
+- consider_treatment
+
+Display mapping:
+
+- inspect → "Pregledaj biljku detaljnije"
+- monitor → "Prati stanje narednih dana"
+- consider_treatment → "Razmisli o tretmanu"
+
+Rules:
+
+- always shown
+- must be actionable
+- must NOT include product names or dosage
+
+---
+
+### Optional explanation
+
+Based on: notes
+
+- secondary text
+- smaller font
+- can be collapsible (optional)
+
+Purpose:
+
+- provide context
+- explain why AI suggested this
+
+Rules:
+
+- must be plain language
+- must NOT introduce new actions
+- must NOT contradict nextAction
+
+---
+
+### Label usage (IMPORTANT)
+
+- label is NOT shown to user
+- label is internal only
+
+Rules:
+
+- label must NOT be used in UI directly
+- label must NOT drive UI logic
+
+Only these fields drive UI:
+
+- message
+- confidence
+- nextAction
+- notes
+
+---
+
+### User actions (CTA)
+
+Below the card:
+
+Buttons:
+
+- "Spremi kao aktivnost"
+- "Zanemari"
+
+---
+
+### Save behavior
+
+If user taps "Spremi kao aktivnost":
+
+- open existing "Add Activity" flow
+- prefill:
+  - type (observation / problem)
+  - plantId
+  - notes (from message)
+
+User must:
+- confirm manually
+
+Rules:
+
+- no auto-save
+- no background save
+
+---
+
+### Ignore behavior
+
+If user taps "Zanemari":
+
+- close result
+- no data stored
+
+---
+
+### Loading state
+
+While waiting for response:
+
+- show loading indicator
+- disable interaction
+- optional text:
+  - "Analiziram fotografiju..."
+
+---
+
+### Error state
+
+If request fails:
+
+Show:
+
+- "Analiza nije uspjela. Pokušaj ponovno."
+
+Rules:
+
+- no technical details
+- no retry loops
+
+---
+
+### Rate limit state
+
+If limit reached:
+
+Show:
+
+- "Dosegnut je limit analiza za danas."
+
+Optional:
+
+- show upgrade hint (future)
+
+---
+
+### UX rules (critical)
+
+- one result per request
+- no stacked results
+- no history view (V1)
+- no comparison mode
+- no chat interaction
+
+---
+
+### Design principles
+
+- minimal UI
+- fast to read (<3 seconds)
+- clear next step
+- no overload
+
+AI result should feel like:
+
+- quick help
+- safe suggestion
+
+NOT:
+
+- diagnosis
+- decision system
 
 ---
 
