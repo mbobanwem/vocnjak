@@ -356,10 +356,7 @@ NO:
 
 ### Step 5 — response
 
-Backend returns normalized response.
-
-Response format is defined in:
-- RESPONSE FORMAT (FUTURE DIRECTION)
+Backend returns normalized response (see RESPONSE FORMAT).
 
 ---
 
