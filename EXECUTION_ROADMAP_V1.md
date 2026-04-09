@@ -26,7 +26,7 @@ V2 (overlay features such as monitoring, trigger engine, recommendations) MUST N
 - modify validation rules defined in Session 9
 - introduce new fields into activities, plants, or plans
 - persist any derived or computed state
-- V2 MUST NOT weaken or broaden V1 validation except where an explicit approved exception already exists
+- accept any values that are not explicitly allowed by V1 validation
 
 V2 is strictly:
 
