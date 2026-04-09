@@ -87,7 +87,7 @@ Rules:
 
 ## Activity Type Set (MANDATORY)
 
-Allowed types:
+### V1 allowed types (base set)
 
 - spraying
 - pruning
@@ -98,8 +98,30 @@ Allowed types:
 - observation
 - problem
 
+---
+
+### Approved implementation extension
+
+`monitoring` is an approved activity type extension already present in the current implementation.
+
 Rules:
-- type MUST be one of the above values
+- monitoring MUST be accepted in validation
+- monitoring MUST NOT be removed or restricted
+- existing monitoring data MUST NOT be treated as invalid
+- monitoring behaves as a normal activity.type value
+
+Important:
+- this does NOT change the V1 activity object structure
+- this does NOT authorize any additional types beyond this extension
+
+---
+
+### Validation rules
+
+- type MUST be one of:
+  - V1 base set
+  - OR the approved extension (`monitoring`)
+
 - no additional types allowed
 - no free text types allowed
 - type values MUST match exactly (case-sensitive)
