@@ -709,3 +709,122 @@ without making it:
 
 Core deterministic system remains primary.
 AI is a future assistant layer.
+
+## AI BACKEND CONTRACT (V1 — FUTURE)
+
+This section defines how the client communicates with the AI backend.
+
+This is NOT for immediate implementation.
+This defines expected structure to avoid future ambiguity.
+
+---
+
+### Endpoint
+
+POST /ai/analyze-image
+
+---
+
+### Request (client → backend)
+
+Payload:
+
+- image: base64 or binary (compressed)
+- plantId: optional
+- plantType: optional
+- timestamp: optional
+
+Rules:
+
+- image must be resized before sending (512–768px max width)
+- no full-resolution images
+- no full plant history sent
+
+---
+
+### Response (backend → client)
+
+Must follow:
+
+- RESPONSE FORMAT (FUTURE DIRECTION)
+
+Rules:
+
+- backend must normalize provider output
+- client must never depend on raw provider output
+
+---
+
+### Error response
+
+If analysis fails:
+
+Return:
+
+{
+  "error": true
+}
+
+Client behavior:
+
+- show generic message:
+  - "Analiza nije uspjela. Pokušaj ponovno."
+
+---
+
+### Rate limiting (expected)
+
+Backend should support:
+
+- per-user daily limit
+- per-user monthly limit
+- request throttling
+
+Client behavior:
+
+- show:
+  - "Dosegnut je limit analiza za danas."
+
+---
+
+### Idempotency (future)
+
+Optional:
+
+- same image → same result (within short time window)
+
+Goal:
+
+- avoid duplicate cost
+
+---
+
+### Security
+
+- API keys must be stored only on backend
+- client must not access provider directly
+
+---
+
+### Logging (future)
+
+Optional:
+
+- log requests count
+- do NOT log raw images by default
+
+---
+
+## FINAL NOTE
+
+AI backend must remain:
+
+- replaceable
+- minimal
+- controlled
+
+Client must remain:
+
+- simple
+- deterministic-first
+- not dependent on AI
