@@ -77,59 +77,146 @@ Defined in PLANT_CATALOG_V1.md:
 
 ---
 
-## Notes Convention
+## Template Interpretation Rules
 
-- `youngTreeSkip: true` — skip for trees in year 1–2 (no fruit production expected)
-- `conditionBased: true` — execute ONLY if stated condition is met (trap reading, pest observed, weather)
-- All spray activities assume: dry weather, no wind, temp above 5°C, morning or evening application
-- Spray rule: white oil and copper NEVER on same day — minimum 7–10 day gap
+This file defines orchard work templates only.
 
----
-
-## Completeness Checklist (per standard fruit tree)
-
-Every standard fruit tree (apple, pear, plum, cherry, peach, nectarine, apricot) must have:
-
-| # | Activity              | activityType      |
-|---|-----------------------|-------------------|
-| 1 | Whitewash             | whitewash         |
-| 2 | White mineral oil     | spraying          |
-| 3 | Copper – winter       | spraying          |
-| 4 | Winter pruning        | pruning           |
-| 5 | Copper on wounds      | spraying          |
-| 6 | Monitoring traps      | monitoring        |
-| 7 | Post-bloom spray      | spraying          |
-| 8 | Fruit thinning        | thinning          |
-| 9 | Bird netting          | protection        |
-|10 | Watering              | watering          |
-|11 | Summer pruning        | pruning           |
-|12 | Harvest               | harvest           |
-|13 | Stop watering         | watering_stop     |
-|14 | Autumn inspection     | inspection        |
-
-Note: Items 6, 7, 8, 9 carry `youngTreeSkip: true`.
-Note: Item 6, 7 carry `conditionBased: true` where explicitly stated.
-Note: Apricot has additional frost monitoring activity.
-Note: Nectarine and Peach have additional critical copper activity for leaf curl.
-Note: Olive and Fig follow a different checklist — see their sections.
+Rules:
+- this file must remain compatible with the existing V1 plan structure
+- template entries must use only existing plan-compatible fields
+- template entries must NOT introduce new schema fields
+- additional logic such as young-tree suppression or condition-based execution may be documented here, but must NOT appear as template fields
+- all internal `activityType` values must remain compatible with the existing allowed activity model
 
 ---
 
+## Interpretation of Special Orchard Logic
+
+Some orchard work depends on tree age, bearing stage, visible pest pressure, or local weather.
+
+That logic is IMPORTANT and should be preserved.
+
+However, in V1 this logic must be represented as documentation and notes, NOT as additional template fields.
+
+### Young tree interpretation
+
+Some activities are not relevant for trees in year 1–2, especially when the tree is not yet bearing fruit.
+
+Examples:
+- fruit thinning
+- bird netting
+- harvest-related protection
+- some trap-driven fruit pest actions
+
+In this file:
+- young-tree relevance must be described in `notes`
+- do NOT use custom fields such as `youngTreeSkip`
+
+### Condition-based interpretation
+
+Some activities should happen only if a condition is met.
+
+Examples:
+- insecticide after trap threshold
+- copper after visible symptom pressure
+- bird net only if birds become a real issue
+
+In this file:
+- condition logic must be described in `notes`
+- do NOT use custom fields such as `conditionBased`
+
 ---
 
+## ActivityType Mapping Rule
+
+Templates MUST use only V1-compatible internal activity types.
+
+Allowed internal activity types for this file:
+
+- spraying
+- pruning
+- fertilizing
+- watering
+- planting
+- harvest
+- observation
+- problem
+- monitoring
+
+This means orchard-specific titles must be mapped to existing internal activity types.
+
+Examples:
+
+- "Krečenje debla" → activityType: "observation"
+- "Prorjeđivanje plodova" → activityType: "observation"
+- "Mreža protiv ptica" → activityType: "observation"
+- "Gašenje navodnjavanja" → activityType: "observation"
+- "Pregled za zimu" → activityType: "observation"
+
+Reason:
+- orchard meaning stays in `title`
+- internal compatibility stays in `activityType`
+
+---
+
+## Spray Safety Notes
+
+These are orchard interpretation notes only.
+
+They are NOT additional template fields.
+
+Rules:
+- white oil and copper must NEVER be applied on the same day
+- keep at least 7–10 days between white oil and copper
+- all spray activities assume dry weather, no wind, and appropriate temperature
+- insecticide references must always be interpreted outside bloom / bee activity
+- exact local legality and product availability are outside the scope of this file
+
+---
+
+## Completeness Principle
+
+Every supported plant type should have enough template coverage to generate a useful annual orchard plan.
+
+For standard fruit trees, expected coverage usually includes:
+
+- winter trunk care
+- dormant / winter protection
+- pruning
+- wound protection after pruning
+- spring or early-season monitoring
+- post-bloom protection where relevant
+- fruit thinning where relevant
+- bird protection where relevant
+- irrigation period
+- summer pruning where relevant
+- harvest
+- season shutdown / winter inspection
+
+Important:
+- not every plant type needs every item
+- Mediterranean plants and citrus follow different logic
+- completeness is orchard-complete, not identical-per-species
+
+---
 # ══════════════════════════════════════════════════════
 # SHARED BLOCK
-# Activities applied to ALL standard fruit trees.
-# appliesToAll: true
-# Generator applies these to every plant automatically.
-# Do NOT duplicate per-species below.
+# Shared orchard work for standard fruit trees.
+# These templates are the common baseline for:
+# apple, pear, plum, cherry, peach, nectarine, apricot
+#
+# IMPORTANT:
+# - this block is a template source, not execution logic
+# - later generation may apply all or only relevant shared items
+# - do NOT interpret this block as "always blindly apply everything"
+# - Mediterranean plants and citrus are handled separately
 # ══════════════════════════════════════════════════════
 
-## SHARED — ALL STANDARD FRUIT TREES
+## SHARED — STANDARD FRUIT TREES
 
-### 1. Whitewash
+### 1. Krečenje debla
 
-- activityType: "whitewash"
+- activityType: "observation"
   title: "Krečenje debla"
   appliesToAll: true
   monthStart: 1
@@ -137,15 +224,14 @@ Note: Olive and Fig follow a different checklist — see their sections.
   monthEnd: 2
   dayEnd: 10
   notes: >
-    Zaštita kore od zimskog pucanja uzrokovanog izmjenom mraza i sunca.
-    Važno za sve koštičave (trešnja, šljiva, nektarina, breskva, marelica) i mlade jabuke/kruške.
-    Vapnena boja ili komercijalni bijeli premaz za voćke.
-    Nanijeti po suhom vremenu, temperatura iznad 0°C.
-    Mlada stabla (god. 1–2): primijeniti — štiti tanku koru.
+    Zimsko krečenje debla radi zaštite kore od pucanja zbog oscilacije mraza i sunca.
+    Posebno korisno za koštičave vrste i mlada stabla s tankom korom.
+    Primijeniti po suhom vremenu, iznad 0°C.
+    Za mlada stabla: posebno korisno, ne preskakati.
 
 ---
 
-### 2. White mineral oil
+### 2. Bijelo mineralno ulje
 
 - activityType: "spraying"
   title: "Bijelo mineralno ulje"
@@ -155,15 +241,16 @@ Note: Olive and Fig follow a different checklist — see their sections.
   monthEnd: 2
   dayEnd: 15
   notes: >
-    Uništava prezimljujuća jaja štetnika: grinje, lisne uši, štitaste uši.
-    Prskati po suhom vremenu, bez vjetra, temperatura min. 5°C.
-    Dobro natopiti sve grane i koru debla.
-    RAZMAK OD BAKRA: min. 7–10 dana — ne miješati, ne primjenjivati previše blizu.
-    Mlada stabla: primijeniti bez iznimke.
+    Dormant oil tretman protiv prezimljujućih jaja i oblika štetnika:
+    grinje, lisne uši, štitaste uši.
+    Prskati po suhom vremenu, bez vjetra, iznad 5°C.
+    Dobro natopiti grane i koru.
+    RAZMAK OD BAKRA: najmanje 7–10 dana.
+    Za mlada stabla: primijeniti.
 
 ---
 
-### 3. Copper – winter
+### 3. Bakar – zimska zaštita
 
 - activityType: "spraying"
   title: "Bakar – zimska zaštita"
@@ -173,15 +260,15 @@ Note: Olive and Fig follow a different checklist — see their sections.
   monthEnd: 2
   dayEnd: 28
   notes: >
-    Zaštita od gljivičnih bolesti i bakterija: rak kore, monilija, čađavost, pjegavost.
-    Preparat: Cuprablau Z 35 WG ili ekvivalentni bakreni fungicid.
-    RAZMAK OD ULJA: min. 7–10 dana.
-    Prskati po suhom, bez vjetra.
-    Mlada stabla: primijeniti.
+    Zimski bakreni fungicid protiv gljivičnih i bakterijskih problema:
+    rak kore, pjegavosti, monilija i slični rani izvori infekcije.
+    Primijeniti uz razmak od bijelog ulja najmanje 7–10 dana.
+    Prskati po suhom vremenu.
+    Za mlada stabla: primijeniti.
 
 ---
 
-### 4. Winter pruning
+### 4. Zimska rezidba
 
 - activityType: "pruning"
   title: "Zimska rezidba"
@@ -192,15 +279,14 @@ Note: Olive and Fig follow a different checklist — see their sections.
   dayEnd: 15
   notes: >
     Ukloniti suhe, bolesne, križajuće i preguste grane.
-    Cilj: prozračena krošnja, visina max. ~3 m.
-    Alat: Felco 8 škare, lopper, pila. Rezati po suhom.
-    Rane veće od 2 cm premazati fungicidnim premazom (Lac Balsam).
-    Mlada stabla god. 1–2: formiranje oblika — vaza (koštičave) ili vreteno/spindle (jabuka, kruška).
-    Ne rezati za mraza ili kiše.
+    Cilj je prozračna krošnja i održiva visina stabla.
+    Rezati po suhom vremenu.
+    Veće rane zaštititi premazom po potrebi.
+    Za mlada stabla god. 1–2 fokus je na formiranju uzgojnog oblika, ne na rodnoj rezidbi.
 
 ---
 
-### 5. Copper on wounds
+### 5. Bakar na rane nakon rezidbe
 
 - activityType: "spraying"
   title: "Bakar na rane nakon rezidbe"
@@ -211,13 +297,12 @@ Note: Olive and Fig follow a different checklist — see their sections.
   dayEnd: 20
   notes: >
     Primijeniti unutar 1–2 dana nakon rezidbe.
-    Zaštita svježih reznih rana od prodora gljivica i bakterija.
-    Cuprablau Z 35 WG ili ekvivalent.
-    RAZMAK OD ULJA: min. 7–10 dana.
+    Zaštita reznih rana od prodora gljivica i bakterija.
+    Ovaj tretman je posebno koristan nakon jače zimske rezidbe.
 
 ---
 
-### 6. Watering – season
+### 6. Sezonsko navodnjavanje
 
 - activityType: "watering"
   title: "Sezonsko navodnjavanje"
@@ -227,15 +312,14 @@ Note: Olive and Fig follow a different checklist — see their sections.
   monthEnd: 8
   dayEnd: 31
   notes: >
-    Upaliti kada prestane redovita kiša (obično kraj lipnja).
-    20–40 L po stablu tjedno. Prilagoditi oborinama — pratiti kišomjer.
-    Mlada stabla (god. 1–2): prioritet — 30–50 L tjedno, pratiti vlagu tla redovito.
-    Drip sustav preporučen za ujednačenu vlagu i manje bolesti.
-    Navodnjavanje ujutro ili navečer — ne po vrućini.
+    Sezonski period navodnjavanja za sušni dio godine.
+    Odrasla stabla: okvirno 20–40 L tjedno, ovisno o oborinama i tlu.
+    Mlada stabla: prioritetno i redovitije pratiti vlagu tla.
+    Stvarni ritam ovisi o kiši, sustavu navodnjavanja i tipu tla.
 
 ---
 
-### 7. Summer pruning
+### 7. Ljetna rezidba
 
 - activityType: "pruning"
   title: "Ljetna rezidba"
@@ -245,16 +329,16 @@ Note: Olive and Fig follow a different checklist — see their sections.
   monthEnd: 7
   dayEnd: 15
   notes: >
-    Uklanjanje vodopija (vertikalni snažni izbojci) i pregustih grana.
-    Prosvjetljavanje krošnje za bolju obojenost i razvoj plodova.
-    Rezati kada novi izdanci dosegnu 10–20 cm.
-    Ne rezati po vrućini iznad 30°C — opeče koru.
+    Uklanjanje vodopija i pregustih ljetnih izbojaka.
+    Cilj je bolja osvijetljenost krošnje i kontrola bujnosti.
+    Ne rezati po ekstremnim vrućinama.
+    Nije svake godine jednako potrebna za svaku vrstu i svako stablo.
 
 ---
 
-### 8. Stop watering
+### 8. Gašenje navodnjavanja
 
-- activityType: "watering_stop"
+- activityType: "observation"
   title: "Gašenje navodnjavanja"
   appliesToAll: true
   monthStart: 9
@@ -262,16 +346,15 @@ Note: Olive and Fig follow a different checklist — see their sections.
   monthEnd: 9
   dayEnd: 15
   notes: >
-    Ugasiti 2–3 tjedna prije berbe zadnje voćke u sezoni (obično jabuka).
-    Jabuka treba suhoću u završnoj fazi za bolji okus, čvrstoću i trajnost.
-    Ako je samo jedan ventil za cijeli vrt: gasiti sve odjednom oko 1. rujna.
-    Trešnja, nektarina, breskva, šljiva i marelica su već pobrane — nema konflikta.
+    Završetak glavnog sezonskog navodnjavanja prije kasnih berbi kada je to korisno.
+    Točan trenutak ovisi o zadnjoj voćki koja još ulazi u završnu fazu dozrijevanja.
+    Ovu stavku treba tumačiti kao orchard management reminder, ne kao obaveznu radnju za svaku situaciju.
 
 ---
 
-### 9. Autumn inspection
+### 9. Pregled za zimu
 
-- activityType: "inspection"
+- activityType: "observation"
   title: "Pregled za zimu"
   appliesToAll: true
   monthStart: 10
@@ -279,293 +362,224 @@ Note: Olive and Fig follow a different checklist — see their sections.
   monthEnd: 10
   dayEnd: 31
   notes: >
-    Pregledati debla i grane: pukotine, rak kore, oštećenja od štetnika.
-    Provjeriti vezice — ne smiju rezati koru, labaviti ako pritišću.
-    Provjeriti spiralne zaštite od glodavaca (zimi aktivni, posebno miševi i zečevi).
-    Ukloniti sve mumificirane plodove i lišće sa stabla i s tla — izvor zaraze za sljedeću sezonu.
-    Prilagoditi kolce i potpore mladim stablima ako su se pomaknuli.
-
----
+    Jesenski pregled stabala prije zime:
+    stanje debla, rana, vezica, zaštita od glodavaca, potpore, suhi ili mumificirani plodovi.
+    Ukloniti izvore zaraze sa stabla i tla.
+    Posebno važno za mlada stabla i stabla koja su imala stres u sezoni.
 
 ---
 
 # ══════════════════════════════════════════════════════
 # PER-SPECIES TEMPLATES
-# Specific activities per plant type.
-# Shared block applies additionally — do NOT duplicate here.
+# Species-specific orchard work.
+#
+# Shared block above remains the common baseline for:
+# apple, pear, plum, cherry, peach, nectarine, apricot
+
+# IMPORTANT:
+# - per-species sections add only what is specific to that plant type
+# - do NOT duplicate shared activities unless a species needs a clearly different timing or interpretation
+# - young-tree logic and condition-based logic belong in notes, not in custom fields
+# - orchard-specific titles must remain user-facing
+# - internal activityType values must remain V1-compatible
 # ══════════════════════════════════════════════════════
 
+---
+## Standard Fruit Tree Interpretation Rule
+
+For the following plant types:
+
+- apple
+- pear
+- plum
+- cherry
+- peach
+- nectarine
+- apricot
+
+the shared block is the common baseline.
+
+Species sections below add:
+- species-specific monitoring
+- species-specific spray context
+- species-specific thinning guidance
+- bird protection where relevant
+- species-specific harvest interpretation
+- special disease or frost notes where relevant
+
+Rules:
+- if a species-specific section adds a more specific activity of the same orchard meaning, that specific section should be preferred in generation logic
+- if a species does NOT need a specific activity, shared block remains sufficient
+- species-specific notes may explain:
+  - young-tree relevance
+  - condition-based execution
+  - special disease sensitivity
+  - harvest-specific handling
+
+---
+## Species ActivityType Mapping Reminder
+
+Within species sections below, the following orchard actions must use V1-compatible internal activity types:
+
+- trap setup / trap checks → monitoring
+- pest scouting / disease scouting → monitoring
+- fruit thinning → observation
+- bird netting → observation
+- winter shutdown reminders → observation
+- seasonal inspection → observation
+
+This keeps the orchard meaning in `title` while preserving model compatibility in `activityType`.
 
 ---
 
-## 🍎 APPLE (Malus domestica)
+## 🍎 APPLE
 
-### Bloom window (Zagreb baseline)
-Cvatnja: travanj (kasne sorte kao Fuji: poč.–kraj travnja)
-
-### Variety timing table
-
-| Variety          | Timing | Harvest (Zagreb)  |
-|------------------|--------|-------------------|
-| Fuji             | late   | 25.9.–15.10.      |
-| Gala             | mid    | 20.8.–10.9.       |
-| Granny Smith     | late   | 1.10.–20.10.      |
-| Golden Delicious | mid    | 10.9.–30.9.       |
-| Idared           | late   | 1.10.–20.10.      |
-| Jonagold         | mid    | 15.9.–5.10.       |
-
-### Fallback harvest
-- early → 10.8.–5.9.
-- mid   → 1.9.–30.9.
-- late  → 25.9.–20.10.
-
----
-
-### SPRING — monitoring
-
-- activityType: "monitoring"
-  title: "Feromonska klopka – jabučni savijač"
-  monthStart: 4
-  dayStart: 25
-  monthEnd: 5
-  dayEnd: 5
-  youngTreeSkip: true
-  notes: >
-    Jabučni savijač (Cydia pomonella) — crvi u plodovima jabuke.
-    Postaviti na 1.5–2 m visine, u sjenu krošnje.
-    Tjedno pregledavati ulov.
-    Prag: nagli rast ulova → insekticid unutar 7–10 dana.
-    Mlada stabla (god. 1–2): preskočiti — nema plodova.
-
-- activityType: "monitoring"
-  title: "Praćenje klopke – 2. generacija savijača"
-  monthStart: 6
-  dayStart: 1
-  monthEnd: 6
-  dayEnd: 30
-  youngTreeSkip: true
-  conditionBased: true
-  notes: >
-    Nastavak praćenja iz travnja.
-    Insekticid (Mospilan 20 SP) SAMO ako ulov naglo raste.
-    Mospilan NIKAD za cvatnje ili pri aktivnom letu pčela.
-
----
-
-### GROWTH — post-bloom spray
+### 1. Post-bloom zaštita (krastavost, pepelnica)
 
 - activityType: "spraying"
-  title: "Zaštita ploda – fungicid + insekticid"
-  monthStart: 5
+  title: "Post-bloom zaštita (krastavost, pepelnica)"
+  monthStart: 4
   dayStart: 10
   monthEnd: 5
-  dayEnd: 30
-  youngTreeSkip: true
-  notes: >
-    Primijeniti NAKON završetka cvatnje — pčele moraju biti izvan cvjetova.
-    Score 250 EC + Mospilan 20 SP — miješati u jednom prolazu.
-    Score štiti od krastavosti jabuke (Venturia inaequalis).
-    Mospilan štiti od jabučnog savijača (Cydia pomonella).
-    Mospilan je toksičan za pčele — NIKAD za cvatnje.
-    Mlada stabla: preskočiti.
-
-- activityType: "spraying"
-  title: "Insekticid – 2. generacija savijača"
-  monthStart: 6
-  dayStart: 10
-  monthEnd: 6
-  dayEnd: 30
-  youngTreeSkip: true
-  conditionBased: true
-  notes: >
-    Mospilan 20 SP — SAMO ako klopke pokažu nagli porast ulova.
-    Nije preventivno prskanje.
-    Primijeniti ujutro ili navečer, ne za ljetnih vrućina.
-
----
-
-### GROWTH — thinning
-
-- activityType: "thinning"
-  title: "Prorjeđivanje plodova"
-  monthStart: 5
-  dayStart: 20
-  monthEnd: 6
-  dayEnd: 10
-  youngTreeSkip: true
-  notes: >
-    Ostaviti 1 plod na svakih 10–15 cm grane.
-    Ukloniti sitne, oštećene i blizance.
-    Jabuka je sklona alternativnoj rodnosti — redovito prorjeđivanje to smanjuje.
-    Bez prorjeđivanja: sitni plodovi, preveliko opterećenje grana.
-    Mlada stabla: preskočiti.
-
----
-
-### SUMMER — bird protection
-
-- activityType: "protection"
-  title: "Zaštita od štetočina (po potrebi)"
-  monthStart: 8
-  dayStart: 1
-  monthEnd: 9
-  dayEnd: 25
-  youngTreeSkip: true
-  conditionBased: true
-  notes: >
-    Jabuka Fuji i druge kasne sorte rijetko napadnute pticama dok je plod čvrst.
-    Pratiti vizualno. Mreža nije standardna potreba za jabuku.
-    Ako se primijeti oštećenje od ptica: postaviti zastrašivače ili mrežu.
-
----
-
-### HARVEST
-
-- activityType: "harvest"
-  title: "Berba jabuke"
-  monthStart: 9
-  dayStart: 25
-  monthEnd: 10
-  dayEnd: 15
-  notes: >
-    Brati zakretanjem ploda (ne čupati, ne vući — oštećuje peteljku i uzrokuje trulež).
-    Test zrelosti: plod lako otpada pri laganom zakretanju, sjemenke smeđe.
-    Fuji: čekati punu zrelost — ako se bere prerano, nema razvijenog okusa.
-    Brati po suhom vremenu, izbjegavati jutarnju rosu.
-    Ne ostavljati oštećene plodove na stablu — uzrokuju moniliju.
-    Čuvati na 0–4°C — Fuji traje i do proljeća u dobrim uvjetima.
-
-
----
-
-## 🍐 PEAR (Pyrus communis)
-
-### Bloom window (Zagreb baseline)
-Cvatnja: kraj ožujka – poč. travnja (nešto ranije od jabuke)
-
-### Variety timing table
-
-| Variety        | Timing | Harvest (Zagreb) |
-|----------------|--------|-----------------|
-| Williams       | early  | 1.8.–20.8.      |
-| Conference     | mid    | 25.8.–15.9.     |
-| Beurré Bosc    | mid    | 1.9.–20.9.      |
-| Abate Fetel    | late   | 15.9.–5.10.     |
-| Concorde       | mid    | 20.8.–10.9.     |
-
-### Fallback harvest
-- early → 1.8.–25.8.
-- mid   → 25.8.–20.9.
-- late  → 15.9.–10.10.
-
-### Special note — fire blight
-Kruška je osjetljiva na vatrostuh (Erwinia amylovora) — bakterijska bolest bez kemijskog lijeka.
-Prevencija: bakar preventivno, rezidba oboljelih dijelova odmah (alat dezinficirati između rezova).
-
----
-
-### SPRING — fire blight copper
-
-- activityType: "spraying"
-  title: "Bakar – zaštita od vatrostuh (kruška)"
-  monthStart: 3
-  dayStart: 15
-  monthEnd: 4
   dayEnd: 10
   notes: >
-    Kruška je jedina standardna voćka s ozbiljnim rizikom vatrostuh (Erwinia amylovora).
-    Primijeniti bakar preventivno oko cvatnje.
-    PAŽNJA: cvatnja kruške je ranije od jabuke — prilagoditi termin prema stanju stabla.
-    Ne prskati direktno na otvorene cvjetove (oštećenje cvijeta i pčela).
-    Cuprablau Z 35 WG ili ekvivalent.
-    Razmak od bijelog ulja: min. 7–10 dana.
+    Ključna zaštita protiv krastavosti (Venturia inaequalis) i pepelnice.
+    Provodi se nakon cvatnje kada se formiraju mladi listovi i plodovi.
+    Ne tretirati tijekom cvatnje zbog pčela.
+    Tretmane ponavljati ovisno o kiši i infekcijskom pritisku.
 
 ---
 
-### SPRING — monitoring
+### 2. Praćenje savijača ploda (feromonske klopke)
 
 - activityType: "monitoring"
-  title: "Praćenje kruškine buhe i savijača"
-  monthStart: 4
-  dayStart: 20
-  monthEnd: 5
-  dayEnd: 15
-  youngTreeSkip: true
-  notes: >
-    Kruškina buha (Cacopsylla pyri) — značajan štetnik kruške, izlučuje mednu rosu.
-    Kruškini savijač (Grapholita molesta) može biti prisutan.
-    Tjedno pregledavati nove izbojke i naličje listova.
-    Insekticid Mospilan samo pri vidljivom problemu.
-
----
-
-### GROWTH — post-bloom spray
-
-- activityType: "spraying"
-  title: "Zaštita ploda – fungicid + insekticid"
+  title: "Praćenje savijača ploda (feromonske klopke)"
   monthStart: 5
   dayStart: 1
-  monthEnd: 5
-  dayEnd: 25
-  youngTreeSkip: true
-  notes: >
-    Nakon cvatnje. Score 250 EC + Mospilan 20 SP — jedan prolaz.
-    Zaštita od krastavosti kruške (Venturia pirina) i štetnika.
-    Mospilan NIKAD za cvatnje.
-    Mlada stabla: preskočiti.
-
----
-
-### GROWTH — thinning
-
-- activityType: "thinning"
-  title: "Prorjeđivanje plodova"
-  monthStart: 5
-  dayStart: 20
-  monthEnd: 6
-  dayEnd: 15
-  youngTreeSkip: true
-  notes: >
-    Kruška ne zahtijeva agresivno prorjeđivanje kao jabuka, ali pomaže kvaliteti.
-    Ostaviti 1–2 ploda na grozdu, razmak ~10 cm.
-    Ukloniti oštećene i deformirane plodove.
-    Mlada stabla: preskočiti.
-
----
-
-### SUMMER — bird protection
-
-- activityType: "protection"
-  title: "Zaštita od ptica – kruška"
-  monthStart: 7
-  dayStart: 20
   monthEnd: 8
-  dayEnd: 25
-  youngTreeSkip: true
-  conditionBased: true
+  dayEnd: 15
   notes: >
-    Kruška može biti napadnuta pticama pred samu berbu.
-    Pratiti vizualno — mreža po potrebi.
-    Postaviti kada plodovi počnu sazrijevati.
+    Postaviti feromonske klopke za praćenje jabučnog savijača (Cydia pomonella).
+    Redovito provjeravati ulov.
+    Tretman insekticidom provodi se samo ako ulov prijeđe prag štetnosti.
+    Za mlada stabla bez ploda: nije prioritet.
 
 ---
 
-### HARVEST
+### 3. Prorjeđivanje plodova
+
+- activityType: "observation"
+  title: "Prorjeđivanje plodova"
+  monthStart: 5
+  dayStart: 15
+  monthEnd: 6
+  dayEnd: 15
+  notes: >
+    Uklanjanje viška plodova radi bolje kvalitete i veličine.
+    Cilj je ostaviti jedan plod po cvatu / kratkoj rodnoj grančici.
+    Smanjuje alternativnu rodnost i opterećenje stabla.
+    Za mlada stabla (god. 1–2): uglavnom nepotrebno jer nema značajnog uroda.
+
+---
+
+### 4. Mreža protiv ptica
+
+- activityType: "observation"
+  title: "Mreža protiv ptica"
+  monthStart: 8
+  dayStart: 15
+  monthEnd: 10
+  dayEnd: 1
+  notes: >
+    Postaviti mrežu ako postoji rizik od štete od ptica.
+    Posebno važno kod ranijih sorti.
+    Postavlja se prije početka dozrijevanja.
+    Za mlada stabla bez ploda: nije potrebno.
+
+---
+
+### 5. Berba
 
 - activityType: "harvest"
-  title: "Berba kruške"
-  monthStart: 8
-  dayStart: 1
-  monthEnd: 9
-  dayEnd: 20
+  title: "Berba"
+  dynamicTiming: "harvestWindow"
   notes: >
-    KRITIČNO: brati PRIJE pune zrelosti — kruška dozrijeva nakon berbe, ne na stablu.
-    Test zrelosti na stablu: plod se lako odvaja zakretanjem, ali još čvrst.
-    Dozrijevanje nakon berbe: sobna temperatura 3–7 dana.
-    NE čekati da omekša na stablu — bit će brašnasta i neukusna.
-    Brati pažljivo — kruška lako dobiva modrice koje uzrokuju trulež.
-    Čuvati na 0–4°C — usporava dozrijevanje.
+    Termin berbe ovisi o sorti (early / mid / late ili konkretna sorta).
+    Plod se bere kada postigne punu boju i lako se odvaja od peteljke.
+    Izbjegavati berbu po kiši.
 
+---
+## 🍐 PEAR
+
+### 1. Post-bloom zaštita (krastavost, bakterijske bolesti)
+
+- activityType: "spraying"
+  title: "Post-bloom zaštita (krastavost, bakterijske bolesti)"
+  monthStart: 4
+  dayStart: 10
+  monthEnd: 5
+  dayEnd: 10
+  notes: >
+    Zaštita protiv krastavosti kruške i bakterijskih bolesti (npr. Erwinia amylovora).
+    Ne tretirati tijekom cvatnje.
+    Posebno oprezno u toplim i vlažnim uvjetima.
+
+---
+
+### 2. Praćenje štetnika (savijač, lisne uši)
+
+- activityType: "monitoring"
+  title: "Praćenje štetnika (savijač, lisne uši)"
+  monthStart: 5
+  dayStart: 1
+  monthEnd: 8
+  dayEnd: 15
+  notes: >
+    Praćenje pojave savijača i lisnih uši.
+    Tretman samo ako je prag štetnosti prijeđen.
+    Redoviti vizualni pregled mladih izbojaka i listova.
+    Za mlada stabla: fokus na lisne uši.
+
+---
+
+### 3. Prorjeđivanje plodova
+
+- activityType: "observation"
+  title: "Prorjeđivanje plodova"
+  monthStart: 5
+  dayStart: 15
+  monthEnd: 6
+  dayEnd: 15
+  notes: >
+    Smanjenje broja plodova radi bolje kvalitete.
+    Posebno važno kod bujnijih stabala.
+    Za mlada stabla: nije potrebno.
+
+---
+
+### 4. Mreža protiv ptica
+
+- activityType: "observation"
+  title: "Mreža protiv ptica"
+  monthStart: 8
+  dayStart: 15
+  monthEnd: 9
+  dayEnd: 30
+  notes: >
+    Po potrebi postaviti mrežu prije dozrijevanja.
+    Ovisi o lokaciji i prisutnosti ptica.
+
+---
+
+### 5. Berba
+
+- activityType: "harvest"
+  title: "Berba"
+  dynamicTiming: "harvestWindow"
+  notes: >
+    Berba se obično obavlja prije potpune konzumne zrelosti.
+    Plodovi dozrijevaju nakon berbe.
+    Termin ovisi o sorti ili fallback grupi.
 
 ---
 
