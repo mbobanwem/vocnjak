@@ -101,6 +101,13 @@ When coding:
 - Keep changes minimal and isolated
 - Do NOT restructure code unless required
 - Do NOT introduce abstractions
+- Do NOT add speculative code
+- Do NOT create helper functions, scaffolding, or preparatory logic unless explicitly requested in the session
+- Do NOT extract reusable helpers "in advance"
+- If the plan says inline implementation, keep it inline
+- If a helper or cleanup step is not explicitly in scope, do NOT add it
+- Before stopping for review, verify that the implementation matches the approved session scope 1:1
+- If extra code was added outside scope, remove it before presenting the result
 
 ---
 
