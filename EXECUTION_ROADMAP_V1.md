@@ -17,6 +17,37 @@ Core rule:
 
 ---
 
+## GLOBAL SAFETY RULE — V1 vs V2
+
+V2 (overlay features such as monitoring, trigger engine, recommendations) MUST NOT:
+
+- modify V1 data model
+- modify activity object structure
+- modify validation rules defined in Session 9
+- introduce new fields into activities, plants, or plans
+- persist any derived or computed state
+
+V2 is strictly:
+
+- read-only over V1 data
+- logic-only (pure functions)
+- UI-only (derived rendering)
+
+Exception:
+
+- `monitoring` is the ONLY approved extension to activity.type
+- this exception is defined explicitly in Session 9
+- no other exceptions are allowed
+
+If any V2 feature requires:
+- schema change
+- validation change
+- new stored fields
+
+→ STOP and introduce it through a new explicit roadmap session.
+
+---
+
 # CURRENT STATUS
 
 ## Already completed
