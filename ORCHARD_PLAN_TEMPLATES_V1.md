@@ -76,7 +76,7 @@ Defined in PLANT_CATALOG_V1.md:
 
 ---
 
-# 🌳 TEMPLATES
+# 🌳 ORCHARD PLAN TEMPLATES — V1 (FULL)
 
 ---
 
@@ -90,7 +90,7 @@ Defined in PLANT_CATALOG_V1.md:
   dayStart: 15
   monthEnd: 2
   dayEnd: 10
-  notes: "Zaštita od pucanja kore i sunčanih opeklina"
+  notes: "Zaštita od pucanja kore, sunčanih opeklina i štetnika"
 
 - activityType: "spraying"
   title: "Bijelo ulje"
@@ -98,7 +98,7 @@ Defined in PLANT_CATALOG_V1.md:
   dayStart: 1
   monthEnd: 2
   dayEnd: 15
-  notes: "Uništava jaja štetnika"
+  notes: "Uništava prezimljujuća jaja štetnika. Prskati po suhom vremenu."
 
 - activityType: "spraying"
   title: "Bakar – fungicid"
@@ -106,7 +106,7 @@ Defined in PLANT_CATALOG_V1.md:
   dayStart: 15
   monthEnd: 2
   dayEnd: 28
-  notes: "Razmak min 7–10 dana od ulja"
+  notes: "Zaštita od gljivičnih bolesti. Razmak min 7–10 dana od ulja."
 
 ---
 
@@ -118,6 +118,7 @@ Defined in PLANT_CATALOG_V1.md:
   dayStart: 1
   monthEnd: 3
   dayEnd: 15
+  notes: "Ukloniti suhe, bolesne i preguste grane. Održavati visinu i oblik."
 
 - activityType: "spraying"
   title: "Bakar na rane"
@@ -125,26 +126,27 @@ Defined in PLANT_CATALOG_V1.md:
   dayStart: 1
   monthEnd: 3
   dayEnd: 20
-  notes: "Nakon rezidbe"
+  notes: "Primijeniti unutar 1–2 dana nakon rezidbe."
 
 - activityType: "monitoring"
-  title: "Feromonska klopka"
+  title: "Feromonska klopka – jabučni savijač"
   monthStart: 4
   dayStart: 25
   monthEnd: 5
   dayEnd: 5
+  notes: "Praćenje populacije. Nagli rast ulova = tretman unutar 7–10 dana."
 
 ---
 
 ### GROWTH
 
 - activityType: "spraying"
-  title: "Zaštita ploda"
+  title: "Zaštita ploda (fungicid + insekticid)"
   monthStart: 5
   dayStart: 10
   monthEnd: 5
   dayEnd: 30
-  notes: "Score + Mospilan"
+  notes: "Score + Mospilan. Štiti od krastavosti i štetnika."
 
 - activityType: "thinning"
   title: "Prorjeđivanje plodova"
@@ -152,6 +154,115 @@ Defined in PLANT_CATALOG_V1.md:
   dayStart: 20
   monthEnd: 6
   dayEnd: 10
+  notes: "Ostaviti 1 plod svakih 10–15 cm. Ukloniti sitne i oštećene."
+
+---
+
+### SUMMER
+
+- activityType: "watering"
+  title: "Navodnjavanje"
+  monthStart: 6
+  dayStart: 20
+  monthEnd: 8
+  dayEnd: 31
+  notes: "20–40 L po stablu tjedno. Prilagoditi oborinama."
+
+- activityType: "pruning"
+  title: "Ljetna rezidba"
+  monthStart: 7
+  dayStart: 1
+  monthEnd: 7
+  dayEnd: 20
+  notes: "Uklanjanje vodopija i prozračivanje krošnje."
+
+---
+
+### HARVEST
+
+- activityType: "harvest"
+  title: "Berba jabuke"
+  monthStart: 9
+  dayStart: 25
+  monthEnd: 10
+  dayEnd: 15
+  notes: "Brati zakretanjem ploda. Ne čupati."
+
+---
+
+### AUTUMN
+
+- activityType: "watering_stop"
+  title: "Gašenje navodnjavanja"
+  monthStart: 9
+  dayStart: 1
+  monthEnd: 9
+  dayEnd: 15
+
+- activityType: "inspection"
+  title: "Pregled za zimu"
+  monthStart: 10
+  dayStart: 1
+  monthEnd: 10
+  dayEnd: 31
+
+---
+
+## 🍑 NECTARINE (Prunus persica)
+
+### WINTER
+
+- activityType: "whitewash"
+  title: "Krečenje debla"
+  monthStart: 1
+  dayStart: 15
+  monthEnd: 2
+  dayEnd: 10
+
+- activityType: "spraying"
+  title: "Bijelo ulje"
+  monthStart: 2
+  dayStart: 1
+  monthEnd: 2
+  dayEnd: 15
+
+- activityType: "spraying"
+  title: "Bakar – kovrčavost lista"
+  monthStart: 2
+  dayStart: 10
+  monthEnd: 3
+  dayEnd: 5
+  notes: "Ključno prskanje protiv kovrčavosti."
+
+---
+
+### SPRING
+
+- activityType: "pruning"
+  title: "Rezidba"
+  monthStart: 3
+  dayStart: 1
+  monthEnd: 3
+  dayEnd: 15
+
+- activityType: "spraying"
+  title: "Bakar nakon rezidbe"
+  monthStart: 3
+  dayStart: 1
+  monthEnd: 3
+  dayEnd: 20
+
+---
+
+### GROWTH
+
+- activityType: "thinning"
+  title: "Prorjeđivanje plodova"
+  monthStart: 5
+  dayStart: 20
+  monthEnd: 6
+  dayEnd: 10
+  notes: "Ostaviti 1 plod na 10–15 cm."
 
 ---
 
@@ -176,42 +287,18 @@ Defined in PLANT_CATALOG_V1.md:
 ### HARVEST
 
 - activityType: "harvest"
-  title: "Berba jabuke"
-  monthStart: 9
+  title: "Berba nektarine"
+  monthStart: 7
   dayStart: 25
-  monthEnd: 10
-  dayEnd: 15
-
----
-
-### AUTUMN
-
-- activityType: "watering_stop"
-  title: "Gašenje navodnjavanja"
-  monthStart: 9
-  dayStart: 1
-  monthEnd: 9
-  dayEnd: 15
-
-- activityType: "inspection"
-  title: "Pregled za zimu"
-  monthStart: 10
-  dayStart: 1
-  monthEnd: 10
-  dayEnd: 31
-
----
-
-## 🍑 NECTARINE (Prunus persica)
-
-- uključuje dodatni bakar za kovrčavost
-- berba ranije
-
-(isti pattern — ne dupliciram sve ovdje, ali moraš ih uključiti u MD)
+  monthEnd: 8
+  dayEnd: 10
+  notes: "Više prolaza. Plodovi ne dozrijevaju istovremeno."
 
 ---
 
 ## 🍒 CHERRY (Prunus avium)
+
+### SPRING
 
 - activityType: "monitoring"
   title: "Žute ljepljive ploče"
@@ -219,6 +306,11 @@ Defined in PLANT_CATALOG_V1.md:
   dayStart: 25
   monthEnd: 5
   dayEnd: 10
+  notes: "Praćenje trešnjine muhe."
+
+---
+
+### SUMMER
 
 - activityType: "protection"
   title: "Mreža protiv ptica"
@@ -226,6 +318,10 @@ Defined in PLANT_CATALOG_V1.md:
   dayStart: 10
   monthEnd: 6
   dayEnd: 30
+
+---
+
+### HARVEST
 
 - activityType: "harvest"
   title: "Berba trešnje"
@@ -238,12 +334,29 @@ Defined in PLANT_CATALOG_V1.md:
 
 ## 🍑 PLUM (Prunus domestica)
 
+### SPRING
+
 - activityType: "monitoring"
-  title: "Feromonska klopka"
+  title: "Feromonska klopka – šljivin savijač"
   monthStart: 4
   dayStart: 25
   monthEnd: 5
   dayEnd: 5
+
+---
+
+### GROWTH
+
+- activityType: "thinning"
+  title: "Prorjeđivanje plodova"
+  monthStart: 5
+  dayStart: 20
+  monthEnd: 6
+  dayEnd: 10
+
+---
+
+### HARVEST
 
 - activityType: "harvest"
   title: "Berba šljive"
@@ -251,8 +364,6 @@ Defined in PLANT_CATALOG_V1.md:
   dayStart: 20
   monthEnd: 9
   dayEnd: 10
-
----
 
 ## Notes
 
