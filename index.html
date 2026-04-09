@@ -802,33 +802,6 @@ function _monitoringLabel(notes) {
   return map[notes] || notes;
 }
 
-function _getActivePlansForPlant(v4, plantId) {
-  const { plans = [] } = v4;
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = now.getMonth();
-  const d = now.getDate();
-  const curDate = new Date(y, m, d, 12, 0, 0);
-  return plans.filter(pl => {
-    if(pl.skipYear === y) return false;
-    if(!pl.appliesToAll && !(pl.plantIds || []).includes(plantId)) return false;
-    const wStart = new Date(y, pl.monthStart - 1, pl.dayStart || 1);
-    const endMonth = pl.monthEnd || pl.monthStart;
-    const endDay = pl.dayEnd || new Date(y, endMonth, 0).getDate();
-    const wEnd = new Date(y, endMonth - 1, endDay, 23, 59, 59);
-    return curDate >= wStart && curDate <= wEnd;
-  });
-}
-
-function _formatPlanWindow(pl) {
-  const ds = pl.dayStart || 1;
-  const ms = pl.monthStart;
-  const me = pl.monthEnd || pl.monthStart;
-  const de = pl.dayEnd || new Date(new Date().getFullYear(), me, 0).getDate();
-  if(ms === me && ds === 1 && de === new Date(new Date().getFullYear(), me, 0).getDate()) return ms + ". mjesec";
-  return ds + "." + ms + ". – " + de + "." + me + ".";
-}
-
 // ── TRIGGER ENGINE (V2) ──
 function getRecommendationsV2(v4, plantId, currentDateStr) {
   const { plants = {}, activities = [], plans = [] } = v4;
