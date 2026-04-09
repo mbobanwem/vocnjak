@@ -133,6 +133,7 @@
   .cal-day.has-urgent::after { background: var(--red); }
   .cal-day.has-done::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green-light); position: absolute; bottom: 3px; }
   .cal-day.has-skipped::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #9ca3af; position: absolute; bottom: 3px; }
+  .cal-day.has-missed::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #9ca3af; position: absolute; bottom: 3px; }
   .cal-day-num { font-size: 13px; font-weight: 500; color: var(--text); line-height: 26px; }
   .cal-task-item { margin: 0 0 8px; background: var(--cream); border-radius: var(--r-sm); padding: 10px 12px; border-left: 3px solid var(--green-mid); }
   .cal-task-item.urgent { border-left-color: var(--red); background: var(--red-pale); }
@@ -1876,17 +1877,47 @@ function getCalendarItemsV4(v4, year, month) {
   const month1 = month + 1;
   const items = [];
 
-  // Plans → "planned"
+  // Plans → derived state per day
+  const today = new Date();
+  const todayNorm = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   (v4.plans || []).forEach(pl => {
-    // Exclude plans skipped for this year
     if(pl.skipYear === year) return;
-    const start = pl.monthStart;
-    const end   = pl.monthEnd || pl.monthStart;
-    if(month1 < start || month1 > end) return;
-    // Anchor day: use dayStart if this is the start month and dayStart exists, else day 1
-    const day = (month1 === start && pl.dayStart) ? pl.dayStart : 1;
+    const { start, end } = _getPlanWindow(pl, year);
+    const startNorm = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const endNorm = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+    // Tolerance for matching only (±7 days)
+    const effectiveStart = new Date(startNorm); effectiveStart.setDate(effectiveStart.getDate() - 7);
+    const effectiveEnd = new Date(endNorm); effectiveEnd.setDate(effectiveEnd.getDate() + 7);
+    // Check for matching activity
+    const hasMatch = (v4.activities || []).some(a => {
+      if(!a.date) return false;
+      const aType = (a.type || "").toLowerCase().trim();
+      const pType = (pl.activityType || "").toLowerCase().trim();
+      if(aType !== pType) return false;
+      const ad = new Date(a.date);
+      if(isNaN(ad.getTime())) return false;
+      const adNorm = new Date(ad.getFullYear(), ad.getMonth(), ad.getDate());
+      if(adNorm < effectiveStart || adNorm > effectiveEnd) return false;
+      if(pl.appliesToAll) return true;
+      return (a.plantIds || []).some(pid => (pl.plantIds || []).includes(pid));
+    });
+    // Done plans excluded from calendar dots
+    if(hasMatch) return;
+    // Derive state
+    let state;
+    if(todayNorm < startNorm) state = "upcoming";
+    else if(todayNorm <= endNorm) state = "active";
+    else if(todayNorm > effectiveEnd) state = "missed";
+    else state = "active"; // within tolerance period after window but not yet missed
+    // Add item for each day in window within this month
     const plantIds = pl.appliesToAll ? [] : (pl.plantIds || []);
-    items.push({ day, type: "planned", title: pl.title || "", plantIds });
+    const firstDay = (start.getMonth() === month) ? start.getDate() : 1;
+    const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
+    const lastDay = (end.getMonth() === month) ? end.getDate() : lastDayOfMonth;
+    if(start.getMonth() > month || end.getMonth() < month) return;
+    for(let d = firstDay; d <= lastDay; d++) {
+      items.push({ day: d, type: state, title: pl.title || "", plantIds });
+    }
   });
 
   // Activities → "done" or "skipped" only
@@ -1917,8 +1948,8 @@ function renderCalendar() {
   if(useV4) {
     const items = getCalendarItemsV4(v4, calYear, calMonth);
 
-    // Single dot per day — priority: done(3) > planned(2) > skipped(1)
-    const PRIORITY = { done: 3, planned: 2, skipped: 1 };
+    // Single dot per day — priority: done(4) > active(3) > missed(2) > upcoming(1)
+    const PRIORITY = { done: 4, active: 3, missed: 2, upcoming: 1, skipped: 1 };
     const dayType = {};
     items.forEach(item => {
       const prev = dayType[item.day];
@@ -1932,7 +1963,7 @@ function renderCalendar() {
     for(let d=1; d<=lastDay.getDate(); d++) {
       const isToday = calYear===now.getFullYear() && calMonth===now.getMonth() && d===now.getDate();
       const t = dayType[d];
-      const dotClass = t === "done" ? "has-done" : t === "planned" ? "has-task" : t === "skipped" ? "has-skipped" : "";
+      const dotClass = t === "done" ? "has-done" : (t === "active" || t === "upcoming") ? "has-task" : t === "missed" ? "has-missed" : t === "skipped" ? "has-skipped" : "";
       daysHTML += `<div class="cal-day ${isToday?'today':''} ${dotClass}" onclick="selectCalDay(${d})"><div class="cal-day-num">${d}</div></div>`;
     }
 
