@@ -17,7 +17,7 @@ If any conflict exists between documents:
   - plans = global array
 
 - Migration is complete and stable
-- Sessions 1–10 are DONE
+- Sessions 1–13A are DONE
 
 ### V2 overlay status
 - Session V2.1 — Monitoring Input = DONE
@@ -26,7 +26,7 @@ If any conflict exists between documents:
 - Session V2.4 — Recommendation UI = DONE
 
 ### Current next step
-- Session 11 — Plans: Read Model
+- Session 13B — Plant detail plan integration (reuse existing plan logic)
 
 ---
 
@@ -79,6 +79,7 @@ The following documents define direction only and MUST NOT be treated as automat
 - AI_STRATEGY_V1.md
 - STORE_READY_ROADMAP_V1.md
 - V2_PROTECTION_ENGINE.md
+- ORCHARD_PLAN_TEMPLATES_V1.md
 
 Rules:
 - these files guide future work
