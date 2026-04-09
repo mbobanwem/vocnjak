@@ -134,6 +134,22 @@ else → timing = "mid" (default)
 
 ---
 
+## Timing Resolution Rule (FINAL)
+
+The system MUST resolve timing using exactly one of these sources, in this order:
+
+1. variety timing
+2. fallback timing
+3. default = mid
+
+Rules:
+- no other timing source is allowed in V1
+- region offsets are NOT part of V1
+- fine tuning is NOT part of V1
+- rootstock influence is NOT part of V1
+
+---
+
 ## 6. Timing Groups (Fallback)
 
 Used when variety is unknown.
@@ -165,6 +181,21 @@ Each variety has exactly:
 - `bloomWindow` is optional in V1, reserved for future phenology engine
 - No combined timing values (e.g. early_mid) — single value only
 - All windows are Zagreb baseline — region offsets are future (V2+)
+
+---
+
+## Bloom Window (Future)
+
+`bloomWindow` is future-ready metadata only.
+
+Rules:
+- `bloomWindow` is NOT used by the V1 engine
+- `harvestWindow` is the only active timing window used by V1 runtime logic
+- `bloomWindow` may later support:
+  - phenology modeling
+  - disease timing
+  - advanced planning
+- V1 implementation MUST NOT depend on `bloomWindow`
 
 ---
 
@@ -443,6 +474,25 @@ User selects type only. No fallback, no variety.
 
 ---
 
+## Mediterranean Season Profile
+
+Applies to:
+- Olive
+- Fig
+
+Rules:
+- Mediterranean plants do NOT use Early / Mid / Late fallback timing
+- Mediterranean plants do NOT require variety timing in V1
+- Mediterranean plants use simplified seasonal handling in V1
+- detailed regional adaptation is future work
+
+V1 interpretation:
+- olive and fig are supported plant types
+- they use a simplified season profile
+- exact phenology is not modeled in V1
+
+---
+
 ## 11. Citrus Special Handling
 
 Citrus uses seasonProfile model — no timing groups, no variety timing.
@@ -467,12 +517,24 @@ Rules:
 
 ---
 
+## ⚠️ Source of Truth
+
+The JSON block in **Section 12 — Complete Data Model** is the ONLY source of truth used by the application.
+
+Rules:
+- tables above are documentation only
+- descriptive text above is explanatory only
+- if any table or paragraph conflicts with the JSON in Section 12, the JSON wins
+- runtime logic must depend on the JSON block only
+---
+
 ## 12. Complete Data Model (V1, implementation-ready)
 
 ```json
 {
   "apple": {
-    "varieties": {
+  "group": "pome",
+  "varieties": {
       "gala":             { "timing": "mid",  "harvestWindow": { "monthStart": 8,  "dayStart": 20, "monthEnd": 9,  "dayEnd": 10 } },
       "golden_delicious": { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 10, "monthEnd": 9,  "dayEnd": 30 } },
       "jonagold":         { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 15, "monthEnd": 10, "dayEnd": 5  } },
@@ -487,8 +549,9 @@ Rules:
     }
   },
 
-  "cherry": {
-    "varieties": {
+ "cherry": {
+  "group": "stone",
+  "varieties": {
       "burlat":     { "timing": "early", "harvestWindow": { "monthStart": 6, "dayStart": 1,  "monthEnd": 6, "dayEnd": 15 } },
       "kordia":     { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 5  } },
       "lapins":     { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 25, "monthEnd": 7, "dayEnd": 10 } },
@@ -503,7 +566,8 @@ Rules:
   },
 
   "plum": {
-    "varieties": {
+  "group": "stone",
+  "varieties": {
       "cacanska_rana":     { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 20, "monthEnd": 8, "dayEnd": 10 } },
       "cacanska_lepotica": { "timing": "early", "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 20 } },
       "cacanska_najbolja": { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 10, "monthEnd": 8, "dayEnd": 31 } },
@@ -518,7 +582,8 @@ Rules:
   },
 
   "peach": {
-    "varieties": {
+  "group": "stone",
+  "varieties": {
       "springcrest": { "timing": "early", "harvestWindow": { "monthStart": 6, "dayStart": 25, "monthEnd": 7, "dayEnd": 15 } },
       "redhaven":    { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 20 } },
       "royal_glory": { "timing": "mid",   "harvestWindow": { "monthStart": 7, "dayStart": 20, "monthEnd": 8, "dayEnd": 5  } },
@@ -532,8 +597,9 @@ Rules:
     }
   },
 
-  "nectarine": {
-    "varieties": {
+"nectarine": {
+  "group": "stone",
+  "varieties": {
       "caldesi_2000":  { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 20 } },
       "big_top":       { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 10, "monthEnd": 7, "dayEnd": 31 } },
       "fantasia":      { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 20 } },
@@ -548,7 +614,8 @@ Rules:
   },
 
   "pear": {
-    "varieties": {
+  "group": "pome",
+  "varieties": {
       "santa_maria":  { "timing": "early", "harvestWindow": { "monthStart": 8, "dayStart": 5,  "monthEnd": 8,  "dayEnd": 25 } },
       "williams":     { "timing": "early", "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8,  "dayEnd": 20 } },
       "conference":   { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 25, "monthEnd": 9,  "dayEnd": 15 } },
@@ -563,7 +630,8 @@ Rules:
   },
 
   "apricot": {
-    "varieties": {
+  "group": "stone",
+  "varieties": {
       "novosadska_rodna": { "timing": "early", "harvestWindow": { "monthStart": 6, "dayStart": 5,  "monthEnd": 6, "dayEnd": 25 } },
       "kioto":            { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 10 } },
       "goldrich":         { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 10 } },
@@ -577,11 +645,12 @@ Rules:
     }
   },
 
-  "olive": { "varieties": null, "fallback": null },
-  "fig":   { "varieties": null, "fallback": null },
+  "olive": { "group": "mediterranean", "seasonProfile": "mediterranean" },
+  "fig":   { "group": "mediterranean", "seasonProfile": "mediterranean" },
 
-  "citrus": {
-    "subtypes": {
+"citrus": {
+  "group": "citrus",
+  "subtypes": {
       "lemon":    { "seasonProfile": "multi_cycle" },
       "orange":   { "seasonProfile": "winter" },
       "mandarin": { "seasonProfile": "autumn" }
@@ -614,14 +683,24 @@ Rules:
 
 ---
 
-## 15. Future Extensions (V2+)
+## 13. Future Extensions (V2+)
 
-- Add more varieties per type
-- Add region-specific timing offsets
-- Add bloomWindow for phenology engine
-- Add disease susceptibility per variety
-- Add rootstock influence on harvest timing
-- Remote catalog updates without app release
+Possible future extensions:
+
+- add more varieties
+- add region-specific defaults
+- add disease susceptibility
+- add rootstock influence
+- remote catalog updates
+- activate `bloomWindow` in runtime logic
+- add climate-zone offsets
+- add user fine-tuning for timing
+- add phenology-based planning
+
+Rules:
+- none of the above are active in V1
+- V1 runtime logic uses `harvestWindow` only
+- no future field may be treated as implemented unless explicitly opened in roadmap
 
 ---
 
@@ -632,29 +711,3 @@ Catalog must be:
 - structured enough for engine
 - stable enough to avoid refactoring
 
-dodatno objašnjenje:
-da li sada ove podvrste moramo dodati i u orchard plan templates v1? da li si mijenjao još išta u plant catalog v1 ili si samo dodao podvrste?
-
-14:40
-
-Razjasnio razlike između šablona i kataloga, identificirao izmjene
-Razjasnio razlike između šablona i kataloga, identificirao izmjene
-Odgovor na oba pitanja:
-
-1. Treba li dodati podvrste u ORCHARD_PLAN_TEMPLATES_V1.md?
-
-Ne. Templates rade na razini vrste (apple, cherry...), ne sorte. Sorta utječe samo na kada – a to dolazi iz harvestWindow u katalogu. Engine uzima harvestWindow iz kataloga i ubacuje ga u harvest aktivnost iz templatea. Nema potrebe pisati poseban template za Fuji i poseban za Galu – plan radova je identičan, samo datum berbe se razlikuje.
-
-Jedina iznimka bi bila da neka sorta ima specifičnu bolest ili poseban tretman – ali to je V2+.
-
-2. Što sam promijenio u PLANT_CATALOG_V1 osim sorti?
-
-Promijenio sam više od samog dodavanja sorti. Konkretno:
-
-Sekcija 4 (Selection Model) – originalno ima 3 koraka (type → variety → fallback). Ja sam to zamijenio s 3-tier logikom (zna sortu / zna kada bere / ne zna ništa) i dodao pravilo za default Mid.
-Sekcija 7 (Variety Strategy) – original ima samo par primjera (Fuji, Gala, Granny Smith za jabuku). Ja sam dodao kompletnih 35 sorti s harvestWindow i bloomWindow.
-Sekcija 9 (Data Model) – original ima samo jabuku kao primjer JSON. Ja sam dodao Sekciju 12 s kompletnim JSON modelom za sve vrste.
-Sekcije 10 i 11 – original ima Citrus special handling. Ja sam dodao i Olive/Fig kao null model (nije bilo u originalu).
-Strukturu, Purpose, Constraints, Design Principles, Storage Rules – to sam zadržao identično.
-
-Ako hoćeš mogu pokazati točan diff originalnog vs novog za bilo koji dio.
