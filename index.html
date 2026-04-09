@@ -882,10 +882,7 @@ function getRecommendationsV2(v4, plantId, currentDateStr) {
   const hasActivePlan = plans.some(pl => {
     if(pl.skipYear === curY) return false;
     if(!pl.appliesToAll && !(pl.plantIds || []).includes(plantId)) return false;
-    const wStart = new Date(curY, pl.monthStart - 1, pl.dayStart || 1);
-    const endMonth = pl.monthEnd || pl.monthStart;
-    const endDay = pl.dayEnd || new Date(curY, endMonth, 0).getDate();
-    const wEnd = new Date(curY, endMonth - 1, endDay, 23, 59, 59);
+    const { start: wStart, end: wEnd } = _getPlanWindow(pl, curY);
     const curDate = new Date(curY, curM - 1, curD, 12, 0, 0);
     return curDate >= wStart && curDate <= wEnd;
   });
