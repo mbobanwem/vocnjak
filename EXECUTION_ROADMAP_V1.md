@@ -277,24 +277,198 @@ User must understand the basic context of the plant without entering edit mode.
 ## Session 11 — Plans: Read Model
 
 ### Goal
-Use existing predefined plans as a visible part of the app.
+
+Use existing predefined plans as a visible, read-only part of the app.
+
+This session introduces plans into the UI safely and incrementally.
+
+Plans remain:
+- read-only
+- predefined
+- structurally unchanged
+
+No plan creation or editing is allowed in this session.
+
+---
+
+## Strategy
+
+Session 11 is split into 3 safe substeps:
+
+- Session 11A — Plans UI (rendering only)
+- Session 11B — Plan logic consolidation
+- Session 11C — Engine alignment (optional, later)
+
+Purpose:
+- avoid risky refactors
+- avoid logic drift
+- keep rendering and logic changes separate
+
+---
+
+## Session 11A — Plans UI (rendering only)
+
+### Goal
+
+Make plans visible in the UI without changing plan logic.
 
 ### Scope
-- read plans from v4.plans
-- do NOT create or modify plans
-- display plans in:
-  - calendar
-  - plant context (if applicable)
+
+1. Rename overview section:
+   - `Otvoreni prozori` → `Plan rada`
+
+2. Cap overview plan list to max 2 items
+
+3. Add `Plan rada` section to plant detail screen (v4 path)
+
+Position:
+- after recommendations
+- after KPI section
+- before activity history
 
 Rules:
-- plans are read-only
-- no add/edit/delete plan functionality
-- no changes to plan structure
+- show only active plans for the current plant
+- hide section if no active plans exist
+- max 2 items
+
+4. Update `CURRENT_STATE.md`
+
+### Plan card content
+
+Each plan card shows only:
+
+- plan title
+- time window
+- scope:
+  - `Sve biljke`
+  - `Ova biljka`
+
+### Rules
+
+- rendering only
+- no helper extraction in this step
+- no cleanup in this step
+- no function removal in this step
+- no trigger engine changes
+- no calendar changes
+- no plan mutation
+- no schema changes
+
+### DO NOT touch
+
+- `_v4DashboardPlans` function body
+- trigger engine (`getRecommendationsV2`)
+- existing partial helper functions from earlier unwired attempts
+- save logic
+- validation
+- calendar
+- monitoring
+- data model
 
 ### Done when
-- plans are visible in UI
-- no plan creation exists
-- plan data strictly matches MIGRATION_PLAN_V1.md
+
+- overview shows `Plan rada`
+- overview shows max 2 active plans
+- plant detail shows active plans for that plant
+- plant detail hides the section if no active plans exist
+- plan cards show title, window, and scope
+- no unrelated code is changed
+
+---
+
+## Session 11B — Plan logic consolidation
+
+### Goal
+
+Introduce a shared helper for plan window calculation and reduce duplicated UI plan-window logic.
+
+### Scope
+
+1. Evaluate existing partial helper functions from earlier unwired attempts
+
+Determine whether they should be:
+- reused
+- replaced
+- removed only if explicitly verified unused after replacement
+
+2. Introduce shared helper:
+
+`_getPlanWindow(plan, year)`
+
+3. Rewrite `_v4DashboardPlans` to use the shared helper
+
+4. Rewrite plant detail plan rendering from 11A to use the shared helper
+
+### Rules
+
+- no rendering changes
+- no label changes
+- no UI redesign
+- no behavior change
+- pure mechanical refactor
+- no trigger engine changes in this step
+
+### Cleanup rule
+
+No function may be removed unless:
+- its usage / non-usage is explicitly verified
+- it is confirmed fully superseded
+
+### Done when
+
+- shared `_getPlanWindow(plan, year)` exists
+- overview uses shared helper
+- plant detail uses shared helper
+- output remains identical to 11A
+- partial helper functions are removed only if explicitly verified superseded
+
+---
+
+## Session 11C — Engine alignment (optional, later)
+
+### Goal
+
+Unify trigger engine plan window calculation with the shared helper from 11B.
+
+### Scope
+
+- replace inline plan window calculation in trigger engine Rule P1 with `_getPlanWindow(plan, year)`
+
+### Rules
+
+- no change to rule conditions
+- no change to thresholds
+- no change to messages
+- no change to date basis logic of the trigger engine
+- no change to recommendation structure
+
+### Done when
+
+- Rule P1 uses `_getPlanWindow`
+- recommendation output remains identical
+- no new recommendations appear
+- no existing recommendations disappear
+
+---
+
+## Session 11 Global Rules
+
+- plans are read-only
+- no add/edit/delete plan functionality
+- no plan mutation
+- no schema changes
+- no stored execution state
+- no manual override of plan state
+- no helper extraction unless explicitly requested by substep scope
+- no speculative scaffolding
+- no cleanup outside explicit scope
+
+---
+
+## Principle
+
+Session 11 introduces plans into the UI first, then consolidates logic safely, and only later aligns engine usage if needed.
+
 ---
 
 ## Session 12 — Plans ↔ Calendar Integration
