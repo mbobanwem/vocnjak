@@ -1,5 +1,21 @@
 # UX IMPROVEMENTS V1 (FINAL)
 
+## IMPORTANT
+
+This document defines UX direction and future target behavior.
+
+It is NOT an automatic implementation specification.
+
+If any conflict exists:
+- EXECUTION_ROADMAP_V1.md defines what is currently open for implementation
+- MIGRATION_PLAN_V1.md defines what is allowed in the data model
+- CURRENT_STATE.md + IMPLEMENTATION_AUTHORITY_V1.md define what is already implemented
+
+Rules:
+- do NOT implement items from this file unless the active roadmap session explicitly opens that scope
+- do NOT use this file to justify schema changes
+- do NOT treat future UX direction as current implementation authority
+
 ---
 
 ## 1. Core Principle
