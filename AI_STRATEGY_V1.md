@@ -276,6 +276,61 @@ Rules:
 
 ---
 
+---
+
+## PRIVACY / IMAGE RETENTION
+
+Default rule:
+- original uploaded images should NOT be stored permanently
+
+Preferred flow:
+- user uploads image
+- image is analyzed
+- result is returned
+- original image is discarded
+
+If image storage is introduced later:
+- it must be explicit
+- user must understand what is stored
+- retention duration must be defined
+- storage must not be enabled silently
+
+---
+
+## AI VS DETERMINISTIC LOGIC
+
+AI is a secondary advisory layer.
+
+Rules:
+- AI must NOT override activities
+- AI must NOT override plans
+- AI must NOT replace deterministic recommendation logic
+- deterministic system remains the primary source of truth
+- AI may suggest actions, but must NOT change derived state
+
+Principle:
+- plans define intent
+- activities define reality
+- AI adds interpretation, not authority
+
+---
+
+## ABUSE / RETRY CONTROL
+
+AI usage must be protected from abuse and excessive cost.
+
+Rules:
+- repeated rapid requests must be rate-limited
+- identical or near-identical repeated analysis should be limited or discouraged
+- the system should avoid sending duplicate analysis requests without user intent
+
+Recommended behavior:
+- prevent multiple submissions within a short time window
+- optionally reuse recent results for identical inputs
+- guide user toward meaningful, intentional usage
+
+---
+
 ## SAFETY RULES
 
 AI must NOT:
