@@ -432,6 +432,21 @@ Rules:
 
 ---
 
+### Low confidence behavior
+
+If confidence = low:
+
+- message must clearly express uncertainty
+- nextAction should default to:
+  - inspect OR monitor
+
+Rules:
+
+- never suggest treatment on low confidence
+- guide user to re-check instead of acting
+
+---
+
 ### Next action suggestion
 
 Based on: nextAction
@@ -547,6 +562,19 @@ While waiting for response:
 
 ---
 
+### Interaction lock
+
+During loading:
+
+- disable "Analiziraj fotografiju" button
+- prevent multiple submissions
+
+Rules:
+
+- user cannot trigger another request until current finishes
+
+---
+
 ### Error state
 
 If request fails:
@@ -573,6 +601,29 @@ Show:
 Optional:
 
 - show upgrade hint (future)
+
+---
+
+### Result state rules
+
+- only one AI result can exist at a time
+- new analysis replaces previous result
+- result is not persisted after leaving screen
+
+If user leaves screen:
+
+- result is discarded
+- no recovery on return
+
+If user triggers new analysis:
+
+- previous result is cleared
+- new loading state starts
+
+Rules:
+
+- no caching in V1
+- no history of results
 
 ---
 
