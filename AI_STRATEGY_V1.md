@@ -276,6 +276,284 @@ Rules:
 
 ---
 
+## AI UX ENTRY POINT (V1)
+
+AI must be accessible in a way that feels natural and contextual.
+
+### Primary entry point
+
+Location:
+- plant detail screen
+
+Action:
+- button: "Analiziraj fotografiju"
+
+Position:
+- below plant header / basic info
+- above activity history
+
+Reason:
+- user is already thinking about a specific plant
+- no need for global AI entry point
+
+---
+
+### Secondary entry point (optional, later)
+
+Location:
+- monitoring / recommendations area
+
+Use case:
+- user sees issue → wants to confirm via photo
+
+NOT required for initial implementation.
+
+---
+
+## AI UX FLOW (V1)
+
+### Step 1 — trigger
+
+User taps:
+- "Analiziraj fotografiju"
+
+---
+
+### Step 2 — input
+
+User can:
+- take photo
+- upload photo
+
+---
+
+### Step 3 — pre-processing
+
+Before sending:
+
+- resize image
+- compress image
+- target size:
+  - max width: 512–768 px
+
+---
+
+### Step 4 — request
+
+App sends:
+
+- image
+- minimal context:
+  - plant type (if available)
+  - plant age/status (optional)
+  - timestamp (optional)
+
+NO:
+- full plant history
+- no unnecessary payload
+
+---
+
+### Step 5 — response
+
+Backend returns normalized structure:
+
+{
+  "kind": "pest | disease | unknown",
+  "label": "possible_aphids",
+  "confidence": "low | medium | high",
+  "message": "Possible aphids detected on young shoots.",
+  "nextAction": "inspect | monitor | consider_treatment",
+  "notes": "Plain-language explanation"
+}
+
+---
+
+### Step 6 — UI display
+
+Show:
+
+- short title (label/message)
+- confidence indicator
+- next step suggestion
+- optional explanation
+
+---
+
+### Step 7 — user decision
+
+User can:
+
+- Save as:
+  - observation
+  - problem
+
+OR:
+- ignore result
+
+Rules:
+- NOTHING is auto-saved
+- user must explicitly confirm
+
+---
+
+## AI RESULT → ACTIVITY MAPPING
+
+AI result must map ONLY to existing activity types:
+
+Allowed:
+
+- observation
+- problem
+
+Rules:
+
+- AI must NOT create new activity types
+- AI must NOT introduce new fields
+- saved activity must follow existing structure
+
+---
+
+## AI BUTTON VISIBILITY RULE
+
+Button must always be visible on plant detail.
+
+No conditions:
+- no plan dependency
+- no activity dependency
+- no weather dependency
+
+Reason:
+- user-driven interaction
+
+---
+
+## AI ERROR HANDLING
+
+If AI fails:
+
+Show simple message:
+
+- "Analiza nije uspjela. Pokušaj ponovno."
+
+Rules:
+
+- no technical errors shown
+- no stack traces
+- no provider messages
+
+---
+
+## AI LOADING STATE
+
+During analysis:
+
+- show loading indicator
+- disable repeated taps
+
+Optional:
+
+- "Analiziram fotografiju..."
+
+---
+
+## AI RATE LIMIT UX
+
+If limit reached:
+
+Show:
+
+- "Dosegnut je limit analiza za danas."
+
+Optional (future):
+- suggest upgrade
+
+---
+
+## AI SESSION RULES
+
+- one request at a time
+- no parallel analysis
+- no background retries
+
+---
+
+## AI DATA FLOW (SIMPLIFIED)
+
+Client:
+- prepares image
+- sends request
+
+Backend:
+- receives image
+- calls AI provider
+- normalizes response
+- returns structured result
+
+Client:
+- renders result
+- waits for user action
+
+---
+
+## AI STORAGE RULE
+
+Default:
+- do NOT store images
+- do NOT store AI results permanently
+
+If user saves result:
+- only activity is stored
+- NOT raw AI response
+
+---
+
+## AI VERSIONING (FUTURE SAFE)
+
+AI behavior may change over time.
+
+Rules:
+
+- app must not depend on exact phrasing
+- app must depend only on structured fields:
+  - kind
+  - label
+  - confidence
+  - nextAction
+
+---
+
+## AI NON-GOALS (IMPORTANT)
+
+Do NOT build:
+
+- chat interface
+- conversational AI
+- long explanations
+- treatment engine
+- dosage calculator
+- product recommendations
+
+AI is:
+- quick assist
+- not full advisory system
+
+---
+
+## FINAL UX PRINCIPLE
+
+AI should feel like:
+
+- quick help
+- low friction
+- safe suggestion
+
+NOT:
+
+- complex tool
+- decision authority
+- mandatory step
+
 ---
 
 ## PRIVACY / IMAGE RETENTION
