@@ -1967,7 +1967,8 @@ function renderCalendar() {
       daysHTML += `<div class="cal-day ${isToday?'today':''} ${dotClass}" onclick="selectCalDay(${d})"><div class="cal-day-num">${d}</div></div>`;
     }
 
-    const monthItems = items.slice().sort((a,b) => a.day - b.day);
+    const TYPE_ORDER = { done: 0, skipped: 0, active: 1, upcoming: 1, missed: 1 };
+    const monthItems = items.slice().sort((a,b) => a.day - b.day || (TYPE_ORDER[a.type] || 0) - (TYPE_ORDER[b.type] || 0));
 
     mc.innerHTML = `
       <div class="card">
@@ -1979,14 +1980,20 @@ function renderCalendar() {
         <div class="cal-grid-header">${["Pon","Uto","Sri","Čet","Pet","Sub","Ned"].map(d=>`<div class="cal-day-name">${d}</div>`).join("")}</div>
         <div class="cal-grid">${daysHTML}</div>
       </div>
+      <div id="calDayDetail"></div>
       <div class="section-label">Ovaj mjesec (${monthItems.length})</div>
       ${monthItems.length === 0 ? '<div class="empty">Nema stavki.</div>' : monthItems.map(item => {
         const plantLabel = item.plantIds.length === 0
           ? "Sve biljke"
           : item.plantIds.map(id => v4.plants[id]?.name || id).join(", ");
-        return `<div class="cal-task-item">
+        const isActivity = item.type === "done" || item.type === "skipped";
+        const borderColor = isActivity ? "var(--green-mid)" : item.type === "missed" ? "#9ca3af" : "var(--amber)";
+        const stateLabel = { active:"Aktivan", upcoming:"Predstojeći", missed:"Propušteno" };
+        const label = isActivity ? _v4TypeLabel(item.title) : item.title;
+        const stateSuffix = !isActivity && stateLabel[item.type] ? ` · <span style="font-size:11px;color:${borderColor}">${stateLabel[item.type]}</span>` : "";
+        return `<div class="cal-task-item" style="border-left-color:${borderColor}">
           <div class="cal-task-plant">${String(item.day).padStart(2,'0')}. ${monthNames[calMonth].slice(0,3)} · ${plantLabel}</div>
-          <div class="cal-task-text">${item.title}</div>
+          <div class="cal-task-text">${label}${stateSuffix}</div>
         </div>`;
       }).join("")}
     `;
@@ -2054,9 +2061,34 @@ function selectCalDayV4(v4, d) {
   const items = getCalendarItemsV4(v4, calYear, calMonth).filter(item => item.day === d);
   if(!items.length) return;
   const monthNames = ["Siječanj","Veljača","Ožujak","Travanj","Svibanj","Lipanj","Srpanj","Kolovoz","Rujan","Listopad","Studeni","Prosinac"];
-  const n = items.length;
-  const plural = n === 1 ? "stavka" : n < 5 ? "stavke" : "stavki";
-  showToast(`${d}. ${monthNames[calMonth]}: ${n} ${plural}`);
+  const stateLabel = { active:"Aktivan", upcoming:"Predstojeći", missed:"Propušteno" };
+  const activities = items.filter(i => i.type === "done" || i.type === "skipped");
+  const plans = items.filter(i => i.type === "active" || i.type === "upcoming" || i.type === "missed");
+  let html = `<div class="section-label" style="margin-top:12px">${d}. ${monthNames[calMonth]}</div>`;
+  if(activities.length > 0) {
+    html += activities.map(a => {
+      const plantLabel = a.plantIds.length === 0 ? "Sve biljke" : a.plantIds.map(id => v4.plants[id]?.name || id).join(", ");
+      return `<div class="cal-task-item" style="border-left-color:var(--green-light)">
+        <div class="cal-task-plant">${plantLabel}</div>
+        <div class="cal-task-text">${_v4TypeLabel(a.title)}</div>
+      </div>`;
+    }).join("");
+  }
+  if(plans.length > 0) {
+    html += plans.map(p => {
+      const plantLabel = p.plantIds.length === 0 ? "Sve biljke" : p.plantIds.map(id => v4.plants[id]?.name || id).join(", ");
+      const color = p.type === "missed" ? "#9ca3af" : "var(--amber)";
+      return `<div class="cal-task-item" style="border-left-color:${color}">
+        <div class="cal-task-plant">${plantLabel}</div>
+        <div class="cal-task-text">${p.title} · <span style="font-size:11px;color:${color}">${stateLabel[p.type] || p.type}</span></div>
+      </div>`;
+    }).join("");
+  }
+  const detail = document.getElementById("calDayDetail");
+  if(detail) {
+    detail.innerHTML = html;
+    detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
 }
 
 // ── SYNC ──
