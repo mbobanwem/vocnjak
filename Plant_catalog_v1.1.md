@@ -498,15 +498,8 @@ V1 interpretation:
 Citrus uses seasonProfile model — no timing groups, no variety timing.
 
 ```json
-{
-  "citrus": {
-    "subtypes": {
-      "lemon":    { "seasonProfile": "multi_cycle" },
-      "orange":   { "seasonProfile": "winter" },
-      "mandarin": { "seasonProfile": "autumn" }
-    }
-  }
-}
+"olive": { "group": "mediterranean", "seasonProfile": "mediterranean" },
+"fig":   { "group": "mediterranean", "seasonProfile": "mediterranean" }
 ```
 ### Citrus Season Profiles
 
