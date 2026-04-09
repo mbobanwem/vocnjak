@@ -1327,6 +1327,11 @@ function renderPlantScreen() {
         const plantPlans = (v4.plans || []).filter(pl => {
           if(pl.skipYear === y) return false;
           if(!pl.appliesToAll && !(pl.plantIds || []).includes(plantId)) return false;
+          // Session 14 — young plant: hide harvest plans
+          const pd14 = plant.plantedDate ? new Date(plant.plantedDate) : null;
+          const cutoff14 = new Date(); cutoff14.setFullYear(cutoff14.getFullYear() - 1);
+          const isYoung = plant.status === "forming" || (pd14 !== null && !isNaN(pd14.getTime()) && pd14 >= cutoff14);
+          if(isYoung && (pl.activityType || "").toLowerCase().trim() === "harvest") return false;
           const { start: wStart, end: wEnd } = _getPlanWindow(pl, y);
           // Exclude done plans — matching activity check (reuse 13A logic)
           const effectiveStart = new Date(wStart); effectiveStart.setDate(effectiveStart.getDate() - 7);
