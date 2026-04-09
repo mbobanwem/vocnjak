@@ -773,6 +773,18 @@ Rules:
 - backend must normalize provider output
 - client must never depend on raw provider output
 
+### Stability rules
+
+- fields must always exist (no missing keys)
+- unknown values must fallback to "unknown"
+- client must not break on new labels
+- label is NOT used for logic, only display
+
+Example:
+
+- kind drives UI behavior
+- label is descriptive only
+
 ---
 
 ### Error response
