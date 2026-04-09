@@ -142,6 +142,13 @@ V2 is an overlay layer:
 - it MUST NOT be removed or restricted
 - it does NOT change activity structure
 
+### Plans UI (Session 11A)
+- overview: renamed "Otvoreni prozori" → "Plan rada"
+- overview: capped active plan display to max 2 items
+- plant detail: added "Plan rada" section showing active plans for current plant
+- plant detail: section hidden when no active plans
+- rendering only — no logic changes
+
 ---
 
 ## CURRENT LIMITATIONS
@@ -159,7 +166,7 @@ V2 is an overlay layer:
 ## CURRENT FOCUS
 
 Next step:
-→ Session 11 — Plans: Read Model
+→ Session 11B — Plan logic consolidation
 
 ---
 

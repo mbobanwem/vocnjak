@@ -133,6 +133,7 @@
   .cal-day.has-urgent::after { background: var(--red); }
   .cal-day.has-done::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green-light); position: absolute; bottom: 3px; }
   .cal-day.has-skipped::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #9ca3af; position: absolute; bottom: 3px; }
+  .cal-day.has-missed::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #9ca3af; position: absolute; bottom: 3px; }
   .cal-day-num { font-size: 13px; font-weight: 500; color: var(--text); line-height: 26px; }
   .cal-task-item { margin: 0 0 8px; background: var(--cream); border-radius: var(--r-sm); padding: 10px 12px; border-left: 3px solid var(--green-mid); }
   .cal-task-item.urgent { border-left-color: var(--red); background: var(--red-pale); }
@@ -736,16 +737,21 @@ function _v4ActivitiesThisWeek(activities) {
   }).length;
 }
 
+function _getPlanWindow(plan, year) {
+  const start = new Date(year, plan.monthStart - 1, plan.dayStart || 1);
+  const endMonth = plan.monthEnd || plan.monthStart;
+  const endDay = plan.dayEnd || new Date(year, endMonth, 0).getDate();
+  const end = new Date(year, endMonth - 1, endDay, 23, 59, 59);
+  return { start, end };
+}
+
 function _v4DashboardPlans(v4) {
   const now = new Date();
   const year = now.getFullYear();
   const { plans = [], activities = [] } = v4;
   return plans.map(pl => {
     if(pl.skipYear === year) return null;
-    const wStart = new Date(year, pl.monthStart - 1, pl.dayStart || 1);
-    const endMonth = (pl.monthEnd || pl.monthStart);
-    const endDay = pl.dayEnd || new Date(year, endMonth, 0).getDate();
-    const wEnd = new Date(year, endMonth - 1, endDay, 23, 59, 59);
+    const { start: wStart, end: wEnd } = _getPlanWindow(pl, year);
     let state;
     if(now < wStart) {
       state = "upcoming";
@@ -877,10 +883,7 @@ function getRecommendationsV2(v4, plantId, currentDateStr) {
   const hasActivePlan = plans.some(pl => {
     if(pl.skipYear === curY) return false;
     if(!pl.appliesToAll && !(pl.plantIds || []).includes(plantId)) return false;
-    const wStart = new Date(curY, pl.monthStart - 1, pl.dayStart || 1);
-    const endMonth = pl.monthEnd || pl.monthStart;
-    const endDay = pl.dayEnd || new Date(curY, endMonth, 0).getDate();
-    const wEnd = new Date(curY, endMonth - 1, endDay, 23, 59, 59);
+    const { start: wStart, end: wEnd } = _getPlanWindow(pl, curY);
     const curDate = new Date(curY, curM - 1, curD, 12, 0, 0);
     return curDate >= wStart && curDate <= wEnd;
   });
@@ -966,10 +969,10 @@ function _renderOverviewV4(mc, v4) {
   mc.innerHTML = `
     <div class="section-label">${monthNames[now.getMonth()]} ${now.getFullYear()}</div>
     ${overviewRecsHTML}
-    <div class="section-label" style="margin-top:16px">Otvoreni prozori</div>
+    <div class="section-label" style="margin-top:16px">Plan rada</div>
     ${activePlans.length === 0
-      ? '<div class="empty">Nema otvorenih prozora ovaj mjesec.</div>'
-      : activePlans.map(p => `<div class="card" style="padding:12px 14px;margin-bottom:8px">
+      ? '<div class="empty">Nema aktivnih planova.</div>'
+      : activePlans.slice(0, 2).map(p => `<div class="card" style="padding:12px 14px;margin-bottom:8px">
           <div style="font-size:14px;font-weight:600;color:var(--green-deep)">${p.title}</div>
           <div style="font-size:12px;color:var(--text-mid);margin-top:2px">${_v4TypeLabel(p.activityType)}</div>
         </div>`).join("")}
@@ -1307,6 +1310,33 @@ function renderPlantScreen() {
         else if(kpiMonth >= 8 && kpiMonth <= 9) cards = [kpiTrap, kpiFungus];
         cards = cards.slice(0, 2);
         return '<div class="section-label" style="margin-top:16px;margin-bottom:10px">Što provjeriti sada</div>' + cards.join("");
+      })()}
+
+      ${(() => {
+        const y = new Date().getFullYear();
+        const now = new Date();
+        const plantPlans = (v4.plans || []).filter(pl => {
+          if(pl.skipYear === y) return false;
+          if(!pl.appliesToAll && !(pl.plantIds || []).includes(plantId)) return false;
+          const { start: wStart, end: wEnd } = _getPlanWindow(pl, y);
+          return now >= wStart && now <= wEnd;
+        }).slice(0, 2);
+        if(plantPlans.length === 0) return "";
+        return '<div class="section-label" style="margin-top:16px;margin-bottom:10px">Plan rada</div>'
+          + plantPlans.map(pl => {
+            const ds = pl.dayStart || 1;
+            const ms = pl.monthStart;
+            const me = pl.monthEnd || pl.monthStart;
+            const de = pl.dayEnd || new Date(y, me, 0).getDate();
+            const window = (ms === me && ds === 1 && de === new Date(y, me, 0).getDate())
+              ? ms + ". mjesec"
+              : ds + "." + ms + ". – " + de + "." + me + ".";
+            const scope = pl.appliesToAll ? "Sve biljke" : "Ova biljka";
+            return `<div class="card" style="padding:12px 14px;margin-bottom:8px">
+              <div style="font-size:14px;font-weight:600;color:var(--green-deep)">${pl.title}</div>
+              <div style="font-size:12px;color:var(--text-mid);margin-top:2px">${window} · ${scope}</div>
+            </div>`;
+          }).join("");
       })()}
 
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
@@ -1847,17 +1877,47 @@ function getCalendarItemsV4(v4, year, month) {
   const month1 = month + 1;
   const items = [];
 
-  // Plans → "planned"
+  // Plans → derived state per day
+  const today = new Date();
+  const todayNorm = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   (v4.plans || []).forEach(pl => {
-    // Exclude plans skipped for this year
     if(pl.skipYear === year) return;
-    const start = pl.monthStart;
-    const end   = pl.monthEnd || pl.monthStart;
-    if(month1 < start || month1 > end) return;
-    // Anchor day: use dayStart if this is the start month and dayStart exists, else day 1
-    const day = (month1 === start && pl.dayStart) ? pl.dayStart : 1;
+    const { start, end } = _getPlanWindow(pl, year);
+    const startNorm = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const endNorm = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+    // Tolerance for matching only (±7 days)
+    const effectiveStart = new Date(startNorm); effectiveStart.setDate(effectiveStart.getDate() - 7);
+    const effectiveEnd = new Date(endNorm); effectiveEnd.setDate(effectiveEnd.getDate() + 7);
+    // Check for matching activity
+    const hasMatch = (v4.activities || []).some(a => {
+      if(!a.date) return false;
+      const aType = (a.type || "").toLowerCase().trim();
+      const pType = (pl.activityType || "").toLowerCase().trim();
+      if(aType !== pType) return false;
+      const ad = new Date(a.date);
+      if(isNaN(ad.getTime())) return false;
+      const adNorm = new Date(ad.getFullYear(), ad.getMonth(), ad.getDate());
+      if(adNorm < effectiveStart || adNorm > effectiveEnd) return false;
+      if(pl.appliesToAll) return true;
+      return (a.plantIds || []).some(pid => (pl.plantIds || []).includes(pid));
+    });
+    // Done plans excluded from calendar dots
+    if(hasMatch) return;
+    // Derive state
+    let state;
+    if(todayNorm < startNorm) state = "upcoming";
+    else if(todayNorm <= endNorm) state = "active";
+    else if(todayNorm > effectiveEnd) state = "missed";
+    else state = "active"; // within tolerance period after window but not yet missed
+    // Add item for each day in window within this month
     const plantIds = pl.appliesToAll ? [] : (pl.plantIds || []);
-    items.push({ day, type: "planned", title: pl.title || "", plantIds });
+    const firstDay = (start.getMonth() === month) ? start.getDate() : 1;
+    const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
+    const lastDay = (end.getMonth() === month) ? end.getDate() : lastDayOfMonth;
+    if(start.getMonth() > month || end.getMonth() < month) return;
+    for(let d = firstDay; d <= lastDay; d++) {
+      items.push({ day: d, type: state, title: pl.title || "", plantIds });
+    }
   });
 
   // Activities → "done" or "skipped" only
@@ -1888,8 +1948,8 @@ function renderCalendar() {
   if(useV4) {
     const items = getCalendarItemsV4(v4, calYear, calMonth);
 
-    // Single dot per day — priority: done(3) > planned(2) > skipped(1)
-    const PRIORITY = { done: 3, planned: 2, skipped: 1 };
+    // Single dot per day — priority: done(4) > active(3) > missed(2) > upcoming(1)
+    const PRIORITY = { done: 4, active: 3, missed: 2, upcoming: 1, skipped: 1 };
     const dayType = {};
     items.forEach(item => {
       const prev = dayType[item.day];
@@ -1903,11 +1963,12 @@ function renderCalendar() {
     for(let d=1; d<=lastDay.getDate(); d++) {
       const isToday = calYear===now.getFullYear() && calMonth===now.getMonth() && d===now.getDate();
       const t = dayType[d];
-      const dotClass = t === "done" ? "has-done" : t === "planned" ? "has-task" : t === "skipped" ? "has-skipped" : "";
+      const dotClass = t === "done" ? "has-done" : (t === "active" || t === "upcoming") ? "has-task" : t === "missed" ? "has-missed" : t === "skipped" ? "has-skipped" : "";
       daysHTML += `<div class="cal-day ${isToday?'today':''} ${dotClass}" onclick="selectCalDay(${d})"><div class="cal-day-num">${d}</div></div>`;
     }
 
-    const monthItems = items.slice().sort((a,b) => a.day - b.day);
+    const TYPE_ORDER = { done: 0, skipped: 0, active: 1, upcoming: 1, missed: 1 };
+    const monthItems = items.slice().sort((a,b) => a.day - b.day || (TYPE_ORDER[a.type] || 0) - (TYPE_ORDER[b.type] || 0));
 
     mc.innerHTML = `
       <div class="card">
@@ -1919,14 +1980,20 @@ function renderCalendar() {
         <div class="cal-grid-header">${["Pon","Uto","Sri","Čet","Pet","Sub","Ned"].map(d=>`<div class="cal-day-name">${d}</div>`).join("")}</div>
         <div class="cal-grid">${daysHTML}</div>
       </div>
+      <div id="calDayDetail"></div>
       <div class="section-label">Ovaj mjesec (${monthItems.length})</div>
       ${monthItems.length === 0 ? '<div class="empty">Nema stavki.</div>' : monthItems.map(item => {
         const plantLabel = item.plantIds.length === 0
           ? "Sve biljke"
           : item.plantIds.map(id => v4.plants[id]?.name || id).join(", ");
-        return `<div class="cal-task-item">
+        const isActivity = item.type === "done" || item.type === "skipped";
+        const borderColor = isActivity ? "var(--green-mid)" : item.type === "missed" ? "#9ca3af" : "var(--amber)";
+        const stateLabel = { active:"Aktivan", upcoming:"Predstojeći", missed:"Propušteno" };
+        const label = isActivity ? _v4TypeLabel(item.title) : item.title;
+        const stateSuffix = !isActivity && stateLabel[item.type] ? ` · <span style="font-size:11px;color:${borderColor}">${stateLabel[item.type]}</span>` : "";
+        return `<div class="cal-task-item" style="border-left-color:${borderColor}">
           <div class="cal-task-plant">${String(item.day).padStart(2,'0')}. ${monthNames[calMonth].slice(0,3)} · ${plantLabel}</div>
-          <div class="cal-task-text">${item.title}</div>
+          <div class="cal-task-text">${label}${stateSuffix}</div>
         </div>`;
       }).join("")}
     `;
@@ -1994,9 +2061,34 @@ function selectCalDayV4(v4, d) {
   const items = getCalendarItemsV4(v4, calYear, calMonth).filter(item => item.day === d);
   if(!items.length) return;
   const monthNames = ["Siječanj","Veljača","Ožujak","Travanj","Svibanj","Lipanj","Srpanj","Kolovoz","Rujan","Listopad","Studeni","Prosinac"];
-  const n = items.length;
-  const plural = n === 1 ? "stavka" : n < 5 ? "stavke" : "stavki";
-  showToast(`${d}. ${monthNames[calMonth]}: ${n} ${plural}`);
+  const stateLabel = { active:"Aktivan", upcoming:"Predstojeći", missed:"Propušteno" };
+  const activities = items.filter(i => i.type === "done" || i.type === "skipped");
+  const plans = items.filter(i => i.type === "active" || i.type === "upcoming" || i.type === "missed");
+  let html = `<div class="section-label" style="margin-top:12px">${d}. ${monthNames[calMonth]}</div>`;
+  if(activities.length > 0) {
+    html += activities.map(a => {
+      const plantLabel = a.plantIds.length === 0 ? "Sve biljke" : a.plantIds.map(id => v4.plants[id]?.name || id).join(", ");
+      return `<div class="cal-task-item" style="border-left-color:var(--green-light)">
+        <div class="cal-task-plant">${plantLabel}</div>
+        <div class="cal-task-text">${_v4TypeLabel(a.title)}</div>
+      </div>`;
+    }).join("");
+  }
+  if(plans.length > 0) {
+    html += plans.map(p => {
+      const plantLabel = p.plantIds.length === 0 ? "Sve biljke" : p.plantIds.map(id => v4.plants[id]?.name || id).join(", ");
+      const color = p.type === "missed" ? "#9ca3af" : "var(--amber)";
+      return `<div class="cal-task-item" style="border-left-color:${color}">
+        <div class="cal-task-plant">${plantLabel}</div>
+        <div class="cal-task-text">${p.title} · <span style="font-size:11px;color:${color}">${stateLabel[p.type] || p.type}</span></div>
+      </div>`;
+    }).join("");
+  }
+  const detail = document.getElementById("calDayDetail");
+  if(detail) {
+    detail.innerHTML = html;
+    detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
 }
 
 // ── SYNC ──
