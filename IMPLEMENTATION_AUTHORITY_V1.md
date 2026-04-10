@@ -17,7 +17,7 @@ If any conflict exists between documents:
   - plans = global array
 
 - Migration is complete and stable
-- Sessions 1–15 are DONE (includes 13B, 14, 15)
+- Sessions 1–16 are DONE (includes 13B, 14, 15, 16)
 
 ### V2 overlay status
 - Session V2.1 — Monitoring Input = DONE
@@ -26,9 +26,7 @@ If any conflict exists between documents:
 - Session V2.4 — Recommendation UI = DONE
 
 ### Current next step
-- Session 16 — Weather-Aware Spray Layer
-
-Session 16 requires explicit authorization before implementation. Weather integration is protected by CLAUDE.md scope rules and must not be touched without explicit user instruction.
+- Session 17 — Export / Import JSON
 
 ---
 

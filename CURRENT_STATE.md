@@ -172,6 +172,16 @@ Introduced a lifecycle-based task layer.
 - dashboard and calendar are not affected
 - V2 protection engine is unchanged
 
+### Session 16 — Weather-Aware Spray Layer
+
+- weather is shown in overview (v4 only)
+- visible only when active spraying plan exists
+- uses Open-Meteo (existing fetchWeather)
+- reuses existing weatherData and UI
+- shows 3-day forecast (today / tomorrow / day after)
+- informational only (no recommendations, no decision logic)
+- no schema or storage changes
+
 ---
 
 ## IMPLEMENTED — V2 OVERLAY (PROTECTION ENGINE)
@@ -275,7 +285,6 @@ Implemented in:
 - no onboarding flow
 - no multi-language support
 - no tools / equipment layer
-- no weather integration (temporarily removed)
 - no subscription / monetization layer
 
 ---
@@ -283,9 +292,7 @@ Implemented in:
 ## CURRENT FOCUS
 
 Next step:
-→ Session 16 — Weather-Aware Spray Layer
-
-Session 16 requires explicit authorization before implementation — weather integration is protected by CLAUDE.md scope rules.
+→ Session 17 — Export / Import JSON
 
 ---
 
@@ -299,7 +306,8 @@ Session 16 requires explicit authorization before implementation — weather int
 - Session 13B — Plant detail plan state derivation fix (DONE)
 - Session 14 — Context-Aware Filtering (DONE)
 - Session 15 — Recommendation Engine V1 (DONE)
-- Next: Session 16 — Weather-Aware Spray Layer (requires explicit weather-scope approval)
+- Session 16 — Weather-Aware Spray Layer (DONE)
+- Next: Session 17 — Export / Import JSON
 
 ### Protection Engine (V2)
 - V2.1 Monitoring Input — DONE
