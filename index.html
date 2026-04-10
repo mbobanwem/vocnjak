@@ -2241,6 +2241,15 @@ function renderSync() {
       <button onclick="importData()" class="btn-primary" style="width:100%;margin-top:8px">📥 Uvezi podatke</button>
     </div>
     <div class="card" style="padding:16px; margin-bottom:12px">
+      <div style="font-family:'Playfair Display',serif; font-size:17px; color:var(--green-deep); margin-bottom:6px">🗄️ Sigurnosna kopija (v4)</div>
+      <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">Izvezi trenutno v4 stanje u datoteku ili ga uvezi natrag. Prije uvoza trenutna verzija se automatski sprema kao interna sigurnosna kopija.</div>
+      <input type="file" id="importV4File" accept="application/json" style="display:none" onchange="importV4JSON(this.files[0]); this.value=''">
+      <div style="display:flex; gap:8px">
+        <button onclick="exportV4JSON()" class="btn-primary" style="flex:1">⬇️ Izvezi v4 JSON</button>
+        <button onclick="document.getElementById('importV4File').click()" class="btn-primary" style="flex:1;background:var(--indigo)">⬆️ Uvezi v4 JSON</button>
+      </div>
+    </div>
+    <div class="card" style="padding:16px; margin-bottom:12px">
       <div style="font-family:'Playfair Display',serif; font-size:17px; color:var(--green-deep); margin-bottom:6px">📅 iCal sync</div>
       <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">Kad označiš zadatak kao odrađen, automatski ažurira .ics kalendar na GitHubu.</div>
       <div class="form-group" style="margin-bottom:10px">
@@ -2321,6 +2330,123 @@ function importData() {
     if(!valid) { showToast("❌ Neispravni podaci"); return; }
     data = parsed; saveData(); showToast("✓ Podaci uvezeni!"); setTimeout(() => showScreen("overview"), 1000);
   } catch(e) { showToast("❌ Greška pri uvozu"); }
+}
+
+// ── SESSION 17 — v4 EXPORT / IMPORT ──
+function exportV4JSON() {
+  const raw = localStorage.getItem("vocnjak_v4");
+  if(!raw) { showToast("❌ Nema v4 podataka"); return; }
+  try { JSON.parse(raw); } catch(e) { showToast("❌ Neispravan v4 u memoriji"); return; }
+  const now = new Date().toISOString().split("T")[0];
+  const blob = new Blob([raw], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `vocnjak-v4-${now}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("✓ v4 izvezen");
+}
+
+function importV4JSON(file) {
+  if(!file) { showToast("❌ Datoteka nije odabrana"); return; }
+  const reader = new FileReader();
+  reader.onerror = () => showToast("❌ Greška pri čitanju datoteke");
+  reader.onload = () => {
+    let parsed;
+    try { parsed = JSON.parse(reader.result); }
+    catch(e) { showToast("❌ Neispravan JSON"); return; }
+    const result = _validateV4Import(parsed);
+    if(!result.ok) { showToast("❌ " + result.error); return; }
+    const currentRaw = localStorage.getItem("vocnjak_v4");
+    localStorage.setItem("vocnjak_v4_preimport_backup", currentRaw == null ? "" : currentRaw);
+    localStorage.setItem("vocnjak_v4", JSON.stringify(parsed));
+    buildPlantTabs();
+    showScreen("sync");
+    showToast("✓ v4 uvezen");
+  };
+  reader.readAsText(file);
+}
+
+function _validateV4Import(parsed) {
+  const ALLOWED_TYPES = ["spraying","pruning","fertilizing","watering","planting","harvest","observation","problem","monitoring"];
+  const ALLOWED_PLANT_STATUS = ["forming","issue",""];
+  const isPlainObject = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+  const isNonEmptyString = (v) => typeof v === "string" && v.length > 0;
+  const isISODate = (v) => {
+    if(typeof v !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+    const [yr, mo, dy] = v.split("-").map(Number);
+    const d = new Date(Date.UTC(yr, mo - 1, dy));
+    return d.getUTCFullYear() === yr && d.getUTCMonth() === mo - 1 && d.getUTCDate() === dy;
+  };
+
+  // Root
+  if(!isPlainObject(parsed)) return { ok: false, error: "Korijenski objekt nije valjan" };
+
+  // V4 shape
+  if(!isPlainObject(parsed.plants)) return { ok: false, error: "plants mora biti objekt" };
+  if(!Array.isArray(parsed.activities)) return { ok: false, error: "activities mora biti polje" };
+  if(!Array.isArray(parsed.plans)) return { ok: false, error: "plans mora biti polje" };
+
+  // Plants
+  const plantIdSet = new Set();
+  for(const [key, plant] of Object.entries(parsed.plants)) {
+    if(!isPlainObject(plant)) return { ok: false, error: "biljka nije objekt" };
+    if(!isNonEmptyString(plant.id)) return { ok: false, error: "biljka nema id" };
+    if(plant.id !== key) return { ok: false, error: "biljka.id ne odgovara ključu" };
+    if(!isNonEmptyString(plant.name)) return { ok: false, error: "biljka nema naziv" };
+    for(const f of ["variety","rootstock","status","legacyStatus","notes","plantedDate"]) {
+      if(plant[f] !== undefined && typeof plant[f] !== "string") return { ok: false, error: "biljka." + f + " mora biti string" };
+    }
+    if(typeof plant.plantedDate === "string" && plant.plantedDate !== "" && !/^\d{4}-\d{2}-\d{2}$/.test(plant.plantedDate)) {
+      return { ok: false, error: "biljka.plantedDate nije ispravan datum" };
+    }
+    if(typeof plant.status === "string" && !ALLOWED_PLANT_STATUS.includes(plant.status)) {
+      return { ok: false, error: "biljka.status nije valjan" };
+    }
+    plantIdSet.add(plant.id);
+  }
+
+  // Activities
+  for(const act of parsed.activities) {
+    if(!isPlainObject(act)) return { ok: false, error: "aktivnost nije objekt" };
+    if(!isNonEmptyString(act.id)) return { ok: false, error: "aktivnost nema id" };
+    if(!isNonEmptyString(act.type) || !ALLOWED_TYPES.includes(act.type)) return { ok: false, error: "aktivnost.type nije valjan" };
+    if(!isISODate(act.date)) return { ok: false, error: "aktivnost.date nije valjan" };
+    if(act.status !== "done") return { ok: false, error: "aktivnost.status nije valjan" };
+    if(!Array.isArray(act.plantIds) || act.plantIds.length === 0) return { ok: false, error: "aktivnost.plantIds je prazno" };
+    for(const pid of act.plantIds) {
+      if(typeof pid !== "string") return { ok: false, error: "aktivnost.plantIds sadrži nevažeći ID" };
+      if(!plantIdSet.has(pid)) return { ok: false, error: "aktivnost referencira nepoznatu biljku" };
+    }
+    if(typeof act.product !== "string") return { ok: false, error: "aktivnost.product mora biti string" };
+    if(typeof act.notes !== "string") return { ok: false, error: "aktivnost.notes mora biti string" };
+  }
+
+  // Plans
+  for(const plan of parsed.plans) {
+    if(!isPlainObject(plan)) return { ok: false, error: "plan nije objekt" };
+    if(!isNonEmptyString(plan.id)) return { ok: false, error: "plan nema id" };
+    if(typeof plan.title !== "string") return { ok: false, error: "plan.title mora biti string" };
+    if(typeof plan.activityType !== "string") return { ok: false, error: "plan.activityType mora biti string" };
+    if(plan.activityType !== "" && !ALLOWED_TYPES.includes(plan.activityType)) return { ok: false, error: "plan.activityType nije valjan" };
+    if(!Number.isInteger(plan.monthStart) || plan.monthStart < 1 || plan.monthStart > 12) return { ok: false, error: "plan.monthStart nije valjan" };
+    const hasAppliesAll = plan.appliesToAll === true;
+    const hasPlantList = Array.isArray(plan.plantIds) && plan.plantIds.length > 0;
+    if(!hasAppliesAll && !hasPlantList) return { ok: false, error: "plan nema biljke" };
+    if(Array.isArray(plan.plantIds)) {
+      for(const pid of plan.plantIds) {
+        if(typeof pid !== "string") return { ok: false, error: "plan.plantIds sadrži nevažeći ID" };
+        if(!plantIdSet.has(pid)) return { ok: false, error: "plan referencira nepoznatu biljku" };
+      }
+    }
+    if(plan.dayStart !== undefined && plan.dayStart !== "" && typeof plan.dayStart !== "string" && typeof plan.dayStart !== "number") return { ok: false, error: "plan.dayStart nije valjan" };
+    if(plan.monthEnd !== undefined && plan.monthEnd !== "" && !(Number.isInteger(plan.monthEnd) && plan.monthEnd >= 1 && plan.monthEnd <= 12)) return { ok: false, error: "plan.monthEnd nije valjan" };
+    if(plan.dayEnd !== undefined && plan.dayEnd !== "" && typeof plan.dayEnd !== "string" && typeof plan.dayEnd !== "number") return { ok: false, error: "plan.dayEnd nije valjan" };
+    if(plan.skipYear !== undefined && plan.skipYear !== "" && !Number.isInteger(plan.skipYear)) return { ok: false, error: "plan.skipYear nije valjan" };
+    if(plan.notes !== undefined && typeof plan.notes !== "string") return { ok: false, error: "plan.notes mora biti string" };
+  }
+
+  return { ok: true };
 }
 
 // ── HELPERS ──
