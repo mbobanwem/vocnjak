@@ -146,6 +146,20 @@ Introduced a lifecycle-based task layer.
 - type normalization (toLowerCase/trim) added
 - overview display unchanged — still shows only active plans
 
+### Session 13B — Plant detail plan state derivation fix
+
+- plant detail "Plan rada" section now checks matching activities
+- done plans are excluded from plant detail (no longer shown as active)
+- reuses established deterministic plan logic (same matching model as dashboard and calendar)
+- no schema or storage changes
+
+### Session 14 — Context-Aware Filtering
+
+- young plant filtering added at render time
+- harvest plans are hidden for young plants on plant detail
+- filtering uses existing plant context only
+- no schema or storage changes
+
 ### Session 15 — Recommendation Engine V1
 
 - first V1 recommendation layer — surfaces "what should I do now" prompts per plant
@@ -243,7 +257,7 @@ Implemented in:
 - `_v4DashboardPlans` — derives state for overview (shows only active plans)
 - `getCalendarItemsV4` — derives state per day for calendar dots
 - `selectCalDayV4` — shows state labels on day click
-- plant detail IIFE — shows active plans only (no matching check yet — Session 13B)
+- plant detail IIFE — derives state with matching check (done plans excluded)
 
 ### Monitoring (important)
 
@@ -257,7 +271,6 @@ Implemented in:
 
 ## CURRENT LIMITATIONS
 
-- plant detail plan section does not check for matching activities (Session 13B pending)
 - no activity edit (only create + delete)
 - no onboarding flow
 - no multi-language support
@@ -270,7 +283,9 @@ Implemented in:
 ## CURRENT FOCUS
 
 Next step:
-→ Session 13B — Plant detail plan state derivation fix
+→ Session 16 — Weather-Aware Spray Layer
+
+Session 16 requires explicit authorization before implementation — weather integration is protected by CLAUDE.md scope rules.
 
 ---
 
@@ -281,8 +296,10 @@ Next step:
 - Session 11 — Plans: Read Model (DONE — 11A, 11B, 11C)
 - Session 12 — Plans ↔ Calendar Integration (DONE — 12A, 12B, 12C)
 - Session 13A — Dashboard plan state fix (DONE)
+- Session 13B — Plant detail plan state derivation fix (DONE)
+- Session 14 — Context-Aware Filtering (DONE)
 - Session 15 — Recommendation Engine V1 (DONE)
-- Next: Session 13B — Plant detail plan state fix
+- Next: Session 16 — Weather-Aware Spray Layer (requires explicit weather-scope approval)
 
 ### Protection Engine (V2)
 - V2.1 Monitoring Input — DONE
