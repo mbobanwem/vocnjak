@@ -125,6 +125,20 @@ Initial scope:
 - window: ~30 days
 - condition: user confirms shoot length (10–20 cm)
 
+### Practical guidance
+
+When shoots reach 10–20 cm:
+
+- keep 3–4 strongest branches
+- branches should be:
+  - at least ~60–80 cm above ground
+  - evenly spaced around the trunk (different directions)
+  - with a wide angle (~45°) from the trunk
+- remove all other shoots
+
+Goal:
+- create a balanced, open crown structure for future growth
+
 Design decision:
 - this is a controlled extension to the plan system
 - avoids introducing a generic relative-plan engine in V1
