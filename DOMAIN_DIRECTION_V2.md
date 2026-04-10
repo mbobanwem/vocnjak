@@ -320,3 +320,42 @@ Design intent:
 - simple, structured, domain-accurate content
 - no generic filler
 - no hidden logic
+
+---
+
+## Weather Location Strategy (V2)
+
+The system may later evolve weather context from a fixed-coordinate model to an orchard-location-aware model.
+
+### Current limitation
+
+- weather is tied to fixed coordinates (Zagreb)
+- not suitable for users outside that region
+- no orchard-based location awareness yet
+
+### V2 direction
+
+- weather must become orchard-location-aware
+- location must NOT be hardcoded
+- weather must be based on the orchard / garden location, not the user's current device location
+
+Possible approaches (do NOT decide yet):
+
+- orchard location set during onboarding
+- current GPS used only as an optional initial suggestion
+- manual confirmation / correction by the user
+- orchard location stored as the long-term source of truth
+
+### Constraints
+
+- current GPS must NOT become the runtime source of weather by default
+- user travel must NOT change orchard weather context
+- must NOT block V1
+- must NOT be implemented before V1 completion
+- must remain simple (no over-engineering)
+- must not introduce heavy configuration UX
+
+### Note
+
+- Session 16 intentionally uses hardcoded Zagreb
+- this is a temporary V1 simplification
