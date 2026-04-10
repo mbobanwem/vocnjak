@@ -915,7 +915,69 @@ function getRecommendationsV2(v4, plantId, currentDateStr) {
   return unique.slice(0, 3);
 }
 
-// ── OVERVIEW ──
+// ── RECOMMENDATION ENGINE V1 (plan + activity + plant status) ──
+function getRecommendationsV1(v4, plantId) {
+  const recs = [];
+  const plant = (v4.plants || {})[plantId];
+  if(!plant) return recs;
+  const now = new Date();
+  const year = now.getFullYear();
+  const cm = now.getMonth() + 1;
+
+  // Rule 1 — single aggregated active-plan prompt
+  let activePlanPushed = false;
+  const plans = v4.plans || [];
+  for(let i = 0; i < plans.length && !activePlanPushed; i++) {
+    const pl = plans[i];
+    if(pl.skipYear === year) continue;
+    if(!pl.appliesToAll && !(pl.plantIds || []).includes(plantId)) continue;
+    const { start: wStart, end: wEnd } = _getPlanWindow(pl, year);
+    if(now < wStart || now > wEnd) continue;
+    const effStart = new Date(wStart); effStart.setDate(effStart.getDate() - 7);
+    const effEnd   = new Date(wEnd);   effEnd.setDate(effEnd.getDate() + 7);
+    const pType = (pl.activityType || "").toLowerCase().trim();
+    const hasMatch = (v4.activities || []).some(a => {
+      if(!a.date) return false;
+      if((a.type || "").toLowerCase().trim() !== pType) return false;
+      const ad = new Date(a.date);
+      if(isNaN(ad.getTime())) return false;
+      if(ad < effStart || ad > effEnd) return false;
+      if(pl.appliesToAll) return true;
+      return (a.plantIds || []).some(pid => (pl.plantIds || []).includes(pid));
+    });
+    if(!hasMatch) {
+      recs.push({ urgency: "medium", actionCategory: "inspect", message: "Plan je aktivan — potrebno izvršiti" });
+      activePlanPushed = true;
+    }
+  }
+
+  // Rule 2 — young plant notice (informational)
+  const pd = plant.plantedDate ? new Date(plant.plantedDate) : null;
+  const cutoffY = new Date(); cutoffY.setFullYear(cutoffY.getFullYear() - 1);
+  const isYoung = plant.status === "forming" || (pd !== null && !isNaN(pd.getTime()) && pd >= cutoffY);
+  if(isYoung) {
+    recs.push({ urgency: "low", actionCategory: "monitoring", message: "Biljka je mlada — fokus na razvoj, ne na rod" });
+  }
+
+  // Rule 3 — watering gap (months 4–9, 14-day threshold)
+  if(cm >= 4 && cm <= 9) {
+    const cutoffW = new Date(); cutoffW.setDate(cutoffW.getDate() - 14);
+    const hasRecentWater = (v4.activities || []).some(a => {
+      if(!a.date) return false;
+      if((a.type || "").toLowerCase().trim() !== "watering") return false;
+      const ad = new Date(a.date);
+      if(isNaN(ad.getTime())) return false;
+      if(ad < cutoffW) return false;
+      return (a.plantIds || []).includes(plantId);
+    });
+    if(!hasRecentWater) {
+      recs.push({ urgency: "medium", actionCategory: "inspect", message: "Provjeri zalijevanje" });
+    }
+  }
+
+  return recs;
+}
+
 function _renderRecCard(r) {
   const urgencyLabel = { high:"Visoko", medium:"Srednje", low:"Nisko" };
   const urgencyColor = { high:"#dc2626", medium:"#b45309", low:"var(--text-light)" };
@@ -931,6 +993,7 @@ function _renderRecCard(r) {
   </div>`;
 }
 
+// ── OVERVIEW ──
 function renderOverview() {
   const mc = document.getElementById("mainContent");
   document.getElementById("headerTitle").textContent = "Dnevnik vrta";
@@ -1267,7 +1330,9 @@ function renderPlantScreen() {
       .filter(a => Array.isArray(a.plantIds) && a.plantIds.includes(plantId))
       .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 
-    const plantRecs = getRecommendationsV2(v4, plantId);
+    const plantRecsV2 = getRecommendationsV2(v4, plantId);
+    const plantRecsV1 = getRecommendationsV1(v4, plantId);
+    const plantRecs = [...plantRecsV2, ...plantRecsV1];
     const plantRecsHTML = plantRecs.length > 0
       ? '<div class="section-label" style="margin-top:16px;margin-bottom:10px">Preporuke</div>' + plantRecs.map(r => _renderRecCard(r)).join("")
       : "";
