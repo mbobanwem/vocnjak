@@ -1038,9 +1038,37 @@ function _renderOverviewV4(mc, v4) {
     ? '<div class="section-label" style="margin-top:16px">Što sada provjeriti</div>' + overviewRecs.map(r => _renderRecCard(r)).join("")
     : "";
 
+  // Session 16 — weather visibility: ONLY when an active spraying plan exists
+  const hasActiveSprayingPlan = dashPlans.some(p => p.activityType === "spraying" && p.state === "active");
+  const showWeather = hasActiveSprayingPlan
+    && weatherData
+    && Array.isArray(weatherData.time)
+    && weatherData.time.length >= 3
+    && Array.isArray(weatherData.temperature_2m_min)
+    && Array.isArray(weatherData.temperature_2m_max)
+    && Array.isArray(weatherData.precipitation_sum);
+  let weatherHTML = "";
+  if(showWeather) {
+    const dn = ["Danas","Sutra","Prekosutra"];
+    weatherHTML = `<div class="weather-card" style="margin-top:16px">
+      <div style="font-size:10px;font-weight:600;color:var(--text-light);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Zagreb — prognoza</div>
+      <div class="weather-row">
+        ${[0,1,2].map((i,idx) => `
+          ${idx > 0 ? '<div class="weather-divider"></div>' : ''}
+          <div class="weather-day">
+            <div class="weather-day-label">${dn[i]}</div>
+            <div class="weather-temp">${Math.round(weatherData.temperature_2m_min[i])}° / ${Math.round(weatherData.temperature_2m_max[i])}°</div>
+            <div class="weather-rain">${weatherData.precipitation_sum[i] > 0 ? '🌧 ' + weatherData.precipitation_sum[i].toFixed(1) + 'mm' : '☀️ suho'}</div>
+          </div>
+        `).join("")}
+      </div>
+    </div>`;
+  }
+
   mc.innerHTML = `
     <div class="section-label">${monthNames[now.getMonth()]} ${now.getFullYear()}</div>
     ${overviewRecsHTML}
+    ${weatherHTML}
     <div class="section-label" style="margin-top:16px">Plan rada</div>
     ${activePlans.length === 0
       ? '<div class="empty">Nema aktivnih planova.</div>'
