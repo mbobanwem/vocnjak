@@ -293,3 +293,30 @@ Not:
 - complexity
 - setup burden
 - technical overhead
+
+---
+
+## Structured Domain Knowledge (Future)
+
+The system may later include structured "practical guidance" for key orchard activities.
+
+Purpose:
+- provide users with clear, actionable context (not just what to do, but how and why)
+- improve decision-making without introducing a rule engine
+
+Constraints:
+- informational only (no automatic decisions)
+- not part of core logic
+- introduced only through explicit sessions
+
+Potential areas:
+
+- pheromone traps → interpretation of catch counts (normal vs alert vs treatment)
+- spraying → when and why to spray (high-level guidance)
+- watering → general thresholds (young vs established trees)
+- pruning → extended structural guidance beyond initial lifecycle rules
+
+Design intent:
+- simple, structured, domain-accurate content
+- no generic filler
+- no hidden logic
