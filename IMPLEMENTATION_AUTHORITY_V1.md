@@ -17,7 +17,7 @@ If any conflict exists between documents:
   - plans = global array
 
 - Migration is complete and stable
-- Sessions 1–16 are DONE (includes 13B, 14, 15, 16)
+- Sessions 1–17 are DONE (includes 13B, 14, 15, 16, 17)
 
 ### V2 overlay status
 - Session V2.1 — Monitoring Input = DONE
@@ -26,7 +26,9 @@ If any conflict exists between documents:
 - Session V2.4 — Recommendation UI = DONE
 
 ### Current next step
-- Session 17 — Export / Import JSON
+- Session 18 — Supabase Backup
+
+Session 18 requires explicit authorization before implementation. Supabase integration is protected by CLAUDE.md scope rules and must not be touched without explicit user instruction.
 
 ---
 
@@ -113,3 +115,41 @@ Ensure:
 - stable execution
 - consistent agent behavior
 - safe evolution of the app
+
+---
+
+## Backup / Import Rules (v4)
+
+- Only `vocnjak_v4` is considered valid export/import user data
+- Export MUST include only `vocnjak_v4`
+- Export MUST NOT include:
+  - v3 data
+  - migration backups
+  - runtime/derived state
+  - helper or backup keys
+
+- Import MUST:
+  - fully replace existing `vocnjak_v4`
+  - validate before write
+  - fail completely if validation fails
+  - back up current state to `vocnjak_v4_preimport_backup` before valid overwrite
+
+- Import MUST NOT:
+  - partially import data
+  - skip invalid entries
+  - auto-correct values
+  - infer missing fields
+  - merge with existing state
+
+- Rationale:
+  - data integrity
+  - predictability
+  - debuggability
+  - no silent corruption
+
+- Any future attempt to introduce:
+  - tolerant import
+  - auto-repair
+  - merge behavior
+
+  must be opened as a separate explicit session and must NOT modify the existing strict import behavior by default.

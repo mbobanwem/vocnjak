@@ -182,6 +182,18 @@ Introduced a lifecycle-based task layer.
 - informational only (no recommendations, no decision logic)
 - no schema or storage changes
 
+### Session 17 — v4 Export / Import (JSON backup)
+
+- enables safe backup and restore when moving to a new device
+- export source is only `vocnjak_v4`
+- import behavior is validated full replace of `vocnjak_v4`
+- current state is backed up to `vocnjak_v4_preimport_backup` before valid import overwrite
+- validation is strict and fail-closed
+- invalid import never overwrites existing data
+- no schema or storage model changes beyond the internal backup key
+- located in the Sync screen as a separate v4 backup/import utility
+- legacy v3 export/import remains unchanged
+
 ---
 
 ## IMPLEMENTED — V2 OVERLAY (PROTECTION ENGINE)
@@ -292,7 +304,9 @@ Implemented in:
 ## CURRENT FOCUS
 
 Next step:
-→ Session 17 — Export / Import JSON
+→ Session 18 — Supabase Backup
+
+Session 18 requires explicit authorization before implementation — Supabase integration is protected by CLAUDE.md scope rules.
 
 ---
 
@@ -307,7 +321,8 @@ Next step:
 - Session 14 — Context-Aware Filtering (DONE)
 - Session 15 — Recommendation Engine V1 (DONE)
 - Session 16 — Weather-Aware Spray Layer (DONE)
-- Next: Session 17 — Export / Import JSON
+- Session 17 — v4 Export / Import JSON (DONE)
+- Next: Session 18 — Supabase Backup (requires explicit Supabase-scope approval)
 
 ### Protection Engine (V2)
 - V2.1 Monitoring Input — DONE
