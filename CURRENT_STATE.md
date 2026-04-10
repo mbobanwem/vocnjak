@@ -135,6 +135,18 @@ Migration from v3 → v4 is implemented and stable.
 - type normalization (toLowerCase/trim) added
 - overview display unchanged — still shows only active plans
 
+### Session 15 — Recommendation Engine V1
+
+- first V1 recommendation layer — surfaces "what should I do now" prompts per plant
+- render-time only — no schema changes, no new stored fields
+- three high-level rules:
+  - active plan prompt — notifies when a plan is active for the plant but not yet executed
+  - young plant notice — informational reminder shown for young plants
+  - watering gap — notifies when the plant has not been watered recently during the growing season
+- renders on plant detail only, inside the existing "Preporuke" section, combined with V2 recommendations (V2 = protection/warnings, V1 = actionable prompts)
+- dashboard and calendar are not affected
+- V2 protection engine is unchanged
+
 ---
 
 ## IMPLEMENTED — V2 OVERLAY (PROTECTION ENGINE)
@@ -258,6 +270,7 @@ Next step:
 - Session 11 — Plans: Read Model (DONE — 11A, 11B, 11C)
 - Session 12 — Plans ↔ Calendar Integration (DONE — 12A, 12B, 12C)
 - Session 13A — Dashboard plan state fix (DONE)
+- Session 15 — Recommendation Engine V1 (DONE)
 - Next: Session 13B — Plant detail plan state fix
 
 ### Protection Engine (V2)
