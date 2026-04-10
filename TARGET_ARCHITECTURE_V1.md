@@ -9,6 +9,12 @@ The goal is to:
 - support orchard-specific workflows
 - enable future intelligence without breaking the core model
 
+The system is organized in three layers:
+
+1. Data layer (persisted)
+2. Lifecycle layer (event-based task generation)
+3. Derived layer (runtime recommendations & filtering)
+
 ---
 
 ## Data Model
@@ -96,6 +102,33 @@ Activities define reality.
 - `activity.type === plan.activityType`
 - plant overlap exists OR `appliesToAll === true`
 - exact type match only (no fuzzy matching)
+
+---
+
+## Lifecycle-based Plans (Controlled Extension)
+
+The system introduces a minimal lifecycle-based planning layer.
+
+Purpose:
+- support critical plant-development actions tied to events (e.g. planting)
+- enable calendar visibility, activity tracking, and iCal export for non-calendar-based tasks
+
+Characteristics:
+- generated from existing data (e.g. plantedDate)
+- NOT persisted as standalone plans
+- NOT a generic engine
+- limited to explicitly defined use cases
+
+Initial scope:
+- formative pruning (year 1)
+- trigger: plantedDate + ~60 days
+- window: ~30 days
+- condition: user confirms shoot length (10–20 cm)
+
+Design decision:
+- this is a controlled extension to the plan system
+- avoids introducing a generic relative-plan engine in V1
+- prioritizes correctness and simplicity over flexibility
 
 ---
 

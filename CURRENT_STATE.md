@@ -128,6 +128,17 @@ Migration from v3 → v4 is implemented and stable.
 - month summary shows colored borders and state labels for plan items
 - activities sorted before plans on same day
 
+### Lifecycle-based Plans (Controlled Extension)
+
+Introduced a lifecycle-based task layer.
+
+- generates plan-like tasks based on plantedDate
+- currently supports:
+  - formative pruning (year 1)
+- injected into calendar as planned items
+- does not modify v4 schema
+- no generic engine introduced
+
 ### Session 13A — Dashboard plan state derivation fix
 - `_v4DashboardPlans` matching logic aligned with DOMAIN_RULES 5.4–5.6
 - activity matching now checks FIRST (done overrides all states)
