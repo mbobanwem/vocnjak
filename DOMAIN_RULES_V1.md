@@ -52,6 +52,7 @@ Examples:
 ```js
 plant = {
   id: string,
+  type: string,          // REQUIRED for new plants — catalog-backed canonical identity (Session 17.4+)
   name: string,
   variety: string,
   rootstock: string,
@@ -65,6 +66,11 @@ plant = {
 ## Rules
 
 - `id` is unique and stable
+- `type` is REQUIRED for new plants (added Session 17.4 — approved schema extension; see IMPLEMENTATION_AUTHORITY_V1.md "Plant Identity & Lifecycle Rules (V1 Override)")
+- `type` allowed values (closed set): `apple`, `pear`, `plum`, `cherry`, `peach`, `nectarine`, `apricot`, `olive`, `fig`, `citrus`
+- `type` MUST be selected from the catalog; free-text type is FORBIDDEN for new plants
+- `type` MUST NEVER be reverse-derived, parsed, or inferred from `name`, `variety`, or any other field
+- pre-existing plants created before Session 17.4 may have `type` missing or empty — they remain valid and MUST NOT be auto-migrated
 - `name` is user-facing plant name (e.g. "Fuji jabuka", "Trešnja Kordia")
 - `variety` is optional in practice, but field exists in V1
 - `rootstock` is optional in practice, but field exists in V1
@@ -86,16 +92,18 @@ Rule:
 
 ## Plant Input Rules (V1 display / UX)
 
-Current V1 storage does NOT include a dedicated `type` field.
+V1 storage now includes a stored `type` field as canonical plant identity (approved Session 17.4).
 
 Rules:
-- plant `type` may be shown in UI as a derived display value only
-- derived type MUST NOT be stored back into V1 model unless explicitly approved
-- if type cannot be derived safely, show placeholder `—`
+- `type` is the canonical identity used for plan-template selection (Session 17.6) and any future type-aware logic
+- `type` MUST be set from the catalog at Add Plant time (Session 17.5+)
+- `type` MUST NEVER be reverse-parsed, inferred, or guessed from `name` or any other field
+- if `type` is missing on a legacy plant, the app MUST treat it as "unknown type" — no template generation, no auto-fix, no rewrite
+- legacy plants with missing `type` are valid and MUST NOT be migrated, rewritten, or rejected
 
 Plant detail display fields in V1:
 - `name`
-- derived `type`
+- stored `type` (or `—` placeholder for legacy plants)
 - `variety`
 - `rootstock`
 - `plantedDate`
@@ -103,8 +111,9 @@ Plant detail display fields in V1:
 
 Display rules:
 - if `variety`, `rootstock`, or `plantedDate` is empty → show `—`
+- if stored `type` is missing on a legacy plant → show `—`
 - `plantedDate` is displayed in localized UI format
-- V1 plant detail is read-only unless explicitly approved otherwise
+- V1 plant detail is read-only unless explicitly approved otherwise (Delete Plant action — Session 17.5 — is the explicitly approved exception)
 
 ---
 
@@ -200,15 +209,19 @@ plan = {
 
 ## Plan Behavior Rules (V1)
 
-- plans are predefined and stored
-- plans are NOT generated dynamically in V1
-- plans are read-only in V1
+- plans are predefined OR generated from orchard templates (Session 17.6)
+- generated plans MUST be PERSISTED into `v4.plans[]` — runtime-only generation is FORBIDDEN
+- plans are user-read-only — user cannot edit individual plan fields
 - plan execution state is derived at runtime (see section 5)
 
 Strict rules:
-- do NOT mutate plan data
-- do NOT generate new plans without explicit instruction
-- do NOT adjust plan windows in storage
+- do NOT mutate plan data after persistence
+- generation from templates MUST follow Session 17.6 rules and IMPLEMENTATION_AUTHORITY_V1.md "Plant Identity & Lifecycle Rules (V1 Override)"
+- generated plans MUST carry deterministic id prefix `gen:plant:<plantId>:<templateKey>`
+- generated plans appear in export/import (Session 17) and Supabase backup (Session 18) — they are part of `v4.plans[]`
+- do NOT adjust plan windows in storage outside of approved generation
+- do NOT mutate or rewrite manually authored plans during generation
+- re-running generation for a plant that already has its generated plans MUST be a no-op (deterministic id prevents duplicate insert)
 
 ---
 
@@ -238,8 +251,9 @@ Rules:
 
 ## Add Plant
 
-Minimum required user input:
-- `name`
+Minimum required user input (Session 17.5+):
+- `type` (catalog selection — closed set of 10 allowed values)
+- `name` (display label, may be auto-suggested from catalog)
 
 Defaults:
 - `status = "forming"`
@@ -250,8 +264,40 @@ If planted date is not changed:
 - today is acceptable default
 
 Rules:
-- V1 plant creation remains compatible with existing V1 fields only
-- no additional plant fields may be introduced without approval
+- `type` MUST be selected from catalog — free-text is FORBIDDEN
+- variety and fallback timing group are mutually exclusive (per PLANT_CATALOG_V1.md)
+- save MUST fail if `type` is missing or not in the allowed set
+- save MUST never create a plant with an unknown / non-catalog `type` value
+- legacy plants without `type` are NOT auto-migrated by the Add Plant flow
+
+## Delete Plant (Session 17.5)
+
+Delete is a deterministic HARD delete with cascade.
+
+Steps (in order, atomic in a single localStorage write):
+1. remove plant from `v4.plants` (delete by id)
+2. for every plan in `v4.plans` where `plan.appliesToAll === false`:
+   - remove the deleted id from `plan.plantIds`
+   - if `plan.plantIds` becomes empty, delete the plan
+3. plans where `plan.appliesToAll === true` are NEVER removed by delete
+4. for every activity in `v4.activities`:
+   - remove the deleted id from `activity.plantIds`
+   - if `activity.plantIds` becomes empty, delete the activity
+5. all generated plans with id matching `gen:plant:<deletedId>:*` are removed by step 2 (their `plantIds` collapses to empty)
+
+Strict prohibitions:
+- NO soft delete
+- NO archive state
+- NO inactive flag on plant
+- NO hidden flag
+- NO trash / recycle state
+- NO field added to mark deletion
+
+Rules:
+- delete MUST require user confirmation (single confirmation modal)
+- delete MUST be atomic in localStorage — partial cascade is FORBIDDEN
+- delete MUST NOT touch other plants' data
+- after delete, no reference to the removed id may remain anywhere in `v4`
 
 ---
 

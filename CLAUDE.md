@@ -16,7 +16,7 @@ Additional context:
 5. DOMAIN_RULES_V1.md (allowed behavior within V1)
 6. UX_IMPROVEMENTS.md (UX direction)
 7. VALIDATION_CONTEXT.md (validation logic)
-8. PLANT_CATALOG_V1.md (plant types, varieties, timing — UI layer only)
+8. PLANT_CATALOG_V1.md (plant types, varieties, timing — runtime input layer; defines the stored canonical `plant.type` per Session 17.4)
 
 Future context (DO NOT IMPLEMENT):
 

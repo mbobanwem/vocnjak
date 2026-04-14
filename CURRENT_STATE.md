@@ -128,16 +128,15 @@ Migration from v3 → v4 is implemented and stable.
 - month summary shows colored borders and state labels for plan items
 - activities sorted before plans on same day
 
-### Lifecycle-based Plans (Controlled Extension)
+### Lifecycle-based Plans (Controlled Extension — SECONDARY, OPTIONAL)
 
-Introduced a lifecycle-based task layer.
+Documented as a narrow, optional extension. NOT the primary plan system. NOT persisted. NOT a parallel plan engine. See TARGET_ARCHITECTURE_V1.md "Plan System Hierarchy (V1)".
 
-- generates plan-like tasks based on plantedDate
-- currently supports:
-  - formative pruning (year 1)
-- injected into calendar as planned items
+- scope limited to explicitly approved event-based cases (e.g. formative pruning year 1)
+- generated from existing data (e.g. plantedDate) — never persisted into `v4.plans[]`
 - does not modify v4 schema
 - no generic engine introduced
+- MUST NOT be mixed with persisted plans in the rendered plan list
 
 ### Session 13A — Dashboard plan state derivation fix
 - `_v4DashboardPlans` matching logic aligned with DOMAIN_RULES 5.4–5.6
@@ -304,9 +303,18 @@ Implemented in:
 ## CURRENT FOCUS
 
 Next step:
-→ Session 18 — Supabase Backup
+→ Session 17.4 — Plant Type Schema Approval (roadmap exception — Core Domain Bridge)
 
-Session 18 requires explicit authorization before implementation — Supabase integration is protected by CLAUDE.md scope rules.
+Followed by:
+→ Session 17.5 — Plant Catalog + Plant Management (Add + Delete) (roadmap exception — Core Domain Bridge)
+
+Then:
+→ Session 17.6 — Template → persisted plans[] (roadmap exception — Core Domain Bridge)
+
+Then:
+→ Session 18 — Supabase Backup (still requires explicit Supabase-scope approval)
+
+Sessions 17.4, 17.5, and 17.6 are an explicit insertion between Session 17 and Session 18. They are a forward-pull of plant identity work from Session 20 (NOT full onboarding). See IMPLEMENTATION_AUTHORITY_V1.md "Core Domain Bridge" and "Plant Identity & Lifecycle Rules (V1 Override)" sections, and EXECUTION_ROADMAP_V1.md "ROADMAP EXCEPTION — CORE DOMAIN BRIDGE" block.
 
 ---
 
@@ -322,7 +330,10 @@ Session 18 requires explicit authorization before implementation — Supabase in
 - Session 15 — Recommendation Engine V1 (DONE)
 - Session 16 — Weather-Aware Spray Layer (DONE)
 - Session 17 — v4 Export / Import JSON (DONE)
-- Next: Session 18 — Supabase Backup (requires explicit Supabase-scope approval)
+- Next: Session 17.4 — Plant Type Schema Approval (roadmap exception — Core Domain Bridge)
+- Then: Session 17.5 — Plant Catalog + Plant Management (Add + Delete) (roadmap exception — Core Domain Bridge)
+- Then: Session 17.6 — Template → persisted plans[] (roadmap exception — Core Domain Bridge)
+- Then: Session 18 — Supabase Backup (requires explicit Supabase-scope approval)
 
 ### Protection Engine (V2)
 - V2.1 Monitoring Input — DONE

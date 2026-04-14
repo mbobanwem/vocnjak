@@ -48,7 +48,7 @@ Future value should come from:
 The system is based on the following principles:
 
 - activities are the only source of truth for real-world events
-- plans are domain knowledge, not user-managed data
+- plans are predefined OR generated from orchard templates (Session 17.6) and PERSISTED into `v4.plans[]` as user-owned data; runtime-only / derived-only plan generation is FORBIDDEN
 - plan state is always derived from activities
 - no plan state is stored
 - no manual override of plan state exists

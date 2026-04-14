@@ -1152,8 +1152,8 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
 # — early / mid / late timing groups
 # — shared block from above
 #
-# # Future generation context:
-# when roadmap opens plan generation scope and catalog selection context is available:
+# # Session 17.6 generation context:
+# the persisted plan generation layer reads stored `plant.type` (Session 17.4) and routes templates as follows:
 # - olive / fig use Block 6 Mediterranean templates only
 # - citrus uses Block 6 Citrus subtype templates only
 # - standard fruit trees use shared block + per-species block
@@ -1506,8 +1506,8 @@ Posebna napomena: smokva podnosi do -10°C kratkoročno, ali mlada stabla su osj
 # Citrus uses subtype seasonProfile — NOT standard timing groups.
 # Subtype required: lemon | orange | mandarin
 # Shared block does NOT apply.
-# Future generation layer may use citrus subtype selection
-# to route the correct template below when that roadmap scope is opened.
+# The Session 17.6 persisted plan generation layer uses citrus subtype selection
+# (stored as `plant.variety` from catalog) to route the correct template below.
 # ══════════════════════════════════════════════════════
 
 ## CITRUS model note
@@ -1775,16 +1775,20 @@ Mandarina dozrijeva u jesen. Najhladnootpornija citrus vrsta (do -7°C kratkoro�
 # FINAL RULES
 # ══════════════════════════════════════════════════════
 
-## Template path reference (future generation context)
+## Template path reference (Session 17.6 generation context)
 
-This section describes how a future plan generation layer may use catalog selection context
-to route templates correctly. This is NOT a current V1 runtime rule.
+This section describes how the persisted plan generation layer (Session 17.6) uses the stored
+canonical `plant.type` to route templates correctly.
 
-PLANT_CATALOG_V1.md and TARGET_ARCHITECTURE_V1.md both state that plant.type and plant.group
-are NOT stored fields in the current V1 data model. Catalog values are UI/input layer only.
-This routing logic applies when roadmap opens plan generation scope (Session 13+).
+`plant.type` IS a stored field in the V1 data model (Session 17.4 approved schema extension).
+Catalog selection writes `plant.type` at Add Plant time (Session 17.5), and the persisted plan
+generation layer (Session 17.6) reads `plant.type` to pick the correct template path.
+Generated plans are PERSISTED into `v4.plans[]` — runtime-only / derived-only generation is FORBIDDEN.
 
-When a future generation layer has catalog selection context available:
+`plant.group` is NOT stored — it is derived at render/generation time from `plant.type` using the
+group reference below.
+
+When the Session 17.6 generation layer runs (immediately after Add Plant for the new plant only):
 
 ```
 catalog.group == "pome" or "stone"
@@ -1806,18 +1810,18 @@ Reference:
 - "mediterranean" -- olive, fig
 - "citrus"        -- lemon, orange, mandarin
 
-## Template composition notes (future generation context)
+## Template composition notes (Session 17.6 generation context)
 
-These notes describe intended composition when a future generation layer is built.
-They are NOT current implementation rules and must NOT be read as executable V1 behavior.
+These notes describe the composition rules used by the Session 17.6 persisted plan generation layer.
+Generated plans are PERSISTED into `v4.plans[]`; runtime-only / derived-only generation is FORBIDDEN.
 
 1. Shared block is the common baseline for standard fruit trees (pome + stone)
 2. Per-species blocks add species-specific activities on top of the shared baseline
-3. Young-tree relevance is described in notes per entry -- future filtering layer may
-   interpret these notes when roadmap opens that scope (Session 14+); current V1 does not
-   suppress or filter plans based on tree age
-4. Condition-based activities are described in notes -- future layer may surface them as
-   advisory when conditions are met; current V1 does not enforce conditions
+3. Young-tree relevance is described in notes per entry -- the existing Session 14 context-aware
+   filtering layer interprets these notes at render time (e.g. harvest plans hidden for young plants);
+   filtering is render-only and does NOT mutate persisted plans
+4. Condition-based activities are described in notes -- a future advisory layer may surface them
+   when conditions are met; current V1 does not enforce conditions
 5. Mediterranean and citrus follow separate template paths -- Block 6 only
 
 ## Spray rules (agronomic notes — for future generation and display context)
@@ -1834,7 +1838,7 @@ They are NOT current implementation rules and must NOT be read as executable V1 
 Harvest window for standard fruit trees is NOT encoded here.
 It comes from PLANT_CATALOG_V1.md (variety.harvestWindow or fallback.harvestWindow).
 This file provides harvest activity templates with broad windows.
-When roadmap opens plan generation scope, a future generation layer may narrow the harvest window using catalog harvestWindow data.
+The Session 17.6 generation layer narrows the harvest window using catalog `harvestWindow` data (variety.harvestWindow when a variety is selected, otherwise fallback.harvestWindow).
 
 ## ActivityType validity
 

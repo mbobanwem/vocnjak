@@ -26,9 +26,14 @@ If any conflict exists between documents:
 - Session V2.4 — Recommendation UI = DONE
 
 ### Current next step
-- Session 18 — Supabase Backup
+- Session 17.4 — Plant Type Schema Approval (roadmap exception — Core Domain Bridge)
+- then Session 17.5 — Plant Catalog + Plant Management (Add + Delete) (roadmap exception — Core Domain Bridge)
+- then Session 17.6 — Template → persisted plans[] (roadmap exception — Core Domain Bridge)
+- then Session 18 — Supabase Backup
 
-Session 18 requires explicit authorization before implementation. Supabase integration is protected by CLAUDE.md scope rules and must not be touched without explicit user instruction.
+Sessions 17.4, 17.5, and 17.6 are an explicit insertion between Session 17 and Session 18. See "Core Domain Bridge" and "Plant Identity & Lifecycle Rules (V1 Override)" sections below.
+
+Session 18 resumes as the next step AFTER Sessions 17.4, 17.5, and 17.6 complete. Session 18 still requires explicit authorization before implementation — Supabase integration is protected by CLAUDE.md scope rules and must not be touched without explicit user instruction.
 
 ---
 
@@ -115,6 +120,117 @@ Ensure:
 - stable execution
 - consistent agent behavior
 - safe evolution of the app
+
+---
+
+## Core Domain Bridge (Roadmap Exception Between Session 17 and Session 18)
+
+### Purpose
+Sessions 17.4, 17.5, and 17.6 are an explicit, intentional roadmap insertion between Session 17 and Session 18. They close a product-critical gap: the app cannot meaningfully benefit from cloud backup (Session 18) or calendar sync (Session 19) while plant input is free-text, plant identity is unstable, and no plans are generated from orchard templates.
+
+### Classification
+- this is CORE DOMAIN work
+- this is NOT monitoring, V2, recommendation, AI, or polish
+- this is the deterministic bridge: plant identity → catalog-backed input → orchard template generation → persisted plans surfaced in UI
+
+### Scope rules
+- Session 17.4 approves a single schema extension: `plant.type` (string, required for new plants). DOCUMENTATION ONLY — no code changes.
+- Session 17.5 implements catalog-backed Add Plant AND deterministic Delete Plant cascade.
+- Session 17.6 generates plans from orchard templates and PERSISTS them in `v4.plans[]`.
+- ONLY one new field (`plant.type`) is approved across the entire bridge. No other field is added on plant, activity, or plan.
+- Generated plans are PERSISTED — runtime-only / derived-only plan generation is FORBIDDEN.
+- Session 17 export/import contract continues to read raw `vocnjak_v4` — generated plans are part of `v4.plans[]` so they ARE included in the export, by design.
+- Legacy plants (pre-17.4) without `plant.type` remain valid. They are NOT auto-migrated. They produce zero generated plans.
+
+### Authority
+- PLANT_CATALOG_V1.md becomes the runtime data source for Session 17.5 catalog selectors (still direction-only for everything beyond that explicit scope)
+- ORCHARD_PLAN_TEMPLATES_V1.md becomes the runtime data source for Session 17.6 generation (still direction-only for everything beyond that explicit scope)
+- MIGRATION_PLAN_V1.md is NOT modified — `plant.type` is documented as an APPROVED SCHEMA EXTENSION here, in the same pattern as the monitoring activity-type exception above
+- DOMAIN_RULES_V1.md IS modified to reflect: new `plant.type` field, catalog-backed Add Plant, Delete Plant cascade, persisted plan generation
+- TARGET_ARCHITECTURE_V1.md is updated to reflect persisted plan generation and stored `plant.type`
+
+### After completion
+- Session 18 (Supabase Backup) resumes as the next step
+- the exception is closed
+- no roadmap renumbering occurs (inserted sessions use decimal numbering 17.4 / 17.5 / 17.6)
+
+### Rationale
+- Session 20 (First-Run Onboarding) already mandates PLANT_CATALOG_V1 integration per EXECUTION_ROADMAP_V1.md Phase 4
+- this insertion is a forward-pull from Session 20: ONLY plant-identity-related work is promoted forward (catalog selection + delete + plan generation). Full onboarding (language selection, climate zone, first-run gating) remains at Session 20.
+- promoting catalog + delete + persisted plan generation forward delivers complete orchard guidance before cloud/sync layers are built on top of an empty-state app
+- keeps Session 18+ numbering stable
+
+---
+
+## Plant Identity & Lifecycle Rules (V1 Override)
+
+This section LOCKS the new plant identity model and the orchard plan generation model. These rules OVERRIDE older direction-only language wherever conflict arises.
+
+### Plant Identity (mandatory)
+- `plant.type` is REQUIRED for all new plants created from Session 17.5 onward
+- allowed values for `plant.type` (closed set):
+  - `apple`
+  - `pear`
+  - `plum`
+  - `cherry`
+  - `peach`
+  - `nectarine`
+  - `apricot`
+  - `olive`
+  - `fig`
+  - `citrus`
+- `plant.type` MUST be selected via the catalog — free text is FORBIDDEN
+- `plant.type` MUST NEVER be reverse-derived, parsed, guessed, or inferred from `plant.name`, `plant.variety`, or any other field
+- `plant.name` and `plant.variety` continue to exist as user-facing labels but they are NOT identity
+- legacy plants without `plant.type` remain valid; they MUST NOT be auto-migrated, auto-tagged, or rewritten
+
+### Catalog authority
+- PLANT_CATALOG_V1.md is the authoritative runtime source of allowed `plant.type` values, varieties, and timing groups
+- Add Plant UI MUST reject any save where `plant.type` is missing or not in the allowed set
+
+### Delete Plant (deterministic HARD delete with cascade)
+- delete is HARD — there is NO soft delete, archive, inactive, hidden, or trash state
+- delete steps (in order, atomic in a single localStorage write):
+  1. remove plant from `v4.plants` (delete by id)
+  2. for every plan in `v4.plans` where `plan.appliesToAll === false`:
+     - remove the deleted id from `plan.plantIds`
+     - if `plan.plantIds` becomes empty, delete the plan
+  3. plans where `plan.appliesToAll === true` are NEVER removed by delete
+  4. for every activity in `v4.activities`:
+     - remove the deleted id from `activity.plantIds`
+     - if `activity.plantIds` becomes empty, delete the activity
+  5. all generated plans with id matching `gen:plant:<deletedId>:*` are removed by step 2 (their `plantIds` collapses to empty)
+- delete MUST require user confirmation (single confirmation modal)
+- delete MUST be atomic in localStorage — partial cascade is FORBIDDEN
+- after delete, no reference to the removed id may remain anywhere in `v4`
+
+### Persisted plan generation (mandatory)
+- plans generated from orchard templates MUST be PERSISTED into `v4.plans[]`
+- runtime-only / derived-only plan generation is FORBIDDEN
+- generated plans MUST carry deterministic id: `gen:plant:<plantId>:<templateKey>`
+- generated plans coexist with manual / migrated plans in `v4.plans[]`
+- generation runs immediately after Add Plant for the newly created plant only
+- cascade-delete of generated plans is handled by the standard Delete Plant cascade above (they live in `v4.plans[]`)
+- re-running generation for a plant that already has its generated plans MUST be a NO-OP (deterministic id check prevents duplicate insert)
+- generation MUST NEVER mutate or rewrite manually authored plans
+- generation MUST NEVER mutate or rewrite previously generated plans
+- generated plans ARE included in Session 17 export/import (they are part of `vocnjak_v4`)
+- generated plans ARE included in Session 18 Supabase backup (same reason)
+
+### Forbidden behavior (locks)
+This section explicitly forbids the following patterns. Future agents MUST NOT reintroduce them under any rationale:
+- reverse parsing of `plant.type` from `plant.name`, `plant.variety`, or anything else
+- soft delete, archive state, inactive flag, hidden flag, trash state, or any "logically deleted" pattern
+- runtime-only / derived-only plan generation
+- mixing persisted and runtime-derived plans in the rendered plan list
+- using lifecycle-based (event-based, non-persisted) plan generation as a general or parallel plan system — only template-based persisted plans are allowed for the core orchard flow; lifecycle extensions are SECONDARY, optional, and scoped per-use-case
+- adding any plant field beyond `plant.type` (e.g. `catalogKey`, `climateZone`, `rootstockId`) without a separate explicit approval session
+- adding any plan field (e.g. `origin`, `templateId`, `generatedAt`) — the deterministic id prefix `gen:plant:` is the only marker
+
+### Authority precedence
+- this section OVERRIDES older "Plant Input Rules" sentences in DOMAIN_RULES_V1.md wherever they conflict
+- this section OVERRIDES "current V1 plant model has NO dedicated type field" language anywhere it still appears
+- this section is the canonical source of truth for plant identity and plant lifecycle in V1
 
 ---
 
