@@ -21,14 +21,17 @@ Catalog provides structured input for:
 
 ## V1 Storage Rules (CRITICAL)
 
-The catalog is a UI/input layer ONLY.
+The catalog is the runtime input layer for plant identity. It is NOT pure UI — catalog selection writes the canonical stored `plant.type` (Session 17.4).
 
 Rules:
-- catalog data is NOT stored directly in the v4 plant model
-- plant.type does NOT exist as a stored field in V1
-- selected catalog values may populate existing fields (name, variety) only
-- no new plant fields may be introduced without explicit approval
+- `plant.type` IS a stored field in v4 (Session 17.4 approved schema extension; closed set of 10 allowed values)
+- catalog selection populates `plant.type` (canonical identity) and may also populate `plant.name` and `plant.variety` (display labels)
+- catalog reference data beyond `plant.type` (varieties, harvestWindow, fallback timing groups, citrus subtypes) is NOT persisted into the plant model — it stays external in this file and is recomputed at render time
+- `plant.type` MUST be selected from the catalog — free-text type is FORBIDDEN for new plants
+- `plant.type` MUST NEVER be reverse-derived from `plant.name`, `plant.variety`, or any other field
+- no new plant fields beyond the approved `plant.type` may be introduced without explicit approval
 - timing profiles and region offsets are future features — do NOT implement in V1
+- legacy plants without `plant.type` remain valid; they are NOT auto-migrated and produce zero generated plans
 
 ---
 

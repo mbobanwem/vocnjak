@@ -42,7 +42,7 @@ User must be able to:
 The product is based on a deterministic model:
 
 - activities are the only source of truth
-- plans are predefined domain knowledge (not user-managed)
+- plans are predefined OR generated from orchard templates (Session 17.6) and PERSISTED into `v4.plans[]` as user-owned data — runtime-only / derived-only plan generation is FORBIDDEN
 - plan state is always derived from activities
 - no hidden logic, no assumptions, no heuristics
 
