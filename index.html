@@ -243,6 +243,33 @@ const STATUS_COLORS = {
 const STATUS_LABELS = { dobro: "Dobro", prati: "Pratiti", hitno: "Hitno", odradjeno: "Odrađeno" };
 const ENTRY_TYPES = ["bilješka","prskanje","rezidba","sadnja","berba","navodnjavanje","gnojidba","odrađeno","tretman"];
 
+// ── PLANT CATALOG (Session 17.5 — catalog-backed plant identity per PLANT_CATALOG_V1.md) ──
+// Closed set of 10 plant types. Variety lists are Tier-1 selectors only (catalog variety key OR "").
+// Citrus REQUIRES a subtype (lemon | orange | mandarin) stored in plant.variety.
+// Tier-2 fallback timing groups (early/mid/late) are deliberately OUT OF SCOPE for Session 17.5.
+const PLANT_CATALOG = {
+  apple:     { label: "Jabuka",    varieties: ["gala","golden_delicious","jonagold","fuji","granny_smith","idared"] },
+  pear:      { label: "Kruška",    varieties: ["santa_maria","williams","conference","boscs_bottle","abate_fetel"] },
+  plum:      { label: "Šljiva",    varieties: ["cacanska_rana","cacanska_lepotica","cacanska_najbolja","stanley","prezident"] },
+  cherry:    { label: "Trešnja",   varieties: ["burlat","kordia","lapins","regina","sweetheart"] },
+  peach:     { label: "Breskva",   varieties: ["springcrest","redhaven","royal_glory","fayette","o_henry"] },
+  nectarine: { label: "Nektarina", varieties: ["caldesi_2000","big_top","fantasia","stark_redgold","venus"] },
+  apricot:   { label: "Marelica",  varieties: ["novosadska_rodna","kioto","goldrich","hargrand","bergeron"] },
+  olive:     { label: "Maslina",   varieties: [] },
+  fig:       { label: "Smokva",    varieties: [] },
+  citrus:    { label: "Citrus",    varieties: [], subtypes: ["lemon","orange","mandarin"] }
+};
+const PLANT_VARIETY_LABELS = {
+  gala: "Gala", golden_delicious: "Golden Delicious", jonagold: "Jonagold", fuji: "Fuji", granny_smith: "Granny Smith", idared: "Idared",
+  santa_maria: "Santa Maria", williams: "Williams", conference: "Conference", boscs_bottle: "Bosc's Bottle", abate_fetel: "Abate Fetel",
+  cacanska_rana: "Čačanska rana", cacanska_lepotica: "Čačanska lepotica", cacanska_najbolja: "Čačanska najbolja", stanley: "Stanley", prezident: "Président",
+  burlat: "Burlat", kordia: "Kordia", lapins: "Lapins", regina: "Regina", sweetheart: "Sweetheart",
+  springcrest: "Springcrest", redhaven: "Redhaven", royal_glory: "Royal Glory", fayette: "Fayette", o_henry: "O'Henry",
+  caldesi_2000: "Caldesi 2000", big_top: "Big Top", fantasia: "Fantasia", stark_redgold: "Stark Redgold", venus: "Venus",
+  novosadska_rodna: "Novosadska rodna", kioto: "Kioto", goldrich: "Goldrich", hargrand: "Hargrand", bergeron: "Bergeron",
+  lemon: "Limun", orange: "Naranča", mandarin: "Mandarina"
+};
+
 // ── SCHEDULED TASKS ── month 0-based, with due date for sorting
 const SCHEDULED = [
   { month: 1, day: 1,  plant: "sve",          text: "Bijelo mineralno ulje – sve voćke + smreka + Lagerstroemia + Photinia", urgent: true, skipYear: 2026 },
@@ -670,7 +697,7 @@ function buildPlantTabs() {
       return `<button class="tab-btn ${id === activePlantId ? 'active' : ''}" onclick="setActivePlant('${id}')">
         <span>${label}</span>
       </button>`;
-    }).join("");
+    }).join("") + `<button class="tab-btn" onclick="showAddPlant()" title="Dodaj biljku"><span>+</span></button>`;
     return;
   }
   tabs.innerHTML = PLANTS.map(p => {
@@ -1475,6 +1502,10 @@ function renderPlantScreen() {
           </div>
         </div>`;
       }).join("")}
+
+      <div style="margin-top:24px;text-align:center">
+        <button onclick="deletePlant('${plantId}')" style="background:#ef4444;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Obriši biljku</button>
+      </div>
     `;
     buildPlantTabs();
     return;
@@ -1930,7 +1961,55 @@ function deleteActivity(activityId) {
   showActivitiesScreen();
 }
 
-// ── ADD PLANT (v4) ──
+// ── DELETE PLANT (v4 — Session 17.5: deterministic atomic cascade) ──
+function deletePlant(plantId) {
+  let v4;
+  try {
+    const raw = localStorage.getItem("vocnjak_v4");
+    v4 = raw ? JSON.parse(raw) : null;
+    if(!v4 || typeof v4.plants !== "object" || !v4.plants[plantId]) {
+      showToast("Biljka nije pronađena"); return;
+    }
+  } catch(e) { showToast("Greška pri čitanju podataka"); return; }
+  if(!Array.isArray(v4.plans)) v4.plans = [];
+  if(!Array.isArray(v4.activities)) v4.activities = [];
+  const plantName = (v4.plants[plantId].name || "").trim() || plantId;
+  // Read-only cascade-impact counts (plans/activities that belong ONLY to this plant)
+  const plansDropped = v4.plans.filter(pl =>
+    pl && pl.appliesToAll !== true &&
+    Array.isArray(pl.plantIds) && pl.plantIds.length === 1 && pl.plantIds[0] === plantId
+  ).length;
+  const activitiesDropped = v4.activities.filter(a =>
+    a && Array.isArray(a.plantIds) && a.plantIds.length === 1 && a.plantIds[0] === plantId
+  ).length;
+  if(!confirm("Obriši biljku '" + plantName + "'? Uklonit će se i " + plansDropped + " plana(e) i " + activitiesDropped + " aktivnost(i) koje pripadaju samo ovoj biljci.")) return;
+  // Cascade (in-memory on single v4 reference)
+  delete v4.plants[plantId];
+  v4.plans = v4.plans.filter(pl => {
+    if(!pl) return false;
+    if(pl.appliesToAll === true) return true;
+    // Session 17.5 fix: malformed plans (no valid plantIds array) are KEPT untouched —
+    // this delete flow must not silently destroy unrelated/corrupt plan data.
+    if(!Array.isArray(pl.plantIds)) return true;
+    pl.plantIds = pl.plantIds.filter(pid => pid !== plantId);
+    return pl.plantIds.length > 0;
+  });
+  v4.activities = v4.activities.filter(a => {
+    if(!a) return false;
+    if(!Array.isArray(a.plantIds)) return false;
+    a.plantIds = a.plantIds.filter(pid => pid !== plantId);
+    return a.plantIds.length > 0;
+  });
+  try {
+    localStorage.setItem("vocnjak_v4", JSON.stringify(v4));
+  } catch(e) { showToast("Greška pri spremanju"); return; }
+  const remaining = Object.keys(v4.plants);
+  activePlantId = remaining.length > 0 ? remaining[0] : "";
+  showToast("Obrisano ✓");
+  showScreen("plants");
+}
+
+// ── ADD PLANT (v4 — Session 17.5: catalog-backed) ──
 function showAddPlant() {
   currentScreen = "plants";
   ["overview","plants","calendar","add","sync"].forEach(s => document.getElementById(`bnav-${s}`)?.classList.remove("active"));
@@ -1938,16 +2017,22 @@ function showAddPlant() {
   document.getElementById("plantTabs").style.display = "none";
   document.getElementById("headerTitle").textContent = "Nova biljka";
   const today = new Date().toISOString().split("T")[0];
+  const typeOptions = Object.keys(PLANT_CATALOG)
+    .map(k => `<option value="${k}">${PLANT_CATALOG[k].label}</option>`).join("");
   document.getElementById("mainContent").innerHTML = `
     <div class="section-label">Nova biljka</div>
     <div class="form-card">
       <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Tip biljke *</label>
+        <select id="apType" class="form-input" onchange="_renderAddPlantVariety()">
+          <option value="">— odaberi tip —</option>
+          ${typeOptions}
+        </select>
+      </div>
+      <div id="apVarietyContainer"></div>
+      <div class="form-group" style="margin-bottom:10px">
         <label class="form-label">Ime biljke *</label>
         <input id="apName" class="form-input" placeholder="npr. Trešnja Kordia">
-      </div>
-      <div class="form-group" style="margin-bottom:10px">
-        <label class="form-label">Sorta</label>
-        <input id="apVariety" class="form-input" placeholder="npr. Kordia">
       </div>
       <div class="form-group" style="margin-bottom:10px">
         <label class="form-label">Podloga</label>
@@ -1969,15 +2054,92 @@ function showAddPlant() {
   `;
 }
 
+function _renderAddPlantVariety() {
+  const type = document.getElementById("apType")?.value || "";
+  const container = document.getElementById("apVarietyContainer");
+  if(!container) return;
+  if(!type || !PLANT_CATALOG[type]) { container.innerHTML = ""; _suggestAddPlantName(); return; }
+  const cat = PLANT_CATALOG[type];
+  if(type === "citrus") {
+    const opts = (cat.subtypes || [])
+      .map(s => `<option value="${s}">${PLANT_VARIETY_LABELS[s] || s}</option>`).join("");
+    container.innerHTML = `
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Vrsta citrusa *</label>
+        <select id="apCitrusSubtype" class="form-input" onchange="_suggestAddPlantName()">
+          <option value="" disabled selected>— odaberi vrstu —</option>
+          ${opts}
+        </select>
+      </div>`;
+    _suggestAddPlantName();
+    return;
+  }
+  if(Array.isArray(cat.varieties) && cat.varieties.length > 0) {
+    const opts = cat.varieties
+      .map(v => `<option value="${v}">${PLANT_VARIETY_LABELS[v] || v}</option>`).join("");
+    container.innerHTML = `
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label">Sorta</label>
+        <select id="apVariety" class="form-input">
+          <option value="">— bez sorte —</option>
+          ${opts}
+        </select>
+      </div>`;
+    _suggestAddPlantName();
+    return;
+  }
+  container.innerHTML = "";
+  _suggestAddPlantName();
+}
+
+// Session 17.5 — UX-only name suggestion. Never overwrites a non-empty name.
+// Never used to derive plant.type. Suggestion source: catalog label, with
+// citrus subtype label preferred when one is selected.
+function _suggestAddPlantName() {
+  const nameEl = document.getElementById("apName");
+  if(!nameEl) return;
+  if((nameEl.value || "").trim() !== "") return;
+  const type = document.getElementById("apType")?.value || "";
+  if(!type || !PLANT_CATALOG[type]) return;
+  let suggestion = PLANT_CATALOG[type].label || "";
+  if(type === "citrus") {
+    const sub = document.getElementById("apCitrusSubtype")?.value || "";
+    if(sub && PLANT_VARIETY_LABELS[sub]) suggestion = PLANT_VARIETY_LABELS[sub];
+  }
+  if(suggestion) nameEl.value = suggestion;
+}
+
 function saveNewPlant() {
+  // Session 17.5: catalog-backed plant.type required + citrus subtype required
+  const type = document.getElementById("apType")?.value || "";
+  if(!type || !Object.prototype.hasOwnProperty.call(PLANT_CATALOG, type)) {
+    showToast("Odaberi tip biljke iz kataloga"); return;
+  }
   const name = document.getElementById("apName")?.value?.trim();
   if(!name) { showToast("Upiši ime biljke"); return; }
-  const variety = document.getElementById("apVariety")?.value?.trim() || "";
+  let variety = "";
+  if(type === "citrus") {
+    const sub = document.getElementById("apCitrusSubtype")?.value || "";
+    const allowed = PLANT_CATALOG.citrus.subtypes || [];
+    if(!sub || allowed.indexOf(sub) === -1) {
+      showToast("Odaberi vrstu citrusa"); return;
+    }
+    variety = sub;
+  } else {
+    const v = document.getElementById("apVariety")?.value || "";
+    if(v !== "") {
+      const allowed = PLANT_CATALOG[type].varieties || [];
+      if(allowed.indexOf(v) === -1) {
+        showToast("Odaberi sortu iz kataloga"); return;
+      }
+      variety = v;
+    }
+  }
   const rootstock = document.getElementById("apRootstock")?.value?.trim() || "";
   const plantedDate = document.getElementById("apPlantedDate")?.value || "";
   const notes = document.getElementById("apNotes")?.value?.trim() || "";
   const id = "plant_" + Date.now();
-  const plant = { id, name, variety, rootstock, plantedDate, status: "forming", legacyStatus: "", notes };
+  const plant = { id, type, name, variety, rootstock, plantedDate, status: "forming", legacyStatus: "", notes };
   let v4;
   try {
     const raw = localStorage.getItem("vocnjak_v4");

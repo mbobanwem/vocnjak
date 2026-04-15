@@ -193,6 +193,35 @@ Documented as a narrow, optional extension. NOT the primary plan system. NOT per
 - located in the Sync screen as a separate v4 backup/import utility
 - legacy v3 export/import remains unchanged
 
+### Session 17.4 — Plant Type Schema Approval (Core Domain Bridge)
+
+- DOCUMENTATION ONLY — no code changes
+- approved one new field: `plant.type` (string, required for new plants from Session 17.5 onward)
+- closed allowed set: apple, pear, plum, cherry, peach, nectarine, apricot, olive, fig, citrus
+- locked rules added to IMPLEMENTATION_AUTHORITY_V1.md "Plant Identity & Lifecycle Rules (V1 Override)"
+- legacy plants without `plant.type` remain valid; never auto-migrated, never auto-tagged
+- MIGRATION_PLAN_V1.md remains untouched — `plant.type` is recorded as an APPROVED SCHEMA EXTENSION (same pattern as the monitoring activity-type exception)
+
+### Session 17.5 — Plant Catalog + Plant Management (Add + Delete)
+
+- Add Plant is catalog-backed: `#apType` select is required and whitelisted against the closed 10-value catalog
+- `plant.type` is saved into `v4.plants[id]` for every newly created plant
+- citrus REQUIRES a subtype (lemon | orange | mandarin) stored in `plant.variety`; placeholder is `disabled selected` to reflect the requirement
+- non-citrus types: optional variety select; when chosen, value is whitelisted against the per-type catalog list
+- legacy plants without `plant.type` continue to load and render unchanged — no migration pass
+- Add Plant entry point is reachable from the plants screen beyond the empty state (a "+" button is appended to the v4 plant tab row)
+- Delete Plant action is present on plant detail; one confirmation dialog showing cascade-impact counts
+- Delete uses a deterministic HARD cascade in a single `localStorage.setItem("vocnjak_v4", …)` write:
+  - removes `v4.plants[plantId]`
+  - removes the deleted id from each non-`appliesToAll` plan's `plantIds`; drops the plan when its `plantIds` becomes empty
+  - plans with `appliesToAll === true` are NEVER touched
+  - malformed plans (no valid `plantIds` array) are KEPT untouched (delete flow does not silently destroy unrelated/corrupt plan data)
+  - removes the deleted id from each activity's `plantIds`; drops the activity when its `plantIds` becomes empty
+  - never leaves dangling references in `v4`
+- one localStorage write per save and per delete (atomic)
+- NO plan generation in this session — that is Session 17.6 scope
+- minor UX: name input gets a catalog-label suggestion when empty (never overwrites a typed value; never used to derive `plant.type`)
+
 ---
 
 ## IMPLEMENTED — V2 OVERLAY (PROTECTION ENGINE)
@@ -303,18 +332,12 @@ Implemented in:
 ## CURRENT FOCUS
 
 Next step:
-→ Session 17.4 — Plant Type Schema Approval (roadmap exception — Core Domain Bridge)
-
-Followed by:
-→ Session 17.5 — Plant Catalog + Plant Management (Add + Delete) (roadmap exception — Core Domain Bridge)
-
-Then:
 → Session 17.6 — Template → persisted plans[] (roadmap exception — Core Domain Bridge)
 
 Then:
 → Session 18 — Supabase Backup (still requires explicit Supabase-scope approval)
 
-Sessions 17.4, 17.5, and 17.6 are an explicit insertion between Session 17 and Session 18. They are a forward-pull of plant identity work from Session 20 (NOT full onboarding). See IMPLEMENTATION_AUTHORITY_V1.md "Core Domain Bridge" and "Plant Identity & Lifecycle Rules (V1 Override)" sections, and EXECUTION_ROADMAP_V1.md "ROADMAP EXCEPTION — CORE DOMAIN BRIDGE" block.
+Sessions 17.4 (DONE — schema approval) and 17.5 (DONE — catalog-backed Add Plant + Delete Plant cascade) are complete. Session 17.6 remains the open step in the Core Domain Bridge insertion between Session 17 and Session 18. The bridge is a forward-pull of plant identity work from Session 20 (NOT full onboarding). See IMPLEMENTATION_AUTHORITY_V1.md "Core Domain Bridge" and "Plant Identity & Lifecycle Rules (V1 Override)" sections, and EXECUTION_ROADMAP_V1.md "ROADMAP EXCEPTION — CORE DOMAIN BRIDGE" block.
 
 ---
 
@@ -330,9 +353,9 @@ Sessions 17.4, 17.5, and 17.6 are an explicit insertion between Session 17 and S
 - Session 15 — Recommendation Engine V1 (DONE)
 - Session 16 — Weather-Aware Spray Layer (DONE)
 - Session 17 — v4 Export / Import JSON (DONE)
-- Next: Session 17.4 — Plant Type Schema Approval (roadmap exception — Core Domain Bridge)
-- Then: Session 17.5 — Plant Catalog + Plant Management (Add + Delete) (roadmap exception — Core Domain Bridge)
-- Then: Session 17.6 — Template → persisted plans[] (roadmap exception — Core Domain Bridge)
+- Session 17.4 — Plant Type Schema Approval (DONE — roadmap exception — Core Domain Bridge)
+- Session 17.5 — Plant Catalog + Plant Management (Add + Delete) (DONE — roadmap exception — Core Domain Bridge)
+- Next: Session 17.6 — Template → persisted plans[] (roadmap exception — Core Domain Bridge)
 - Then: Session 18 — Supabase Backup (requires explicit Supabase-scope approval)
 
 ### Protection Engine (V2)
