@@ -1157,17 +1157,28 @@ Generate plans from ORCHARD_PLAN_TEMPLATES_V1.md per plant and PERSIST them in `
 
 ---
 
-## Session 18 — Supabase Backup
+## Session 18 — Supabase Backup (DONE)
 ### Goal
 Cloud backup for user data.
 
 ### Scope
-- backup/restore v4 JSON
+- manual backup/restore of v4 JSON
 - per-user key handling
 - backup timestamp in UI
 
+### Implemented
+- backup source is only `vocnjak_v4`
+- backup is manual trigger only
+- restore is validated full replace
+- restore uses existing `vocnjak_v4_preimport_backup` before valid overwrite
+- `saveData()` has no cloud backup side effect
+- UI displays last backup timestamp
+- existing Supabase table `vocnjak_data` is used
+- backup request uses POST upsert-compatible REST pattern with unique `user_key`
+- no sync, merge, partial restore, polling, or background job was introduced
+
 ### Done when
-- user has safe cloud backup
+- user has safe manual cloud backup
 
 ---
 
