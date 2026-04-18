@@ -20,6 +20,7 @@ If any conflict exists between documents:
 - Sessions 1–17 are DONE (includes 13B, 14, 15, 16, 17)
 - Session 17.4 — Plant Type Schema Approval = DONE (docs-only schema approval; rules locked in this file under "Plant Identity & Lifecycle Rules (V1 Override)")
 - Session 17.5 — Plant Catalog + Plant Management (Add + Delete) = DONE (catalog-backed Add Plant; required `plant.type`; required citrus subtype; deterministic HARD Delete Plant cascade in a single localStorage write; no plan generation)
+- Session 17.6 — Template → Persisted Plans = DONE (ORCHARD_PLAN_TEMPLATES populated; _generatePlansForPlant added; Add Plant now generates and persists plans into v4.plans[]; backfillGeneratedPlans added; Core Domain Bridge COMPLETE)
 
 ### V2 overlay status
 - Session V2.1 — Monitoring Input = DONE
@@ -28,12 +29,11 @@ If any conflict exists between documents:
 - Session V2.4 — Recommendation UI = DONE
 
 ### Current next step
-- Session 17.6 — Template → persisted plans[] (roadmap exception — Core Domain Bridge)
-- then Session 18 — Supabase Backup
+- Session 18 — Supabase Backup (requires explicit authorization before implementation)
 
-Sessions 17.4 and 17.5 of the Core Domain Bridge insertion (between Session 17 and Session 18) are complete. Session 17.6 is the remaining bridge step. See "Core Domain Bridge" and "Plant Identity & Lifecycle Rules (V1 Override)" sections below — the locked rules in those sections remain in force and are NOT weakened by this status update.
+The Core Domain Bridge (Sessions 17.4, 17.5, 17.6) is COMPLETE. All three steps are done. See "Core Domain Bridge" and "Plant Identity & Lifecycle Rules (V1 Override)" sections below — the locked rules in those sections remain in force and are NOT weakened by this status update.
 
-Session 18 resumes as the next step AFTER Session 17.6 completes. Session 18 still requires explicit authorization before implementation — Supabase integration is protected by CLAUDE.md scope rules and must not be touched without explicit user instruction.
+Session 18 is now the next step. It still requires explicit authorization before implementation — Supabase integration is protected by CLAUDE.md scope rules and must not be touched without explicit user instruction.
 
 ---
 
