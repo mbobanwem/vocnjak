@@ -235,6 +235,24 @@ Documented as a narrow, optional extension. NOT the primary plan system. NOT per
 - Cross-year template windows split into two same-year entries (a/b suffix keys) for compatibility with existing readers
 - Core Domain Bridge (Sessions 17.4 / 17.5 / 17.6) is now COMPLETE
 
+### Session 18 — Supabase Backup (manual only)
+
+- Supabase backup is implemented in the Sync screen
+- backup source is ONLY `localStorage.vocnjak_v4`
+- backup is manual trigger only — no auto backup, no polling, no background job
+- `saveData()` no longer has a cloud backup side effect
+- backup sends the full v4 object (`plants`, `activities`, `plans`) to the existing Supabase table `vocnjak_data`
+- backup request uses an upsert-compatible Supabase REST pattern:
+  - `POST /rest/v1/vocnjak_data`
+  - `Prefer: resolution=merge-duplicates`
+  - requires `user_key` to be unique in the Supabase table
+- restore is a validated full replace of `localStorage.vocnjak_v4`
+- restore validation reuses the strict v4 import validator before any overwrite
+- current local v4 state is backed up to the existing `vocnjak_v4_preimport_backup` key before valid restore overwrite, only when current v4 exists
+- invalid cloud restore never overwrites local data
+- UI shows "Zadnji cloud backup" using `vocnjak_v4_last_supabase_backup`
+- no sync / merge / partial restore / background logic was introduced
+
 ---
 
 ## IMPLEMENTED — V2 OVERLAY (PROTECTION ENGINE)
@@ -345,9 +363,9 @@ Implemented in:
 ## CURRENT FOCUS
 
 Next step:
-→ Session 18 — Supabase Backup (requires explicit Supabase-scope approval before implementation)
+→ Session 19 — iCal Sync
 
-The Core Domain Bridge (Sessions 17.4 / 17.5 / 17.6) is now COMPLETE. Plant identity is catalog-backed, delete is deterministic with cascade, and orchard template plans are persisted into `v4.plans[]`. The bridge was a forward-pull of plant identity work from Session 20 (NOT full onboarding). See IMPLEMENTATION_AUTHORITY_V1.md "Core Domain Bridge" and "Plant Identity & Lifecycle Rules (V1 Override)" sections, and EXECUTION_ROADMAP_V1.md "ROADMAP EXCEPTION — CORE DOMAIN BRIDGE" block.
+Session 18 Supabase Backup is complete and pushed in commit `061ce1c65363957689b6e0837ca6d3da7a7ea043`. The Core Domain Bridge (Sessions 17.4 / 17.5 / 17.6) is also COMPLETE. Plant identity is catalog-backed, delete is deterministic with cascade, and orchard template plans are persisted into `v4.plans[]`. The bridge was a forward-pull of plant identity work from Session 20 (NOT full onboarding). See IMPLEMENTATION_AUTHORITY_V1.md "Core Domain Bridge" and "Plant Identity & Lifecycle Rules (V1 Override)" sections, and EXECUTION_ROADMAP_V1.md "ROADMAP EXCEPTION — CORE DOMAIN BRIDGE" block.
 
 ---
 
@@ -366,7 +384,8 @@ The Core Domain Bridge (Sessions 17.4 / 17.5 / 17.6) is now COMPLETE. Plant iden
 - Session 17.4 — Plant Type Schema Approval (DONE — roadmap exception — Core Domain Bridge)
 - Session 17.5 — Plant Catalog + Plant Management (Add + Delete) (DONE — roadmap exception — Core Domain Bridge)
 - Session 17.6 — Template → persisted plans[] (DONE — roadmap exception — Core Domain Bridge)
-- Next: Session 18 — Supabase Backup (requires explicit Supabase-scope approval)
+- Session 18 — Supabase Backup (DONE — manual only)
+- Next: Session 19 — iCal Sync
 
 ### Protection Engine (V2)
 - V2.1 Monitoring Input — DONE
