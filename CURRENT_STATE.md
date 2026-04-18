@@ -222,6 +222,19 @@ Documented as a narrow, optional extension. NOT the primary plan system. NOT per
 - NO plan generation in this session — that is Session 17.6 scope
 - minor UX: name input gets a catalog-label suggestion when empty (never overwrites a typed value; never used to derive `plant.type`)
 
+### Session 17.6 — Template → Persisted Plans (Core Domain Bridge)
+
+- `ORCHARD_PLAN_TEMPLATES` constant added to `index.html` — 13 sections (shared + 12 plant-type-specific), 92 entries total, populated from ORCHARD_PLAN_TEMPLATES_V1.md
+- `_generatePlansForPlant(plant)` — pure function; takes a plant object; routes to correct template sections by `plant.type` and `plant.variety` (citrus subtypes); returns array of plan objects; no mutation, no localStorage, no side effects; includes defensive guard for missing/invalid plant
+- Add Plant now generates persisted plans immediately after save: generated plans are pushed into `v4.plans[]` with dedup check before the single `localStorage.setItem` write
+- Generated plan IDs are deterministic: `gen:plant:<plantId>:<section>:<key>` — re-running generation for an already-processed plant is a NO-OP
+- `backfillGeneratedPlans()` — loops all existing plants, generates + dedup-pushes plans, single localStorage write, toast result, re-renders; triggered by ↻ button in plant tab bar
+- ↻ button appended to plant tab row (alongside existing + button)
+- Generated plans coexist with manual/migrated plans in `v4.plans[]`
+- Cascade delete of generated plans handled by existing Session 17.5 Delete Plant cascade (no change to delete logic)
+- Cross-year template windows split into two same-year entries (a/b suffix keys) for compatibility with existing readers
+- Core Domain Bridge (Sessions 17.4 / 17.5 / 17.6) is now COMPLETE
+
 ---
 
 ## IMPLEMENTED — V2 OVERLAY (PROTECTION ENGINE)
@@ -332,12 +345,9 @@ Implemented in:
 ## CURRENT FOCUS
 
 Next step:
-→ Session 17.6 — Template → persisted plans[] (roadmap exception — Core Domain Bridge)
+→ Session 18 — Supabase Backup (requires explicit Supabase-scope approval before implementation)
 
-Then:
-→ Session 18 — Supabase Backup (still requires explicit Supabase-scope approval)
-
-Sessions 17.4 (DONE — schema approval) and 17.5 (DONE — catalog-backed Add Plant + Delete Plant cascade) are complete. Session 17.6 remains the open step in the Core Domain Bridge insertion between Session 17 and Session 18. The bridge is a forward-pull of plant identity work from Session 20 (NOT full onboarding). See IMPLEMENTATION_AUTHORITY_V1.md "Core Domain Bridge" and "Plant Identity & Lifecycle Rules (V1 Override)" sections, and EXECUTION_ROADMAP_V1.md "ROADMAP EXCEPTION — CORE DOMAIN BRIDGE" block.
+The Core Domain Bridge (Sessions 17.4 / 17.5 / 17.6) is now COMPLETE. Plant identity is catalog-backed, delete is deterministic with cascade, and orchard template plans are persisted into `v4.plans[]`. The bridge was a forward-pull of plant identity work from Session 20 (NOT full onboarding). See IMPLEMENTATION_AUTHORITY_V1.md "Core Domain Bridge" and "Plant Identity & Lifecycle Rules (V1 Override)" sections, and EXECUTION_ROADMAP_V1.md "ROADMAP EXCEPTION — CORE DOMAIN BRIDGE" block.
 
 ---
 
@@ -355,8 +365,8 @@ Sessions 17.4 (DONE — schema approval) and 17.5 (DONE — catalog-backed Add P
 - Session 17 — v4 Export / Import JSON (DONE)
 - Session 17.4 — Plant Type Schema Approval (DONE — roadmap exception — Core Domain Bridge)
 - Session 17.5 — Plant Catalog + Plant Management (Add + Delete) (DONE — roadmap exception — Core Domain Bridge)
-- Next: Session 17.6 — Template → persisted plans[] (roadmap exception — Core Domain Bridge)
-- Then: Session 18 — Supabase Backup (requires explicit Supabase-scope approval)
+- Session 17.6 — Template → persisted plans[] (DONE — roadmap exception — Core Domain Bridge)
+- Next: Session 18 — Supabase Backup (requires explicit Supabase-scope approval)
 
 ### Protection Engine (V2)
 - V2.1 Monitoring Input — DONE
