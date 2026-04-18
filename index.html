@@ -270,6 +270,127 @@ const PLANT_VARIETY_LABELS = {
   lemon: "Limun", orange: "Naranča", mandarin: "Mandarina"
 };
 
+const ORCHARD_PLAN_TEMPLATES = {
+  shared: [
+    { key: "e1", title: "Krečenje debla", activityType: "observation", monthStart: 1, dayStart: 15, monthEnd: 2, dayEnd: 10, skipYear: 0, notes: "Zimsko krečenje debla radi zaštite kore od pucanja zbog izmjene mraza i sunca.\nPosebno važno za koštičave vrste i stabla s tankom korom.\nVapnena boja ili komercijalni bijeli premaz za voćke.\nPrimijeniti po suhom vremenu, temperatura iznad 0°C.\nZa mlada stabla: preporučeno, ne preskakati." },
+    { key: "e2", title: "Bijelo mineralno ulje", activityType: "spraying", monthStart: 2, dayStart: 1, monthEnd: 2, dayEnd: 15, skipYear: 0, notes: "Dormant oil tretman protiv prezimljujućih jaja i oblika štetnika:\ngrinje, lisne uši, štitaste uši.\nPrskati po suhom, bez vjetra, iznad 5°C. Dobro natopiti grane i koru.\nVAŽNO: minimalni razmak od bakra je 7–10 dana — ne miješati, ne primjenjivati previše blizu.\nZa mlada stabla: primijeniti." },
+    { key: "e3", title: "Bakar – zimska zaštita", activityType: "spraying", monthStart: 2, dayStart: 15, monthEnd: 2, dayEnd: 28, skipYear: 0, notes: "Zimski bakreni fungicid: zaštita od raka kore, pjegavosti, monililje i srodnih bolesti.\nPrimijeniti uz razmak od bijelog ulja najmanje 7–10 dana.\nPreparat: Cuprablau Z 35 WG ili ekvivalent.\nPrskati po suhom vremenu.\nZa mlada stabla: primijeniti." },
+    { key: "e4", title: "Zimska rezidba", activityType: "pruning", monthStart: 3, dayStart: 1, monthEnd: 3, dayEnd: 15, skipYear: 0, notes: "Ukloniti suhe, bolesne, križajuće i preguste grane.\nCilj: prozračna krošnja, kontrolirana visina stabla.\nRezati po suhom vremenu. Alat dezinficirati između stabala.\nVeće rane zaštititi premazom (Lac Balsam) za rezove iznad 2 cm.\nZa mlada stabla god. 1–2: fokus na formiranje uzgojnog oblika —\nvaza (koštičave) ili vreteno/spindle (jabuka, kruška). Ne rezati rodno drvo." },
+    { key: "e5", title: "Bakar na rane nakon rezidbe", activityType: "spraying", monthStart: 3, dayStart: 1, monthEnd: 3, dayEnd: 20, skipYear: 0, notes: "Primijeniti unutar 1–2 dana nakon rezidbe.\nZaštita svježih reznih rana od prodora gljivica i bakterija.\nCuprablau Z 35 WG ili ekvivalent.\nRazmak od bijelog ulja: min. 7–10 dana." },
+    { key: "e6", title: "Sezonsko navodnjavanje", activityType: "watering", monthStart: 6, dayStart: 20, monthEnd: 8, dayEnd: 31, skipYear: 0, notes: "Sezonski period navodnjavanja za sušni dio godine.\nPokrenuti kada prestane redovita kiša, obično kraj lipnja.\nOdrasla stabla: okvirno 20–40 L po stablu tjedno, prilagoditi oborinama i tlu.\nMlada stabla: prioritet — pratiti vlagu tla redovito, 30–50 L tjedno.\nNavodnjavanje ujutro ili navečer. Drip sustav preporučen." },
+    { key: "e7", title: "Ljetna rezidba", activityType: "pruning", monthStart: 7, dayStart: 1, monthEnd: 7, dayEnd: 15, skipYear: 0, notes: "Uklanjanje vodopija i pregustih ljetnih izbojaka.\nCilj: bolja osvijetljenost krošnje, kontrola bujnosti.\nRezati kada novi izdanci dosegnu 10–20 cm.\nNe rezati po ekstremnim vrućinama iznad 30°C." },
+    { key: "e8", title: "Gašenje navodnjavanja", activityType: "observation", monthStart: 9, dayStart: 1, monthEnd: 9, dayEnd: 15, skipYear: 0, notes: "Završetak sezonskog navodnjavanja pred kasne berbe.\nJabuka i kasne sorte: ugasiti 2–3 tjedna prije berbe za bolji okus i čvrstoću ploda.\nAko je cijeli vrt na jednom ventilu: gasiti oko 1. rujna —\ntrešnja, nektarina, breskva i šljiva su tada već pobrane.\nTumačiti kao orchard management podsjetnik, ne kao obaveznu radnju u svakom scenariju." },
+    { key: "e9", title: "Pregled za zimu", activityType: "observation", monthStart: 10, dayStart: 1, monthEnd: 10, dayEnd: 31, skipYear: 0, notes: "Jesenski pregled stabala pred zimu:\nstanje debla i rana, vezice (ne smiju rezati koru), zaštita od glodavaca,\npotpore mladih stabala, mumificirani plodovi na stablu i tlu.\nUkloniti sve izvore zaraze.\nPosebno važno za mlada stabla i stabla koja su imala stres u sezoni." }
+  ],
+  apple: [
+    { key: "e1", title: "Post-bloom zaštita – krastavost i pepelnica", activityType: "spraying", monthStart: 4, dayStart: 10, monthEnd: 5, dayEnd: 10, skipYear: 0, notes: "Ključna zaštita protiv krastavosti jabuke (Venturia inaequalis) i pepelnice.\nPrimijeniti nakon cvatnje kada se formiraju mladi listovi i plodovi.\nNE tretirati za cvatnje — pčele moraju biti zaštićene.\nScore 250 EC + Mospilan 20 SP mogu se miješati u jednom prolazu.\nTretmane ponavljati prema infekcijskom pritisku i kiši.\nZa mlada stabla god. 1–2 bez ploda: manje kritično, ali nije na odmet." },
+    { key: "e2", title: "Praćenje jabučnog savijača (feromonske klopke)", activityType: "monitoring", monthStart: 4, dayStart: 25, monthEnd: 8, dayEnd: 15, skipYear: 0, notes: "Jabučni savijač (Cydia pomonella) — crvi u plodovima jabuke.\nPostaviti feromonsku klopku na 1.5–2 m visine, u sjenu krošnje.\nTjedno pregledavati ulov.\nTretman insekticidom (Mospilan) samo ako ulov prijeđe prag štetnosti —\nnagli porast = tretman unutar 7–10 dana.\nZa mlada stabla god. 1–2 bez ploda: nije prioritet." },
+    { key: "e3", title: "Prorjeđivanje plodova", activityType: "observation", monthStart: 5, dayStart: 15, monthEnd: 6, dayEnd: 15, skipYear: 0, notes: "Uklanjanje viška plodova radi bolje veličine i kvalitete uroda.\nOstaviti 1 plod na 10–15 cm grane. Ukloniti blizance i oštećene plodove.\nJabuka je sklona alternativnoj rodnosti — redovito prorjeđivanje smanjuje taj problem.\nZa mlada stabla god. 1–2 bez značajnog uroda: nije potrebno." },
+    { key: "e4", title: "Mreža protiv ptica – jabuka", activityType: "observation", monthStart: 8, dayStart: 15, monthEnd: 10, dayEnd: 1, skipYear: 0, notes: "Jabuka Fuji i kasne sorte rijetko su intenzivno napadnute pticama dok su plodovi čvrsti.\nPostaviti mrežu samo ako postoji vidljiv pritisak ptica.\nZa rane i srednje sorte: pratiti i reagirati prema situaciji.\nZa mlada stabla god. 1–2 bez uroda: nije potrebno." },
+    { key: "e5", title: "Berba jabuke", activityType: "harvest", monthStart: 8, dayStart: 20, monthEnd: 10, dayEnd: 20, skipYear: 0, notes: "Termin berbe ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.\nPrimjeri: Gala (aug 20 – sep 10), Fuji / Idared (sep 25 – oct 15).\nBrati zakretanjem ploda — ne čupati, ne vući.\nTest zrelosti: plod lako otpada pri laganom zakretanju, sjemenke smeđe.\nFuji: čekati punu zrelost — prerano ubrana Fuji jabuka nema okusa.\nBrati po suhom, izbjegavati jutarnju rosu.\nNe ostavljati oštećene plodove — uzrokuju moniliju." }
+  ],
+  pear: [
+    { key: "e1", title: "Bakar – preventivna zaštita od vatrostuh", activityType: "spraying", monthStart: 3, dayStart: 15, monthEnd: 4, dayEnd: 10, skipYear: 0, notes: "Kruška je jedina standardna voćka s ozbiljnim rizikom vatrostuh (Erwinia amylovora).\nPrimijeniti bakar preventivno oko cvatnje.\nCvatnja kruške je ranije od jabuke — pratiti stanje pupova i prilagoditi termin.\nNE prskati direktno na otvorene cvjetove — oštećuje cvjetove i pčele.\nCuprablau Z 35 WG ili ekvivalent.\nRazmak od bijelog ulja: min. 7–10 dana.\nAko se pojave simptomi vatrostuh (tamnosmeđe uvenule grane): odmah rezati ispod vidljive zaraze,\ndezinficirati alat između rezova, spaliti rezani material." },
+    { key: "e2", title: "Praćenje kruškine buhe i savijača", activityType: "monitoring", monthStart: 4, dayStart: 20, monthEnd: 8, dayEnd: 15, skipYear: 0, notes: "Kruškina buha (Cacopsylla pyri): štitaste uši na naličju listova, medna rosa, čađavica.\nVizualni pregled mladih izbojaka i listova tjedno.\nTretman (bijelo ulje ili Mospilan) samo pri vidljivom problemu.\nKruškini savijač (Grapholita molesta): feromonska klopka ako je dostupna.\nZa mlada stabla: fokus na lisne uši i buhu." },
+    { key: "e3", title: "Post-bloom zaštita – krastavost kruške", activityType: "spraying", monthStart: 4, dayStart: 15, monthEnd: 5, dayEnd: 15, skipYear: 0, notes: "Zaštita od krastavosti kruške (Venturia pirina) i monililje.\nPrimijeniti nakon cvatnje. Score 250 EC + Mospilan 20 SP.\nNE tretirati za cvatnje.\nZa mlada stabla god. 1–2: manje kritično, ali korisno u vlažnim sezonama." },
+    { key: "e4", title: "Prorjeđivanje plodova – kruška", activityType: "observation", monthStart: 5, dayStart: 20, monthEnd: 6, dayEnd: 15, skipYear: 0, notes: "Kruška ne zahtijeva agresivno prorjeđivanje kao jabuka.\nOstaviti 1–2 ploda po grozdu, razmak oko 10 cm.\nUkloniti oštećene i deformirane plodove.\nZa mlada stabla god. 1–2: nije potrebno." },
+    { key: "e5", title: "Mreža protiv ptica – kruška", activityType: "observation", monthStart: 7, dayStart: 20, monthEnd: 9, dayEnd: 15, skipYear: 0, notes: "Kruška može biti napadnuta pticama pred samu berbu.\nPratiti vizualno — mreža po potrebi kada plodovi počnu sazrijevati.\nZa mlada stabla bez uroda: nije potrebno." },
+    { key: "e6", title: "Berba kruške", activityType: "harvest", monthStart: 8, dayStart: 1, monthEnd: 10, dayEnd: 5, skipYear: 0, notes: "Termin berbe ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.\nKRITIČNO: brati PRIJE potpune konzumne zrelosti — kruška dozrijeva nakon berbe, ne na stablu.\nTest na stablu: plod se lako odvaja zakretanjem, ali još čvrst.\nDozrijevanje nakon berbe: sobna temperatura 3–7 dana.\nNE čekati da omekša na stablu — bit će brašnasta i neukusna.\nBrati pažljivo — lako dobiva modrice." }
+  ],
+  cherry: [
+    { key: "e1", title: "Praćenje trešnjine muhe – žute ljepljive ploče", activityType: "monitoring", monthStart: 4, dayStart: 25, monthEnd: 6, dayEnd: 20, skipYear: 0, notes: "Trešnjina muha (Rhagoletis cerasi) — najvažniji štetnik trešnje u EU.\nPostaviti 2–3 žute ljepljive ploče po stablu na visinu 1.5–2 m, u sjenu krošnje.\nTjedno pregledavati:\n— 0–2 muhe/tjedan → nema tretmana\n— nagli porast → insekticid (Mospilan) unutar 7–10 dana od prvog masovnog leta.\nMospilan karenca: min. 14 dana do berbe — ne tretirati ako je berba za 10 dana ili manje.\nZa mlada stabla god. 1–2 bez ploda: nije prioritet." },
+    { key: "e2", title: "Prorjeđivanje trešnje (po potrebi)", activityType: "observation", monthStart: 5, dayStart: 15, monthEnd: 6, dayEnd: 1, skipYear: 0, notes: "Trešnja nije obavezna za prorjeđivanje — stablo samo regulira broj plodova.\nGisela 5 ne prerodi ekscesivno.\nPo želji: ukloniti blizance (dva srasla ploda) i sitne zaostale plodove.\nOstaviti ~5–8 cm razmaka između plodova u grozdu.\nZnakovi previše: grane vise jako pod težinom, svi plodovi sitni i blijedi.\nOvo smanjuje broj plodova koji padaju na tlo i štedi leđa pri čišćenju.\nZa mlada stabla god. 1–2: nije potrebno." },
+    { key: "e3", title: "Mreža protiv ptica – trešnja", activityType: "observation", monthStart: 6, dayStart: 1, monthEnd: 6, dayEnd: 30, skipYear: 0, notes: "Postaviti 2–3 tjedna prije berbe.\nZa Kordiju (berba 20.6.–5.7.): postaviti oko 1.–15.6.\nZa ranije sorte (Burlat, berba od 1.6.): postaviti već kraj svibnja.\nVeličina: min. 4×4 m, preporučeno 5×5 m.\nTip: s bočnim zipperom za pristup pri berbi bez skidanja mreže.\nMreža štiti i od kiše → smanjuje pucanje plodova pred berbu.\nSkinuti odmah nakon berbe.\nZa mlada stabla god. 1–2 bez uroda: nije potrebno." },
+    { key: "e4", title: "Berba trešnje", activityType: "harvest", monthStart: 6, dayStart: 1, monthEnd: 7, dayEnd: 25, skipYear: 0, notes: "Termin ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.\nBrati sa peteljkom — plod bez peteljke traje znatno kraće (max 1–2 dana).\nBrati po suhom vremenu, u hladnijem dijelu dana (jutro, večer).\nTest zrelosti: puna tamnocrvena boja, čvrstoća uz blag pritisak popušta.\nNe brati mokre plodove — pucaju i brzo trunu.\nČuvanje: 3–5 dana na 0–4°C.\nNe ostavljati prezrele plodove na stablu — privlače ose, uzrokuju gnilobu." }
+  ],
+  nectarine: [
+    { key: "e1", title: "Bakar – kovrčavost lista (KRITIČNO – nektarina)", activityType: "spraying", monthStart: 2, dayStart: 10, monthEnd: 3, dayEnd: 5, skipYear: 0, notes: "KRITIČNO ZA NEKTARINU — ne smije se propustiti.\nPrimijeniti dok su pupovi nektarine još zatvoreni ili tek počinju bubriti.\nTaphrina deformans: nema lijeka nakon zaraze — jedino preventiva.\nCuprablau Z 35 WG ili ekvivalent.\nAko je proljeće vlažno: 2 tretmana u razmaku 7–10 dana.\nOvo prskanje je DODATAK zimskom bakru iz shared bloka — primijeniti specifično za nektarinu.\nRazmak od bijelog ulja: min. 7–10 dana.\nZa mlada stabla: primijeniti — posebno važno u prvim godinama." },
+    { key: "e2", title: "Praćenje lisnih ušiju i breskvinog savijača", activityType: "monitoring", monthStart: 4, dayStart: 15, monthEnd: 7, dayEnd: 31, skipYear: 0, notes: "Tjedno pregledavati naličje listova i mlade izbojke.\nLisne uši na nektarini mogu biti problem — Mospilan pri vidljivoj koloniji.\nBreskvin savijač (Grapholita molesta): feromonska klopka ako je dostupna.\nTretman samo pri vidljivom problemu ili prijeđenom pragu.\nZa mlada stabla: fokus na lisne uši." },
+    { key: "e3", title: "Post-bloom zaštita – monilija i štetnici", activityType: "spraying", monthStart: 5, dayStart: 5, monthEnd: 5, dayEnd: 25, skipYear: 0, notes: "Primijeniti nakon završetka cvatnje.\nScore 250 EC + Mospilan 20 SP — u jednom prolazu.\nZaštita od monililje (Monilinia laxa) i breskvinog savijača.\nMospilan NIKAD za cvatnje — toksičan za pčele.\nZa mlada stabla god. 1–2: nije obavezno, ali preporučeno u vlažnim sezonama." },
+    { key: "e4", title: "Prorjeđivanje plodova – nektarina", activityType: "observation", monthStart: 5, dayStart: 20, monthEnd: 6, dayEnd: 10, skipYear: 0, notes: "PREPORUČENO za nektarinu — jako prorodi bez prorjeđivanja.\nOstaviti 1 plod na 10–15 cm grane.\nUkloniti blizance, sitne i oštećene plodove.\nBez prorjeđivanja: sitni plodovi, lom grana od težine, iscrpljenost stabla.\nZa mlada stabla god. 1–2 bez uroda: nije potrebno." },
+    { key: "e5", title: "Mreža protiv ptica – nektarina", activityType: "observation", monthStart: 7, dayStart: 20, monthEnd: 8, dayEnd: 5, skipYear: 0, notes: "Postaviti kada plodovi počnu mijenjati boju (žuto-narančasta osnova vidljiva).\nKos i drozd napadaju nektarinu agresivno pred berbu.\nVeličina mreže: min. 4×4 m. Tip s bočnim zipperom preporučen.\nSkinuti odmah nakon berbe.\nZa mlada stabla god. 1–2 bez uroda: nije potrebno." },
+    { key: "e6", title: "Berba nektarine", activityType: "harvest", monthStart: 7, dayStart: 1, monthEnd: 9, dayEnd: 5, skipYear: 0, notes: "Termin ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.\nVIŠE PROLAZA — plodovi ne dozrijevaju istovremeno (3–4 prolaza u ~3 tjedna).\nTest zrelosti: blago popuštanje pri pritisku oko peteljke, osnovna boja žuto-narančasta.\nNE brati prerano — nektarina ne dozrijeva nakon berbe kao kruška.\nBrati pažljivo — tanka kožica lako se oštećuje.\nČuvati na 0–4°C do 2 tjedna." }
+  ],
+  peach: [
+    { key: "e1", title: "Bakar – kovrčavost lista (KRITIČNO – breskva)", activityType: "spraying", monthStart: 2, dayStart: 10, monthEnd: 3, dayEnd: 5, skipYear: 0, notes: "KRITIČNO ZA BRESKVU — identično kao kod nektarine, ne smije se propustiti.\nPrimijeniti dok su pupovi zatvoreni ili tek počinju bubriti.\nTaphrina deformans — jednom zaražena grana, nema lijeka.\nCuprablau Z 35 WG ili ekvivalent.\nVlažno proljeće: 2 tretmana u razmaku 7–10 dana.\nOvo prskanje je DODATAK zimskom bakru iz shared bloka.\nRazmak od bijelog ulja: min. 7–10 dana." },
+    { key: "e2", title: "Praćenje lisnih ušiju i breskvinog savijača", activityType: "monitoring", monthStart: 4, dayStart: 15, monthEnd: 7, dayEnd: 31, skipYear: 0, notes: "Tjedno pregledavati naličje listova i vršne izbojke.\nLisne uši: Mospilan pri vidljivoj koloniji.\nBreskvin savijač (Grapholita molesta): feromonska klopka ako je dostupna.\nTretman samo pri vidljivom problemu." },
+    { key: "e3", title: "Post-bloom zaštita – monilija i štetnici", activityType: "spraying", monthStart: 5, dayStart: 5, monthEnd: 5, dayEnd: 25, skipYear: 0, notes: "Nakon cvatnje. Score 250 EC + Mospilan 20 SP — u jednom prolazu.\nZaštita od monililje (Monilinia laxa) i breskvinog savijača.\nMospilan NIKAD za cvatnje.\nZa mlada stabla god. 1–2: nije obavezno, korisno u vlažnim sezonama." },
+    { key: "e4", title: "Prorjeđivanje plodova – breskva", activityType: "observation", monthStart: 5, dayStart: 20, monthEnd: 6, dayEnd: 10, skipYear: 0, notes: "PREPORUČENO — breskva jako prorodi bez prorjeđivanja.\nOstaviti 1 plod na 10–15 cm grane.\nUkloniti blizance i oštećene plodove.\nBez prorjeđivanja: sitni plodovi, lom grana, alternativna rodnost.\nZa mlada stabla god. 1–2 bez uroda: nije potrebno." },
+    { key: "e5", title: "Mreža protiv ptica – breskva", activityType: "observation", monthStart: 7, dayStart: 10, monthEnd: 7, dayEnd: 25, skipYear: 0, notes: "Postaviti kada plodovi počnu mijenjati boju (ružičasto-crvena osnova).\nKos i drozd napadaju breskvu pred berbu.\nVeličina: min. 4×4 m. Skinuti odmah nakon berbe.\nZa mlada stabla god. 1–2 bez uroda: nije potrebno." },
+    { key: "e6", title: "Berba breskve", activityType: "harvest", monthStart: 6, dayStart: 25, monthEnd: 8, dayEnd: 31, skipYear: 0, notes: "Termin ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.\nViše prolaza — plodovi ne dozrijevaju istovremeno.\nTest zrelosti: blago popuštanje pri pritisku, osnovna boja žuto-narančasta.\nBrati pažljivo — dlakava kožica nježnija nego što izgleda.\nNa sobnoj temperaturi dozrijeva 2–3 dana nakon berbe.\nNe ostavljati prezrele plodove — privlače ose, uzrokuju moniliju." }
+  ],
+  apricot: [
+    { key: "e1", title: "Bakar – zaštita PRIJE cvatnje (KRITIČNO – marelica)", activityType: "spraying", monthStart: 1, dayStart: 20, monthEnd: 2, dayEnd: 15, skipYear: 0, notes: "KRITIČNO: marelica cvate u veljači/ožujku — bakar mora biti primijenjen PRIJE.\nPrskati dok su pupovi još zatvoreni ili tek počinju bubriti.\nZaštita od: šarke (Plum pox virus, vektori su lisne uši), monililje, pjegavosti kore.\nCuprablau Z 35 WG ili ekvivalent.\nAko se propusti ovaj termin, ne može se naknadno kompenzirati.\nRazmak od bijelog ulja: min. 7–10 dana.\nOvo je DODATAK zimskom bakru iz shared bloka — primijeniti ranije, prilagođeno marelici." },
+    { key: "e2", title: "Praćenje mraza za cvatnje marelice", activityType: "monitoring", monthStart: 2, dayStart: 1, monthEnd: 3, dayEnd: 31, skipYear: 0, notes: "Marelica cvate u veljači/ožujku — mraz je najveći neprijatelj.\nPratiti vremensku prognozu svakodnevno za cvatnje.\nKritična temperatura: ispod -1°C za otvorene cvjetove → oštećenje.\nMoguće mjere zaštite za manja stabla: agrotekstil (navlaka), dimni lonci.\nOvo je informacijska radnja — korisnik mora reagirati prema lokalnim uvjetima.\nLoš rod marelice je najčešće uzrokovan mrazom, ne bolešću ni štetnicima." },
+    { key: "e3", title: "Praćenje lisnih ušiju i šarke (marelica)", activityType: "monitoring", monthStart: 4, dayStart: 1, monthEnd: 5, dayEnd: 15, skipYear: 0, notes: "Šarka (Plum pox virus) se prenosi lisnim ušima — pratiti kolonije na naličju listova.\nVizualni pregled: žuti prstenovi/mrlje na listovima = mogući simptom šarke.\nŠarka nema lijeka — zaražena stabla moraju se ukloniti.\nMospilan pri vidljivoj koloniji lisnih uši (preventivna kontrola vektora šarke).\nZa mlada stabla: posebno pratiti." },
+    { key: "e4", title: "Post-bloom zaštita – monilija (marelica)", activityType: "spraying", monthStart: 4, dayStart: 15, monthEnd: 5, dayEnd: 15, skipYear: 0, notes: "Nakon cvatnje (marelica cvate ranije — prilagoditi termin prema stanju stabla).\nScore 250 EC za zaštitu od monililje (Monilinia laxa).\nMospilan dodati samo pri vidljivim štetnicima.\nNIKAD prskati otvorene cvjetove.\nZa mlada stabla god. 1–2: nije obavezno." },
+    { key: "e5", title: "Prorjeđivanje plodova – marelica", activityType: "observation", monthStart: 5, dayStart: 1, monthEnd: 5, dayEnd: 25, skipYear: 0, notes: "Marelica jako prorodi (ako nije bilo mraza koji je uništio cvjetove).\nOstaviti 1 plod na 8–10 cm grane.\nUkloniti blizance i oštećene plodove.\nBez prorjeđivanja: sitni plodovi, lom grana, iscrpljenost stabla.\nZa mlada stabla god. 1–2 bez uroda: nije potrebno." },
+    { key: "e6", title: "Berba marelice", activityType: "harvest", monthStart: 6, dayStart: 5, monthEnd: 7, dayEnd: 25, skipYear: 0, notes: "Termin ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.\nMarelica dozrijeva brzo i neravnomjerno — 2–3 prolaza kroz ~2 tjedna.\nTest zrelosti: narančasta boja s crvenim rumenilom, blago popuštanje pri pritisku.\nBrati pažljivo — lako se oštećuje i brzo trune.\nRok: 2–3 dana na sobnoj temperaturi, do 1 tjedan na 0–4°C.\nNe ostavljati prezrele plodove — privlače ose, uzrokuju moniliju.\nAko je rod manji od očekivanog → uzrok je gotovo uvijek mraz za cvatnje." }
+  ],
+  plum: [
+    { key: "e1", title: "Praćenje šljivinog savijača (feromonske klopke)", activityType: "monitoring", monthStart: 4, dayStart: 25, monthEnd: 7, dayEnd: 15, skipYear: 0, notes: "Šljivin savijač (Cydia funebrana) — crvi u plodovima šljive.\nPostaviti feromonsku klopku na 1.5–2 m visine.\nTjedno pregledavati ulov.\nNagli porast ulova = insekticid unutar 7–10 dana.\nPraćenje traje i za 2. generaciju (sredina lipnja – sredina srpnja).\nZa mlada stabla god. 1–2 bez ploda: nije prioritet." },
+    { key: "e2", title: "Post-bloom zaštita – monilija i šljivin savijač", activityType: "spraying", monthStart: 5, dayStart: 5, monthEnd: 5, dayEnd: 25, skipYear: 0, notes: "Nakon cvatnje. Score 250 EC + Mospilan 20 SP — jedan prolaz.\nZaštita od monililje, pjegavosti lista i šljivinog savijača.\nMospilan NIKAD za cvatnje.\nZa mlada stabla god. 1–2: nije obavezno." },
+    { key: "e3", title: "Insekticid – 2. generacija šljivinog savijača", activityType: "spraying", monthStart: 6, dayStart: 15, monthEnd: 7, dayEnd: 10, skipYear: 0, notes: "Mospilan 20 SP — SAMO ako klopke pokažu nagli porast ulova.\nNije preventivno prskanje.\nPrimijeniti ujutro ili navečer.\nZa mlada stabla god. 1–2 bez ploda: nije potrebno." },
+    { key: "e4", title: "Prorjeđivanje plodova – šljiva", activityType: "observation", monthStart: 5, dayStart: 20, monthEnd: 6, dayEnd: 15, skipYear: 0, notes: "Šljiva je sklona prerodu — prorjeđivanje bitno za kvalitetu.\nOstaviti 1 plod na 8–10 cm grane.\nUkloniti blizance i oštećene.\nPosebno važno za kasne sorte (Stanley) jer plodovi trebaju dugo rasti.\nZa mlada stabla god. 1–2 bez uroda: nije potrebno." },
+    { key: "e5", title: "Mreža protiv ptica – šljiva", activityType: "observation", monthStart: 8, dayStart: 8, monthEnd: 8, dayEnd: 22, skipYear: 0, notes: "Postaviti 1–2 tjedna prije berbe, kada šljiva počne omekšavati.\nKos i drozd napadaju šljivu agresivno pred berbu.\nVeličina: min. 4×4 m. Tip s bočnim zipperom preporučen.\nSkinuti odmah nakon berbe.\nZa mlada stabla god. 1–2 bez uroda: nije potrebno." },
+    { key: "e6", title: "Berba šljive", activityType: "harvest", monthStart: 7, dayStart: 20, monthEnd: 9, dayEnd: 20, skipYear: 0, notes: "Termin ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.\nBrati u više navrata — ne dozrijeva sve odjednom.\nTest: plod omekšao, puna boja, lako se odvaja.\nNe ostavljati prezrele plodove — privlače ose, uzrokuju moniliju.\nZa sušenje i pekmez: ostaviti dulje na stablu za veći udio šećera." }
+  ],
+  olive: [
+    { key: "e1", title: "Zimska rezidba masline", activityType: "pruning", monthStart: 2, dayStart: 1, monthEnd: 3, dayEnd: 15, skipYear: 0, notes: "Rezati nakon najhladnijeg dijela zime.\nUkloniti suhare, vodopije i grane prema unutra krošnje.\nCilj: otvorena krošnja u obliku vaze, dobra cirkulacija zraka.\nSvake 2–3 godine: jača rezidba za obnovu rodnog drva.\nMlada stabla god. 1–3: samo formiranje oblika, ne rezati agresivno.\nVeće rane premazati (Lac Balsam) za rezove iznad 3 cm." },
+    { key: "e2", title: "Bakar na rane – maslina", activityType: "spraying", monthStart: 2, dayStart: 1, monthEnd: 3, dayEnd: 31, skipYear: 0, notes: "Primijeniti unutar 1–2 dana nakon rezidbe.\nZaštita od bakterioze masline (Pseudomonas savastanoi — maslinin rak).\nCuprablau Z 35 WG ili ekvivalent." },
+    { key: "e3", title: "Gnojidba masline", activityType: "fertilizing", monthStart: 3, dayStart: 1, monthEnd: 4, dayEnd: 15, skipYear: 0, notes: "NPK gnojivo s povišenim dušikom za poticanje vegetativnog rasta.\nPrimijeniti oko stabla, ne direktno na deblo ili korijen.\nMlada stabla: polovica preporučene doze prve 2–3 godine." },
+    { key: "e4", title: "Praćenje paunovog oka i maslinovog moljca", activityType: "monitoring", monthStart: 4, dayStart: 1, monthEnd: 5, dayEnd: 31, skipYear: 0, notes: "Paunovo oko (Spilocaea oleagina): žute mrlje s tamnim rubom na listu — tretman bakrom po potrebi.\nMaslinin moljac (Prays oleae): napada cvjetove i plodove.\nVizualni pregled — tretman samo pri vidljivom problemu.\nU kontinentalnoj klimi rijedak problem na otvorenom." },
+    { key: "e5", title: "Praćenje maslinove muhe", activityType: "monitoring", monthStart: 6, dayStart: 1, monthEnd: 9, dayEnd: 30, skipYear: 0, notes: "Maslinova muha (Bactrocera oleae) — najvažniji štetnik masline.\nPostaviti žute ljepljive ploče s atraktantom.\nTjedno pregledavati.\nPri jakom naletu: insekticid specifičan za maslinovu muhu (spinosad ili kaolin zemlja).\nZa mlada stabla bez ploda: manje relevantno." },
+    { key: "e6", title: "Zaštita od maslinove muhe (po potrebi)", activityType: "spraying", monthStart: 6, dayStart: 1, monthEnd: 9, dayEnd: 30, skipYear: 0, notes: "Primijeniti SAMO ako praćenje (monitoring) pokaže visok ulov.\nSpinosad (organsko) ili kaolin zemlja kao fizička barijera.\nNije preventivno prskanje.\nZa mlada stabla bez ploda: nije potrebno." },
+    { key: "e7", title: "Ljetna korekcijska rezidba masline", activityType: "pruning", monthStart: 6, dayStart: 1, monthEnd: 7, dayEnd: 15, skipYear: 0, notes: "Opcijsko uklanjanje vodopija i pregustih izbojaka.\nNe rezati agresivno — smanjuje rod tekuće godine.\nMaslina rodi na jednogodišnjem drvu — ljetna rezidba nije obavezna svake godine." },
+    { key: "e8", title: "Navodnjavanje masline (mlada stabla)", activityType: "watering", monthStart: 6, dayStart: 1, monthEnd: 8, dayEnd: 31, skipYear: 0, notes: "Maslina je otporna na sušu — odrasla stabla obično ne trebaju navodnjavanje.\nMlada stabla god. 1–3: 20–30 L tjedno za suhih perioda.\nPrekomjerno navodnjavanje šteti." },
+    { key: "e9", title: "Berba maslina", activityType: "harvest", monthStart: 10, dayStart: 1, monthEnd: 12, dayEnd: 31, skipYear: 0, notes: "Zelene masline za ulje s više polifenola: studeni.\nCrne masline za veći prinos ulja: prosinac–siječanj.\nZa konzumne masline u salamuri: brati zelene, studeni.\nMetode: ručno češljanje, mreža ispod stabla, električni češalj.\nPreraditi u ulje max. 24–48h nakon berbe." },
+    { key: "e10a", title: "Korekcijska rezidba masline nakon berbe", activityType: "pruning", monthStart: 12, dayStart: 1, monthEnd: 12, dayEnd: 31, skipYear: 0, notes: "Laka korekcijska rezidba odmah nakon berbe.\nUkloniti iscrpljene grane i urediti krošnju za sljedeću sezonu.\nNe rezati agresivno." },
+    { key: "e10b", title: "Korekcijska rezidba masline nakon berbe", activityType: "pruning", monthStart: 1, dayStart: 1, monthEnd: 1, dayEnd: 15, skipYear: 0, notes: "Laka korekcijska rezidba odmah nakon berbe.\nUkloniti iscrpljene grane i urediti krošnju za sljedeću sezonu.\nNe rezati agresivno." },
+    { key: "e11", title: "Pregled masline za zimu", activityType: "observation", monthStart: 10, dayStart: 15, monthEnd: 11, dayEnd: 30, skipYear: 0, notes: "Pregledati krošnju: suhe grane, znakovi bolesti.\nZa kontinentalnu klimu: provjeriti prognozu mrazeva.\nMlada stabla: zaštititi deblo agrotekstilom za mrazeve ispod -7°C.\nUkloniti ostatke plodova s tla." }
+  ],
+  fig: [
+    { key: "e1", title: "Zimska rezidba smokve", activityType: "pruning", monthStart: 2, dayStart: 1, monthEnd: 3, dayEnd: 1, skipYear: 0, notes: "Rezati kasno u zimi (veljača–ožujak) — smokva je osjetljiva na kasne mrazeve.\nUkloniti suhare i stare iscrpljene grane starije od 3–4 godine.\nSmokva rodi na jednogodišnjem i dvogodišnjem drvu — paziti što se reže.\nBijeli mliječni sok iz rezova je normalan (pazi na kožu — može iritirati).\nVeće rane premazati.\nMlada stabla: formiranje oblika — vaza s 3–5 glavnih grana." },
+    { key: "e2", title: "Gnojidba smokve", activityType: "fertilizing", monthStart: 3, dayStart: 1, monthEnd: 4, dayEnd: 15, skipYear: 0, notes: "Umjerena gnojidba — smokva ne treba puno.\nNPK s povišenim kalijem za kvalitetu ploda.\nPrekomjerna gnojidba dušikom: puno lišća, malo plodova." },
+    { key: "e3", title: "Pregled smokve – štetnici i bolesti", activityType: "monitoring", monthStart: 5, dayStart: 1, monthEnd: 6, dayEnd: 30, skipYear: 0, notes: "Smokva rijetko ima ozbiljnih štetnika u kontinentalnoj klimi.\nVizualni pregled listova i nezrelih plodova.\nGrinje i lisne uši: rijetko, samo pri suhim vrućim ljetima." },
+    { key: "e4", title: "Ljetno skraćivanje izdanaka smokve", activityType: "pruning", monthStart: 6, dayStart: 15, monthEnd: 7, dayEnd: 15, skipYear: 0, notes: "Pinciranje (skraćivanje) jakih izdanaka na 5–6 listova iznad ploda.\nUsmjerava energiju u razvoj plodova.\nNe rezati previše — smanjuje asimilacijsku površinu." },
+    { key: "e5", title: "Navodnjavanje smokve (mlada stabla)", activityType: "watering", monthStart: 6, dayStart: 20, monthEnd: 8, dayEnd: 20, skipYear: 0, notes: "Smokva je otporna na sušu — odrasla stabla obično ne trebaju.\nMlada stabla god. 1–3: 20–30 L tjedno za suhih perioda.\nPrekomjerno navodnjavanje uzrokuje pucanje plodova." },
+    { key: "e6", title: "Berba ranih (zimskih) smokava", activityType: "harvest", monthStart: 6, dayStart: 15, monthEnd: 7, dayEnd: 10, skipYear: 0, notes: "Rane smokve: plodovi koji su prezimili na prošlogodišnjem drvu.\nNisu prisutne na svim sortama — ovisi o sorti i klimi.\nTest: meka na dodir, vrh se spušta, kapljica meda vidljiva.\nBrati pažljivo — traju 1–2 dana." },
+    { key: "e7", title: "Berba glavnog roda smokve", activityType: "harvest", monthStart: 8, dayStart: 1, monthEnd: 10, dayEnd: 15, skipYear: 0, notes: "Glavni rod: kolovoz–listopad ovisno o sorti i klimi.\nBrati samo zrele — smokva dozrijeva postupno, više prolaza.\nTest: plod mekan, koža počinje pucati, boja tamni.\nBrati pažljivo, konzumirati odmah ili sušiti.\nNe ostavljati prezrele plodove — privlače ose i uzrokuju gnilobu." },
+    { key: "e8a", title: "Zimska zaštita smokve – mlada stabla", activityType: "observation", monthStart: 11, dayStart: 15, monthEnd: 12, dayEnd: 31, skipYear: 0, notes: "Relevantno za mlada stabla god. 1–3 u kontinentalnoj klimi.\nOmotati deblo agrotekstilom ili slamom.\nSmokva podnosi do -10°C kratkoročno, ali mlada stabla osjetljivija.\nUkloniti zaštitu čim prođe opasnost od mraza u proljeće.\nOdrasla zdrava stabla obično ne trebaju zaštitu." },
+    { key: "e8b", title: "Zimska zaštita smokve – mlada stabla", activityType: "observation", monthStart: 1, dayStart: 1, monthEnd: 2, dayEnd: 15, skipYear: 0, notes: "Relevantno za mlada stabla god. 1–3 u kontinentalnoj klimi.\nOmotati deblo agrotekstilom ili slamom.\nSmokva podnosi do -10°C kratkoročno, ali mlada stabla osjetljivija.\nUkloniti zaštitu čim prođe opasnost od mraza u proljeće.\nOdrasla zdrava stabla obično ne trebaju zaštitu." },
+    { key: "e9", title: "Pregled smokve za zimu", activityType: "observation", monthStart: 10, dayStart: 15, monthEnd: 11, dayEnd: 30, skipYear: 0, notes: "Ukloniti sve nezrele plodove koji neće sazrjeti — izvor zaraze.\nPregledati deblo i grane na pukotine.\nZa mlada stabla: pripremiti zaštitu za zimu." }
+  ],
+  citrus_lemon: [
+    { key: "e1", title: "Korekcijska rezidba limuna", activityType: "pruning", monthStart: 2, dayStart: 1, monthEnd: 3, dayEnd: 31, skipYear: 0, notes: "Ukloniti suhe grane i vodopije.\nLimun ne podnosi agresivnu rezidbu — samo korekcijska.\nRezati između cvatnji da se ne izgubi rod." },
+    { key: "e2", title: "Gnojidba limuna", activityType: "fertilizing", monthStart: 3, dayStart: 1, monthEnd: 10, dayEnd: 1, skipYear: 0, notes: "Limun je pohlepan — gnojiti svaka 4–6 tjedana u vegetaciji.\nKoristiti gnojivo za citrus s mikroelementima (Mg, Fe, Mn).\nŽuto lišće = nedostatak željeza ili dušika." },
+    { key: "e3", title: "Navodnjavanje limuna", activityType: "watering", monthStart: 4, dayStart: 1, monthEnd: 10, dayEnd: 31, skipYear: 0, notes: "Redovito navodnjavanje — limun ne podnosi ni sušu ni prekomjernu vlagu.\nLončani uzgoj: svakodnevna provjera ljeti.\nKoristiti vodu bez vapna ako je moguće." },
+    { key: "e4", title: "Praćenje štetnika – limun", activityType: "monitoring", monthStart: 4, dayStart: 1, monthEnd: 10, dayEnd: 31, skipYear: 0, notes: "Štitaste uši i lisne uši česti u zatvorenom/zaštićenom uzgoju.\nVizualni pregled naličja listova tjedno.\nTretman (bijelo ulje) pri pojavi — ne preventivno." },
+    { key: "e5", title: "Zaštita od štetnika – limun (po potrebi)", activityType: "spraying", monthStart: 4, dayStart: 1, monthEnd: 10, dayEnd: 31, skipYear: 0, notes: "Bijelo mineralno ulje pri pojavi štitastih uši ili lisnih ušiju.\nPaučinac: akaricid pri vidljivim znakovima.\nSamo ako monitoring pokaže problem." },
+    { key: "e6", title: "Berba limuna (kontinuirana)", activityType: "harvest", monthStart: 1, dayStart: 1, monthEnd: 12, dayEnd: 31, skipYear: 0, notes: "Limun rodi kontinuirano — brati prema zrelosti.\nTest: puna veličina i žuta boja.\nBrati s peteljkom i listićem za dulje trajanje." },
+    { key: "e7", title: "Priprema limuna za zimu", activityType: "observation", monthStart: 10, dayStart: 1, monthEnd: 11, dayEnd: 15, skipYear: 0, notes: "Limun nije otporan na mraz — oštećenje ispod -3°C, grane stradaju ispod -5°C.\nZa kontinentalnu klimu: premjestiti u zaštićeni prostor (5–10°C) prije mrazova.\nPregledati na štetnika pred zimski smještaj." }
+  ],
+  citrus_orange: [
+    { key: "e1", title: "Korekcijska rezidba naranče", activityType: "pruning", monthStart: 2, dayStart: 15, monthEnd: 3, dayEnd: 15, skipYear: 0, notes: "Korekcijska rezidba — ukloniti suhe i bolesne grane.\nNaranča ne podnosi jaku rezidbu." },
+    { key: "e2", title: "Gnojidba naranče", activityType: "fertilizing", monthStart: 3, dayStart: 1, monthEnd: 5, dayEnd: 1, skipYear: 0, notes: "NPK gnojivo za citrus s mikroelementima u proljeće.\nPonavljati prema potrebi kroz vegetaciju." },
+    { key: "e3", title: "Navodnjavanje naranče", activityType: "watering", monthStart: 4, dayStart: 1, monthEnd: 9, dayEnd: 30, skipYear: 0, notes: "Redovito u vegetacijskom periodu.\nZimi smanjiti — u mirovanju potrebe su manje." },
+    { key: "e4", title: "Praćenje štetnika – naranča", activityType: "monitoring", monthStart: 4, dayStart: 1, monthEnd: 6, dayEnd: 30, skipYear: 0, notes: "Štitaste uši i lisne uši — vizualni pregled naličja listova.\nTretman (bijelo ulje) pri pojavi. Na otvorenom u sjevernoj klimi rijedak problem." },
+    { key: "e5", title: "Zaštita od štetnika – naranča (po potrebi)", activityType: "spraying", monthStart: 4, dayStart: 1, monthEnd: 6, dayEnd: 30, skipYear: 0, notes: "Bijelo ulje pri pojavi štitastih uši.\nSamo ako monitoring pokaže problem." },
+    { key: "e6a", title: "Berba naranče", activityType: "harvest", monthStart: 12, dayStart: 1, monthEnd: 12, dayEnd: 31, skipYear: 0, notes: "Naranča dozrijeva zimi — prosinac do veljača.\nMože ostati na stablu tjednima nakon zrelosti bez kvarenja.\nZa kontinentalnu klimu: uzgoj moguć u loncima, unutra zimi." },
+    { key: "e6b", title: "Berba naranče", activityType: "harvest", monthStart: 1, dayStart: 1, monthEnd: 2, dayEnd: 28, skipYear: 0, notes: "Naranča dozrijeva zimi — prosinac do veljača.\nMože ostati na stablu tjednima nakon zrelosti bez kvarenja.\nZa kontinentalnu klimu: uzgoj moguć u loncima, unutra zimi." },
+    { key: "e7", title: "Priprema naranče za zimu", activityType: "observation", monthStart: 10, dayStart: 1, monthEnd: 11, dayEnd: 15, skipYear: 0, notes: "Premjestiti u zaštićen prostor (min. 5°C) prije prvih mrazova.\nPregledati na štetnika.\nSmanjiti navodnjavanje." }
+  ],
+  citrus_mandarin: [
+    { key: "e1", title: "Korekcijska rezidba mandarine", activityType: "pruning", monthStart: 2, dayStart: 15, monthEnd: 3, dayEnd: 15, skipYear: 0, notes: "Korekcijska rezidba — ukloniti suhe i prekrižene grane.\nMandarina ne podnosi agresivnu rezidbu." },
+    { key: "e2", title: "Gnojidba mandarine", activityType: "fertilizing", monthStart: 3, dayStart: 1, monthEnd: 5, dayEnd: 1, skipYear: 0, notes: "NPK gnojivo za citrus s mikroelementima u proljeće." },
+    { key: "e3", title: "Navodnjavanje mandarine", activityType: "watering", monthStart: 4, dayStart: 1, monthEnd: 9, dayEnd: 30, skipYear: 0, notes: "Redovito u vegetacijskom periodu.\nZimi smanjiti." },
+    { key: "e4", title: "Praćenje štetnika – mandarina", activityType: "monitoring", monthStart: 4, dayStart: 1, monthEnd: 6, dayEnd: 30, skipYear: 0, notes: "Štitaste uši — vizualni pregled naličja listova.\nTretman pri pojavi. Rijedak problem u kontinentalnoj klimi." },
+    { key: "e5", title: "Zaštita od štetnika – mandarina (po potrebi)", activityType: "spraying", monthStart: 4, dayStart: 1, monthEnd: 6, dayEnd: 30, skipYear: 0, notes: "Bijelo ulje pri pojavi štitastih uši.\nSamo ako monitoring pokaže problem." },
+    { key: "e6", title: "Berba mandarine", activityType: "harvest", monthStart: 9, dayStart: 15, monthEnd: 11, dayEnd: 30, skipYear: 0, notes: "Mandarina dozrijeva u jesen — rujan do studeni.\nMože ostati na stablu 2–3 tjedna nakon zrelosti.\nBrati s peteljkom za dulje trajanje." },
+    { key: "e7", title: "Priprema mandarine za zimu", activityType: "observation", monthStart: 11, dayStart: 1, monthEnd: 11, dayEnd: 30, skipYear: 0, notes: "Najhladnootpornija citrus vrsta — podnosi kratke mrazeve do -7°C.\nZa lončani uzgoj: premjestiti unutra pri prvim mrazovima.\nPregledati na štetnika pred zimski smještaj." }
+  ]
+};
+
 // ── SCHEDULED TASKS ── month 0-based, with due date for sorting
 const SCHEDULED = [
   { month: 1, day: 1,  plant: "sve",          text: "Bijelo mineralno ulje – sve voćke + smreka + Lagerstroemia + Photinia", urgent: true, skipYear: 2026 },
@@ -697,7 +818,8 @@ function buildPlantTabs() {
       return `<button class="tab-btn ${id === activePlantId ? 'active' : ''}" onclick="setActivePlant('${id}')">
         <span>${label}</span>
       </button>`;
-    }).join("") + `<button class="tab-btn" onclick="showAddPlant()" title="Dodaj biljku"><span>+</span></button>`;
+    }).join("") + `<button class="tab-btn" onclick="showAddPlant()" title="Dodaj biljku"><span>+</span></button>` +
+      `<button class="tab-btn" onclick="backfillGeneratedPlans()" title="Generiraj nedostajuće planove"><span>↻</span></button>`;
     return;
   }
   tabs.innerHTML = PLANTS.map(p => {
@@ -740,6 +862,70 @@ function _loadV4() {
     if(!raw) return null;
     return JSON.parse(raw);
   } catch(e) { return null; }
+}
+
+function _generatePlansForPlant(plant) {
+  if (!plant || typeof plant.type !== "string") return [];
+  const type = plant.type;
+  let sections = [];
+  const standard = ["apple", "pear", "cherry", "nectarine", "peach", "apricot", "plum"];
+  if (standard.indexOf(type) !== -1) {
+    sections = ["shared", type];
+  } else if (type === "olive") {
+    sections = ["olive"];
+  } else if (type === "fig") {
+    sections = ["fig"];
+  } else if (type === "citrus") {
+    const v = plant.variety;
+    if (v === "lemon") sections = ["citrus_lemon"];
+    else if (v === "orange") sections = ["citrus_orange"];
+    else if (v === "mandarin") sections = ["citrus_mandarin"];
+    else return [];
+  } else {
+    return [];
+  }
+  const result = [];
+  for (const section of sections) {
+    const entries = ORCHARD_PLAN_TEMPLATES[section] || [];
+    for (const e of entries) {
+      result.push({
+        id: "gen:plant:" + plant.id + ":" + section + ":" + e.key,
+        title: e.title,
+        activityType: e.activityType,
+        appliesToAll: false,
+        plantIds: [plant.id],
+        monthStart: e.monthStart,
+        dayStart: e.dayStart,
+        monthEnd: e.monthEnd,
+        dayEnd: e.dayEnd,
+        skipYear: 0,
+        notes: e.notes
+      });
+    }
+  }
+  return result;
+}
+
+function backfillGeneratedPlans() {
+  if (!confirm("Generirati nedostajuće planove za sve biljke? Postojeći planovi neće biti promijenjeni.")) return;
+  const v4 = _loadV4();
+  if (!v4 || typeof v4.plants !== "object") { showToast("Podaci nisu dostupni"); return; }
+  if (!Array.isArray(v4.plans)) v4.plans = [];
+  let added = 0;
+  for (const plant of Object.values(v4.plants)) {
+    const generated = _generatePlansForPlant(plant);
+    for (const gp of generated) {
+      if (!v4.plans.some(p => p && p.id === gp.id)) {
+        v4.plans.push(gp);
+        added++;
+      }
+    }
+  }
+  try {
+    localStorage.setItem("vocnjak_v4", JSON.stringify(v4));
+  } catch(e) { showToast("Greška pri spremanju"); return; }
+  showToast(added > 0 ? "Dodano " + added + " planova." : "Nema novih planova");
+  showScreen("plants");
 }
 
 function _v4PlansThisMonth(plans) {
@@ -2147,6 +2333,13 @@ function saveNewPlant() {
     if(!v4 || typeof v4.plants !== "object") { showToast("Podaci nisu dostupni"); return; }
   } catch(e) { showToast("Greška pri čitanju podataka"); return; }
   v4.plants[id] = plant;
+  if (!Array.isArray(v4.plans)) v4.plans = [];
+  const generated = _generatePlansForPlant(plant);
+  for (const gp of generated) {
+    if (!v4.plans.some(p => p && p.id === gp.id)) {
+      v4.plans.push(gp);
+    }
+  }
   try {
     localStorage.setItem("vocnjak_v4", JSON.stringify(v4));
   } catch(e) { showToast("Greška pri spremanju"); return; }
