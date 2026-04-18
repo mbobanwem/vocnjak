@@ -627,21 +627,54 @@ async function syncIcalOnComplete(todoText) {
   } catch(e) { console.log("iCal sync error:", e); }
 }
 
-// ── SUPABASE SYNC ──
+// ── SUPABASE BACKUP (manual v4 only) ──
+function _formatLastSupabaseBackup() {
+  const raw = localStorage.getItem("vocnjak_v4_last_supabase_backup");
+  if(!raw) return "Nije još napravljen";
+  const d = new Date(raw);
+  if(Number.isNaN(d.getTime())) return "Nije još napravljen";
+  return d.toLocaleString("hr-HR", { day:"numeric", month:"long", year:"numeric", hour:"2-digit", minute:"2-digit" });
+}
+
 async function supabaseBackup() {
   const url = await secureGet("vocnjak_sb_url");
   const key = await secureGet("vocnjak_sb_key");
-  if(!url || !key) return;
+  if(!url || !key) { showToast("Postavi Supabase URL i key"); return false; }
   let userKey = localStorage.getItem("vocnjak_user_key");
   if(!userKey) { userKey = crypto.randomUUID(); localStorage.setItem("vocnjak_user_key", userKey); }
+  const raw = localStorage.getItem("vocnjak_v4");
+  if(!raw) { showToast("❌ Nema v4 podataka"); return false; }
+  let backupData;
+  try { backupData = JSON.parse(raw); }
+  catch(e) { showToast("❌ Neispravan v4 u memoriji"); return false; }
+  const hasValidBackupShape =
+    backupData !== null &&
+    typeof backupData === "object" &&
+    !Array.isArray(backupData) &&
+    typeof backupData.plants === "object" &&
+    backupData.plants !== null &&
+    !Array.isArray(backupData.plants) &&
+    Array.isArray(backupData.activities) &&
+    Array.isArray(backupData.plans);
+  if(!hasValidBackupShape) {
+    showToast("❌ v4 nije spreman za backup");
+    return false;
+  }
   try {
-    const res = await fetch(`${url}/rest/v1/vocnjak_data?user_key=eq.${encodeURIComponent(userKey)}`, {
-      method: "PUT",
-      headers: { "apikey": key, "Authorization": `Bearer ${key}`, "Content-Type": "application/json", "Prefer": "return=minimal" },
-      body: JSON.stringify({ user_key: userKey, data: data, updated_at: new Date().toISOString() })
+    const now = new Date().toISOString();
+    const res = await fetch(`${url}/rest/v1/vocnjak_data`, {
+      method: "POST",
+      headers: { "apikey": key, "Authorization": `Bearer ${key}`, "Content-Type": "application/json", "Prefer": "resolution=merge-duplicates" },
+      body: JSON.stringify({ user_key: userKey, data: backupData, updated_at: now })
     });
-    if(!res.ok) console.log("Supabase backup status:", res.status);
-  } catch(e) { console.log("Supabase backup error:", e); }
+    if(!res.ok) { showToast("❌ Backup greška: " + res.status); return false; }
+    localStorage.setItem("vocnjak_v4_last_supabase_backup", now);
+    showToast("✓ Backup spremljen");
+    return true;
+  } catch(e) {
+    showToast("❌ Greška pri backupu");
+    return false;
+  }
 }
 
 async function supabaseRestore() {
@@ -657,10 +690,15 @@ async function supabaseRestore() {
     if(!res.ok) { showToast("❌ Greška: " + res.status); return; }
     const rows = await res.json();
     if(!rows.length) { showToast("Nema backupa u cloudu"); return; }
-    data = rows[0].data;
-    try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e) {}
-    showToast("✓ Podaci vraćeni iz clouda!");
-    setTimeout(() => showScreen("overview"), 1000);
+    const parsed = rows[0].data;
+    const result = _validateV4Import(parsed);
+    if(!result.ok) { showToast("❌ " + result.error); return; }
+    const currentRaw = localStorage.getItem("vocnjak_v4");
+    if(currentRaw !== null) localStorage.setItem("vocnjak_v4_preimport_backup", currentRaw);
+    localStorage.setItem("vocnjak_v4", JSON.stringify(parsed));
+    buildPlantTabs();
+    showScreen("sync");
+    showToast("✓ v4 vraćen iz clouda");
   } catch(e) { showToast("❌ Greška pri restore-u"); }
 }
 
@@ -794,7 +832,6 @@ function initUI() {
 function saveData() {
   try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e) {}
   showToast("Spremljeno ✓");
-  supabaseBackup();
 }
 
 function showToast(msg) {
@@ -2574,6 +2611,7 @@ function renderSync() {
   const now = new Date().toLocaleDateString("hr-HR", { day:"numeric", month:"long", year:"numeric", hour:"2-digit", minute:"2-digit" });
   const totalEntries = PLANTS.reduce((s,p) => s+(data[p.id]?.entries?.length||0), 0);
   const totalTodos = PLANTS.reduce((s,p) => s+(data[p.id]?.todos?.length||0), 0);
+  const lastSupabaseBackup = _formatLastSupabaseBackup();
 
   mc.innerHTML = `
     <div class="card" style="padding:16px; margin-bottom:12px">
@@ -2621,7 +2659,7 @@ function renderSync() {
     </div>
     <div class="card" style="padding:16px; margin-bottom:12px">
       <div style="font-family:'Playfair Display',serif; font-size:17px; color:var(--green-deep); margin-bottom:6px">☁️ Cloud backup (Supabase)</div>
-      <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">Automatski backup u cloud svaki put kad spremiš. Besplatni account na supabase.com.</div>
+      <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">Ručni backup cijelog v4 stanja u cloud. Restore vraća cijeli v4 backup.</div>
       <div class="form-group" style="margin-bottom:10px">
         <label class="form-label">Supabase URL</label>
         <input id="sbUrl" class="form-input" placeholder="https://xxxxx.supabase.co" onchange="secureSet('vocnjak_sb_url', this.value)">
@@ -2630,14 +2668,17 @@ function renderSync() {
         <label class="form-label">Supabase anon key</label>
         <input type="password" id="sbKey" class="form-input" placeholder="eyJ..." onchange="secureSet('vocnjak_sb_key', this.value)">
       </div>
+      <div style="background:var(--cream); border:1px solid var(--border); border-radius:var(--r-sm); padding:10px 12px; margin-bottom:12px; font-size:11px; color:var(--text-mid)">
+        Zadnji cloud backup: ${lastSupabaseBackup}
+      </div>
       <div style="display:flex; gap:8px; margin-bottom:12px">
-        <button onclick="supabaseBackup().then(()=>showToast('✓ Backup spreman!'))" class="btn-primary" style="flex:1">💾 Backup u cloud</button>
+        <button onclick="supabaseBackup().then(ok => { if(ok) renderSync(); })" class="btn-primary" style="flex:1">💾 Backup u cloud</button>
         <button onclick="supabaseRestore()" class="btn-primary" style="flex:1;background:var(--indigo)">☁️ Restore iz clouda</button>
       </div>
       <div style="font-size:11px; color:var(--text-light); line-height:1.6; background:var(--cream); border-radius:var(--r-sm); padding:10px 12px">
         <strong>Postavljanje:</strong> supabase.com → novi projekt → Settings → API<br>
         <strong>SQL za tablicu:</strong><br>
-        <code style="font-size:10px;word-break:break-all">CREATE TABLE vocnjak_data (id SERIAL PRIMARY KEY, user_key TEXT NOT NULL, data JSONB NOT NULL, updated_at TIMESTAMPTZ DEFAULT NOW());</code><br><br>
+        <code style="font-size:10px;word-break:break-all">CREATE TABLE vocnjak_data (id SERIAL PRIMARY KEY, user_key TEXT NOT NULL UNIQUE, data JSONB NOT NULL, updated_at TIMESTAMPTZ DEFAULT NOW());</code><br><br>
         <strong>User key:</strong> ${localStorage.getItem('vocnjak_user_key') || 'generirat će se automatski'}
       </div>
     </div>
@@ -2713,7 +2754,7 @@ function importV4JSON(file) {
     const result = _validateV4Import(parsed);
     if(!result.ok) { showToast("❌ " + result.error); return; }
     const currentRaw = localStorage.getItem("vocnjak_v4");
-    localStorage.setItem("vocnjak_v4_preimport_backup", currentRaw == null ? "" : currentRaw);
+    if(currentRaw !== null) localStorage.setItem("vocnjak_v4_preimport_backup", currentRaw);
     localStorage.setItem("vocnjak_v4", JSON.stringify(parsed));
     buildPlantTabs();
     showScreen("sync");
