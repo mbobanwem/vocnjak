@@ -1401,6 +1401,30 @@ function getRecommendationsV2(v4, plantId, currentDateStr) {
 }
 
 // ── RECOMMENDATION ENGINE V1 (plan + activity + plant status) ──
+function _getYoungTreeFormativeReminder(plant, now) {
+  if(!plant || !_isYoungTree(plant, now)) return null;
+  if(!plant.plantedDate || !/^\d{4}-\d{2}-\d{2}$/.test(plant.plantedDate)) return null;
+  const [py, pm, pd] = plant.plantedDate.split("-").map(Number);
+  const planted = new Date(py, pm - 1, pd);
+  if(isNaN(planted.getTime())) return null;
+  if(planted.getFullYear() !== py || planted.getMonth() !== pm - 1 || planted.getDate() !== pd) return null;
+  const todayRaw = now || new Date();
+  const today = new Date(todayRaw.getFullYear(), todayRaw.getMonth(), todayRaw.getDate());
+  const target = new Date(planted);
+  target.setDate(target.getDate() + 60);
+  const start = new Date(target);
+  start.setDate(start.getDate() - 15);
+  const end = new Date(target);
+  end.setDate(end.getDate() + 15);
+  if(today < start || today > end) return null;
+  return {
+    urgency: "medium",
+    actionCategory: "inspect",
+    title: "Formiranje krošnje – odabir grana",
+    message: "Pregledaj mlade izboje. Kad dosegnu 10–20 cm, ostavi 3–4 najjače grane pravilno raspoređene oko debla i ukloni ostale."
+  };
+}
+
 function getRecommendationsV1(v4, plantId) {
   const recs = [];
   const plant = (v4.plants || {})[plantId];
@@ -1444,6 +1468,11 @@ function getRecommendationsV1(v4, plantId) {
     recs.push({ urgency: "low", actionCategory: "monitoring", message: "Biljka je mlada — fokus na razvoj, ne na rod" });
   }
 
+  const formativeReminder = _getYoungTreeFormativeReminder(plant, now);
+  if(formativeReminder) {
+    recs.push(formativeReminder);
+  }
+
   // Rule 3 — watering gap (months 4–9, 14-day threshold)
   if(cm >= 4 && cm <= 9) {
     const cutoffW = new Date(); cutoffW.setDate(cutoffW.getDate() - 14);
@@ -1468,11 +1497,13 @@ function _renderRecCard(r) {
   const urgencyColor = { high:"#dc2626", medium:"#b45309", low:"var(--text-light)" };
   const actionLabel = { inspect:"Pregledaj", insecticide:"Razmotri zaštitu", fungicide:"Razmotri fungicid", monitoring:"Prati", wait:"Pričekaj" };
   const disclaimer = r.productHintLevel === "category" ? '<div style="font-size:11px;color:var(--text-light);margin-top:4px">Provjeri stadij biljke i lokalnu registraciju prije primjene.</div>' : "";
+  const title = r.title ? `<div style="font-size:13px;font-weight:600;margin-bottom:3px">${r.title}</div>` : "";
   return `<div class="card" style="padding:10px 14px;margin-bottom:6px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
       <span style="font-size:11px;font-weight:600;color:${urgencyColor[r.urgency] || "var(--text-light)"}">${urgencyLabel[r.urgency] || r.urgency}</span>
       <span style="font-size:11px;color:var(--text-mid)">${actionLabel[r.actionCategory] || r.actionCategory}</span>
     </div>
+    ${title}
     <div style="font-size:13px">${r.message}</div>
     ${disclaimer}
   </div>`;
