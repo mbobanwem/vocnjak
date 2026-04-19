@@ -627,6 +627,164 @@ async function syncIcalOnComplete(todoText) {
   } catch(e) { console.log("iCal sync error:", e); }
 }
 
+function _getPlanReminderState(plan, v4, currentYear, now) {
+  if(plan.skipYear === currentYear) return null;
+  const { start: wStart, end: wEnd } = _getPlanWindow(plan, currentYear);
+  const todayNorm = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startNorm = new Date(wStart.getFullYear(), wStart.getMonth(), wStart.getDate());
+  const endNorm = new Date(wEnd.getFullYear(), wEnd.getMonth(), wEnd.getDate());
+  const effectiveStart = new Date(startNorm); effectiveStart.setDate(effectiveStart.getDate() - 7);
+  const effectiveEnd = new Date(endNorm); effectiveEnd.setDate(effectiveEnd.getDate() + 7);
+  const pType = (plan.activityType || "").toLowerCase().trim();
+  const hasMatch = (v4.activities || []).some(a => {
+    if(!a.date) return false;
+    const aType = (a.type || "").toLowerCase().trim();
+    if(aType !== pType) return false;
+    const ad = new Date(a.date);
+    if(isNaN(ad.getTime())) return false;
+    const adNorm = new Date(ad.getFullYear(), ad.getMonth(), ad.getDate());
+    if(adNorm < effectiveStart || adNorm > effectiveEnd) return false;
+    if(plan.appliesToAll) return true;
+    return (a.plantIds || []).some(pid => (plan.plantIds || []).includes(pid));
+  });
+  if(hasMatch) return "done";
+  if(todayNorm < startNorm) return "upcoming";
+  if(todayNorm <= endNorm) return "active";
+  if(todayNorm > effectiveEnd) return "missed";
+  return null;
+}
+
+function _getPlanScopeLabel(plan, plants) {
+  if(plan.appliesToAll === true) return "Sve biljke";
+  const ids = Array.isArray(plan.plantIds) ? plan.plantIds : [];
+  if(ids.length === 0) return "Bez odabranih biljki";
+  return ids.map(id => (plants && plants[id] && plants[id].name) ? plants[id].name : id).join(", ");
+}
+
+function _icsDate(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return "" + y + m + d;
+}
+
+function _icsDateTime(date) {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(date.getUTCDate()).padStart(2, "0");
+  const h = String(date.getUTCHours()).padStart(2, "0");
+  const min = String(date.getUTCMinutes()).padStart(2, "0");
+  const s = String(date.getUTCSeconds()).padStart(2, "0");
+  return "" + y + m + d + "T" + h + min + s + "Z";
+}
+
+function _icsEscape(text) {
+  return String(text || "")
+    .replace(/\\/g, "\\\\")
+    .replace(/\r?\n/g, "\\n")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,");
+}
+
+function _planWindowLabel(start, end) {
+  const fmt = d => d.toLocaleDateString("hr-HR", { day:"numeric", month:"numeric", year:"numeric" });
+  return fmt(start) + " - " + fmt(end);
+}
+
+function _buildReminderIcsV4(v4) {
+  const currentYear = new Date().getFullYear();
+  const now = new Date();
+  const exportedAt = new Date();
+  const dtstamp = _icsDateTime(exportedAt);
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Vocnjak//Reminder Export//HR",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH"
+  ];
+  let count = 0;
+
+  (v4.plans || []).forEach((plan, index) => {
+    const state = _getPlanReminderState(plan, v4, currentYear, now);
+    if(state !== "upcoming" && state !== "active") return;
+    const { start, end } = _getPlanWindow(plan, currentYear);
+    const eventEnd = new Date(start);
+    eventEnd.setDate(eventEnd.getDate() + 1);
+    const scope = _getPlanScopeLabel(plan, v4.plants || {});
+    const title = plan.title || "Podsjetnik";
+    const typeLabel = plan.activityType ? _v4TypeLabel(plan.activityType) : "";
+    const descriptionParts = [
+      "Prozor: " + _planWindowLabel(start, end),
+      "Biljke: " + scope
+    ];
+    if(typeLabel) descriptionParts.push("Tip: " + typeLabel);
+    if(plan.notes) descriptionParts.push("Napomene: " + plan.notes);
+
+    lines.push(
+      "BEGIN:VEVENT",
+      "UID:" + _icsEscape((plan.id || ("plan-" + index)) + "-" + currentYear + "@vocnjak"),
+      "DTSTAMP:" + dtstamp,
+      "DTSTART;VALUE=DATE:" + _icsDate(start),
+      "DTEND;VALUE=DATE:" + _icsDate(eventEnd),
+      "SUMMARY:" + _icsEscape(title + " — " + scope),
+      "DESCRIPTION:" + _icsEscape(descriptionParts.join("\n")),
+      "END:VEVENT"
+    );
+    count++;
+  });
+
+  lines.push("END:VCALENDAR");
+  return { content: lines.join("\r\n") + "\r\n", count };
+}
+
+async function _uploadIcsToGitHub(icsContent) {
+  const token = await secureGet("vocnjak_gh_token");
+  const repo = (await secureGet("vocnjak_gh_repo")) || "mbobanwem/vocnjak";
+  if(!token) { showToast("Postavi GitHub token"); return false; }
+  const parts = repo.split("/");
+  if(parts.length !== 2 || !parts[0] || !parts[1]) { showToast("GitHub repo nije valjan"); return false; }
+  const [owner, repoName] = parts;
+  const apiBase = `https://api.github.com/repos/${owner}/${repoName}/contents/vocnjak_kalendar_puni_v2.ics`;
+  let sha = null;
+  try {
+    const res = await fetch(apiBase, { headers: { "Authorization": `token ${token}`, "Accept": "application/vnd.github.v3+json" } });
+    if(res.ok) {
+      const fileData = await res.json();
+      sha = fileData.sha || null;
+    } else if(res.status !== 404) {
+      showToast("❌ GitHub greška: " + res.status);
+      return false;
+    }
+    const body = {
+      message: "Update orchard reminder calendar",
+      content: btoa(unescape(encodeURIComponent(icsContent)))
+    };
+    if(sha) body.sha = sha;
+    const putRes = await fetch(apiBase, {
+      method: "PUT",
+      headers: { "Authorization": `token ${token}`, "Accept": "application/vnd.github.v3+json", "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    if(!putRes.ok) { showToast("❌ Upload greška: " + putRes.status); return false; }
+    return true;
+  } catch(e) {
+    showToast("❌ Greška pri iCal exportu");
+    return false;
+  }
+}
+
+async function exportReminderIcsToGitHub() {
+  const v4 = _loadV4();
+  if(!v4 || typeof v4.plants !== "object" || Array.isArray(v4.plants) || !Array.isArray(v4.activities) || !Array.isArray(v4.plans)) {
+    showToast("v4 podaci nisu dostupni");
+    return;
+  }
+  const result = _buildReminderIcsV4(v4);
+  const ok = await _uploadIcsToGitHub(result.content);
+  if(ok) showToast("✓ iCal podsjetnici izvezeni (" + result.count + ")");
+}
+
 // ── SUPABASE BACKUP (manual v4 only) ──
 function _formatLastSupabaseBackup() {
   const raw = localStorage.getItem("vocnjak_v4_last_supabase_backup");
@@ -2644,7 +2802,7 @@ function renderSync() {
     </div>
     <div class="card" style="padding:16px; margin-bottom:12px">
       <div style="font-family:'Playfair Display',serif; font-size:17px; color:var(--green-deep); margin-bottom:6px">📅 iCal sync</div>
-      <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">Kad označiš zadatak kao odrađen, automatski ažurira .ics kalendar na GitHubu.</div>
+      <div style="font-size:12px; color:var(--text-light); line-height:1.6; margin-bottom:14px">Ručno izvezi podsjetnike za aktivne i nadolazeće planove u .ics kalendar na GitHubu.</div>
       <div class="form-group" style="margin-bottom:10px">
         <label class="form-label">GitHub Personal Access Token</label>
         <input type="password" id="ghToken" class="form-input" placeholder="ghp_..." onchange="secureSet('vocnjak_gh_token', this.value)">
@@ -2653,6 +2811,7 @@ function renderSync() {
         <label class="form-label">GitHub repo</label>
         <input id="ghRepo" class="form-input" placeholder="mbobanwem/vocnjak" onchange="secureSet('vocnjak_gh_repo', this.value)">
       </div>
+      <button onclick="exportReminderIcsToGitHub()" class="btn-primary" style="width:100%;margin-bottom:12px">📤 Izvezi iCal podsjetnike</button>
       <div style="font-size:11px; color:var(--text-light); line-height:1.6; background:var(--cream); border-radius:var(--r-sm); padding:10px 12px">
         Token: github.com → Settings → Developer settings → Personal access tokens → Tokens (classic) → <strong>repo</strong> scope
       </div>
