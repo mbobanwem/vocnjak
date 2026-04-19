@@ -1182,16 +1182,19 @@ Cloud backup for user data.
 
 ---
 
-## Session 19 — iCal Sync
+## Session 19 — iCal Reminder Export (DONE)
 ### Goal
-Restore calendar sync behavior.
+Export orchard work reminders to an `.ics` file so subscribed mobile calendars can show upcoming work.
 
 ### Scope
-- sync done activities back to .ics / GitHub flow
-- keep it minimal
+- manual reminder ICS export from `v4.plans[]`
+- use `v4.activities[]` only to suppress done plans
+- export only derived upcoming / active plans
+- upload full ICS file to GitHub using the existing `vocnjak_kalendar_puni_v2.ics` path
+- keep it minimal and manual
 
 ### Done when
-- completed work can update calendar export
+- subscribed calendar can receive reminders for orchard work that still needs to be done
 
 ---
 
