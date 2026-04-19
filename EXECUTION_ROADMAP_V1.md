@@ -1202,6 +1202,23 @@ Export orchard work reminders to an `.ics` file so subscribed mobile calendars c
 
 ---
 
+## Step 2 — Young Tree Formative Reminder (DONE)
+### Goal
+Surface the narrow year-1 formative branch-selection reminder for young trees without expanding the persisted plan system.
+
+### Implemented
+- runtime-only lifecycle reminder added for young trees
+- based on valid `plant.plantedDate`, existing young-tree detection, and plantedDate + 60 days with a ±15 day active window
+- rendered only on plant detail through the existing V1 recommendation engine
+- remains outside `v4.plans[]` and outside templates
+- does not affect dashboard, calendar, or iCal export
+- no data model, storage, Supabase, GitHub upload, or migration changes
+
+### Done when
+- newly planted young trees can surface fixed formative guidance for selecting 3–4 scaffold branches when shoots reach 10–20 cm
+
+---
+
 # PHASE 4 — STORE READINESS
 
 Goal:

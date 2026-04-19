@@ -290,6 +290,36 @@ Documented as a narrow, optional extension. NOT the primary plan system. NOT per
 
 ---
 
+### Step 2 — Young Tree Formative Reminder (runtime-only)
+
+- one deterministic formative reminder exists for young trees
+- reminder is runtime-only
+- NOT stored in `v4.plans[]`
+- NOT persisted to localStorage
+- NOT part of templates
+- trigger conditions:
+  - valid `plant.plantedDate`
+  - plant is young via `_isYoungTree`
+  - target date = plantedDate + 60 days
+  - active window = ±15 days (day 45–75)
+- content:
+  - title: `Formiranje krošnje – odabir grana`
+  - message:
+    - inspect young shoots
+    - when shoots reach 10–20 cm
+    - keep 3–4 strongest branches
+    - remove the rest
+- surface:
+  - plant detail only
+  - rendered via existing V1 recommendation engine
+- not included in:
+  - dashboard
+  - calendar
+  - iCal export
+  - plans
+
+---
+
 ## IMPLEMENTED — V2 OVERLAY (PROTECTION ENGINE)
 
 V2 is an overlay layer:

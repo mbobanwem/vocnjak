@@ -158,6 +158,9 @@ Approved use cases (closed set):
   - trigger: `plantedDate` + ~60 days
   - window: ~30 days
   - condition: user confirms shoot length (10–20 cm)
+  - implemented as one runtime-only plant-detail V1 recommendation
+  - NOT persisted into `v4.plans[]`
+  - NOT included in dashboard, calendar, or iCal export
 
 ### Practical guidance
 
