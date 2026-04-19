@@ -890,10 +890,13 @@ Either condition alone is sufficient.
 
 If plant is young:
 
-HIDE plans where activityType is:
+HIDE plans for:
 - harvest
+- fruit thinning
+- bird netting
+- trap plans
 
-SHOW all other plans, including:
+SHOW all care plans, including:
 - watering
 - pruning
 - spraying
@@ -903,10 +906,10 @@ SHOW all other plans, including:
 - problem
 
 Rules:
-- no interpretation of plan intent
+- no broad interpretation of plan intent
 - no distinction between "formation" and "production" pruning
 - no distinction between "basic" and "fruit protection" spraying
-- filtering is based only on activityType value
+- filtering is based on deterministic plan fields only
 - filtering is deterministic
 - filtering applies at render time only
 - do NOT store a derived "young" field
@@ -924,8 +927,9 @@ This rule remains DEFERRED — it must NOT be implemented until a separate roadm
 ---
 
 ### Done when
-- harvest plans are hidden for young plants
+- harvest, fruit thinning, bird netting, and trap plans are hidden for young plants
 - all care plans remain visible for young plants
+- filtering applies consistently in dashboard plans, calendar, plant detail plan list, and iCal reminder export
 - filtering behavior is deterministic
 - no new fields introduced
 
@@ -1136,12 +1140,12 @@ Generate plans from ORCHARD_PLAN_TEMPLATES_V1.md per plant and PERSIST them in `
   - apple, pear, plum, cherry, peach, nectarine, apricot → shared block + per-species block
   - olive, fig → mediterranean block only (no shared block)
   - citrus → citrus subtype block by `plant.variety` (lemon | orange | mandarin)
-- no condition evaluation, no young-tree suppression, no heuristics — templates are emitted literally
+- no condition evaluation, no generation-time young-tree suppression, no heuristics — templates are emitted literally
 - plan-state derivation (DOMAIN_RULES 5.4) is unchanged and applies to all plans identically
 
 ### Out of scope
 - harvest window narrowing from catalog harvestWindow (future)
-- young-tree suppression at generation or render time (future)
+- generation-time young-tree suppression (future)
 - condition-based suppression (future)
 - editing generated plans (user-read-only like all plans)
 - recommendation logic changes (V1 + V2 continue unchanged)

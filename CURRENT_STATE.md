@@ -154,10 +154,27 @@ Documented as a narrow, optional extension. NOT the primary plan system. NOT per
 
 ### Session 14 — Context-Aware Filtering
 
-- young plant filtering added at render time
-- harvest plans are hidden for young plants on plant detail
+- young tree plan relevance filtering added at render/export time
+- young trees are detected when `plant.status === "forming"` OR `plantedDate` is within the last 12 months
 - filtering uses existing plant context only
+- no plan/template/data mutation
 - no schema or storage changes
+- hidden for young trees:
+  - harvest
+  - fruit thinning
+  - bird netting
+  - trap plans
+- still visible for young trees:
+  - watering
+  - pruning
+  - spraying
+  - fertilizing
+  - observation
+- filtering is applied consistently in:
+  - dashboard plans
+  - calendar
+  - plant detail "Plan rada"
+  - iCal reminder export
 
 ### Session 15 — Recommendation Engine V1
 
