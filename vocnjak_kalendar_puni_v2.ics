@@ -5,7 +5,7 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
 UID:gen:plant:plant_1776573019581:shared:e6-2026@vocnjak
-DTSTAMP:20260419T051831Z
+DTSTAMP:20260419T054228Z
 DTSTART;VALUE=DATE:20260620
 DTEND;VALUE=DATE:20260621
 SUMMARY:Sezonsko navodnjavanje — Jabuka Fuji
@@ -13,34 +13,18 @@ DESCRIPTION:Prozor: 20. 06. 2026. - 31. 08. 2026.\nBiljke: Jabuka Fuji\nTip: Nav
 END:VEVENT
 BEGIN:VEVENT
 UID:gen:plant:plant_1776573019581:shared:e7-2026@vocnjak
-DTSTAMP:20260419T051831Z
+DTSTAMP:20260419T054228Z
 DTSTART;VALUE=DATE:20260701
 DTEND;VALUE=DATE:20260702
 SUMMARY:Ljetna rezidba — Jabuka Fuji
 DESCRIPTION:Prozor: 01. 07. 2026. - 15. 07. 2026.\nBiljke: Jabuka Fuji\nTip: Rezidba\nNapomene: Uklanjanje vodopija i pregustih ljetnih izbojaka.\nCilj: bolja osvijetljenost krošnje\, kontrola bujnosti.\nRezati kada novi izdanci dosegnu 10–20 cm.\nNe rezati po ekstremnim vrućinama iznad 30°C.
 END:VEVENT
 BEGIN:VEVENT
-UID:gen:plant:plant_1776573019581:shared:e8-2026@vocnjak
-DTSTAMP:20260419T051831Z
-DTSTART;VALUE=DATE:20260901
-DTEND;VALUE=DATE:20260902
-SUMMARY:Gašenje navodnjavanja — Jabuka Fuji
-DESCRIPTION:Prozor: 01. 09. 2026. - 15. 09. 2026.\nBiljke: Jabuka Fuji\nTip: Opservacija\nNapomene: Završetak sezonskog navodnjavanja pred kasne berbe.\nJabuka i kasne sorte: ugasiti 2–3 tjedna prije berbe za bolji okus i čvrstoću ploda.\nAko je cijeli vrt na jednom ventilu: gasiti oko 1. rujna —\ntrešnja\, nektarina\, breskva i šljiva su tada već pobrane.\nTumačiti kao orchard management podsjetnik\, ne kao obaveznu radnju u svakom scenariju.
-END:VEVENT
-BEGIN:VEVENT
 UID:gen:plant:plant_1776573019581:shared:e9-2026@vocnjak
-DTSTAMP:20260419T051831Z
+DTSTAMP:20260419T054228Z
 DTSTART;VALUE=DATE:20261001
 DTEND;VALUE=DATE:20261002
 SUMMARY:Pregled za zimu — Jabuka Fuji
 DESCRIPTION:Prozor: 01. 10. 2026. - 31. 10. 2026.\nBiljke: Jabuka Fuji\nTip: Opservacija\nNapomene: Jesenski pregled stabala pred zimu:\nstanje debla i rana\, vezice (ne smiju rezati koru)\, zaštita od glodavaca\,\npotpore mladih stabala\, mumificirani plodovi na stablu i tlu.\nUkloniti sve izvore zaraze.\nPosebno važno za mlada stabla i stabla koja su imala stres u sezoni.
-END:VEVENT
-BEGIN:VEVENT
-UID:gen:plant:plant_1776573019581:apple:e1-2026@vocnjak
-DTSTAMP:20260419T051831Z
-DTSTART;VALUE=DATE:20260410
-DTEND;VALUE=DATE:20260411
-SUMMARY:Post-bloom zaštita – krastavost i pepelnica — Jabuka Fuji
-DESCRIPTION:Prozor: 10. 04. 2026. - 10. 05. 2026.\nBiljke: Jabuka Fuji\nTip: Prskanje\nNapomene: Ključna zaštita protiv krastavosti jabuke (Venturia inaequalis) i pepelnice.\nPrimijeniti nakon cvatnje kada se formiraju mladi listovi i plodovi.\nNE tretirati za cvatnje — pčele moraju biti zaštićene.\nScore 250 EC + Mospilan 20 SP mogu se miješati u jednom prolazu.\nTretmane ponavljati prema infekcijskom pritisku i kiši.\nZa mlada stabla god. 1–2 bez ploda: manje kritično\, ali nije na odmet.
 END:VEVENT
 END:VCALENDAR
