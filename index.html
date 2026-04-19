@@ -1172,7 +1172,8 @@ function _normalizePlanTitle(title) {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d");
+    .replace(/đ/g, "d")
+    .replace(/[–—]/g, "-");
 }
 
 function _isYoungTreeBlockedPlan(plan) {
@@ -1180,18 +1181,32 @@ function _isYoungTreeBlockedPlan(plan) {
   if(type === "harvest") return true;
 
   const title = _normalizePlanTitle(plan.title);
-  if(title.startsWith("prorjedivanje plodova")) return true;
-  if(title.startsWith("prorjedivanje tresnje")) return true;
-  if(title.startsWith("mreza protiv ptica")) return true;
-
-  const trapTitles = [
+  const blockedTitles = [
+    "prorjedivanje plodova",
+    "prorjedivanje plodova - kruska",
+    "prorjedivanje tresnje (po potrebi)",
+    "prorjedivanje plodova - nektarina",
+    "prorjedivanje plodova - breskva",
+    "prorjedivanje plodova - marelica",
+    "prorjedivanje plodova - sljiva",
+    "mreza protiv ptica - jabuka",
+    "mreza protiv ptica - kruska",
+    "mreza protiv ptica - tresnja",
+    "mreza protiv ptica - nektarina",
+    "mreza protiv ptica - breskva",
+    "mreza protiv ptica - sljiva",
     "pracenje jabucnog savijaca (feromonske klopke)",
     "pracenje sljivinog savijaca (feromonske klopke)",
-    "pracenje tresnjine muhe – zute ljepljive ploce",
     "pracenje tresnjine muhe - zute ljepljive ploce",
-    "pracenje maslinove muhe"
+    "pracenje maslinove muhe",
+    "gasenje navodnjavanja",
+    "post-bloom zastita - krastavost i pepelnica",
+    "post-bloom zastita - krastavost kruske",
+    "post-bloom zastita - monilija i stetnici",
+    "post-bloom zastita - monilija (marelica)",
+    "post-bloom zastita - monilija i sljivin savijac"
   ];
-  return trapTitles.includes(title);
+  return blockedTitles.includes(title);
 }
 
 function _planAppliesToPlant(plan, plantId) {
