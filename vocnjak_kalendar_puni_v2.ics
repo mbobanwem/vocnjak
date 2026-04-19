@@ -5,7 +5,7 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
 UID:gen:plant:plant_1776573019581:shared:e6-2026@vocnjak
-DTSTAMP:20260419T043627Z
+DTSTAMP:20260419T051831Z
 DTSTART;VALUE=DATE:20260620
 DTEND;VALUE=DATE:20260621
 SUMMARY:Sezonsko navodnjavanje — Jabuka Fuji
@@ -13,7 +13,7 @@ DESCRIPTION:Prozor: 20. 06. 2026. - 31. 08. 2026.\nBiljke: Jabuka Fuji\nTip: Nav
 END:VEVENT
 BEGIN:VEVENT
 UID:gen:plant:plant_1776573019581:shared:e7-2026@vocnjak
-DTSTAMP:20260419T043627Z
+DTSTAMP:20260419T051831Z
 DTSTART;VALUE=DATE:20260701
 DTEND;VALUE=DATE:20260702
 SUMMARY:Ljetna rezidba — Jabuka Fuji
@@ -21,7 +21,7 @@ DESCRIPTION:Prozor: 01. 07. 2026. - 15. 07. 2026.\nBiljke: Jabuka Fuji\nTip: Rez
 END:VEVENT
 BEGIN:VEVENT
 UID:gen:plant:plant_1776573019581:shared:e8-2026@vocnjak
-DTSTAMP:20260419T043627Z
+DTSTAMP:20260419T051831Z
 DTSTART;VALUE=DATE:20260901
 DTEND;VALUE=DATE:20260902
 SUMMARY:Gašenje navodnjavanja — Jabuka Fuji
@@ -29,7 +29,7 @@ DESCRIPTION:Prozor: 01. 09. 2026. - 15. 09. 2026.\nBiljke: Jabuka Fuji\nTip: Ops
 END:VEVENT
 BEGIN:VEVENT
 UID:gen:plant:plant_1776573019581:shared:e9-2026@vocnjak
-DTSTAMP:20260419T043627Z
+DTSTAMP:20260419T051831Z
 DTSTART;VALUE=DATE:20261001
 DTEND;VALUE=DATE:20261002
 SUMMARY:Pregled za zimu — Jabuka Fuji
@@ -37,42 +37,10 @@ DESCRIPTION:Prozor: 01. 10. 2026. - 31. 10. 2026.\nBiljke: Jabuka Fuji\nTip: Ops
 END:VEVENT
 BEGIN:VEVENT
 UID:gen:plant:plant_1776573019581:apple:e1-2026@vocnjak
-DTSTAMP:20260419T043627Z
+DTSTAMP:20260419T051831Z
 DTSTART;VALUE=DATE:20260410
 DTEND;VALUE=DATE:20260411
 SUMMARY:Post-bloom zaštita – krastavost i pepelnica — Jabuka Fuji
 DESCRIPTION:Prozor: 10. 04. 2026. - 10. 05. 2026.\nBiljke: Jabuka Fuji\nTip: Prskanje\nNapomene: Ključna zaštita protiv krastavosti jabuke (Venturia inaequalis) i pepelnice.\nPrimijeniti nakon cvatnje kada se formiraju mladi listovi i plodovi.\nNE tretirati za cvatnje — pčele moraju biti zaštićene.\nScore 250 EC + Mospilan 20 SP mogu se miješati u jednom prolazu.\nTretmane ponavljati prema infekcijskom pritisku i kiši.\nZa mlada stabla god. 1–2 bez ploda: manje kritično\, ali nije na odmet.
-END:VEVENT
-BEGIN:VEVENT
-UID:gen:plant:plant_1776573019581:apple:e2-2026@vocnjak
-DTSTAMP:20260419T043627Z
-DTSTART;VALUE=DATE:20260425
-DTEND;VALUE=DATE:20260426
-SUMMARY:Praćenje jabučnog savijača (feromonske klopke) — Jabuka Fuji
-DESCRIPTION:Prozor: 25. 04. 2026. - 15. 08. 2026.\nBiljke: Jabuka Fuji\nTip: Monitoring\nNapomene: Jabučni savijač (Cydia pomonella) — crvi u plodovima jabuke.\nPostaviti feromonsku klopku na 1.5–2 m visine\, u sjenu krošnje.\nTjedno pregledavati ulov.\nTretman insekticidom (Mospilan) samo ako ulov prijeđe prag štetnosti —\nnagli porast = tretman unutar 7–10 dana.\nZa mlada stabla god. 1–2 bez ploda: nije prioritet.
-END:VEVENT
-BEGIN:VEVENT
-UID:gen:plant:plant_1776573019581:apple:e3-2026@vocnjak
-DTSTAMP:20260419T043627Z
-DTSTART;VALUE=DATE:20260515
-DTEND;VALUE=DATE:20260516
-SUMMARY:Prorjeđivanje plodova — Jabuka Fuji
-DESCRIPTION:Prozor: 15. 05. 2026. - 15. 06. 2026.\nBiljke: Jabuka Fuji\nTip: Opservacija\nNapomene: Uklanjanje viška plodova radi bolje veličine i kvalitete uroda.\nOstaviti 1 plod na 10–15 cm grane. Ukloniti blizance i oštećene plodove.\nJabuka je sklona alternativnoj rodnosti — redovito prorjeđivanje smanjuje taj problem.\nZa mlada stabla god. 1–2 bez značajnog uroda: nije potrebno.
-END:VEVENT
-BEGIN:VEVENT
-UID:gen:plant:plant_1776573019581:apple:e4-2026@vocnjak
-DTSTAMP:20260419T043627Z
-DTSTART;VALUE=DATE:20260815
-DTEND;VALUE=DATE:20260816
-SUMMARY:Mreža protiv ptica – jabuka — Jabuka Fuji
-DESCRIPTION:Prozor: 15. 08. 2026. - 01. 10. 2026.\nBiljke: Jabuka Fuji\nTip: Opservacija\nNapomene: Jabuka Fuji i kasne sorte rijetko su intenzivno napadnute pticama dok su plodovi čvrsti.\nPostaviti mrežu samo ako postoji vidljiv pritisak ptica.\nZa rane i srednje sorte: pratiti i reagirati prema situaciji.\nZa mlada stabla god. 1–2 bez uroda: nije potrebno.
-END:VEVENT
-BEGIN:VEVENT
-UID:gen:plant:plant_1776573019581:apple:e5-2026@vocnjak
-DTSTAMP:20260419T043627Z
-DTSTART;VALUE=DATE:20260820
-DTEND;VALUE=DATE:20260821
-SUMMARY:Berba jabuke — Jabuka Fuji
-DESCRIPTION:Prozor: 20. 08. 2026. - 20. 10. 2026.\nBiljke: Jabuka Fuji\nTip: Berba\nNapomene: Termin berbe ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.\nPrimjeri: Gala (aug 20 – sep 10)\, Fuji / Idared (sep 25 – oct 15).\nBrati zakretanjem ploda — ne čupati\, ne vući.\nTest zrelosti: plod lako otpada pri laganom zakretanju\, sjemenke smeđe.\nFuji: čekati punu zrelost — prerano ubrana Fuji jabuka nema okusa.\nBrati po suhom\, izbjegavati jutarnju rosu.\nNe ostavljati oštećene plodove — uzrokuju moniliju.
 END:VEVENT
 END:VCALENDAR
