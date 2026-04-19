@@ -654,9 +654,10 @@ function _getPlanReminderState(plan, v4, currentYear, now) {
   return null;
 }
 
-function _getPlanScopeLabel(plan, plants) {
-  if(plan.appliesToAll === true) return "Sve biljke";
-  const ids = Array.isArray(plan.plantIds) ? plan.plantIds : [];
+function _getPlanScopeLabel(plan, plants, visiblePlantIds) {
+  const ids = Array.isArray(visiblePlantIds) ? visiblePlantIds : (Array.isArray(plan.plantIds) ? plan.plantIds : []);
+  if(plan.appliesToAll === true && !Array.isArray(visiblePlantIds)) return "Sve biljke";
+  if(plan.appliesToAll === true && Array.isArray(visiblePlantIds) && ids.length === Object.keys(plants || {}).length) return "Sve biljke";
   if(ids.length === 0) return "Bez odabranih biljki";
   return ids.map(id => (plants && plants[id] && plants[id].name) ? plants[id].name : id).join(", ");
 }
@@ -706,12 +707,14 @@ function _buildReminderIcsV4(v4) {
   let count = 0;
 
   (v4.plans || []).forEach((plan, index) => {
+    if(!_isPlanRelevantForAnyPlant(plan, v4, currentYear)) return;
     const state = _getPlanReminderState(plan, v4, currentYear, now);
     if(state !== "upcoming" && state !== "active") return;
     const { start, end } = _getPlanWindow(plan, currentYear);
     const eventEnd = new Date(start);
     eventEnd.setDate(eventEnd.getDate() + 1);
-    const scope = _getPlanScopeLabel(plan, v4.plants || {});
+    const relevantPlantIds = _getPlanRelevantPlantIds(plan, v4, currentYear);
+    const scope = _getPlanScopeLabel(plan, v4.plants || {}, relevantPlantIds);
     const title = plan.title || "Podsjetnik";
     const typeLabel = plan.activityType ? _v4TypeLabel(plan.activityType) : "";
     const descriptionParts = [
@@ -1153,12 +1156,78 @@ function _getPlanWindow(plan, year) {
   return { start, end };
 }
 
+function _isYoungTree(plant, now) {
+  if(!plant) return false;
+  if(plant.status === "forming") return true;
+  if(!plant.plantedDate) return false;
+  const d = new Date(plant.plantedDate);
+  if(isNaN(d.getTime())) return false;
+  const cutoff = new Date(now || new Date());
+  cutoff.setFullYear(cutoff.getFullYear() - 1);
+  return d >= cutoff;
+}
+
+function _normalizePlanTitle(title) {
+  return String(title || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d");
+}
+
+function _isYoungTreeBlockedPlan(plan) {
+  const type = (plan.activityType || "").toLowerCase().trim();
+  if(type === "harvest") return true;
+
+  const title = _normalizePlanTitle(plan.title);
+  if(title.startsWith("prorjedivanje plodova")) return true;
+  if(title.startsWith("prorjedivanje tresnje")) return true;
+  if(title.startsWith("mreza protiv ptica")) return true;
+
+  const trapTitles = [
+    "pracenje jabucnog savijaca (feromonske klopke)",
+    "pracenje sljivinog savijaca (feromonske klopke)",
+    "pracenje tresnjine muhe – zute ljepljive ploce",
+    "pracenje tresnjine muhe - zute ljepljive ploce",
+    "pracenje maslinove muhe"
+  ];
+  return trapTitles.includes(title);
+}
+
+function _planAppliesToPlant(plan, plantId) {
+  if(plan.appliesToAll === true) return true;
+  return (plan.plantIds || []).includes(plantId);
+}
+
+function _isPlanRelevantForPlant(plan, plant, v4, year) {
+  if(!_isYoungTree(plant)) return true;
+  return !_isYoungTreeBlockedPlan(plan);
+}
+
+function _getPlanRelevantPlantIds(plan, v4, year) {
+  const plants = (v4 && v4.plants) || {};
+  const ids = plan.appliesToAll === true ? Object.keys(plants) : (plan.plantIds || []);
+  return ids.filter(pid => {
+    const plant = plants[pid];
+    if(!plant) return false;
+    if(!_planAppliesToPlant(plan, pid)) return false;
+    return _isPlanRelevantForPlant(plan, plant, v4, year);
+  });
+}
+
+function _isPlanRelevantForAnyPlant(plan, v4, year) {
+  const ids = plan.appliesToAll === true ? Object.keys((v4 && v4.plants) || {}) : (plan.plantIds || []);
+  if(ids.length === 0) return !_isYoungTreeBlockedPlan(plan);
+  return _getPlanRelevantPlantIds(plan, v4, year).length > 0;
+}
+
 function _v4DashboardPlans(v4) {
   const now = new Date();
   const year = now.getFullYear();
   const { plans = [], activities = [] } = v4;
   return plans.map(pl => {
     if(pl.skipYear === year) return null;
+    if(!_isPlanRelevantForAnyPlant(pl, v4, year)) return null;
     const { start: wStart, end: wEnd } = _getPlanWindow(pl, year);
     // Tolerance ±7 days for matching (DOMAIN_RULES 5.6)
     const effectiveStart = new Date(wStart); effectiveStart.setDate(effectiveStart.getDate() - 7);
@@ -1190,15 +1259,8 @@ function _v4DashboardPlans(v4) {
 }
 
 function _v4HasYoungTree(plants) {
-  const cutoff = new Date();
-  cutoff.setFullYear(cutoff.getFullYear() - 1);
   return Object.values(plants).some(p => {
-    if(p.status === "forming") return true;
-    if(p.plantedDate) {
-      const d = new Date(p.plantedDate);
-      if(!isNaN(d.getTime()) && d >= cutoff) return true;
-    }
-    return false;
+    return _isYoungTree(p);
   });
 }
 
@@ -1828,11 +1890,7 @@ function renderPlantScreen() {
         const plantPlans = (v4.plans || []).filter(pl => {
           if(pl.skipYear === y) return false;
           if(!pl.appliesToAll && !(pl.plantIds || []).includes(plantId)) return false;
-          // Session 14 — young plant: hide harvest plans
-          const pd14 = plant.plantedDate ? new Date(plant.plantedDate) : null;
-          const cutoff14 = new Date(); cutoff14.setFullYear(cutoff14.getFullYear() - 1);
-          const isYoung = plant.status === "forming" || (pd14 !== null && !isNaN(pd14.getTime()) && pd14 >= cutoff14);
-          if(isYoung && (pl.activityType || "").toLowerCase().trim() === "harvest") return false;
+          if(!_isPlanRelevantForPlant(pl, plant, v4, y)) return false;
           const { start: wStart, end: wEnd } = _getPlanWindow(pl, y);
           // Exclude done plans — matching activity check (reuse 13A logic)
           const effectiveStart = new Date(wStart); effectiveStart.setDate(effectiveStart.getDate() - 7);
@@ -2554,6 +2612,7 @@ function getCalendarItemsV4(v4, year, month) {
   const todayNorm = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   (v4.plans || []).forEach(pl => {
     if(pl.skipYear === year) return;
+    if(!_isPlanRelevantForAnyPlant(pl, v4, year)) return;
     const { start, end } = _getPlanWindow(pl, year);
     const startNorm = new Date(start.getFullYear(), start.getMonth(), start.getDate());
     const endNorm = new Date(end.getFullYear(), end.getMonth(), end.getDate());
@@ -2582,7 +2641,9 @@ function getCalendarItemsV4(v4, year, month) {
     else if(todayNorm > effectiveEnd) state = "missed";
     else state = "active"; // within tolerance period after window but not yet missed
     // Add item for each day in window within this month
-    const plantIds = pl.appliesToAll ? [] : (pl.plantIds || []);
+    const relevantPlantIds = _getPlanRelevantPlantIds(pl, v4, year);
+    const allPlantIds = Object.keys((v4 && v4.plants) || {});
+    const plantIds = pl.appliesToAll && relevantPlantIds.length === allPlantIds.length ? [] : relevantPlantIds;
     const firstDay = (start.getMonth() === month) ? start.getDate() : 1;
     const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
     const lastDay = (end.getMonth() === month) ? end.getDate() : lastDayOfMonth;
