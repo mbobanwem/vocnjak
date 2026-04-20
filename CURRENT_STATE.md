@@ -198,6 +198,25 @@ Documented as a narrow, optional extension. NOT the primary plan system. NOT per
 - informational only (no recommendations, no decision logic)
 - no schema or storage changes
 
+### Dashboard V1 Refinement — Unified `Danas` list
+
+- dashboard now uses one unified `Danas` list as the primary dashboard section
+- active plans + recommendations are merged at render time only
+- no stored "task" model was introduced
+- no plan, activity, plant, or recommendation state is persisted
+- max 3 items are shown
+- calm empty-state exists for days with no active work
+- old young-tree footer notice was removed
+- formative reminder is visible on the dashboard through the render-time recommendation surface
+- young-tree chip is consistent across dashboard items:
+  - recommendation items
+  - active-plan items
+- weather remains separate and is placed below `Danas`
+- recent activities are reduced to 2
+- no iCal/calendar changes
+- no plant detail changes
+- no V2 hero/task model exists
+
 ### Session 17 — v4 Export / Import (JSON backup)
 
 - enables safe backup and restore when moving to a new device
@@ -310,10 +329,10 @@ Documented as a narrow, optional extension. NOT the primary plan system. NOT per
     - keep 3–4 strongest branches
     - remove the rest
 - surface:
-  - plant detail only
+  - plant detail
+  - dashboard `Danas` list after the Dashboard V1 refinement
   - rendered via existing V1 recommendation engine
 - not included in:
-  - dashboard
   - calendar
   - iCal export
   - plans
@@ -445,6 +464,7 @@ Session 19 iCal Reminder Export is complete and pushed in commit `a4438ec886cece
 - Session 14 — Context-Aware Filtering (DONE)
 - Session 15 — Recommendation Engine V1 (DONE)
 - Session 16 — Weather-Aware Spray Layer (DONE)
+- Dashboard refinement — unified `Danas` list (DONE — render-only follow-up)
 - Session 17 — v4 Export / Import JSON (DONE)
 - Session 17.4 — Plant Type Schema Approval (DONE — roadmap exception — Core Domain Bridge)
 - Session 17.5 — Plant Catalog + Plant Management (Add + Delete) (DONE — roadmap exception — Core Domain Bridge)

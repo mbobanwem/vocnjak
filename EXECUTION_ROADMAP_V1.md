@@ -1209,13 +1209,47 @@ Surface the narrow year-1 formative branch-selection reminder for young trees wi
 ### Implemented
 - runtime-only lifecycle reminder added for young trees
 - based on valid `plant.plantedDate`, existing young-tree detection, and plantedDate + 60 days with a ±15 day active window
-- rendered only on plant detail through the existing V1 recommendation engine
+- rendered on plant detail through the existing V1 recommendation engine
+- also surfaced in the dashboard `Danas` list by the later Dashboard V1 refinement
 - remains outside `v4.plans[]` and outside templates
-- does not affect dashboard, calendar, or iCal export
+- does not affect calendar or iCal export
 - no data model, storage, Supabase, GitHub upload, or migration changes
 
 ### Done when
 - newly planted young trees can surface fixed formative guidance for selecting 3–4 scaffold branches when shoots reach 10–20 cm
+
+---
+
+## Dashboard V1 Refinement — Unified `Danas` list (DONE)
+### Goal
+Make the dashboard answer "what matters today?" without introducing a stored task model or a full dashboard redesign.
+
+### Implemented
+- dashboard action sections were merged into one `Danas` list
+- active plans + recommendations are unified at render time only
+- max 3 items are shown
+- calm empty-state exists when there is nothing active today
+- formative reminder is visible on the dashboard
+- young-tree chip is consistent across recommendation items and active-plan items
+- weather remains separate and is placed below `Danas`
+- recent activities are reduced to 2
+- `Danas` is visually promoted as the primary dashboard section
+
+### Rules
+- no data model changes
+- no stored "task" model
+- no stored state changes
+- no iCal/calendar changes
+- no plant detail changes
+- no V2 hero/task model
+
+### Deferred to V2
+- hero card
+- unified task model
+- direct `Obavljeno`
+- ambient orchard strip
+- weather inside tasks
+- full dashboard rewrite
 
 ---
 

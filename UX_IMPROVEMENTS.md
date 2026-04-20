@@ -364,6 +364,17 @@ Goal:
 - "Nothing to do" is valid state
 - never show empty screen
 
+### Dashboard V2 direction (deferred)
+
+The current Dashboard V1 refinement is intentionally render-only. The following remain deferred to V2 and MUST NOT be treated as implemented:
+
+- hero card
+- unified task model
+- direct `Obavljeno`
+- ambient orchard strip
+- weather inside tasks
+- full dashboard rewrite
+
 ---
 
 ## 8. Calendar
