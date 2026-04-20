@@ -1509,6 +1509,32 @@ function _renderRecCard(r) {
   </div>`;
 }
 
+function _renderDanasItem(item) {
+  const urgencyLabel = { high:"Visoko", medium:"Srednje", low:"Nisko" };
+  const urgencyColor = { high:"#dc2626", medium:"#b45309", low:"var(--text-light)" };
+  const stripeColor = urgencyColor[item.urgency] || "var(--text-light)";
+  const titleHTML = item.title ? `<div style="font-size:14px;font-weight:600;margin-bottom:3px">${item.title}</div>` : '';
+  const subtitleHTML = item.subtitle ? `<div style="font-size:13px;color:var(--text-mid)">${item.subtitle}</div>` : '';
+  const disclaimerHTML = item.disclaimer
+    ? `<div style="font-size:11px;color:var(--text-light);margin-top:4px">${item.disclaimer}</div>`
+    : '';
+  const youngParts = [];
+  if(item._young) youngParts.push('<span style="font-size:10px;font-weight:600;color:var(--green-deep);background:var(--cream);padding:2px 6px;border-radius:var(--r-sm)">mlado stablo</span>');
+  if(item.isFormative && typeof item.formativeDay === "number") youngParts.push(`<span style="font-size:11px;color:var(--text-light)">dan ${item.formativeDay} od sadnje</span>`);
+  const youngLine = youngParts.length > 0
+    ? `<div style="display:flex;gap:8px;align-items:center;margin-top:6px">${youngParts.join("")}</div>`
+    : '';
+  return `<div class="card" style="padding:10px 14px;margin-bottom:6px;border-left:3px solid ${stripeColor}">
+    <div style="margin-bottom:4px">
+      <span style="font-size:11px;font-weight:600;color:${stripeColor};text-transform:uppercase;letter-spacing:0.5px">${urgencyLabel[item.urgency] || item.urgency}</span>
+    </div>
+    ${titleHTML}
+    ${subtitleHTML}
+    ${disclaimerHTML}
+    ${youngLine}
+  </div>`;
+}
+
 // ── OVERVIEW ──
 function renderOverview() {
   const mc = document.getElementById("mainContent");
@@ -1526,33 +1552,130 @@ function _renderOverviewV4(mc, v4) {
   const { plants = {}, activities = [] } = v4;
   const monthNames = ["Siječanj","Veljača","Ožujak","Travanj","Svibanj","Lipanj","Srpanj","Kolovoz","Rujan","Listopad","Studeni","Prosinac"];
   const now = new Date();
+  const year = now.getFullYear();
 
   const dashPlans = _v4DashboardPlans(v4);
-  const activePlans = dashPlans.filter(p => p.state === "active");
 
   const recent = activities.slice().sort((a, b) => {
     const da = new Date(a.date || 0), db = new Date(b.date || 0);
     return db - da;
-  }).slice(0, 3);
-
-  const youngTree = _v4HasYoungTree(plants);
+  }).slice(0, 2);
 
   const plantIds = Object.keys(plants);
+  const v2ActionLabel = { inspect:"Pregledaj", insecticide:"Razmotri zaštitu", fungicide:"Razmotri fungicid", monitoring:"Prati", wait:"Pričekaj" };
+
+  // Active dashboard plans — local walk mirroring active-state derivation, enriched with
+  // effective plantIds so young-tree status uses the same _isYoungTree rule as rec items.
+  const activePlans = [];
+  for(const pl of (v4.plans || [])) {
+    if(pl.skipYear === year) continue;
+    if(!_isPlanRelevantForAnyPlant(pl, v4, year)) continue;
+    const { start: wStart, end: wEnd } = _getPlanWindow(pl, year);
+    if(now < wStart || now > wEnd) continue;
+    const effStart = new Date(wStart); effStart.setDate(effStart.getDate() - 7);
+    const effEnd = new Date(wEnd); effEnd.setDate(effEnd.getDate() + 7);
+    const pType = (pl.activityType || "").toLowerCase().trim();
+    const hasMatch = (v4.activities || []).some(a => {
+      if(!a.date) return false;
+      if((a.type || "").toLowerCase().trim() !== pType) return false;
+      const ad = new Date(a.date);
+      if(isNaN(ad.getTime())) return false;
+      if(ad < effStart || ad > effEnd) return false;
+      if(pl.appliesToAll) return true;
+      return (a.plantIds || []).some(pid => (pl.plantIds || []).includes(pid));
+    });
+    if(hasMatch) continue;
+    const pids = _getPlanRelevantPlantIds(pl, v4, year);
+    const hasYoung = pids.some(pid => plants[pid] && _isYoungTree(plants[pid]));
+    activePlans.push({
+      title: pl.title || "",
+      activityType: pl.activityType || "",
+      plantIds: pids,
+      _young: hasYoung
+    });
+  }
+
+  const danasItems = [];
   const seen = new Set();
-  const overviewRecs = [];
+
+  // Active plans — WHAT (plan title) + WHY (activity-type label).
+  for(const p of activePlans) {
+    danasItems.push({
+      title: p.title,
+      subtitle: _v4TypeLabel(p.activityType),
+      urgency: "medium",
+      origin: "plan",
+      isMonitoring: false,
+      isFormative: false,
+      _young: p._young
+    });
+  }
+
+  // V2 recommendations + formative reminder (single source: _getYoungTreeFormativeReminder),
+  // both deduped through the same `seen` set keyed on message.
   for(const pid of plantIds) {
-    if(overviewRecs.length >= 3) break;
+    const plant = plants[pid];
     const recs = getRecommendationsV2(v4, pid);
     for(const r of recs) {
-      if(overviewRecs.length >= 3) break;
+      if(r.kind === "plan") continue; // duplicates active-plan item
       if(seen.has(r.message)) continue;
       seen.add(r.message);
-      overviewRecs.push(r);
+      danasItems.push({
+        title: v2ActionLabel[r.actionCategory] || r.actionCategory || "",
+        subtitle: r.message,
+        disclaimer: r.productHintLevel === "category" ? "Provjeri stadij biljke i lokalnu registraciju prije primjene." : "",
+        urgency: r.urgency,
+        origin: "rec",
+        isMonitoring: r.actionCategory === "monitoring",
+        isFormative: false,
+        _young: !!(plant && _isYoungTree(plant))
+      });
+    }
+    const formative = _getYoungTreeFormativeReminder(plant, now);
+    if(formative && !seen.has(formative.message)) {
+      seen.add(formative.message);
+      const pd = new Date(plant.plantedDate);
+      const today0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const planted0 = new Date(pd.getFullYear(), pd.getMonth(), pd.getDate());
+      const daysSince = Math.floor((today0 - planted0) / (1000 * 60 * 60 * 24));
+      danasItems.push({
+        title: formative.title,
+        subtitle: formative.message,
+        urgency: formative.urgency,
+        origin: "rec",
+        isMonitoring: false,
+        isFormative: true,
+        formativeDay: daysSince,
+        _young: true
+      });
     }
   }
-  const overviewRecsHTML = overviewRecs.length > 0
-    ? '<div class="section-label" style="margin-top:16px">Što sada provjeriti</div>' + overviewRecs.map(r => _renderRecCard(r)).join("")
-    : "";
+
+  const urgencyOrder = { high: 0, medium: 1, low: 2 };
+  danasItems.sort((a, b) => {
+    const ua = urgencyOrder[a.urgency] ?? 3;
+    const ub = urgencyOrder[b.urgency] ?? 3;
+    if(ua !== ub) return ua - ub;
+    if(a.isMonitoring !== b.isMonitoring) return a.isMonitoring ? 1 : -1;
+    return 0;
+  });
+
+  const totalDanas = danasItems.length;
+  const visibleDanas = danasItems.slice(0, 3);
+  const overflow = totalDanas - visibleDanas.length;
+
+  let danasHTML = '<div style="font-size:16px;font-weight:600;color:var(--green-deep);margin-bottom:10px">Danas</div>';
+  if(totalDanas === 0) {
+    danasHTML += `<div class="card" style="padding:12px 14px;margin-bottom:6px">
+      <div style="font-size:14px;font-weight:600;color:var(--green-deep)">Danas ništa hitno.</div>
+      <div style="font-size:12px;color:var(--text-mid);margin-top:4px">Sve je mirno — provjeri ponovno uskoro.</div>
+    </div>`;
+  } else {
+    danasHTML += visibleDanas.map(_renderDanasItem).join("");
+    if(overflow > 0) {
+      danasHTML += `<div style="font-size:11px;color:var(--text-light);margin-top:4px;padding-left:4px">+ još ${overflow}</div>`;
+    }
+  }
 
   // Session 16 — weather visibility: ONLY when an active spraying plan exists
   const hasActiveSprayingPlan = dashPlans.some(p => p.activityType === "spraying" && p.state === "active");
@@ -1582,16 +1705,9 @@ function _renderOverviewV4(mc, v4) {
   }
 
   mc.innerHTML = `
-    <div class="section-label">${monthNames[now.getMonth()]} ${now.getFullYear()}</div>
-    ${overviewRecsHTML}
+    <div style="font-size:11px;color:var(--text-light);margin-bottom:10px">${monthNames[now.getMonth()]} ${now.getFullYear()}</div>
+    ${danasHTML}
     ${weatherHTML}
-    <div class="section-label" style="margin-top:16px">Plan rada</div>
-    ${activePlans.length === 0
-      ? '<div class="empty">Nema aktivnih planova.</div>'
-      : activePlans.slice(0, 2).map(p => `<div class="card" style="padding:12px 14px;margin-bottom:8px">
-          <div style="font-size:14px;font-weight:600;color:var(--green-deep)">${p.title}</div>
-          <div style="font-size:12px;color:var(--text-mid);margin-top:2px">${_v4TypeLabel(p.activityType)}</div>
-        </div>`).join("")}
     <div class="section-label" style="margin-top:16px">Zadnje aktivnosti</div>
     ${recent.length === 0
       ? '<div class="empty">Nema zabilježenih aktivnosti.</div>'
@@ -1609,7 +1725,6 @@ function _renderOverviewV4(mc, v4) {
           </div>`;
         }).join("")}
     ${activities.length > 0 ? '<div style="margin-top:10px;text-align:center"><button onclick="showActivitiesScreen()" style="background:none;border:none;color:var(--green-deep);font-size:13px;cursor:pointer;text-decoration:underline">Sve aktivnosti →</button></div>' : ''}
-    ${youngTree ? '<div style="margin-top:16px;padding:10px 14px;font-size:12px;color:var(--text-mid);background:var(--cream);border-radius:var(--r-sm)">Mlade sadnice zahtijevaju pojačanu pažnju.</div>' : ''}
   `;
 }
 
