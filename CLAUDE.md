@@ -4,27 +4,123 @@
 
 ## SOURCE OF TRUTH (READ FIRST — ALWAYS)
 
-Before making ANY change, you MUST read:
+Documents are not equal. Use the classes below exactly.
 
-1. `V2_PRINCIPLES.md` (locked product principles)
-2. `V2_DOMAIN_MODEL.md` (schemas, vocabulary, enums)
-3. `V2_UX_MODEL.md` (surfaces and flows)
-4. `V2_ARCHITECTURE.md` (data model, algorithms, migration)
-5. `V2_EXECUTION_ROADMAP.md` (implementation session order)
-6. `V2_CATALOG_AUDIT.md` (catalog v1.0 status)
-7. `V2_PLANT_CATALOG.md` (plant catalog content)
-8. `V2_ORCHARD_PLAN_TEMPLATES.md` (action templates)
+### LOCKED CORE
 
-Archived (historical, not load-bearing):
+- `V2_PRINCIPLES.md`
+- later: `V2_DOMAIN_MODEL.md`, `V2_UX_MODEL.md`, and `V2_ARCHITECTURE.md` only after sign-off
 
-- `/archive/v1/` — original V1 planning and rules
-- `/archive/future/` — deferred future direction
+Rules:
+- LOCKED CORE is binding
+- if any conflict exists, LOCKED CORE wins
+
+### IN PROGRESS
+
+- current target document only
+
+Rules:
+- may be edited only by its owning session
+- not binding until sign-off
+
+Current:
+- `V2_DOMAIN_MODEL.md`
+- becomes locked only after S2 sign-off
+
+### INPUT FILES (NOT YET VALIDATED V2 TRUTH)
+
+- `V2_PLANT_CATALOG.md`
+- `V2_ORCHARD_PLAN_TEMPLATES.md`
+
+Rules:
+- renamed V1 content
+- input material only
+- may be mined for content
+- may NOT define final V2 truth
+- require audit in S3-S5 before promotion
+
+### PLACEHOLDERS
+
+- `V2_UX_MODEL.md`
+- `V2_ARCHITECTURE.md`
+- `V2_EXECUTION_ROADMAP.md`
+- `V2_CATALOG_AUDIT.md`
+
+Rules:
+- scaffold only
+- not authoritative until owning session completes and signs off
+
+### FUTURE / NON-BINDING
+
+Rules:
+- future roadmap / future idea documents are not implementation spec
+- future roadmap / future idea documents are not source of truth
+
+### ARCHIVE
+
+- `/archive/v1/`
+- `/archive/future/`
+
+Rules:
+- historical only
+- never binding
+- may be referenced for context only
+
+---
+
+## DOCUMENT OWNERSHIP
+
+- `V2_PRINCIPLES.md` -> S1
+- `V2_DOMAIN_MODEL.md` -> S2
+- `V2_CATALOG_AUDIT.md` -> S3-S5
+- `V2_UX_MODEL.md` -> S6-S7
+- `V2_ARCHITECTURE.md` -> S8-S10
+- `V2_EXECUTION_ROADMAP.md` -> S11
+
+Rule:
+- only the owning session may promote a document to authoritative status
+
+---
+
+## PROMOTION RULE
+
+- rename != validation
+- archive != source of truth
+- input != approved model
+- placeholder != specification
+- promotion requires owning session completion + project owner sign-off
+- no document may self-promote
+- no agent may assume promotion
+
+---
+
+## CROSS-DOCUMENT USAGE RULE
+
+- do NOT merge meaning across documents unless the current session explicitly requires it
+- do NOT import INPUT FILES directly into LOCKED CORE
+- do NOT fill gaps using ARCHIVE or INPUT FILES
+- if a concept is not yet defined in the owning document, it is not yet defined
+
+---
+
+## PROJECT PATH
+
+- S1 complete
+- S2 = domain model lock
+- S3-S5 = audit and validation
+- S6-S10 = system definition
+- S11 = execution roadmap
+- only after S11 = return to implementation (Sessions 19-23)
+
+Rules:
+- this is the only valid project path
+- implementation before S11 is forbidden
 
 ---
 
 ## CRITICAL RULES (NON-NEGOTIABLE)
 
-- `V2_PRINCIPLES.md` and `V2_DOMAIN_MODEL.md` are the locked specification
+- Only LOCKED CORE documents are binding
 - NEVER change data model, field names, or structure without explicit approval
 - NEVER introduce new fields, concepts, or features unless explicitly instructed
 
@@ -42,9 +138,10 @@ If anything is unclear:
 You are executing a predefined plan.
 
 - Work ONLY on the current session
-- Follow `V2_EXECUTION_ROADMAP.md` exactly
+- Follow the PROJECT PATH exactly
 - Do NOT skip steps
 - Do NOT anticipate future sessions
+- Do NOT implement before S11 is complete and signed off
 
 ---
 
