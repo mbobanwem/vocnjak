@@ -1,85 +1,47 @@
 # Vocnjak App
 
-Orchard-first, iPhone-first PWA for managing fruit trees, activities, and seasonal plans.
+Orchard-first PWA for managing fruit trees, activities, and seasonal plans.
 
----
-
-## Overview
-
-Vocnjak App is a simple, local-first application designed for real-world orchard management.
-
-It helps track:
-- fruit trees (plants)
-- activities (spraying, pruning, etc.)
-- seasonal plans
-
-The app is evolving from a personal tool into a structured product.
+**A trusted seasonal guide for hobby orchards — not a daily task list.**
 
 ---
 
 ## Tech
 
-- single-file app (index.html)
+- single-file app (`index.html`)
 - vanilla JavaScript
 - localStorage persistence
 - Progressive Web App (PWA)
-- no framework
-- no build step
+- no framework, no build step
 
 ---
 
-## Data Model
+## V2 direction
 
-Current model (v4):
+The project is in a V2 reset. Active documentation (repo root):
 
-- plants → object keyed by id
-- activities → global array
-- plans → global array
-
-Legacy v3 exists only for migration compatibility.
-
----
-
-## Project Structure
-
-Key documents:
-
-- MIGRATION_PLAN_V1.md → LOCKED (data model rules)
-- TARGET_ARCHITECTURE_V1.md → target system design
-- CURRENT_STATE.md → what is already implemented
-- EXECUTION_ROADMAP_V1.md → development plan
-- UX_IMPROVEMENTS.md → UX direction
-- DOMAIN_DIRECTION_V2.md → domain logic and rules
+- `V2_PRINCIPLES.md` — product identity and locked principles
+- `V2_DOMAIN_MODEL.md` — schemas, vocabulary, enums
+- `V2_UX_MODEL.md` — surfaces and flows
+- `V2_ARCHITECTURE.md` — data model, algorithms, migration
+- `V2_EXECUTION_ROADMAP.md` — implementation sessions
+- `V2_CATALOG_AUDIT.md` — catalog v1.0 audit status
+- `V2_PLANT_CATALOG.md` — plant catalog content (input to audit)
+- `V2_ORCHARD_PLAN_TEMPLATES.md` — action templates (input to audit)
 
 ---
 
-## Development Principles
+## Archive
 
-- orchard-first (not generic gardening)
-- mobile-first (one-handed use)
-- smallest working solution
-- no over-engineering
-- no frameworks
+V1 documentation and deferred future-direction docs are preserved under `/archive/`:
 
----
+- `/archive/v1/` — original V1 planning and rules
+- `/archive/future/` — future-facing docs not load-bearing for V2
 
-## Status
-
-- v4 data model implemented
-- core flows working:
-  - migration
-  - overview
-  - plant detail
-  - add activity
-  - calendar
-
-Next:
-→ plan matching and orchard intelligence
+These files are kept for historical rationale. They are **not** the source of truth for V2.
 
 ---
 
-## Important
+## Working branch
 
-- v4 is the active model
-- legacy v3 must not be extended
-- MIGRATION_PLAN_V1.md is the source of truth for data structure
+`main` is the single active working branch.

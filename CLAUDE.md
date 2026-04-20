@@ -1,4 +1,4 @@
-# VOCNJAK — Claude Code Instructions (FINAL)
+# VOCNJAK — Claude Code Instructions (V2)
 
 ---
 
@@ -6,33 +6,30 @@
 
 Before making ANY change, you MUST read:
 
-1. MIGRATION_PLAN_V1.md (LOCKED — absolute truth)
-2. EXECUTION_ROADMAP_V1.md (execution order)
-3. TARGET_ARCHITECTURE_V1.md
-4. CURRENT_STATE.md
+1. `V2_PRINCIPLES.md` (locked product principles)
+2. `V2_DOMAIN_MODEL.md` (schemas, vocabulary, enums)
+3. `V2_UX_MODEL.md` (surfaces and flows)
+4. `V2_ARCHITECTURE.md` (data model, algorithms, migration)
+5. `V2_EXECUTION_ROADMAP.md` (implementation session order)
+6. `V2_CATALOG_AUDIT.md` (catalog v1.0 status)
+7. `V2_PLANT_CATALOG.md` (plant catalog content)
+8. `V2_ORCHARD_PLAN_TEMPLATES.md` (action templates)
 
-Additional context:
+Archived (historical, not load-bearing):
 
-5. DOMAIN_RULES_V1.md (allowed behavior within V1)
-6. UX_IMPROVEMENTS.md (UX direction)
-7. VALIDATION_CONTEXT.md (validation logic)
-8. PLANT_CATALOG_V1.md (plant types, varieties, timing — runtime input layer; defines the stored canonical `plant.type` per Session 17.4)
-
-Future context (DO NOT IMPLEMENT):
-
-9. DOMAIN_DIRECTION_V2.md
+- `/archive/v1/` — original V1 planning and rules
+- `/archive/future/` — deferred future direction
 
 ---
 
 ## CRITICAL RULES (NON-NEGOTIABLE)
 
-- MIGRATION_PLAN_V1.md is LOCKED
-- NEVER change data model, field names, or structure
-- NEVER introduce new fields
-- NEVER introduce new features unless explicitly instructed
+- `V2_PRINCIPLES.md` and `V2_DOMAIN_MODEL.md` are the locked specification
+- NEVER change data model, field names, or structure without explicit approval
+- NEVER introduce new fields, concepts, or features unless explicitly instructed
 
 - DO NOT assume missing logic
-- DO NOT “improve” anything outside task scope
+- DO NOT "improve" anything outside task scope
 - DO NOT refactor unrelated code
 
 If anything is unclear:
@@ -45,50 +42,26 @@ If anything is unclear:
 You are executing a predefined plan.
 
 - Work ONLY on the current session
-- Follow EXECUTION_ROADMAP_V1.md exactly
+- Follow `V2_EXECUTION_ROADMAP.md` exactly
 - Do NOT skip steps
 - Do NOT anticipate future sessions
 
 ---
 
-## SCOPE CONTROL
-
-You MUST NOT touch:
-
-- PWA logic
-- Supabase
-- Weather integration
-- iCal integration
-
-Unless explicitly instructed.
-
----
-
-## DOMAIN RULES (CRITICAL)
+## DOMAIN PRINCIPLES (CRITICAL)
 
 - The system is deterministic
 - NO heuristics allowed
 - NO assumptions allowed
 
 - Activities are the ONLY source of truth
-- Plans are NOT editable
+- Plans follow catalog + instance + overlay model
 - Plan state is ALWAYS derived (never stored)
+- Weather is advisory, never blocking
+- Monitoring never infers missing data
+- No AI-authored action recommendations
 
 If logic cannot be derived:
-→ STOP and ask
-
----
-
-## DOMAIN BOUNDARY
-
-- DOMAIN_RULES_V1.md defines current behavior
-- DOMAIN_DIRECTION_V2.md is FUTURE ONLY
-
-NEVER:
-- implement V2 ideas
-- anticipate V2 logic
-
-If unsure:
 → STOP and ask
 
 ---
@@ -111,13 +84,6 @@ When coding:
 
 ---
 
-## VALIDATION RULE
-
-- All validation must follow VALIDATION_CONTEXT.md
-- Do NOT invent validation rules
-
----
-
 ## COMMIT RULE (STRICT)
 
 - NEVER commit or push unless explicitly told:
@@ -131,7 +97,7 @@ When coding:
 
 ## POLISH RULE
 
-- POLISH_BACKLOG.md is for non-critical improvements
+- `POLISH_BACKLOG.md` is for non-critical improvements
 - NEVER implement polish without explicit instruction
 - NEVER create sessions for cosmetic fixes
 
@@ -151,6 +117,15 @@ Rules:
   - git log --oneline -1
 - If current branch is NOT `main`, STOP and ask before proceeding
 - If repository state conflicts with session instructions, repository state + user instruction wins
+
+---
+
+## ARCHIVE POLICY
+
+- `/archive/v1/` and `/archive/future/` are historical
+- DO NOT modify files under `/archive/`
+- DO NOT load `/archive/` content as active spec
+- If a V1 document is needed for reference, cite it as historical context only
 
 ---
 
