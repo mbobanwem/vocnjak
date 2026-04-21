@@ -65,3 +65,29 @@ Single approver: project owner. No committee, no parallel review.
 - `V2_ORCHARD_PLAN_TEMPLATES.md` — action templates
 
 V1 and deferred future-direction docs are preserved in `/archive/` and are **not load-bearing** for V2 execution.
+
+---
+
+## Interaction model constraints (critical)
+
+The system MUST NOT behave as a task manager.
+
+Forbidden:
+
+- ❌ daily task lists
+- ❌ "today you should do X"
+- ❌ forced action sequences
+- ❌ push-based decision making
+- ❌ AI-generated recommendations
+- ❌ implicit conclusions from missing data
+
+Allowed:
+
+- ✅ window-based visibility (open / upcoming / missed)
+- ✅ monitoring-driven actions (explicit triggers only)
+- ✅ user decides when to act within a valid window
+- ✅ absence of action is valid unless window closes
+
+Principle:
+
+→ The app informs, it does NOT instruct.
