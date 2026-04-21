@@ -429,8 +429,8 @@ Matching an activity record (§0.4) to a window occurrence is a deterministic re
 
 - An activity record `A` is considered for matching against the set of occurrences that share `A.plant_id`, `A.action_type`, and `A.cycle_id` (the identity condition established in §0.4).
 - Within that set, `A` is matched to the occurrence `O` such that:
-  - `A.observed_at >= O.effective_open`, and
-  - `A.observed_at < next(O).effective_open`,
+  - `A.occurred_on >= O.effective_open`, and
+  - `A.occurred_on < next(O).effective_open`,
   where `next(O)` is the occurrence immediately following `O` in ascending `cycle_year` order within the same `(plant_id, action_type, cycle_id)` identity.
 - If no `next(O)` exists (i.e. `O` is the latest occurrence yet produced for that identity), the upper bound is unbounded in the forward direction.
 - The interval is **half-open on the right**. This is required so that the window-state transition `open` → `missed` → `done_late` (§0.4) remains reachable: an activity observed after `O.effective_close` but before `next(O).effective_open` is matched to `O`, producing `done_late` for that occurrence.
