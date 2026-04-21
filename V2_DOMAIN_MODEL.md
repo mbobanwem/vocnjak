@@ -17,7 +17,7 @@
 4. **Plan overlay** — user edits attached to a plan instance.
    - `overlay_id`, `plan_instance_id`
 5. **Activity record** — immutable captured real-world event.
-   - `activity_id`, `plant_id`, `action_type`, `status` ∈ {done, skipped}, `occurred_on`, `recorded_at`, `notes?`, `provenance`
+   - `activity_id`, `plant_id`, `action_type`, `cycle_id?`, `status` ∈ {done, skipped}, `occurred_on`, `recorded_at`, `notes?`, `provenance`
 6. **Observation** — immutable structured observation event.
    - `observation_id`, `plant_id`, `kind` ∈ {trap, scouting, stage_obs, symptom}, `observed_on`, `recorded_at`, `payload` (schema per `kind` deferred to S2.4), `provenance`
 
@@ -46,7 +46,7 @@ Computed each time the screen is opened, from: today's date, the plant's pinned 
 
 A skip recorded after window close is `skipped` — no `skipped_late`.
 
-A "matching activity" is an activity record for the same `plant_id` and the same `action_type` as the window.
+A "matching activity" is an activity record for the same `plant_id`, the same `action_type`, and the same `cycle_id` as the window, where `cycle_id = null` matches `cycle_id = null`.
 
 ### 0.5 Dependency-status enum (final, separate axis)
 
@@ -97,6 +97,7 @@ Window state and dependency status are computed independently. A window can be `
   where `prior_activity` is the matching `done` or `done_late` activity for the prior action.
 - If no such prior activity has been recorded, `dependency_status = unsatisfied`. The dependent window's intrinsic state is still computed normally; the dependency is a separate axis the user sees alongside it.
 - Example: white oil planned Feb 1–15, recorded as done on Feb 18, copper offset 14 days → copper's effective opening is Mar 4 (or the catalog opening for copper, whichever is later).
+- When the prior action has multiple cycles in the same catalog version, `depends_on` MUST name the specific `prior_cycle_id` it depends on. When the prior action has a single cycle, `prior_cycle_id` MUST be omitted.
 - Fallback rules when the prior window is `missed` or `skipped` are deferred to S2.6.
 
 #### 0.9.3 Monitoring vs symptom
