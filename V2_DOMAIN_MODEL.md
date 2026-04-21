@@ -121,7 +121,6 @@ Window state and dependency status are computed independently. A window can be `
 
 | Item                                                              | Owner |
 |-------------------------------------------------------------------|-------|
-| Catalog template field schema                                     | S2.2  |
 | Overlay reconciliation across catalog upgrades                    | S2.7  |
 | Launch species list                                               | S2.8  |
 
