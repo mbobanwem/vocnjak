@@ -1,6 +1,6 @@
 # V2_DOMAIN_MODEL
 
-**Status:** Sections 0–3 locked. Sections 4–9 remain placeholders for S2.5–S2.8.
+**Status:** Sections 0–5 locked. Sections 6–9 remain placeholders for S2.6–S2.8.
 
 ---
 
@@ -122,7 +122,6 @@ Window state and dependency status are computed independently. A window can be `
 | Item                                                              | Owner |
 |-------------------------------------------------------------------|-------|
 | Catalog template field schema                                     | S2.2  |
-| `closing-soon` numeric threshold                                  | S2.5  |
 | End-of-season rules per species                                   | S2.6  |
 | Dependency fallback when prior window is `missed` or `skipped`    | S2.6  |
 | Overlay reconciliation across catalog upgrades                    | S2.7  |
@@ -347,9 +346,58 @@ No other fields. The date the stage was reached is `observation.observed_on` (S2
 
 *Locked in Section 0.4 (S2.1).*
 
-## 5. `closing-soon` threshold
+## 5. `closing-soon` threshold — locked (S2.5)
 
-*Placeholder — owned by S2.5.*
+### 5.1 Domain constant
+
+The system declares a single domain-level constant:
+
+| Field                    | Type       | Value                        | Semantics                                                                                  |
+|--------------------------|------------|------------------------------|--------------------------------------------------------------------------------------------|
+| `closing_soon_threshold` | `duration` | `{ value: 3, unit: "days" }` | The number of days before `effective_close` during which an open window is `closing-soon`. |
+
+Let `T` denote `closing_soon_threshold.value` measured in days. This constant is global: it is NOT a field on `Catalog template` and NOT a field on `Action-window definition`. It applies identically to every window in every catalog version.
+
+### 5.2 Derivation rule
+
+`closing-soon` is a sub-state of the `open` branch of §0.4. It is computed, never stored (§0.3, §0.9.4).
+
+Let `today` = current date.
+Let `effective_open`, `effective_close` = per §1.3, after any `calendar_bound` clipping.
+Let "matching activity" = per §0.4 (same `plant_id`, same `action_type`, same `cycle_id`; null matches null).
+
+Provided no matching activity with `status=done` or `status=skipped` exists:
+
+- `today < effective_open` → `upcoming`
+- `effective_open ≤ today ≤ effective_close − T` → `open`
+- `effective_close − T < today ≤ effective_close` → `closing-soon`
+- `today > effective_close` → `missed`
+
+The `done`, `done_late`, and `skipped` branches of §0.4 are unchanged by S2.5.
+
+### 5.3 Determinism across anchor kinds
+
+The rule consumes `effective_close` only. `effective_close` is produced by §1.3 for both calendar and phenology anchors, and already reflects any `calendar_bound` clipping. S2.5 therefore adds no anchor-specific branching.
+
+For phenology-anchored windows where the referenced stage has not yet been observed (no `Observation` with `kind = stage_obs` resolving the anchor's `stage_code`), `effective_close` is undefined; the window is `upcoming` and cannot yet be `closing-soon`. This is consistent with §2.4 (no stage-reached moment may be inferred).
+
+### 5.4 Short-window behavior
+
+If `effective_close − effective_open < T`, the window enters `closing-soon` the moment it opens. This is intentional: a window shorter than `T` is, by definition, urgent throughout its entire duration. No special-case rule is introduced.
+
+### 5.5 Orthogonality with dependency status
+
+Window state and dependency status are independent axes (§0.5). A window MAY be `closing-soon` and `dependency_status = unsatisfied` simultaneously. S2.5 does not suppress, downgrade, or otherwise couple the two axes.
+
+### 5.6 Validation rule
+
+- `closing_soon_threshold.value` MUST be an integer ≥ 1. A value of 0 would make the `closing-soon` state unreachable.
+
+Negative values and non-day units are already excluded by the `duration` primitive (§1.5).
+
+### 5.7 Per-window override — deferred
+
+S2.5 does not introduce a per-window override of the threshold. A per-window override field MAY be added additively in a later session if real usage produces evidence that a single global value is insufficient. Such an addition would be non-breaking: any window without an override would continue to inherit the global constant, analogous to the provenance fallback in §1.4 (deterministic fallback, not inference).
 
 ## 6. End-of-season rules (per species)
 
