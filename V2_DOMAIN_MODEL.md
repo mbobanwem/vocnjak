@@ -1,6 +1,6 @@
 # V2_DOMAIN_MODEL
 
-**Status:** Sections 0–1 locked. Sections 2–9 remain placeholders for S2.3–S2.8.
+**Status:** Sections 0–2 locked. Sections 3–9 remain placeholders for S2.4–S2.8.
 
 ---
 
@@ -122,7 +122,6 @@ Window state and dependency status are computed independently. A window can be `
 | Item                                                              | Owner |
 |-------------------------------------------------------------------|-------|
 | Catalog template field schema                                     | S2.2  |
-| Phenology stage vocabulary per launch species                     | S2.3  |
 | `Observation.payload` schema per `kind`                           | S2.4  |
 | `closing-soon` numeric threshold                                  | S2.5  |
 | End-of-season rules per species                                   | S2.6  |
@@ -146,6 +145,12 @@ S2.2 adds:
 | `evidence_source`           | string (citation / reference)  | required    | Source of agronomic evidence for this version.                              |
 | `last_reviewed_on`          | ISO date                       | required    | Date this version was last reviewed.                                        |
 | `action_window_definitions` | non-empty list                 | required    | The child collection. Must contain at least one Action-window definition.   |
+
+S2.3 adds:
+
+| Field              | Type | Cardinality | Semantics                                                                                                                                                                   |
+|--------------------|------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `stage_vocabulary` | list | optional    | List of stage entries (§2.2). REQUIRED if any action-window definition has `anchor.kind = "phenology"`. MAY be present without any phenology anchor. Non-empty when present. |
 
 ### 1.2 Action-window definition — MUST-HAVE fields
 
@@ -194,11 +199,14 @@ Given the same catalog, and — for phenology anchors only — the same `Observa
 - `action_window_definitions` is empty.
 - Two Action-window definitions in the catalog share the same `(action_type, cycle_id)` pair (null equals null).
 - `catalog_version` is not unique within a `(species, author)` line.
+- `stage_vocabulary` is absent AND at least one action-window definition has `anchor.kind = "phenology"`.
+- `stage_vocabulary` is present but empty.
 
 #### 1.6.2 Action-window definition — invalid if
 
 - Any required field missing.
 - `anchor.kind = "phenology"` and `stage_code` absent or empty.
+- `anchor.kind = "phenology"` and `anchor.stage_code` is not equal to the `stage_code` of any entry in this catalog's `stage_vocabulary`.
 - `anchor.kind = "calendar"` and `month_day_open` or `month_day_close` absent.
 - `anchor.kind = "calendar"` and `month_day_close < month_day_open` (cross-year windows deferred to S2.6).
 - `anchor.kind = "calendar"` and `calendar_bound` is present (redundant).
@@ -218,9 +226,43 @@ Given the same catalog, and — for phenology anchors only — the same `Observa
 - `calendar_bound` is an absolute-date guard only; it MUST NOT be used to express relative tolerance (use `tolerance` for that).
 - No implicit defaults beyond the provenance fallback rule in §1.4. Missing required fields are validation errors.
 
-## 2. Phenology stage vocabulary (per launch species)
+## 2. Phenology stage vocabulary — locked (S2.3)
 
-*Placeholder — owned by S2.3.*
+### 2.1 Scope model
+
+- Phenology stage vocabulary is **per-catalog**. There is no shared axis, no principal-stage enum, and no cross-catalog classification.
+- A **stage entry** is a catalog-declared identifier for a concrete observable milestone in the plant's life cycle.
+- Each catalog version declares its own list of stage entries as an optional field on the catalog template: `stage_vocabulary` (§1.1).
+- `stage_vocabulary` is REQUIRED if at least one action-window definition in the catalog has `anchor.kind = "phenology"`.
+- `stage_vocabulary` MAY be present even when no action-window definition has `anchor.kind = "phenology"` (e.g., a prepared-in-advance registry or a residual-after-revision registry).
+- When present, `stage_vocabulary` MUST be non-empty.
+
+### 2.2 Stage entry — MUST-HAVE fields
+
+| Field        | Type              | Cardinality | Semantics                                                                   |
+|--------------|-------------------|-------------|-----------------------------------------------------------------------------|
+| `stage_code` | string identifier | required    | Opaque, stable, non-empty. Unique within this catalog's `stage_vocabulary`. |
+
+No other fields are defined in S2.3. Descriptions, orderings, per-stage provenance, principal-stage tags, transitions, and durations are explicitly out of scope.
+
+### 2.3 Stability rules
+
+- `stage_code` is opaque; no parsing, splitting, or label-inference is permitted by any consumer.
+- Stage vocabulary is declared per catalog version and co-versioned with `catalog_version`. Two catalog versions that share a `stage_code` string do not, by that fact alone, share meaning. Overlay reconciliation across upgrades is deferred to S2.7.
+
+### 2.4 Observability rule
+
+- Every declared `stage_code` MUST refer to a visually observable phenomenon accessible to a hobby grower without instruments. Enforcement is catalog audit (S3–S5).
+- The system MUST NOT derive a stage-reached moment for a plant from any input other than an `Observation` with `kind = stage_obs` for that plant. No temperature model, chill model, growing-degree-day model, weather input, or heuristic may author a stage-reached moment.
+
+### 2.5 Validation rules (stage-vocabulary internal)
+
+A catalog is invalid if:
+
+- Two entries in `stage_vocabulary` share the same `stage_code`.
+- Any entry in `stage_vocabulary` has an empty `stage_code`.
+
+Rules that cross into §1.1 catalog fields or §1.2 window fields live in §1.6.
 
 ## 3. Monitoring schema
 
