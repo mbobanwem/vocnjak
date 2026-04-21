@@ -1,6 +1,6 @@
 # V2_DOMAIN_MODEL
 
-**Status:** Sections 0–5 locked. Sections 6–9 remain placeholders for S2.6–S2.8.
+**Status:** Sections 0–6 locked. Sections 7–9 remain placeholders for S2.7–S2.8.
 
 ---
 
@@ -122,8 +122,6 @@ Window state and dependency status are computed independently. A window can be `
 | Item                                                              | Owner |
 |-------------------------------------------------------------------|-------|
 | Catalog template field schema                                     | S2.2  |
-| End-of-season rules per species                                   | S2.6  |
-| Dependency fallback when prior window is `missed` or `skipped`    | S2.6  |
 | Overlay reconciliation across catalog upgrades                    | S2.7  |
 | Launch species list                                               | S2.8  |
 
@@ -399,9 +397,86 @@ Negative values and non-day units are already excluded by the `duration` primiti
 
 S2.5 does not introduce a per-window override of the threshold. A per-window override field MAY be added additively in a later session if real usage produces evidence that a single global value is insufficient. Such an addition would be non-breaking: any window without an override would continue to inherit the global constant, analogous to the provenance fallback in §1.4 (deterministic fallback, not inference).
 
-## 6. End-of-season rules (per species)
+## 6. Season, window occurrences, and terminal-prior dependency — locked (S2.6)
 
-*Placeholder — owned by S2.6.*
+### 6.1 Season
+
+A **season** is the annual repetition of a catalog-defined action window. It is a derived notion, not a stored entity and not a per-species field.
+
+- A season is produced whenever a plan instance is active for a given `plant_id` and the catalog template for that species defines at least one action window.
+- The boundaries of a season are delimited by the action windows themselves: each window's `anchor`, `tolerance`, and (where applicable) `calendar_bound` together determine the last calendar date on which that window can remain actionable within a given year.
+- There is no per-species `season_end` field. There is no per-species end-of-season rule. The derived per-occurrence model in §6.2 fully subsumes what such a field would have expressed: once a given year's window has closed (state = `missed`, `done`, `done_late`, or `skipped` per §0.4), that year's instance of that window contributes nothing further to planning.
+- Species whose action windows span the dormancy transition (e.g. late-autumn pruning followed by spring pruning) are modeled as two distinct action windows in the catalog, each with its own anchor. The catalog is the authoritative source of which windows exist and when; §6 does not introduce a second authority.
+
+### 6.2 Window occurrence
+
+A **window occurrence** is the derived per-year instance of a catalog-defined action window for a specific plan instance.
+
+- Occurrences are derived; they are never stored.
+- Each occurrence is uniquely identified by: `plant_id`, `action_type`, `cycle_id` (catalog-authored; see §2), and `cycle_year` (integer year, derived).
+- `cycle_year` is the calendar year to which the occurrence's effective open date belongs, computed from the occurrence's anchor resolution:
+  - For calendar anchors, `cycle_year` is the year containing `month_day_open`.
+  - For phenology anchors, `cycle_year` is the year of the `stage_obs` event that resolves the anchor (§3).
+- Each occurrence carries:
+  - `effective_open` — the resolved open date for this occurrence, computed per §1 from anchor + `tolerance` (and `calendar_bound` where applicable).
+  - `effective_close` — the resolved close date for this occurrence.
+- At most one occurrence exists per `(plant_id, action_type, cycle_id, cycle_year)` tuple.
+- Phenology-anchored windows produce no occurrence for a given year until the corresponding `stage_obs` is recorded. This is the deterministic consequence of §3 (monitoring never infers missing data), not a new rule.
+
+### 6.3 Activity-to-occurrence matching
+
+Matching an activity record (§0.4) to a window occurrence is a deterministic refinement of §0.4's identity condition.
+
+- An activity record `A` is considered for matching against the set of occurrences that share `A.plant_id`, `A.action_type`, and `A.cycle_id` (the identity condition established in §0.4).
+- Within that set, `A` is matched to the occurrence `O` such that:
+  - `A.observed_at >= O.effective_open`, and
+  - `A.observed_at < next(O).effective_open`,
+  where `next(O)` is the occurrence immediately following `O` in ascending `cycle_year` order within the same `(plant_id, action_type, cycle_id)` identity.
+- If no `next(O)` exists (i.e. `O` is the latest occurrence yet produced for that identity), the upper bound is unbounded in the forward direction.
+- The interval is **half-open on the right**. This is required so that the window-state transition `open` → `missed` → `done_late` (§0.4) remains reachable: an activity observed after `O.effective_close` but before `next(O).effective_open` is matched to `O`, producing `done_late` for that occurrence.
+- Matching is deterministic: the same catalog, the same `stage_obs` set, and the same activity set produce the same mapping on every evaluation.
+- For phenology-anchored windows where the current year's occurrence has not yet been produced (no `stage_obs`), no candidate `O` exists in that year. Activities observed before any occurrence exists cannot match and remain unmatched until an occurrence is produced.
+
+### 6.4 Cross-year calendar windows
+
+Cross-year calendar windows — specifically, calendar-anchored windows for which `month_day_close < month_day_open` within the same calendar year — remain rejected as declared in §1.6.2.
+
+- Rationale: calendar anchors are an explicit fallback for actions whose correct timing cannot be tied to an observable phenology stage. Allowing the close date to wrap past December 31 would introduce a second kind of year discriminator in the catalog (distinct from `cycle_id`), and would force the occurrence model in §6.2 to define which calendar year "owns" a wrap-around window. Both consequences widen the catalog schema and the derivation rules for no gain that phenology anchoring cannot already deliver.
+- Intended modeling path for dormancy-period and other year-crossing actions: use a phenology anchor. Dormancy-entry and dormancy-exit stages are first-class in the phenology vocabulary (§3) and provide deterministic per-year anchoring.
+- **Audit escape hatch:** the S3–S5 catalog audit is authorized to surface, for review in a later session, any concrete real-world action that phenology anchoring cannot honestly represent. If such a case is documented, a future session with authority over §1 may evaluate whether an additive extension is warranted. No such extension is permitted by S2.6 itself, and nothing in §6 presumes one.
+
+### 6.5 Terminal-prior dependency fallback
+
+When a window `W` declares a dependency on a prior window `P` (per §0.5 and §0.9), the dependency status is computed as follows:
+
+- If `P`'s occurrence in the same `cycle_year` as `W`'s occurrence reaches a **terminal state** of `missed` or `skipped` (§0.4), then for `W`'s occurrence in that `cycle_year`:
+  - `dependency_status = unsatisfied` (§0.5), terminally, for that `cycle_year`.
+  - `W.effective_open = W.own_anchor_open` — i.e. `W`'s open date remains its own anchor-derived date and is not shifted by the prior window's fate.
+- Terminal-prior propagation does not occur: a downstream window whose prior is `unsatisfied` because of §6.5 does not itself inherit `unsatisfied` unless its own prior is independently terminal. Each dependency edge is evaluated independently per occurrence.
+- Terminal-prior scoping is strictly **same-year**: `P`'s occurrence in year N does not influence `W`'s occurrence in year N+1 or any later year. Each `cycle_year` is evaluated independently.
+- No new enum values are introduced. `dependency_status` remains `satisfied` | `unsatisfied` | `not_applicable` per §0.5.
+- Axis orthogonality is preserved: window state (§0.4) is never a function of prior-window state, and dependency status (§0.5) is never a function of the dependent window's own state. §6.5 does not alter this separation; it only specifies which `dependency_status` value applies when the prior is terminal.
+
+### 6.6 Explicit non-scope
+
+S2.6 does not introduce, and §6 does not govern, any of the following:
+
+- **Criticality or severity of missed windows.** `missed` is a single terminal state per §0.4. There is no tier, no ranking, and no severity-weighted downstream effect.
+- **Monitoring prerequisites for actions.** Whether a given action requires a preceding observation is a catalog concern (§2) and a monitoring concern (§3); §6 does not re-express or extend those rules.
+- **Consequences of recorded symptoms or stress observations.** Observations are recorded per §4; they do not drive window state or dependency status. §6 does not introduce any symptom-consequence mechanism.
+- **Per-species `season_end` field or rule.** Explicitly rejected — see §6.1. The derived occurrence model in §6.2 is the sole mechanism by which "end of season" is expressed, and it is expressed per-occurrence, not per-species.
+- **Plan-instance lifetime, closure, retirement, or archival.** Plan instances are governed by §0.7; §6 derives from active plan instances but does not define their lifecycle.
+
+### 6.7 Relationship to §0.4 matching rule
+
+§6.3 refines the matching of activity records to windows along the temporal dimension. §0.4's matching rule, as locked, establishes the identity condition (same `plant_id`, same `action_type`, same `cycle_id`). §6.3 does not alter that identity condition; it adds the per-year temporal refinement required to make matching deterministic once multiple occurrences exist.
+
+- **Forward obligation.** A later session with authority to revisit §0.4 should either (a) insert a forward reference from §0.4 to §6.3, or (b) unify both halves into a single consolidated matching rule. Neither is required to make §6 consistent; both are documentation improvements that preserve the existing semantics.
+- **Documentation concern, not a model inconsistency.** The full matching rule is fully determined by reading both sections:
+  - §0.4 provides the identity condition.
+  - §6.3 provides the temporal refinement.
+  - Together they form the complete matching rule.
+  - §6.3 is consistent with §0.4 but does not amend it.
 
 ## 7. Overlay semantics
 
