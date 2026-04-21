@@ -1,6 +1,6 @@
 # V2_DOMAIN_MODEL
 
-**Status:** Section 0 locked in S2.1. Sections 1–9 remain placeholders for S2.2–S2.8.
+**Status:** Sections 0–1 locked. Sections 2–9 remain placeholders for S2.3–S2.8.
 
 ---
 
@@ -132,9 +132,91 @@ Window state and dependency status are computed independently. A window can be `
 
 ---
 
-## 1. Catalog template schema (MUST-HAVE fields)
+## 1. Catalog template schema — locked (S2.2)
 
-*Placeholder — owned by S2.2.*
+### 1.1 Catalog template — MUST-HAVE fields
+
+S2.1 identity: `catalog_id`, `species`, `catalog_version`.
+
+S2.2 adds:
+
+| Field                       | Type                           | Cardinality | Semantics                                                                   |
+|-----------------------------|--------------------------------|-------------|-----------------------------------------------------------------------------|
+| `author`                    | string identifier              | required    | Curator of this catalog version. Provenance per Principle 6.                |
+| `evidence_source`           | string (citation / reference)  | required    | Source of agronomic evidence for this version.                              |
+| `last_reviewed_on`          | ISO date                       | required    | Date this version was last reviewed.                                        |
+| `action_window_definitions` | non-empty list                 | required    | The child collection. Must contain at least one Action-window definition.   |
+
+### 1.2 Action-window definition — MUST-HAVE fields
+
+S2.1 identity: `window_def_id`, `catalog_id`, `action_type`, `anchor`, `tolerance`, `depends_on?`.
+
+S2.2 specifies shape and adds fields:
+
+| Field                 | Type / shape                                                                                                          | Cardinality | Semantics                                                                                                             |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------------------------------------------------|
+| `action_type`         | string identifier                                                                                                     | required    | Stable identifier activity records match against.                                                                     |
+| `cycle_id`            | string identifier                                                                                                     | optional    | Discriminator when the same `action_type` recurs in one catalog. Null means single-cycle.                             |
+| `anchor`              | `{ kind: "phenology", stage_code: string }` OR `{ kind: "calendar", month_day_open: MD, month_day_close: MD }`        | required    | Agronomic origin. Phenology is primary (Principle 2); calendar is fallback.                                           |
+| `calendar_bound`      | `{ not_before?: MD, not_after?: MD }`                                                                                 | optional    | Absolute-date guard. Only meaningful when `anchor.kind = "phenology"`. Forbidden when `anchor.kind = "calendar"`.     |
+| `tolerance`           | `{ before: duration, after: duration }`                                                                               | required    | Relative-duration sizing around the anchor. Distinct axis from `calendar_bound`.                                      |
+| `depends_on`          | `{ prior_action_type: string, prior_cycle_id?: string, offset: duration }`                                            | optional    | Single prior-action reference per §0.9.2. `prior_cycle_id` required iff prior has multiple cycles.                    |
+| `author`              | string identifier                                                                                                     | optional    | Per-window provenance override. When absent, inherits catalog's `author` — deterministic fallback, not inference.     |
+| `evidence_source`     | string                                                                                                                | optional    | Per-window provenance override. When absent, inherits catalog's `evidence_source`.                                    |
+| `last_reviewed_on`    | ISO date                                                                                                              | optional    | Per-window provenance override. When absent, inherits catalog's `last_reviewed_on`.                                   |
+
+### 1.3 Effective window (locked domain rule)
+
+The effective window is the agronomic period during which the action may be performed. It is always determined by the catalog and, when the anchor is phenological, by the plant's `Observation` records with `kind = stage_obs`. It is never determined by a hidden rule, a live decision, or any inference.
+
+- When a window is anchored to a phenology stage, it opens a defined period before the referenced stage is reached and closes a defined period after, where "period before" and "period after" are given by the window's `tolerance`. The moment the referenced stage is reached for the plant is drawn from `Observation` records with `kind = stage_obs`; the internal structure of those records is owned by S2.4 and is not assumed here. If the catalog also declares an absolute calendar guard (`calendar_bound`), the effective window never begins earlier than the guard's `not_before` nor ends later than the guard's `not_after`.
+- When a window is anchored to calendar dates, it opens the declared `month_day_open` minus `tolerance.before`, and closes the declared `month_day_close` plus `tolerance.after`. A calendar anchor does not admit an additional `calendar_bound`; the anchor itself already expresses absolute dates. Calendar-anchored windows do not consult any `Observation` record.
+
+Given the same catalog, and — for phenology anchors only — the same `Observation` records with `kind = stage_obs` for the plant, the effective window is always the same. Determinism is a domain property here, not an implementation one.
+
+### 1.4 Provenance fallback rule
+
+- Catalog provenance fields are required and always present.
+- Window provenance fields are optional. When absent, the window's effective provenance equals the catalog's. This is a deterministic fallback — identical in nature to the `effective_open = max(...)` formula in §0.9.2. It is not inference.
+
+### 1.5 Primitives
+
+- **string identifier** — opaque, stable, non-empty.
+- **ISO date** — `YYYY-MM-DD`.
+- **duration** — `{ value: integer ≥ 0, unit: "days" }`. Other units out of scope.
+- **MD (month-day)** — `{ month: 1..12, day: 1..31 }`. Valid per Gregorian month length.
+
+### 1.6 Validation rules
+
+#### 1.6.1 Catalog template — invalid if
+
+- Any required field missing.
+- `action_window_definitions` is empty.
+- Two Action-window definitions in the catalog share the same `(action_type, cycle_id)` pair (null equals null).
+- `catalog_version` is not unique within a `(species, author)` line.
+
+#### 1.6.2 Action-window definition — invalid if
+
+- Any required field missing.
+- `anchor.kind = "phenology"` and `stage_code` absent or empty.
+- `anchor.kind = "calendar"` and `month_day_open` or `month_day_close` absent.
+- `anchor.kind = "calendar"` and `month_day_close < month_day_open` (cross-year windows deferred to S2.6).
+- `anchor.kind = "calendar"` and `calendar_bound` is present (redundant).
+- `calendar_bound` is present and both `not_before` and `not_after` are absent.
+- `tolerance.before.value` or `tolerance.after.value` is negative.
+- `depends_on.prior_action_type` does not refer to another `action_type` declared in the same catalog version.
+- `depends_on.prior_action_type == this.action_type` AND `depends_on.prior_cycle_id == this.cycle_id` (self-dependency).
+- `depends_on.prior_cycle_id` is present while the named prior `action_type` has exactly one cycle in the catalog (spurious).
+- `depends_on.prior_cycle_id` is absent while the named prior `action_type` has more than one cycle in the catalog (ambiguous).
+- `depends_on.offset.value` is negative.
+- A dependency cycle exists across all Action-window definitions in the catalog (graph must be a DAG).
+- `cycle_id` is an empty string (use null to indicate single-cycle).
+
+#### 1.6.3 Forbidden ambiguity
+
+- `anchor.kind` must be exactly one of `phenology` or `calendar`.
+- `calendar_bound` is an absolute-date guard only; it MUST NOT be used to express relative tolerance (use `tolerance` for that).
+- No implicit defaults beyond the provenance fallback rule in §1.4. Missing required fields are validation errors.
 
 ## 2. Phenology stage vocabulary (per launch species)
 
