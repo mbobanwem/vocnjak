@@ -266,3 +266,62 @@ Purpose:
 - allow exact verification
 - prevent hidden logic errors
 - ensure deterministic review process
+
+---
+
+## DOCUMENT AUTHORITY CLARIFICATIONS (CRITICAL)
+
+The following rules override any ambiguity in the repository:
+
+### README.md
+
+- README.md is **NOT a source of truth**
+- README.md is **overview only**
+- README.md must NOT define logic, rules, or system behavior
+
+---
+
+### V2_FUTURE_ROADMAP.md
+
+- This document is **NON-BINDING**
+- It must NOT influence:
+  - domain model
+  - UX decisions
+  - architecture
+- It is an **idea container only**
+
+---
+
+### INPUT FILES
+
+- V2_PLANT_CATALOG.md
+- V2_ORCHARD_PLAN_TEMPLATES.md
+
+These are:
+
+- NOT validated
+- NOT authoritative
+- NOT allowed to define system logic
+
+They may only be used during S3–S5 (catalog audit).
+
+---
+
+### FINAL AUTHORITY RULE
+
+If conflict exists:
+
+1. V2_PRINCIPLES.md wins
+2. Then LOCKED CORE documents
+3. Then session-owned documents (only within their session)
+4. Everything else is NON-BINDING
+
+---
+
+### INTERPRETATION RULE
+
+If something is not explicitly defined in a LOCKED document:
+
+→ it is NOT defined
+→ DO NOT infer
+→ DO NOT assume
