@@ -1,0 +1,185 @@
+# VOCNJAK V2 — FUTURE ROADMAP (NON-BINDING)
+
+---
+
+## 1. Purpose
+
+This document is a **non-binding idea container**.
+
+It exists to:
+- preserve useful ideas from V1, archive, and past discussions
+- prevent loss of valuable thinking
+- avoid polluting active V2 specification
+
+---
+
+## 2. Strict rules
+
+This document is:
+
+- ❌ NOT a source of truth
+- ❌ NOT an implementation spec
+- ❌ NOT part of active sessions (S1–S11)
+- ❌ NOT allowed to define domain logic
+
+This document is:
+
+- ✅ a collection of future ideas
+- ✅ a reference for potential future sessions
+- ✅ a safe place for unresolved thinking
+
+---
+
+## 3. Promotion rule
+
+Nothing from this document may enter V2 core unless:
+
+1. A dedicated session is created (e.g. S12+)
+2. Scope is clearly defined
+3. Logic is rewritten into the correct V2 document
+4. Project owner signs off
+
+---
+
+## 4. Future directions (candidate areas)
+
+### 4.1 Advanced phenology
+
+- finer stage granularity (beyond initial 8 stages)
+- stage prediction improvements
+- dynamic adjustment based on observations
+- cross-species stage alignment
+
+---
+
+### 4.2 Monitoring expansion
+
+- richer trap tracking (history, trends)
+- multi-trap aggregation per plant
+- visual monitoring dashboards
+- improved scouting workflows
+
+---
+
+### 4.3 Advisory layer improvements
+
+- clearer explanation of "why this action"
+- structured reasoning display (not AI-generated decisions)
+- confidence indicators based on known inputs (NOT inference)
+- better separation of action vs explanation
+
+---
+
+### 4.4 Weather enhancements
+
+- multi-day weather trends
+- rainfall accumulation logic
+- frost risk visualization
+- improved cache handling UX
+
+---
+
+### 4.5 Regional adaptation
+
+- climate zone profiles
+- region-based timing offsets
+- user-adjustable timing shifts
+- localized catalog variants
+
+---
+
+### 4.6 Catalog evolution
+
+- more species support
+- expanded variety lists
+- disease susceptibility metadata
+- rootstock influence (if ever introduced)
+
+---
+
+### 4.7 UX extensions (non-core)
+
+- richer end-of-season summaries
+- multi-year orchard history views
+- seasonal comparisons
+- improved visualization of "on track vs missed"
+
+---
+
+### 4.8 Data & reporting
+
+- export options (PDF / summary)
+- season reports
+- simple analytics (counts, success rate)
+- orchard timeline view
+
+---
+
+### 4.9 Integrations (deferred)
+
+- calendar integrations (iCal improvements)
+- optional sync enhancements
+- backup/export automation
+
+---
+
+### 4.10 AI (strictly limited scope)
+
+Allowed:
+- text rephrasing
+- translation
+- explanation formatting
+
+NOT allowed:
+- generating recommendations
+- deciding actions
+- inferring missing data
+
+---
+
+## 5. Deferred questions
+
+These are open questions that require structured sessions before inclusion:
+
+- how far should phenology modeling go?
+- what level of monitoring detail is useful vs overkill?
+- how to present uncertainty without heuristics?
+- what is the right level of regional adaptation?
+- how to keep UX simple while system grows?
+
+---
+
+## 6. Explicit exclusions (for now)
+
+These are intentionally NOT part of V2 core:
+
+- daily task lists
+- push-based action forcing
+- automatic decision-making
+- AI-generated agronomic logic
+- complex farm management features
+- inventory / commerce features
+
+---
+
+## 7. Relationship to V2 system
+
+This document:
+
+- does NOT override `V2_PRINCIPLES.md`
+- does NOT influence `V2_DOMAIN_MODEL.md`
+- does NOT affect current sessions
+
+It is **completely external to execution**.
+
+---
+
+## FINAL NOTE
+
+This document protects the system from:
+
+- premature optimization
+- uncontrolled idea injection
+- scope creep
+
+All ideas here are **optional, deferred, and non-binding**.
