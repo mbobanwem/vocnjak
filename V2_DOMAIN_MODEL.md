@@ -1,6 +1,6 @@
 # V2_DOMAIN_MODEL
 
-**Status:** Sections 0–2 locked. Sections 3–9 remain placeholders for S2.4–S2.8.
+**Status:** Sections 0–3 locked. Sections 4–9 remain placeholders for S2.5–S2.8.
 
 ---
 
@@ -122,7 +122,6 @@ Window state and dependency status are computed independently. A window can be `
 | Item                                                              | Owner |
 |-------------------------------------------------------------------|-------|
 | Catalog template field schema                                     | S2.2  |
-| `Observation.payload` schema per `kind`                           | S2.4  |
 | `closing-soon` numeric threshold                                  | S2.5  |
 | End-of-season rules per species                                   | S2.6  |
 | Dependency fallback when prior window is `missed` or `skipped`    | S2.6  |
@@ -264,9 +263,85 @@ A catalog is invalid if:
 
 Rules that cross into §1.1 catalog fields or §1.2 window fields live in §1.6.
 
-## 3. Monitoring schema
+## 3. Observation payload schemas per kind — locked (S2.4)
 
-*Placeholder — owned by S2.4 (`Observation.payload` schema per `kind`).*
+### 3.1 Payload strategy
+
+- `Observation.payload` is a kind-specific shape, selected by `observation.kind` (S2.1 §0.1).
+- Payload does NOT include a `kind` field. The outer `observation.kind` is the sole discriminator.
+- Each kind has a complete, typed payload schema. No shared sub-header.
+- Unknown fields are validation errors; no free-shape extension.
+
+### 3.2 Payload per kind
+
+#### 3.2.1 `trap`
+
+| Field              | Type              | Cardinality | Semantics                                                                   |
+|--------------------|-------------------|-------------|-----------------------------------------------------------------------------|
+| `target_pest_code` | string identifier | required    | Pest the trap targets. Opaque in S2.4 (catalog registry deferred).          |
+| `count`            | integer ≥ 0       | required    | Number of captures found at this observation.                               |
+
+`trap_id` is intentionally not included in S2.4 — the Trap entity lifecycle is deferred. A trap reference field can be added additively when the Trap entity is locked.
+
+#### 3.2.2 `scouting`
+
+| Field         | Type                                                                                | Cardinality | Semantics                                                                    |
+|---------------|-------------------------------------------------------------------------------------|-------------|------------------------------------------------------------------------------|
+| `target_code` | string identifier                                                                   | required    | What is being scouted for. Opaque in S2.4.                                   |
+| `finding`     | `{ mode: "count", value: integer ≥ 0 }` OR `{ mode: "presence", value: boolean }`   | required    | Primary observation. Mode declared at capture; not inferred.                 |
+
+#### 3.2.3 `stage_obs`
+
+| Field        | Type              | Cardinality | Semantics                                                                                          |
+|--------------|-------------------|-------------|----------------------------------------------------------------------------------------------------|
+| `stage_code` | string identifier | required    | Phenological stage reached. MUST resolve in the plant's pinned catalog `stage_vocabulary` (S2.3).  |
+
+No other fields. The date the stage was reached is `observation.observed_on` (S2.1 §0.1), not a payload field.
+
+#### 3.2.4 `symptom`
+
+| Field           | Type                                                                          | Cardinality | Semantics                                                                           |
+|-----------------|-------------------------------------------------------------------------------|-------------|-------------------------------------------------------------------------------------|
+| `symptom_code`  | string identifier                                                             | required    | Catalog-declared symptom identifier. Opaque in S2.4.                                |
+| `affected_part` | enum ∈ {`leaf`, `fruit`, `flower`, `trunk`, `branch`, `root`, `whole_plant`}  | optional    | Plant part on which the symptom is observed. Categorical observation, not severity. |
+
+### 3.3 Cross-cutting rules
+
+- The payload shape MUST match `observation.kind`. A trap-shaped payload on a `stage_obs` record is invalid.
+- No payload MAY include fields not listed in its kind's schema (no free-shape extension; no `extra`, `notes`, `severity`, `action_needed`, `confidence`, etc.).
+- `payload` is REQUIRED on every Observation record. Its kind-specific required fields are all REQUIRED.
+
+### 3.4 Validation rules
+
+#### 3.4.1 `trap` payload — invalid if
+
+- `target_pest_code` absent or empty.
+- `count` absent.
+- `count` is not an integer ≥ 0.
+
+#### 3.4.2 `scouting` payload — invalid if
+
+- `target_code` absent or empty.
+- `finding` absent.
+- `finding.mode` not in `{ "count", "presence" }`.
+- `finding.mode = "count"` and `finding.value` absent or not an integer ≥ 0.
+- `finding.mode = "presence"` and `finding.value` not a boolean.
+
+#### 3.4.3 `stage_obs` payload — invalid if
+
+- `stage_code` absent or empty.
+- `stage_code` is not equal to the `stage_code` of any entry in the plant's pinned catalog `stage_vocabulary` (referential integrity into S2.3).
+
+#### 3.4.4 `symptom` payload — invalid if
+
+- `symptom_code` absent or empty.
+- `affected_part` is present and not in the closed enum listed in §3.2.4.
+
+#### 3.4.5 Cross-cutting — invalid if
+
+- `payload` absent.
+- `payload` shape does not match `observation.kind`.
+- `payload` contains a field not defined by its kind's schema.
 
 ## 4. Window-state enum
 
