@@ -8,12 +8,36 @@ Documents are not equal. Use the classes below exactly.
 
 ### LOCKED CORE
 
+- `PRODUCT_VISION.md`
 - `V2_PRINCIPLES.md`
 - later: `V2_DOMAIN_MODEL.md`, `V2_UX_MODEL.md`, and `V2_ARCHITECTURE.md` only after sign-off
 
 Rules:
 - LOCKED CORE is binding
 - if any conflict exists, LOCKED CORE wins
+- `PRODUCT_VISION.md` is mandatory reading before proposing any domain decision, architecture decision, UX decision, or implementation plan
+- before proposing any solution, the agent MUST include a short `Vision alignment check` section
+- this section must explicitly explain how the proposal follows `PRODUCT_VISION.md`
+- it must explicitly mention orchard-first behavior, calendar-first logic, the multi-plant action model, history preservation, and real-world constraints such as weather and sequence
+- it must highlight any tradeoffs or risks where the proposal may conflict with `PRODUCT_VISION.md`
+- it must include at least one concrete real-world example such as spraying copper, pruning, or trap monitoring, showing how the proposed solution behaves in practice
+- the example must demonstrate that the solution fits real orchard behavior and follows `PRODUCT_VISION.md`
+- the agent MUST avoid introducing additional entities, layers, or abstractions unless strictly required by `PRODUCT_VISION.md`
+- if a simpler solution satisfies the same real-world behavior, the more complex solution must be rejected
+- the alignment check MUST explicitly evaluate user effort, including steps, taps, and cognitive load
+- the proposal must demonstrate that it stays fast and usable in real orchard conditions, including one-handed use and minimal interaction
+- the agent MUST NOT introduce constraints that prevent flexible real-world execution, including partial actions, delayed actions, or multi-plant logging
+- if a proposal limits future UX flexibility, that limit must be explicitly identified and justified
+- the proposal must not prevent real-world actions that a user can physically perform
+- the system must reflect real execution, not enforce artificial constraints
+- if no concrete example is provided, the alignment check is incomplete
+- if the alignment check identifies a conflict with `PRODUCT_VISION.md`, the agent MUST NOT proceed with the proposal as-is
+- the agent must either revise the proposal to remove the conflict or explicitly stop and ask for clarification or approval
+- when multiple valid technical solutions exist, the agent MUST prefer the solution that is simpler, closer to real-world orchard behavior, and less likely to break the user mental model
+- if the `Vision alignment check` section is missing, the proposal is invalid
+- technical correctness alone is not enough; every proposal must also match product truth from `PRODUCT_VISION.md`
+- every proposal must explicitly preserve orchard-first thinking, calendar-first behavior, multi-plant real-world actions, history trust, and the product-purpose behind actions
+- if a proposal conflicts with `PRODUCT_VISION.md`, revise it before continuing
 
 ### IN PROGRESS
 
