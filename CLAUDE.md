@@ -37,6 +37,7 @@ Rules:
 - if the `Vision alignment check` section is missing, the proposal is invalid
 - technical correctness alone is not enough; every proposal must also match product truth from `PRODUCT_VISION.md`
 - every proposal must explicitly preserve orchard-first thinking, calendar-first behavior, multi-plant real-world actions, history trust, and the product-purpose behind actions
+- proposals must preserve weather-aware execution support: forecast may guide execution timing, but it must remain advisory, must not replace grower judgment, and must not create automatic domino shifting
 - if a proposal conflicts with `PRODUCT_VISION.md`, revise it before continuing
 
 ### IN PROGRESS

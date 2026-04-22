@@ -246,6 +246,24 @@ Later execution may reduce flexibility for the next actions, but it must not col
 
 The product must reflect real execution constraints, not an idealized calendar where every action happens on time.
 
+### Weather-aware execution support
+
+An action window may be open, but weather can still make execution unsafe, ineffective, or unrealistic on a given day.
+
+The app should help the user understand that today may not be suitable.
+
+It may show practical guidance such as rain is expected, conditions may be unsuitable, or the next likely execution opportunity may be several days away.
+
+Forecast is advisory support, not absolute truth.
+
+The app must not pretend to know the grower's exact micro-location or exact field conditions.
+
+The user must still verify local conditions and make the final decision.
+
+Weather support must help execution, not block the user.
+
+It must support delayed execution without automatically domino-shifting the rest of the seasonal plan.
+
 ---
 
 ## 8. Monitoring philosophy
