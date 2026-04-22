@@ -17,18 +17,18 @@
 4. **Plan overlay** — user edits attached to a plan instance.
    - `overlay_id`, `plan_instance_id`
 5. **Activity record** — immutable captured real-world event.
-   - `activity_id`, `plant_id`, `action_type`, `cycle_id?`, `status` ∈ {done, skipped}, `occurred_on`, `recorded_at`, `notes?`, `provenance`
+   - `activity_id`, `plant_id`, `window_def_id`, `catalog_version`, `action_type`, `activity_group_id?`, `status` ∈ {done, skipped}, `occurred_on`, `recorded_at`, `notes?`, `provenance`
 6. **Observation** — immutable structured observation event.
-   - `observation_id`, `plant_id`, `kind` ∈ {trap, scouting, stage_obs, symptom}, `observed_on`, `recorded_at`, `payload` (schema per `kind` deferred to S2.4), `provenance`
+   - `observation_id`, `plant_id`, `kind` ∈ {trap, scouting, stage_obs, symptom}, `observed_on`, `recorded_at`, `payload` (schema per `kind` deferred to S2.4), `observation_group_id?`, `provenance`
 
 ### 0.2 Action-window definition (child of Catalog template)
 
-- `window_def_id`, `catalog_id`, `action_type`, `anchor` (phenological, calendar fallback), `tolerance`, `depends_on?` (prior `action_type` + `offset`).
+- `window_def_id`, `catalog_id`, `action_type` (category), `label`, `anchor` (phenological, calendar fallback), `tolerance`, `open_condition?` (`requires_prior_activity` or `requires_observation`).
 
 ### 0.3 Derived (never stored)
 
 - **Window state** per (plant, action).
-- **Dependency status** per (plant, action) — independent axis.
+- **Gate state** per (plant, window) — independent axis.
 - **Plan state** — projection of all window states for a plant.
 - **"Am I on track"** — aggregate over plan states across plants.
 
@@ -46,26 +46,30 @@ Computed each time the screen is opened, from: today's date, the plant's pinned 
 
 A skip recorded after window close is `skipped` — no `skipped_late`.
 
-A "matching activity" is an activity record for the same `plant_id`, the same `action_type`, and the same `cycle_id` as the window, where `cycle_id = null` matches `cycle_id = null`.
+A "matching activity" is an activity record for the same `plant_id` and the same `window_def_id` as the window. Per-year temporal refinement across occurrences is defined in §6.3.
 
-### 0.5 Dependency-status enum (final, separate axis)
+### 0.5 Gate-state enum (final, separate axis)
 
-- `satisfied` — prerequisite activity recorded as `done` and offset elapsed
-- `unsatisfied` — prerequisite not yet recorded as `done`, or offset not yet elapsed
-- `not_applicable` — window has no `depends_on`
+Four user-facing gate states (Croatian). `open_condition` state is computed for display only (§0.9.2):
 
-Window state and dependency status are computed independently. A window can be `open` with `dependency_status = unsatisfied` simultaneously.
+- `čeka` — `open_condition` is present and not yet satisfied (waiting on the required prior activity or observation within its `within_days` bound).
+- `otvoreno` — `open_condition` is present and satisfied.
+- `propušteno` — the window's own occurrence for this `cycle_year` is terminally `missed` or `skipped` (§0.4) AND `open_condition` was never satisfied during the open interval (§6.5). Applies to both gate kinds.
+- `ne primjenjuje se` — no `open_condition` is declared on the window, so the gate axis does not apply.
+
+Window state and gate state are computed independently. A window can be `open` with `gate_state = čeka` simultaneously.
 
 ### 0.6 Activity MUST-HAVE fields
 
-- `plant_id`, `action_type`, `status`, `occurred_on`, `recorded_at`.
+- `plant_id`, `window_def_id`, `catalog_version`, `action_type`, `status`, `occurred_on`, `recorded_at`.
+- `window_def_id` + `catalog_version` are the matching identity (§0.4, §6.3). `action_type` is the required category tag for search and human-readable history; it is NOT identity.
 - Absence rule: no activity record ⇒ the action did not happen. No inference from calendar, weather, or context.
 
 ### 0.7 Overlay identity rule
 
 - An overlay belongs to exactly one plan instance.
 - An overlay stores user edits, not derived state.
-- Reconciliation behavior (per-window vs per-field, edit survival across catalog upgrades, `from → to` pairing) is deferred to S2.7.
+- Reconciliation behavior (per-window vs per-field, edit survival across catalog upgrades, `from → to` pairing) is defined in §7.
 
 ### 0.8 Versioning unit
 
@@ -86,19 +90,18 @@ Window state and dependency status are computed independently. A window can be `
   - outside window (after close) → `done_late`
   - skip → `skipped`
   - no activity, window closed → `missed`
-- The plan as a whole does not slide. Only **dependent** windows shift, per the dependency rule.
+- The plan as a whole does not slide. `open_condition` never moves a window's calendar dates; it affects only gate state (§0.5, §0.9.2).
 
-#### 0.9.2 Dependency rule
+#### 0.9.2 Open-condition rule
 
-- A window definition may declare that it depends on a prior action, with a required waiting period (`offset`) measured from when that prior action was actually performed.
-- In plain terms: the dependent window cannot meaningfully open before enough time has passed since the prior action was really done. The catalog's own opening date for the dependent window is treated as a floor; the real opening date is whichever comes later — the catalog date or "prior action's `occurred_on` plus the required offset".
-- Formal restatement, for unambiguous reference:
-  `effective_open = max(own_anchor_open, prior_activity.occurred_on + offset)`
-  where `prior_activity` is the matching `done` or `done_late` activity for the prior action.
-- If no such prior activity has been recorded, `dependency_status = unsatisfied`. The dependent window's intrinsic state is still computed normally; the dependency is a separate axis the user sees alongside it.
-- Example: white oil planned Feb 1–15, recorded as done on Feb 18, copper offset 14 days → copper's effective opening is Mar 4 (or the catalog opening for copper, whichever is later).
-- When the prior action has multiple cycles in the same catalog version, `depends_on` MUST name the specific `prior_cycle_id` it depends on. When the prior action has a single cycle, `prior_cycle_id` MUST be omitted.
-- Fallback rules when the prior window is `missed` or `skipped` are deferred to S2.6.
+- A window definition may declare an `open_condition` with exactly one of two closed kinds:
+  - `requires_prior_activity { prior_action_type, within_days }` — satisfied when any activity for the same plant with `action_type = prior_action_type`, `status = done`, and `occurred_on` within `within_days` of the evaluation date exists. The gate references the `action_type` category (§1.2), not a specific prior window; no cross-window identity is introduced.
+  - `requires_observation { observation_type, state, within_days }` — satisfied when an Observation with `kind = observation_type` and the given `state` exists for the plant with `observed_on` within `within_days` of the evaluation date.
+- `open_condition` is advisory state. It is computed for display as `gate_state` (§0.5); it MUST NOT affect `effective_open` or `effective_close`. Calendar position is governed exclusively by anchor + tolerance + `calendar_bound` (§1.3).
+- **Non-blocking rule (lock):** `open_condition` MUST NOT be consulted by any write path. Activity logging and observation logging MUST succeed regardless of gate state. Gate state is recomputed on read.
+- If `open_condition` is absent, `gate_state = ne primjenjuje se`.
+- Terminal-gate fallback for both kinds is defined in §6.5.
+- Forbidden gate logic (reinforcement): `open_condition` MUST NOT express forecast-based, numeric-threshold, compound multi-factor, absence-as-evidence, user-intent, or projected-time conditions. The `kind` set is closed; no third variant may be introduced without a locked-document amendment.
 
 #### 0.9.3 Monitoring vs symptom
 
@@ -111,7 +114,7 @@ Window state and dependency status are computed independently. A window can be `
 #### 0.9.4 Derived state (plain language)
 
 - The system never writes "this plant is 60% done". There is no stored status field.
-- Every render recomputes window state and dependency status from: today's date, pinned catalog version, overlay, activity records, observations, and the locked rules.
+- Every render recomputes window state and gate state from: today's date, pinned catalog version, overlay, activity records, observations, and the locked rules.
 - Adding a missing activity later changes the displayed state because the same rules now see different inputs — not because state was "updated".
 - State is a view, not a record. This is what makes the system deterministic and auditable.
 
@@ -121,7 +124,6 @@ Window state and dependency status are computed independently. A window can be `
 
 | Item                                                              | Owner |
 |-------------------------------------------------------------------|-------|
-| Overlay reconciliation across catalog upgrades                    | S2.7  |
 | Launch species list                                               | S2.8  |
 
 ---
@@ -149,18 +151,18 @@ S2.3 adds:
 
 ### 1.2 Action-window definition — MUST-HAVE fields
 
-S2.1 identity: `window_def_id`, `catalog_id`, `action_type`, `anchor`, `tolerance`, `depends_on?`.
+S2.1 identity: `window_def_id`, `catalog_id`, `action_type`, `label`, `anchor`, `tolerance`, `open_condition?`.
 
 S2.2 specifies shape and adds fields:
 
 | Field                 | Type / shape                                                                                                          | Cardinality | Semantics                                                                                                             |
 |-----------------------|-----------------------------------------------------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------------------------------------------------|
-| `action_type`         | string identifier                                                                                                     | required    | Stable identifier activity records match against.                                                                     |
-| `cycle_id`            | string identifier                                                                                                     | optional    | Discriminator when the same `action_type` recurs in one catalog. Null means single-cycle.                             |
+| `action_type`         | string from the controlled vocabulary: `oil`, `copper`, `fungicide`, `insecticide`, `pruning`, `monitoring`, `irrigation`, `harvest`, `fertilization`, `other` | required    | Category tag for filtering and display. Activity records carry a copy for history. Not window identity.               |
+| `label`               | string                                                                                                                | required    | Human-readable window label (e.g. "Bakar na rane nakon rezidbe"). May change across catalog versions; `window_def_id` remains stable. |
 | `anchor`              | `{ kind: "phenology", stage_code: string }` OR `{ kind: "calendar", month_day_open: MD, month_day_close: MD }`        | required    | Agronomic origin. Phenology is primary (Principle 2); calendar is fallback.                                           |
 | `calendar_bound`      | `{ not_before?: MD, not_after?: MD }`                                                                                 | optional    | Absolute-date guard. Only meaningful when `anchor.kind = "phenology"`. Forbidden when `anchor.kind = "calendar"`.     |
 | `tolerance`           | `{ before: duration, after: duration }`                                                                               | required    | Relative-duration sizing around the anchor. Distinct axis from `calendar_bound`.                                      |
-| `depends_on`          | `{ prior_action_type: string, prior_cycle_id?: string, offset: duration }`                                            | optional    | Single prior-action reference per §0.9.2. `prior_cycle_id` required iff prior has multiple cycles.                    |
+| `open_condition`      | `{ kind: "requires_prior_activity", prior_action_type: action_type vocab, within_days: integer ≥ 1 }` OR `{ kind: "requires_observation", observation_type: Observation.kind, state: string, within_days: integer ≥ 1 }` | optional    | Advisory gate per §0.9.2. Display-only; never blocks logging. No cross-window identity. `kind` set is closed.         |
 | `author`              | string identifier                                                                                                     | optional    | Per-window provenance override. When absent, inherits catalog's `author` — deterministic fallback, not inference.     |
 | `evidence_source`     | string                                                                                                                | optional    | Per-window provenance override. When absent, inherits catalog's `evidence_source`.                                    |
 | `last_reviewed_on`    | ISO date                                                                                                              | optional    | Per-window provenance override. When absent, inherits catalog's `last_reviewed_on`.                                   |
@@ -192,7 +194,7 @@ Given the same catalog, and — for phenology anchors only — the same `Observa
 
 - Any required field missing.
 - `action_window_definitions` is empty.
-- Two Action-window definitions in the catalog share the same `(action_type, cycle_id)` pair (null equals null).
+- Two Action-window definitions in the catalog share the same `window_def_id`.
 - `catalog_version` is not unique within a `(species, author)` line.
 - `stage_vocabulary` is absent AND at least one action-window definition has `anchor.kind = "phenology"`.
 - `stage_vocabulary` is present but empty.
@@ -207,13 +209,14 @@ Given the same catalog, and — for phenology anchors only — the same `Observa
 - `anchor.kind = "calendar"` and `calendar_bound` is present (redundant).
 - `calendar_bound` is present and both `not_before` and `not_after` are absent.
 - `tolerance.before.value` or `tolerance.after.value` is negative.
-- `depends_on.prior_action_type` does not refer to another `action_type` declared in the same catalog version.
-- `depends_on.prior_action_type == this.action_type` AND `depends_on.prior_cycle_id == this.cycle_id` (self-dependency).
-- `depends_on.prior_cycle_id` is present while the named prior `action_type` has exactly one cycle in the catalog (spurious).
-- `depends_on.prior_cycle_id` is absent while the named prior `action_type` has more than one cycle in the catalog (ambiguous).
-- `depends_on.offset.value` is negative.
-- A dependency cycle exists across all Action-window definitions in the catalog (graph must be a DAG).
-- `cycle_id` is an empty string (use null to indicate single-cycle).
+- `action_type` is not in the controlled vocabulary declared in §1.2.
+- `label` is absent or empty.
+- `open_condition.kind` is not exactly one of `requires_prior_activity` or `requires_observation`.
+- `open_condition.kind = requires_prior_activity` and `prior_action_type` is not in the §1.2 controlled vocabulary.
+- `open_condition.kind = requires_observation` and `observation_type` is not in the `Observation.kind` enum (§0.1).
+- `open_condition.kind = requires_observation` and `state` is absent or empty.
+- `open_condition.within_days` is absent or not an integer ≥ 1.
+- No third variant of `open_condition.kind` may be introduced without a locked-document amendment.
 
 #### 1.6.3 Forbidden ambiguity
 
@@ -361,7 +364,7 @@ Let `T` denote `closing_soon_threshold.value` measured in days. This constant is
 
 Let `today` = current date.
 Let `effective_open`, `effective_close` = per §1.3, after any `calendar_bound` clipping.
-Let "matching activity" = per §0.4 (same `plant_id`, same `action_type`, same `cycle_id`; null matches null).
+Let "matching activity" = per §0.4 (same `plant_id`, same `window_def_id`; per-occurrence temporal refinement per §6.3).
 
 Provided no matching activity with `status=done` or `status=skipped` exists:
 
@@ -382,9 +385,9 @@ For phenology-anchored windows where the referenced stage has not yet been obser
 
 If `effective_close − effective_open < T`, the window enters `closing-soon` the moment it opens. This is intentional: a window shorter than `T` is, by definition, urgent throughout its entire duration. No special-case rule is introduced.
 
-### 5.5 Orthogonality with dependency status
+### 5.5 Orthogonality with gate state
 
-Window state and dependency status are independent axes (§0.5). A window MAY be `closing-soon` and `dependency_status = unsatisfied` simultaneously. S2.5 does not suppress, downgrade, or otherwise couple the two axes.
+Window state and gate state are independent axes (§0.5). A window MAY be `closing-soon` and `gate_state = čeka` simultaneously. S2.5 does not suppress, downgrade, or otherwise couple the two axes.
 
 ### 5.6 Validation rule
 
@@ -412,25 +415,25 @@ A **season** is the annual repetition of a catalog-defined action window. It is 
 A **window occurrence** is the derived per-year instance of a catalog-defined action window for a specific plan instance.
 
 - Occurrences are derived; they are never stored.
-- Each occurrence is uniquely identified by: `plant_id`, `action_type`, `cycle_id` (catalog-authored; see §2), and `cycle_year` (integer year, derived).
+- Each occurrence is uniquely identified by: `plant_id`, `window_def_id`, and `cycle_year` (integer year, derived).
 - `cycle_year` is the calendar year to which the occurrence's effective open date belongs, computed from the occurrence's anchor resolution:
   - For calendar anchors, `cycle_year` is the year containing `month_day_open`.
   - For phenology anchors, `cycle_year` is the year of the `stage_obs` event that resolves the anchor (§3).
 - Each occurrence carries:
   - `effective_open` — the resolved open date for this occurrence, computed per §1 from anchor + `tolerance` (and `calendar_bound` where applicable).
   - `effective_close` — the resolved close date for this occurrence.
-- At most one occurrence exists per `(plant_id, action_type, cycle_id, cycle_year)` tuple.
+- At most one occurrence exists per `(plant_id, window_def_id, cycle_year)` tuple.
 - Phenology-anchored windows produce no occurrence for a given year until the corresponding `stage_obs` is recorded. This is the deterministic consequence of §3 (monitoring never infers missing data), not a new rule.
 
 ### 6.3 Activity-to-occurrence matching
 
 Matching an activity record (§0.4) to a window occurrence is a deterministic refinement of §0.4's identity condition.
 
-- An activity record `A` is considered for matching against the set of occurrences that share `A.plant_id`, `A.action_type`, and `A.cycle_id` (the identity condition established in §0.4).
+- An activity record `A` is considered for matching against the set of occurrences that share `A.plant_id` and `A.window_def_id` (the identity condition established in §0.4).
 - Within that set, `A` is matched to the occurrence `O` such that:
   - `A.occurred_on >= O.effective_open`, and
   - `A.occurred_on < next(O).effective_open`,
-  where `next(O)` is the occurrence immediately following `O` in ascending `cycle_year` order within the same `(plant_id, action_type, cycle_id)` identity.
+  where `next(O)` is the occurrence immediately following `O` in ascending `cycle_year` order within the same `(plant_id, window_def_id)` identity.
 - If no `next(O)` exists (i.e. `O` is the latest occurrence yet produced for that identity), the upper bound is unbounded in the forward direction.
 - The interval is **half-open on the right**. This is required so that the window-state transition `open` → `missed` → `done_late` (§0.4) remains reachable: an activity observed after `O.effective_close` but before `next(O).effective_open` is matched to `O`, producing `done_late` for that occurrence.
 - Matching is deterministic: the same catalog, the same `stage_obs` set, and the same activity set produce the same mapping on every evaluation.
@@ -444,17 +447,16 @@ Cross-year calendar windows — specifically, calendar-anchored windows for whic
 - Intended modeling path for dormancy-period and other year-crossing actions: use a phenology anchor. Dormancy-entry and dormancy-exit stages are first-class in the phenology vocabulary (§3) and provide deterministic per-year anchoring.
 - **Audit escape hatch:** the S3–S5 catalog audit is authorized to surface, for review in a later session, any concrete real-world action that phenology anchoring cannot honestly represent. If such a case is documented, a future session with authority over §1 may evaluate whether an additive extension is warranted. No such extension is permitted by S2.6 itself, and nothing in §6 presumes one.
 
-### 6.5 Terminal-prior dependency fallback
+### 6.5 Terminal-gate fallback
 
-When a window `W` declares a dependency on a prior window `P` (per §0.5 and §0.9), the dependency status is computed as follows:
+When a window `W` declares an `open_condition` (either kind, per §0.9.2), the gate state is computed as follows:
 
-- If `P`'s occurrence in the same `cycle_year` as `W`'s occurrence reaches a **terminal state** of `missed` or `skipped` (§0.4), then for `W`'s occurrence in that `cycle_year`:
-  - `dependency_status = unsatisfied` (§0.5), terminally, for that `cycle_year`.
-  - `W.effective_open = W.own_anchor_open` — i.e. `W`'s open date remains its own anchor-derived date and is not shifted by the prior window's fate.
-- Terminal-prior propagation does not occur: a downstream window whose prior is `unsatisfied` because of §6.5 does not itself inherit `unsatisfied` unless its own prior is independently terminal. Each dependency edge is evaluated independently per occurrence.
-- Terminal-prior scoping is strictly **same-year**: `P`'s occurrence in year N does not influence `W`'s occurrence in year N+1 or any later year. Each `cycle_year` is evaluated independently.
-- No new enum values are introduced. `dependency_status` remains `satisfied` | `unsatisfied` | `not_applicable` per §0.5.
-- Axis orthogonality is preserved: window state (§0.4) is never a function of prior-window state, and dependency status (§0.5) is never a function of the dependent window's own state. §6.5 does not alter this separation; it only specifies which `dependency_status` value applies when the prior is terminal.
+- If `W`'s own occurrence for a given `cycle_year` reaches a **terminal state** of `missed` or `skipped` (§0.4) AND the `open_condition` was never satisfied at any point during the open interval for that `cycle_year`, then:
+  - `gate_state = propušteno` (§0.5), terminally, for that `cycle_year`.
+  - `W.effective_open = W.own_anchor_open` — gate state never shifts `W`'s calendar dates (reinforces §0.9.2).
+- Scoping is strictly **per `cycle_year`**: a terminal gate in year N does not influence year N+1. Each `cycle_year` is evaluated independently.
+- No propagation across windows. Each window's gate is evaluated only against its own occurrence and its own `open_condition`.
+- Axis orthogonality is preserved: window state (§0.4) and gate state (§0.5) remain independent axes; §6.5 only specifies which `gate_state` value applies once `W` is terminal and never satisfied.
 
 ### 6.6 Explicit non-scope
 
@@ -468,7 +470,7 @@ S2.6 does not introduce, and §6 does not govern, any of the following:
 
 ### 6.7 Relationship to §0.4 matching rule
 
-§6.3 refines the matching of activity records to windows along the temporal dimension. §0.4's matching rule, as locked, establishes the identity condition (same `plant_id`, same `action_type`, same `cycle_id`). §6.3 does not alter that identity condition; it adds the per-year temporal refinement required to make matching deterministic once multiple occurrences exist.
+§6.3 refines the matching of activity records to windows along the temporal dimension. §0.4's matching rule, as locked, establishes the identity condition (same `plant_id`, same `window_def_id`). §6.3 does not alter that identity condition; it adds the per-year temporal refinement required to make matching deterministic once multiple occurrences exist.
 
 - **Forward obligation.** A later session with authority to revisit §0.4 should either (a) insert a forward reference from §0.4 to §6.3, or (b) unify both halves into a single consolidated matching rule. Neither is required to make §6 consistent; both are documentation improvements that preserve the existing semantics.
 - **Documentation concern, not a model inconsistency.** The full matching rule is fully determined by reading both sections:
@@ -477,9 +479,21 @@ S2.6 does not introduce, and §6 does not govern, any of the following:
   - Together they form the complete matching rule.
   - §6.3 is consistent with §0.4 but does not amend it.
 
-## 7. Overlay semantics
+## 7. Overlay semantics — locked (S2.7)
 
-*Placeholder — owned by S2.7 (reconciliation). Identity locked in Section 0.7 (S2.1).*
+### 7.1 Overlay identity
+
+- Overlay entries are keyed by `window_def_id` (§0.2). Because `window_def_id` is canonical and stable across catalog versions, overlay identity is preserved across catalog upgrades whenever the underlying `window_def_id` persists.
+
+### 7.2 Reconciliation rule
+
+- On catalog upgrade, an overlay bound to a `window_def_id` that continues to exist in the new catalog version remains bound to that window.
+- An overlay bound to a `window_def_id` that no longer exists in the new catalog version is retained. It MUST NOT be silently deleted.
+- Catalog changes MUST NOT silently overwrite user overlay edits.
+
+### 7.3 Out of scope
+
+- Overlay storage layout (per-field vs per-window granularity), catalog-version diffing, the user-review mechanism for reconciled edits, rendering details, and `from → to` pairing for renamed or merged windows are implementation concerns owned by S9 (`V2_ARCHITECTURE.md` §3).
 
 ## 8. Versioning unit
 
