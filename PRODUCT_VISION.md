@@ -293,7 +293,7 @@ Incorrect behavior:
 
 Monitoring exists to support the grower's own decisions, not to fill empty space with assumptions, and not to push the grower to reduce the app's uncertainty.
 
-The app is honest when it does not know. It never pretends to know, and it never pressures the grower into checking on any schedule other than the one the grower chooses.
+The app is honest when it does not know. It does not derive urgency or obligation from missing evidence; the grower decides whether and when to gather it.
 
 ---
 
