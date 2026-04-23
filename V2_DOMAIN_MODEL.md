@@ -120,7 +120,7 @@ Window state and gate state are computed independently. A window can be `open` w
   2. Introducing derived "pressure" or "recommendation" state from any combination of evidence.
   3. Auto-opening or auto-closing action-windows based on evidence not declared in `open_condition`.
   4. Treating the absence of `open_condition` as equivalent to "no decision context needed" — the absence means decision context lives in notes + history + monitoring display, not in automation.
-- **DS5.** Audit rule (applied in S3–S5): for pests with declared monitoring programs, a treatment action-window MAY declare a formal `open_condition` ONLY IF (a) the source material explicitly defines the gate (phenology precondition, symptom precondition, or prior-action sequence stated verbatim in source), OR (b) the source material explicitly states a condition that is already directly representable by the locked `stage_obs` or `symptom` Observation types, with no reformulation required. Verbatim-from-source is the only admissible basis. Semantic interpretation, inferred agronomic knowledge, conventions of any origin (Croatian or otherwise), curator judgment about restrictiveness, and trap/scouting thresholds MUST NOT be gate inputs. If neither (a) nor (b) holds: NO GATE — the window ships gate-less, and decision context lives in notes + history + monitoring display per DS3. Missing `cadence` is never a reason to invent a gate. Audit detail lives in `V2_CATALOG_AUDIT.md`.
+- **DS5.** Audit rule (applied in S3–S5): for pests with declared monitoring programs, a treatment action-window MAY declare a formal `open_condition` ONLY IF (a) the source material explicitly defines the gate (phenology precondition, symptom precondition, or prior-action sequence stated verbatim in source), OR (b) the source material explicitly states a condition that is already directly representable by the locked `stage_obs` or `symptom` Observation types, with no reformulation required. Verbatim-from-source is the only admissible basis. Semantic interpretation, inferred agronomic knowledge, established practices of any origin (regional or otherwise), curator judgment about restrictiveness, and trap/scouting thresholds MUST NOT be gate inputs. If neither (a) nor (b) holds: NO GATE — the window ships gate-less, and decision context lives in notes + history + monitoring display per DS3. Missing `cadence` is never a reason to invent a gate. Audit detail lives in `V2_CATALOG_AUDIT.md`.
 
 #### 0.9.3 Monitoring vs symptom
 
@@ -356,7 +356,7 @@ Reaffirmed here for adjacency with program rules: no process — runtime, migrat
 
 #### 1.7.8 Validation rules (monitoring program)
 
-A catalog is invalid if any of the following hold:
+Validation rules for monitoring programs:
 
 - Any required `monitoring_program` field missing (§1.7.1).
 - `program_id` is not unique within a catalog.
@@ -391,13 +391,11 @@ Any future proposal to introduce any of the above requires an explicit new sessi
 
 #### 1.7.10 Terminology
 
-The model document MUST NOT use pest-generation terminology in any form. This rule binds on semantics, not tokens; renaming forbidden phrasing to avoid the literal tokens is still forbidden when the meaning matches.
+The model document MUST NOT refer to numbered reproductive or lifecycle cycles of a pest within a season, in any language or form. This rule binds on meaning, not on specific tokens; renaming forbidden phrasing to avoid particular wording is still forbidden when the meaning matches.
 
-Forbidden tokens and phrases (and any semantic equivalent): `gen1`, `gen2`, `genN`, `generation(s)`, `first generation`, `second generation`, Croatian variants `generacija`, `prva generacija`, `druga generacija`, `let generacije`, and any token or phrase meaning "the Nth reproductive cycle of a pest within a season."
+Where two monitoring programs target the same pest at different points within a season, the model refers to them as **consecutive monitoring programs for the same pest**, or (for transition contexts) as **one program ending while another program for the same pest begins**.
 
-Replacement phrasing: "consecutive monitoring programs for the same pest" (or "one program ending while another program for the same pest begins" for transition contexts).
-
-Catalog identifiers (`program_id`, `label`) MUST NOT encode generation semantics. Distinct monitoring programs are distinguished solely by their identifier values, without embedding domain meaning such as generation numbering.
+This terminology restriction applies to model prose, examples, and validation messages. It does not impose naming rules on technical identifiers beyond the existing uniqueness and validation requirements.
 
 This is a model-document terminology rule. UI copy guidance lives in `V2_UX_MODEL.md`.
 
