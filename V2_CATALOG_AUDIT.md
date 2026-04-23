@@ -157,6 +157,24 @@ To be filled by S3–S5 as the audit proceeds. Each row: one source entry (monit
 
 ### 5.3 Remaining launch species — audit status
 
+S5 audit scope (per `V2_DOMAIN_MODEL.md §9`):
+
+- *Pyrus communis* (Pear)
+- *Prunus persica* (Peach)
+- *Prunus persica* var. *nucipersica* (Nectarine)
+- *Prunus domestica* (Plum)
+- *Prunus armeniaca* (Apricot)
+- *Olea europaea* (Olive)
+- *Ficus carica* (Fig)
+- *Citrus limon* (Lemon)
+- *Citrus sinensis* (Orange)
+- *Citrus reticulata* (Mandarin)
+- *Juglans regia* (Walnut)
+- *Corylus avellana* (Hazelnut)
+- *Cydonia oblonga* (Quince)
+- *Punica granatum* (Pomegranate)
+- *Prunus dulcis* (Almond)
+
 *To be filled in S5.*
 
 ### 5.4 Deferred entries

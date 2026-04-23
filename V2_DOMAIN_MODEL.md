@@ -1,6 +1,6 @@
 # V2_DOMAIN_MODEL
 
-**Status:** Sections 0–7 locked. Sections 1.7 and 6.8 added in S2.8 (monitoring model). Section 9 remains placeholder owned by S2.8 (launch species list).
+**Status:** Sections 0–7 locked. Sections 1.7 and 6.8 added in S2.8 (monitoring model). Section 9 locked by S2.8 owner decision (launch species list).
 
 ---
 
@@ -165,9 +165,7 @@ The domain model therefore requires the catalog version store to retain every `c
 
 ### 0.10 Deferred to S2.x
 
-| Item                                                              | Owner |
-|-------------------------------------------------------------------|-------|
-| Launch species list                                               | S2.8  |
+*Empty. Launch species list resolved by S2.8 owner decision (§9).*
 
 ### 0.11 Group-identity rule
 
@@ -809,4 +807,23 @@ Each program's occurrence is evaluated independently. Observations for one progr
 
 The S3 audit cannot begin until this list is named by the owner. No agent may populate this section with content from `V2_PLANT_CATALOG.md` or `V2_ORCHARD_PLAN_TEMPLATES.md` without explicit owner instruction, per CLAUDE.md's input-files rule.
 
-*Awaiting owner disposition.*
+This section enumerates the species shipping with catalog v1.0. It is the S3–S5 audit scope.
+
+- *Malus domestica* (Apple)
+- *Pyrus communis* (Pear)
+- *Prunus avium* (Sweet cherry)
+- *Prunus cerasus* (Sour cherry)
+- *Prunus persica* (Peach)
+- *Prunus persica* var. *nucipersica* (Nectarine)
+- *Prunus domestica* (Plum)
+- *Prunus armeniaca* (Apricot)
+- *Olea europaea* (Olive)
+- *Ficus carica* (Fig)
+- *Citrus limon* (Lemon)
+- *Citrus sinensis* (Orange)
+- *Citrus reticulata* (Mandarin)
+- *Juglans regia* (Walnut)
+- *Corylus avellana* (Hazelnut)
+- *Cydonia oblonga* (Quince)
+- *Punica granatum* (Pomegranate)
+- *Prunus dulcis* (Almond)
