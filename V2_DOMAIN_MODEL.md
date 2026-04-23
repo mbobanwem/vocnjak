@@ -19,7 +19,8 @@
 5. **Activity record** — immutable captured real-world event.
    - `activity_id`, `plant_id`, `window_def_id`, `catalog_version`, `action_type`, `activity_group_id?`, `status` ∈ {done, skipped}, `occurred_on`, `recorded_at`, `notes?`, `provenance`
 6. **Observation** — immutable structured observation event.
-   - `observation_id`, `plant_id`, `kind` ∈ {trap, scouting, stage_obs, symptom}, `observed_on`, `recorded_at`, `payload` (schema per `kind` deferred to S2.4), `program_id?`, `observation_group_id?`, `provenance`
+   - `observation_id`, `plant_id`, `catalog_version`, `kind` ∈ {trap, scouting, stage_obs, symptom}, `observed_on`, `recorded_at`, `payload` (schema per `kind` deferred to S2.4), `program_id?`, `observation_group_id?`, `provenance`
+   - `catalog_version` — required. Pinned at write-time to the plant's then-current pinned `catalog_version`. Every catalog-backed reference on this Observation (`program_id` against §1.7; `payload.stage_code` against §2.2; `payload.symptom_code` against the catalog's symptom registry once declared) is resolved against this pinned version, not against the plant's current pinning. Immutable like all other Observation fields.
    - `program_id?` — optional link to a declared `monitoring_program` (§1.7). When present, attaches the Observation to that program's history and its `cycle_year` per §6.8. When absent, the Observation is **free-standing** and is a first-class plant-history entry that is permanently disjoint from any monitoring program (§1.7.7). Immutable like all other Observation fields.
 7. **Monitoring program** — catalog-authored declaration of a season-long informational campaign per target per plant. Child collection of the catalog template, defined in §1.7. State (`pre_season`, `active`, `ended`) is derived per `(plant_id, program_id, cycle_year)` per §6.8; no state is stored. Absence of observations during any program state is neutral (§1.7.6).
 
@@ -50,6 +51,8 @@ A skip recorded after window close is `skipped` — no `skipped_late`.
 
 A "matching activity" is an activity record for the same `plant_id` and the same `window_def_id` as the window. Per-year temporal refinement across occurrences is defined in §6.3.
 
+Group identity (§0.11) does not enter window-state derivation. Each Activity is matched independently per §6.3.
+
 ### 0.5 Gate-state enum (final, separate axis)
 
 Four user-facing gate states (Croatian). `open_condition` state is computed for display only (§0.9.2):
@@ -66,6 +69,16 @@ Window state and gate state are computed independently. A window can be `open` w
 - `plant_id`, `window_def_id`, `catalog_version`, `action_type`, `status`, `occurred_on`, `recorded_at`.
 - `window_def_id` + `catalog_version` are the matching identity (§0.4, §6.3). `action_type` is the required category tag for search and human-readable history; it is NOT identity.
 - Absence rule: no activity record ⇒ the action did not happen. No inference from calendar, weather, or context.
+- Temporal order rule: `occurred_on ≤ recorded_at`. An Activity claiming an `occurred_on` in the future relative to its `recorded_at` is invalid. Records represent real-world events that have already happened; planned or future-dated captures are rejected at write-time.
+
+### 0.6a Observation MUST-HAVE fields
+
+- `plant_id`, `catalog_version`, `kind`, `observed_on`, `recorded_at`, `payload`.
+- `catalog_version` is the resolution anchor for all catalog-backed references on this Observation (§1.7 monitoring programs, §2 stage vocabulary, §3.2 payload-internal codes that reference the catalog). It is pinned at write-time from the plant's then-current pinned `catalog_version` and is immutable.
+- Absence rule: no Observation record ⇒ no observation happened. No inference from calendar, cadence, or context.
+- Free-standing rule: `program_id` absent is legal; the Observation is a first-class plant-history entry (§1.7.4 FS-INV).
+- Write-time invariant: the Observation's `catalog_version` MUST equal the plant's pinned `catalog_version` at the moment of write. Captures cannot fabricate a version.
+- Temporal order rule: `observed_on ≤ recorded_at`. An Observation claiming an `observed_on` in the future relative to its `recorded_at` is invalid. Retroactive logging (`observed_on < recorded_at`) remains legal per §1.7.3 L5; only future-dated observations are rejected.
 
 ### 0.7 Overlay identity rule
 
@@ -120,7 +133,7 @@ Window state and gate state are computed independently. A window can be `open` w
   2. Introducing derived "pressure" or "recommendation" state from any combination of evidence.
   3. Auto-opening or auto-closing action-windows based on evidence not declared in `open_condition`.
   4. Treating the absence of `open_condition` as equivalent to "no decision context needed" — the absence means decision context lives in notes + history + monitoring display, not in automation.
-- **DS5.** Audit rule (applied in S3–S5): for pests with declared monitoring programs, a treatment action-window MAY declare a formal `open_condition` ONLY IF (a) the source material explicitly defines the gate (phenology precondition, symptom precondition, or prior-action sequence stated verbatim in source), OR (b) the source material explicitly states a condition that is already directly representable by the locked `stage_obs` or `symptom` Observation types, with no reformulation required. Verbatim-from-source is the only admissible basis. Semantic interpretation, inferred agronomic knowledge, established practices of any origin (regional or otherwise), curator judgment about restrictiveness, and trap/scouting thresholds MUST NOT be gate inputs. If neither (a) nor (b) holds: NO GATE — the window ships gate-less, and decision context lives in notes + history + monitoring display per DS3. Missing `cadence` is never a reason to invent a gate. Audit detail lives in `V2_CATALOG_AUDIT.md`.
+- **DS5.** Scope of `open_condition` at gate-authoring time is bounded by DS1–DS4 and §1.2 — specifically, `open_condition` admits only the closed `kind` set (`requires_prior_activity`, `requires_observation` with `observation_type ∈ {stage_obs, symptom}`). The model does not define the curator process by which an author decides whether to declare a gate for a given window; that process is governed by `V2_CATALOG_AUDIT.md §3` (audit-never list) and `V2_CATALOG_AUDIT.md §2.2` (signal table). The domain document does not duplicate audit-process rules.
 
 #### 0.9.3 Monitoring vs symptom
 
@@ -137,6 +150,16 @@ Window state and gate state are computed independently. A window can be `open` w
 - Adding a missing activity later changes the displayed state because the same rules now see different inputs — not because state was "updated".
 - State is a view, not a record. This is what makes the system deterministic and auditable.
 
+#### 0.9.5 Record-integrity timing rule
+
+Referential-integrity validation for every persistent record (Activity §0.6, Observation §0.6a) is a **write-time invariant**. It is evaluated once, at write, against the record's own `catalog_version`. Once the record is written:
+
+- The record's referential-integrity status is frozen for the lifetime of the record.
+- Subsequent catalog upgrades (pinning the plant to a newer `catalog_version`) never retroactively invalidate the record.
+- Read-time renderers (history, program cards, plan state) resolve the record's catalog-backed references against the record's own `catalog_version`, retrieving whichever catalog version is needed from the catalog version store.
+
+The domain model therefore requires the catalog version store to retain every `catalog_version` that is referenced by any existing record. The mechanism and schema of the catalog version store are architecture concerns (`V2_ARCHITECTURE.md`); the domain invariant is that the retention exists.
+
 ---
 
 ### 0.10 Deferred to S2.x
@@ -144,6 +167,50 @@ Window state and gate state are computed independently. A window can be `open` w
 | Item                                                              | Owner |
 |-------------------------------------------------------------------|-------|
 | Launch species list                                               | S2.8  |
+
+### 0.11 Group-identity rule
+
+Activity records (§0.1 item 5) and Observation records (§0.1 item 6) each carry an optional group identifier (`activity_group_id?`, `observation_group_id?`). Grouping has the following locked semantics:
+
+1. **Per-plant atomicity preserved.** Activity remains per-plant (singular `plant_id`). Observation remains per-plant. Grouping does NOT create a multi-plant record type; it marks that multiple per-plant records were produced by one real-world capture event.
+
+2. **Opaque identifier.** The group id is an opaque string identifier. Non-empty when present. It carries no semantics beyond "these records were captured together." Stability and uniqueness follow the primitive definition in §1.5.
+
+3. **Immutability.** The group id inherits the record's immutability. Once written, it cannot be changed, added, or removed.
+
+4. **No runtime coupling.** Window-state derivation (§0.4), gate-state derivation (§0.5), activity-to-occurrence matching (§6.3), program-state derivation (§6.8), and open-condition evaluation (§0.9.2) MUST NOT consult the group id. Every record in a group is evaluated independently. Grouping is display and query only.
+
+5. **Minimum group invariants — Activity group.** All Activity records sharing an `activity_group_id` MUST share:
+   - `occurred_on` (one real-world pass happens on one date).
+   - `action_type` (one pass is one kind of action; a mixed-action session produces separate groups, not one).
+
+   They MAY differ on:
+   - `plant_id` (expected to differ — this is the reason grouping exists).
+   - `catalog_version` (plants may be pinned to different versions; cross-version groups are legal).
+   - `window_def_id` (follows from `catalog_version` differences, since window_def_ids are catalog-scoped; equality within a single catalog version is typical but not required).
+   - `status` (per-plant outcome decided by the grower within the single capture flow; e.g. two plants `done`, two plants `skipped` in one copper-spray decision moment).
+
+   They MUST NOT share `activity_id` (always unique per record).
+
+6. **Minimum group invariants — Observation group.** All Observation records sharing an `observation_group_id` MUST share:
+   - `observed_on` (one capture event on one date).
+   - `kind` (all trap, all scouting, all stage_obs, or all symptom — never mixed).
+   - `program_id` (same value across all members; the all-`null` case — every member free-standing — is legal).
+
+   They MAY differ on:
+   - `plant_id`.
+   - `catalog_version`.
+   - `payload` fields (per-plant counts, measurements, stage observations, symptom notes).
+
+   They MUST NOT share `observation_id`.
+
+7. **Group creation is capture-time only.** A group identifier MAY be assigned only by a single capture flow producing an atomic write batch. Once records are written, the group id is immutable (inherits record immutability per item 3). No retroactive group assembly, no external-system group creation, no migration-time grouping, no post-hoc "link these records" action, no UI action that adds records to an existing group. Groups originate at capture or not at all.
+
+8. **Partial execution.** If a real-world capture covers N of M plants, exactly N records are produced (all sharing the group id). The remaining M−N plants produce no record; their derived state is unaffected. A grower who continues the same real-world action later (e.g., spraying the remaining 2 of 4 plants the next day) produces a NEW group — a new capture event is a new group, never an extension of an earlier one (per item 7).
+
+9. **Disjoint namespaces.** `activity_group_id` and `observation_group_id` are disjoint identifier namespaces. An Activity never shares an id with an Observation; a real-world capture that produces both an Activity and an Observation uses two distinct group ids if grouping is needed at all.
+
+10. **Display / query semantics.** History display MAY surface a group as one user-visible event collapsing the per-plant records; the model does not dictate display behavior. Queries MAY filter by group id; group membership is determined solely by the stored identifier, not by heuristic timestamp/type matching.
 
 ---
 
@@ -244,6 +311,12 @@ Given the same catalog, and — for phenology anchors only — the same `Observa
 - `calendar_bound` is an absolute-date guard only; it MUST NOT be used to express relative tolerance (use `tolerance` for that).
 - No implicit defaults beyond the provenance fallback rule in §1.4. Missing required fields are validation errors.
 
+#### 1.6.4 Group-identifier validation
+
+An Activity is invalid if `activity_group_id` is present and is an empty string or non-string. An Observation is invalid if `observation_group_id` is present and is an empty string or non-string. A record with the field absent is valid; grouping is optional.
+
+**Cross-record group-invariant validation.** For any set of Activity records sharing the same `activity_group_id`, all members MUST satisfy the invariants in §0.11 item 5 (`occurred_on` equal, `action_type` equal). For any set of Observation records sharing the same `observation_group_id`, all members MUST satisfy the invariants in §0.11 item 6 (`observed_on` equal, `kind` equal, `program_id` equal; the all-`null` case is legal). A write batch that would produce records violating these invariants is rejected atomically — all records in the batch fail or all succeed. Because groups are capture-time only (§0.11 item 7) and records are immutable, write-time validation is sufficient; no retroactive enforcement is needed, and no post-hoc record can drift the group's invariants.
+
 ### 1.7 Monitoring program — locked (S2.8)
 
 A **monitoring program** is a catalog-authored declaration of a season-long informational campaign for a specific pest/target on a plant. It is a child collection of the catalog template, parallel to `action_window_definitions`. Programs are not action-windows; they are a separate entity kind with their own state axis (§6.8).
@@ -272,7 +345,7 @@ Programs exist because monitoring is **evidence gathering**, not task completion
 
 - **B1.** Installing a monitoring device is an Activity record (§0.1 item 5) completing the program's setup action-window. It is NEVER an Observation. If a grower wants to record an initial count at install time, that is a separate Observation record.
 - **B2.** `setup_window_def_id` MUST be absent when `method.kind = "scouting"`. Validation error otherwise.
-- **B3.** A single setup action-window MAY be referenced by multiple monitoring programs. Each `monitoring_program` with `method.kind = "trap"` MUST reference exactly one `setup_window_def_id`. A single install Activity closes the shared setup window; each referencing program independently tracks observations via its own `program_id`.
+- **B3.** A single setup action-window MAY be referenced by multiple monitoring programs. Each `monitoring_program` with `method.kind = "trap"` MUST reference exactly one `setup_window_def_id`. A single install Activity closes the shared setup window; each referencing program independently tracks observations via its own `program_id`. Cross-catalog-version reconciliation (what happens when a later catalog version splits a shared setup into per-program setups, or merges per-program setups into a shared one) is governed by `V2_ARCHITECTURE.md §3` (overlay and reference reconciliation) and is out of scope for this model document.
 - **B4.** A program MAY have no setup at all (scouting case, per B2). The grower's first event for that program is an Observation, not an Activity.
 - **B5.** An `action_window_definition` with `action_type = monitoring` MUST be referenced by at least one program's `setup_window_def_id`. Orphan monitoring action-windows are catalog validation errors (§1.6.2). Non-monitoring preparation work uses `action_type = other`.
 
@@ -286,12 +359,12 @@ Programs exist because monitoring is **evidence gathering**, not task completion
   - match the Observation's payload target (`payload.target_pest_code` for `kind = trap`; `payload.target_code` for `kind = scouting`) to the program's `target_code`.
 - **L4.** `program_id` is immutable per Observation immutability (§0.1). No correction or reassignment. A mistaken attachment is addressed by recording a new Observation and annotating history externally.
 - **L5.** Retroactive logging (`observed_on < recorded_at`) is permitted. Program attachment and `cycle_year` derive exclusively from `observed_on`; `recorded_at` is never consulted for membership.
-- **L5a. Attachment rule (deterministic).** When an Observation carries `program_id` for program P, the Observation attaches to cycle_year Y if and only if `observed_on` lies within the half-open interval `[season_start(P, Y), season_end(P, Y))` (resolved per §6.3's half-open semantics adapted for programs).
+- **L5a. Attachment rule (deterministic).** When an Observation carries `program_id` for program P, the Observation attaches to cycle_year Y if and only if `observed_on` lies within the closed interval `[season_start(P, Y), season_end(P, Y)]`, where `season_start` and `season_end` are resolved from the program definition at the Observation's own `catalog_version` and projected onto calendar dates for year Y.
   - Exactly one cycle_year satisfies this → attaches to that cycle_year.
   - Zero cycle_years satisfy this → see L5b.
-  - Two or more cycle_years satisfy this → grower's explicit `program_id` + `observed_on` combination must resolve to exactly one. Catalog overlap within the same program is a catalog bug; reject at capture and flag for owner review.
-- **L5b. Outside-season disposition.** If `observed_on` falls within no cycle_year's `[season_start, season_end)` for the referenced program, the Observation MUST be stored with `program_id = null` (free-standing). Capture UI MUST display a neutral disclosure: "This observation will be saved in history. It is outside the current [program-label] monitoring season." The model MUST NOT reject the capture, MUST NOT auto-shift `observed_on`, MUST NOT attach to an adjacent cycle_year, and MUST NOT discard the Observation.
-- **L5c. No grace period.** The half-open interval admits no tolerance. `season_end = June 20` means June 21 is outside. Catalog authors extending tolerance must adjust `season_end` explicitly.
+  - Two or more cycle_years satisfy this → the grower's explicit `program_id` + `observed_on` combination must resolve to exactly one. Catalog overlap within the same program's own season is a catalog bug; reject at capture and flag for owner review.
+- **L5b. Outside-season disposition.** If `observed_on` falls within no cycle_year's `[season_start, season_end]` (closed, per L5a) for the referenced program, the Observation MUST be stored with `program_id = null` (free-standing). The capture UX MUST surface a neutral disclosure to the grower at capture time (UI copy per `V2_UX_MODEL.md §0.2`). The model MUST NOT reject the capture, MUST NOT auto-shift `observed_on`, MUST NOT attach to an adjacent cycle_year, and MUST NOT discard the Observation.
+- **L5c. No grace period.** The attachment interval is closed on both ends; it admits no tolerance beyond the declared endpoints. `season_end = June 20` means June 20 IS the last day on which an Observation attaches to this cycle_year; June 21 is outside. Catalog authors who want to extend the active season must adjust `season_end` explicitly; the model does not add buffer days.
 - **L6. Overlapping programs, same target.** If catalog declares two programs with overlapping seasons and related targets (e.g., one program ending while another program for the same pest begins), an Observation recorded during the overlap requires an explicit `program_id` choice. Capture UI MUST prompt the grower. If `program_id` is omitted under overlap, the Observation is stored free-standing (per L5b logic; no auto-partition).
 - **L7. Legacy / imported observations.** Observations imported from pre-V2 data or external sources may have `program_id` absent. This is legal; the Observation is treated as free-standing permanently. No process may retroactively assign `program_id` (reaffirmed in §1.7.7).
 
@@ -364,16 +437,19 @@ Validation rules for monitoring programs:
 - `method.kind = "trap"` and `setup_window_def_id` is absent.
 - `method.kind = "scouting"` and `setup_window_def_id` is present.
 - `setup_window_def_id` is present and does not resolve to an `action_window_definition` in the same catalog with `action_type = monitoring`.
-- `season_start` or `season_end` absent; or `season_start >= season_end` (cross-year programs rejected, mirroring §6.4 cross-year window rejection).
+- `season_start` or `season_end` absent; or `season_start > season_end` rejected (this catches every cross-year / wrap-around catalog entry, e.g., Dec 15 > Feb 15 → reject, mirroring §6.4 cross-year window rejection; the closed-interval attachment rule in §1.7.3 L5a admits legitimate one-day seasons with `season_start == season_end`).
 - `cadence.value` present and not an integer ≥ 1.
 - Two `monitoring_program` records MAY declare overlapping seasons when they represent distinct monitoring contexts for the same target. Such programs MUST have distinct `program_id` and MUST be independently selectable by the grower.
 
+**Timing.** Validation of each rule below is a write-time invariant per §0.9.5; once written, an Observation's referential-integrity status is frozen against its own `catalog_version`.
+
 An Observation is invalid at the referential-integrity layer if:
 
-- `program_id` is present and does not resolve in the plant's pinned catalog's monitoring programs.
+- `catalog_version` is absent, or at write-time does not equal the plant's pinned `catalog_version`.
+- `program_id` is present and does not resolve in the `monitoring_program` set of the catalog at the Observation's own `catalog_version`.
 - `program_id` resolves but the program's `method.kind` does not match the Observation's `kind`.
-- `program_id` resolves but the program's `target_code` does not match the Observation's payload target (`payload.target_pest_code` or `payload.target_code`).
-- `program_id` is present but `observed_on` does not lie within any cycle_year's `[season_start, season_end)` for the referenced program (per L5b, the capture flow MUST NOT produce such a record; it produces a free-standing record instead).
+- `program_id` resolves but the program's `target_code` does not match the Observation's payload target (`payload.target_pest_code` for `kind = trap`; `payload.target_code` for `kind = scouting`).
+- `program_id` is present but `observed_on` does not lie within any cycle_year's `[season_start, season_end]` for the referenced program at the Observation's own `catalog_version` (per L5b, the capture flow MUST NOT produce such a record; it produces a free-standing record instead).
 
 #### 1.7.9 Non-scope — S2.8
 
@@ -484,6 +560,7 @@ No other fields. The date the stage was reached is `observation.observed_on` (S2
 - The payload shape MUST match `observation.kind`. A trap-shaped payload on a `stage_obs` record is invalid.
 - No payload MAY include fields not listed in its kind's schema (no free-shape extension; no `extra`, `notes`, `severity`, `action_needed`, `confidence`, etc.).
 - `payload` is REQUIRED on every Observation record. Its kind-specific required fields are all REQUIRED.
+- `observed_on ≤ recorded_at` (reinforced from §0.6a). Future-dated observations are rejected at write-time.
 
 ### 3.4 Validation rules
 
@@ -504,7 +581,7 @@ No other fields. The date the stage was reached is `observation.observed_on` (S2
 #### 3.4.3 `stage_obs` payload — invalid if
 
 - `stage_code` absent or empty.
-- `stage_code` is not equal to the `stage_code` of any entry in the plant's pinned catalog `stage_vocabulary` (referential integrity into S2.3).
+- `stage_code` is not equal to the `stage_code` of any entry in the `stage_vocabulary` of the catalog at the Observation's own `catalog_version` (referential integrity into §2.3, resolved against the record's pinned version — not the plant's current pinned version).
 
 #### 3.4.4 `symptom` payload — invalid if
 
@@ -512,6 +589,8 @@ No other fields. The date the stage was reached is `observation.observed_on` (S2
 - `affected_part` is present and not in the closed enum listed in §3.2.4.
 
 #### 3.4.5 Cross-cutting — invalid if
+
+**Timing.** Payload validation is a write-time invariant per §0.9.5; once written, an Observation's payload-integrity status is frozen against its own `catalog_version`.
 
 - `payload` absent.
 - `payload` shape does not match `observation.kind`.
@@ -614,6 +693,10 @@ Matching an activity record (§0.4) to a window occurrence is a deterministic re
 - Matching is deterministic: the same catalog, the same `stage_obs` set, and the same activity set produce the same mapping on every evaluation.
 - For phenology-anchored windows where the current year's occurrence has not yet been produced (no `stage_obs`), no candidate `O` exists in that year. Activities observed before any occurrence exists cannot match and remain unmatched until an occurrence is produced.
 
+`activity_group_id` (§0.11) is not consulted by the matching rule. Activities with different plant_ids sharing a group id are matched to their respective plants' occurrences independently.
+
+**Unmatched activities.** For phenology-anchored windows where no `stage_obs` for the anchor's `stage_code` is ever recorded for a given year, no occurrence is produced (§6.2). Any Activity recorded for that plant and `window_def_id` in that year cannot match (no candidate occurrence exists). The Activity is nonetheless stored and remains in the activity set. If the anchor's `stage_obs` is subsequently recorded, the §6.3 matching rule is evaluated against the produced occurrence and the previously unmatched Activity may attach. If the `stage_obs` is never recorded, the Activity remains permanently unmatched: it is visible in plant history (preserving Principle 9), but does not contribute to any window-state derivation. Principle 8 (monitoring never infers missing data) forbids inferring the `stage_obs` from the Activity's existence or its `occurred_on`.
+
 ### 6.4 Cross-year calendar windows
 
 Cross-year calendar windows — specifically, calendar-anchored windows for which `month_day_close < month_day_open` within the same calendar year — remain rejected as declared in §1.6.2.
@@ -679,7 +762,9 @@ Program state is a pure function of `today`, `season_start`, and `season_end`. I
 
 **Observation attachment to occurrences:**
 
-An Observation with `program_id = P` attaches to occurrence `(P, cycle_year Y)` if and only if `observed_on` lies within `[season_start(P, Y), season_end(P, Y))` per §1.7.3 L5a. Outside any such interval, the Observation is free-standing (`program_id = null`) per L5b.
+An Observation with `program_id = P` attaches to occurrence `(P, cycle_year Y)` if and only if `observed_on` lies within `[season_start(P, Y), season_end(P, Y)]` (closed interval on both ends; see §1.7.3 L5a). Outside any such interval, the Observation is stored free-standing (`program_id = null`) per L5b.
+
+`observation_group_id` (§0.11) is not consulted by program-state derivation or observation attachment. Each Observation is evaluated independently.
 
 **No propagation across cycle_years:**
 
@@ -719,4 +804,8 @@ Each program's occurrence is evaluated independently. Observations for one progr
 
 ## 9. Launch species list
 
-*Placeholder — owned by S2.8. Awaiting owner disposition (list of launch species; citrus counted as three).* 
+**Status:** content block, S2 owner decision — not a model rule. This section will enumerate the species that ship with catalog v1.0 (the S3–S5 audit operates on this list). The model rules for catalog template, action-window definition, monitoring program, stage vocabulary, and Observation payload are version-independent and do not depend on the specific species named here.
+
+The S3 audit cannot begin until this list is named by the owner. No agent may populate this section with content from `V2_PLANT_CATALOG.md` or `V2_ORCHARD_PLAN_TEMPLATES.md` without explicit owner instruction, per CLAUDE.md's input-files rule.
+
+*Awaiting owner disposition.*

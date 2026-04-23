@@ -47,7 +47,7 @@ Free-standing Observations (`program_id = null`) are first-class plant-history e
 - **MUST NOT** offer any "attach to program," "link observation," "reattach," or "move to program" action on a free-standing Observation. Attachment is permanently impossible.
 - **MAY** render an optional neutral marker ("not linked to a monitoring program" or equivalent) — informational only.
 - **MUST NOT** apply warning, error, or alarm styling to free-standing Observations. Visual treatment is identical to program-attached Observations.
-- **MUST** show a neutral capture-time disclosure when the grower logs an Observation whose `observed_on` falls outside the chosen program's active season: "This observation will be saved in history. It is outside the current [program-label] monitoring season." The capture MUST succeed; evidence is never discarded; the record is stored free-standing per `V2_DOMAIN_MODEL.md` §1.7.3 L5b.
+- **MUST** show a neutral capture-time disclosure when the grower logs an Observation whose `observed_on` falls outside the chosen program's active season. The disclosure copy is: "This observation will be saved in history. It is outside the current [program-label] monitoring season." This copy lives in this document as the single source of truth; `V2_DOMAIN_MODEL.md §1.7.3 L5b` references it and does not duplicate it. The capture MUST succeed; evidence is never discarded; the record is stored free-standing per `V2_DOMAIN_MODEL.md` §1.7.3 L5b.
 
 ### 0.3 Monitoring card constraints
 
@@ -64,6 +64,8 @@ A monitoring program card (home, calendar, plant detail) MUST respect the neutra
   - `cadence` as a static interval declaration (never as a compliance measure).
   - "bez zapisa" / "no records" as a neutral descriptor.
   - program `notes` (agronomic purpose, target lifecycle, threshold hints) for grower reading.
+
+**Affirmative rule — zero-setup and zero-observation programs.** A scouting program (`method.kind = scouting`, no setup required) with zero Observations during `active` state MUST still render factually: the program label, program state as `aktivno`, `bez zapisa` as a neutral descriptor, the program `notes` (agronomic purpose, target context) for grower reading, and — if declared — `cadence` as a static interval declaration. No alarm styling, no nudge copy, no "start your first check" prompt. The card exists during the program's active season regardless of evidence presence; its visibility is a property of the program's state, not of the record set.
 
 ### 0.4 UI must not simulate analytics
 

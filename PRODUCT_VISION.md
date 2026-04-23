@@ -2,17 +2,17 @@
 
 ## 1. Core purpose
 
-Vocnjak exists to answer three real questions a grower has when standing in the orchard:
+Vocnjak exists to answer three real questions a grower has in the orchard:
 
-- What should I do today in my orchard?
-- Why should I do it?
-- Did I do it before?
+- What matters in my orchard right now — which windows are open, which are closing, which are upcoming, which were missed?
+- Why does it matter — what problem does this action prevent or address?
+- Did I do it before — this season, or in prior seasons?
 
-This app is not a generic to do app, not a plant tracker, and not a data tool for entering records for their own sake.
+This app is not a generic to do app, not a plant tracker, not a daily task list, and not a data tool for entering records for their own sake.
 
 This app is a decision-support system for real orchard work.
 
-Its job is to help a person make the next good real-world decision at the right time, with the right context, based on how orchards actually behave through the season.
+Its job is to help a person understand which real-world windows are relevant at the current point in the season, why they are relevant, and whether the work has already been done — so the grower can make a good decision when they choose to act.
 
 ---
 
@@ -278,19 +278,22 @@ If a trap was not checked, the app must not act as if pest pressure is known.
 
 Correct behavior:
 
-- remind the user to check the trap
-- show that more information is needed
-- wait for real observation
+- surface the monitoring program as active during its season
+- display the facts the grower has recorded: last observation date, count of recorded observations, suggested cadence as a static interval declaration
+- surface the program's agronomic purpose and target context so the grower can read, decide, and act on their own judgment
+- wait for real observation; the grower decides whether and when to gather evidence
 
 Incorrect behavior:
 
 - infer that pressure is high without evidence
 - suggest treatment because data is missing
 - create false confidence
+- signal that a check is "overdue" based on time elapsed since the last observation
+- nudge, remind, or push the grower toward a schedule they did not set
 
-Monitoring exists to support decisions, not to fill empty space with assumptions.
+Monitoring exists to support the grower's own decisions, not to fill empty space with assumptions, and not to push the grower to reduce the app's uncertainty.
 
-The app should be honest when it does not know.
+The app is honest when it does not know. It never pretends to know, and it never pressures the grower into checking on any schedule other than the one the grower chooses.
 
 ---
 

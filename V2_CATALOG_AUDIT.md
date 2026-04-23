@@ -97,6 +97,11 @@ Audit MUST NEVER:
 6. **Set `method.kind = "trap"`** from species convention if a device is not explicitly mentioned in source.
 7. **Merge two source entries** into one program or **split one source entry** into two programs, without explicit owner instruction.
 8. **Retroactively set `program_id`** on any historical observation data during migration. Legacy observations stay free-standing permanently (FS-INV, `V2_DOMAIN_MODEL.md` §1.7.4).
+9. **Declare a formal `open_condition` on a treatment action-window without verbatim-from-source backing.** A gate MAY be declared ONLY IF:
+   - (a) the source material explicitly defines the gate (phenology precondition, symptom precondition, or prior-action sequence stated verbatim in source), OR
+   - (b) the source material explicitly states a condition that is already directly representable by the locked `stage_obs` or `symptom` Observation types, with no reformulation required.
+
+   Verbatim-from-source is the only admissible basis. Semantic interpretation, inferred agronomic knowledge, established practices of any origin (regional or otherwise), curator judgment about restrictiveness, and trap/scouting thresholds MUST NOT be gate inputs. If neither (a) nor (b) holds: NO GATE — the window ships gate-less, and decision context lives in notes + history + monitoring display per `V2_DOMAIN_MODEL.md §0.9.2 DS3`. Missing `cadence` is never a reason to invent a gate.
 
 Violation of any of the above is a catalog-quality defect caught in owner review of audit output. The curator MUST flag the entry for owner review rather than guess.
 
@@ -170,6 +175,9 @@ To be filled by S3–S5 as the audit proceeds. Each row: one source entry (monit
 - `V2_DOMAIN_MODEL.md` §0.9.2 — `open_condition` scope, DS1–DS5 decision-support rules, DS5 gate-declaration audit rule.
 - `V2_DOMAIN_MODEL.md` §6.8 — Monitoring program occurrence derivation.
 - `V2_DOMAIN_MODEL.md` §1.2, §1.6.2 — `action_type = monitoring` reserved for monitoring-device installation; orphan monitoring action-windows are validation errors.
+- `V2_DOMAIN_MODEL.md` §0.6a — Observation MUST-HAVE fields, including `catalog_version` pinning.
+- `V2_DOMAIN_MODEL.md` §0.9.5 — record-integrity timing invariant (write-time; catalog upgrades never retroactively invalidate records).
+- `V2_DOMAIN_MODEL.md` §0.11 — group-identity rule (display-only; no audit action on group semantics).
 - `V2_UX_MODEL.md` — UX hard constraints on monitoring display (forbidden copy, neutrality translation).
 
 ---
