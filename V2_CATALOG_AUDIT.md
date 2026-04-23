@@ -169,7 +169,51 @@ To be filled by S3–S5 as the audit proceeds. Each row: one source entry (monit
 
 ---
 
-## 6. Cross-document references
+## 6. Notes-field content — curator reference
+
+This section is a curator reference for what content MAY belong in catalog `notes` fields (action-window `notes`, monitoring-program `notes`) when the source material explicitly supports it. It is advisory for the curator; it does NOT add rules, entities, schema fields, gate types, or runtime logic, and does NOT override §3 MUST NEVER.
+
+The verbatim-from-source discipline of §3 item 9 applies to notes content as well: if the source material does not state the guidance, the curator MUST NOT invent it. Curator knowledge, regional convention, and general agronomic interpretation MUST NOT fill gaps. Notes remain silent where source is silent.
+
+### 6.1 Post-action observation timing
+
+Observations recorded shortly after a treatment may reflect residual action of that treatment rather than true orchard state. When source material explicitly states a post-action observation lag for a pest target, the curator MAY capture it as display-only advisory text in the monitoring program's `notes` field.
+
+This is NOT a gate, NOT a derived rule, and NOT a runtime restriction. It does not affect `open_condition`, `effective_open`, `effective_close`, or any window-state derivation. Absent verbatim source backing, notes remain silent on post-action timing.
+
+### 6.2 Standard inspection sites
+
+When source material explicitly identifies inspection locations for a pest target (for example: young-shoot tips, undersides of leaves, curled or sticky leaves), the curator MAY include those locations as free-text guidance in the monitoring program's `notes` field.
+
+No schema change is involved — content lives in existing `notes`. Curator knowledge, regional convention, and general agronomic interpretation MUST NOT fill gaps where source material is silent (analogue of §3 item 4).
+
+### 6.3 Fungal inspection timing after wet periods
+
+When source material explicitly describes timing-sensitive fungal scouting (for example: inspection after rain or after a prolonged wet period), that timing MAY appear in the relevant monitoring program's `notes` as display-only advisory text.
+
+Such notes MUST NOT become weather-derived runtime logic or a weather-derived gate. Weather remains advisory and never blocking per `V2_DOMAIN_MODEL.md` §0.9.2 DS2. Absent verbatim source backing, notes remain silent on wet-period timing.
+
+### 6.4 Copper — worked example for audit reasoning
+
+This subsection illustrates how a curator might interpret a source-backed copper treatment through V2 structures. It is an audit-reasoning example, not catalog content and not a rule.
+
+Assume, illustratively, a source entry for a species stating: "apply copper before bud-break; avoid during bloom; resume after petal-fall." The curator considers:
+
+- Does the source back a phenology-anchored window (using stages already present in the species' locked stage vocabulary) with a calendar tolerance, rather than a pure calendar window?
+- Does the source explicitly state a precondition mappable to `open_condition.requires_observation{observation_type = stage_obs}` for a stage that already exists in the catalog?
+- Is the bloom-avoidance text a verbatim precondition (candidate for a gate under §3 item 9.a) or narrative guidance (belongs in `notes`)?
+
+The actual catalog outcome — gate vs no-gate, window shape, tolerance — is determined by what the source states verbatim. Where source does not state a precondition verbatim, §3 item 9 applies: no gate; the window ships gate-less and the bloom-avoidance text lives in `notes`. A curator MUST NOT derive a bloom-phase gate from general agronomic knowledge alone.
+
+### 6.5 Spring sequence ordering as advisory
+
+When source material for a species explicitly states a meaningful seasonal ordering (for example: set trap first, then begin shoot inspection, then first fungal checks), the curator MAY capture that ordering as free-text advisory guidance in the relevant monitoring program's `notes`.
+
+Such ordering MUST NOT become a formal `open_condition` unless the source's stated condition maps directly to `requires_prior_activity` or `requires_observation{stage_obs | symptom}` per §3 item 9.b; trap and scouting counts remain NOT a gate input per `V2_DOMAIN_MODEL.md` §0.9.2 DS1. Ordering MUST NOT become a new gate kind, a new observation kind, or a cross-program sequencing runtime mechanism.
+
+---
+
+## 7. Cross-document references
 
 - `V2_DOMAIN_MODEL.md` §1.7 — Monitoring program entity, validation, rules, free-standing invariant.
 - `V2_DOMAIN_MODEL.md` §0.9.2 — `open_condition` scope, DS1–DS5 decision-support rules, DS5 gate-declaration audit rule.
@@ -182,7 +226,7 @@ To be filled by S3–S5 as the audit proceeds. Each row: one source entry (monit
 
 ---
 
-## 7. Extension rules
+## 8. Extension rules
 
 When extending this document:
 
