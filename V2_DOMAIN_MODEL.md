@@ -805,7 +805,7 @@ Each program's occurrence is evaluated independently. Observations for one progr
 
 **Status:** content block, S2 owner decision — not a model rule. This section will enumerate the species that ship with catalog v1.0 (the S3–S5 audit operates on this list). The model rules for catalog template, action-window definition, monitoring program, stage vocabulary, and Observation payload are version-independent and do not depend on the specific species named here.
 
-The S3 audit cannot begin until this list is named by the owner. No agent may populate this section with content from `V2_PLANT_CATALOG.md` or `V2_ORCHARD_PLAN_TEMPLATES.md` without explicit owner instruction, per CLAUDE.md's input-files rule.
+The S3 audit operates on the owner-approved list below. No agent may populate this section with content from `V2_PLANT_CATALOG.md` or `V2_ORCHARD_PLAN_TEMPLATES.md` without explicit owner instruction, per CLAUDE.md's input-files rule.
 
 This section enumerates the species shipping with catalog v1.0. It is the S3–S5 audit scope.
 
