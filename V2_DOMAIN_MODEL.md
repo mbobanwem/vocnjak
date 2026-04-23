@@ -1,6 +1,6 @@
 # V2_DOMAIN_MODEL
 
-**Status:** Sections 0–6 locked. Sections 7–9 remain placeholders for S2.7–S2.8.
+**Status:** Sections 0–7 locked. Sections 1.7 and 6.8 added in S2.8 (monitoring model). Section 9 remains placeholder owned by S2.8 (launch species list).
 
 ---
 
@@ -19,7 +19,9 @@
 5. **Activity record** — immutable captured real-world event.
    - `activity_id`, `plant_id`, `window_def_id`, `catalog_version`, `action_type`, `activity_group_id?`, `status` ∈ {done, skipped}, `occurred_on`, `recorded_at`, `notes?`, `provenance`
 6. **Observation** — immutable structured observation event.
-   - `observation_id`, `plant_id`, `kind` ∈ {trap, scouting, stage_obs, symptom}, `observed_on`, `recorded_at`, `payload` (schema per `kind` deferred to S2.4), `observation_group_id?`, `provenance`
+   - `observation_id`, `plant_id`, `kind` ∈ {trap, scouting, stage_obs, symptom}, `observed_on`, `recorded_at`, `payload` (schema per `kind` deferred to S2.4), `program_id?`, `observation_group_id?`, `provenance`
+   - `program_id?` — optional link to a declared `monitoring_program` (§1.7). When present, attaches the Observation to that program's history and its `cycle_year` per §6.8. When absent, the Observation is **free-standing** and is a first-class plant-history entry that is permanently disjoint from any monitoring program (§1.7.7). Immutable like all other Observation fields.
+7. **Monitoring program** — catalog-authored declaration of a season-long informational campaign per target per plant. Child collection of the catalog template, defined in §1.7. State (`pre_season`, `active`, `ended`) is derived per `(plant_id, program_id, cycle_year)` per §6.8; no state is stored. Absence of observations during any program state is neutral (§1.7.6).
 
 ### 0.2 Action-window definition (child of Catalog template)
 
@@ -96,12 +98,29 @@ Window state and gate state are computed independently. A window can be `open` w
 
 - A window definition may declare an `open_condition` with exactly one of two closed kinds:
   - `requires_prior_activity { prior_action_type, within_days }` — satisfied when any activity for the same plant with `action_type = prior_action_type`, `status = done`, and `occurred_on` within `within_days` of the evaluation date exists. The gate references the `action_type` category (§1.2), not a specific prior window; no cross-window identity is introduced.
-  - `requires_observation { observation_type, state, within_days }` — satisfied when an Observation with `kind = observation_type` and the given `state` exists for the plant with `observed_on` within `within_days` of the evaluation date.
+  - `requires_observation { observation_type, state, within_days }` — satisfied when an Observation with `kind = observation_type` and the given `state` exists for the plant with `observed_on` within `within_days` of the evaluation date. **`observation_type` is narrowed to `{stage_obs, symptom}` only** (S2.8). Trap and scouting observations are NOT valid `observation_type` values and are NOT formal gate inputs (see DS below).
 - `open_condition` is advisory state. It is computed for display as `gate_state` (§0.5); it MUST NOT affect `effective_open` or `effective_close`. Calendar position is governed exclusively by anchor + tolerance + `calendar_bound` (§1.3).
 - **Non-blocking rule (lock):** `open_condition` MUST NOT be consulted by any write path. Activity logging and observation logging MUST succeed regardless of gate state. Gate state is recomputed on read.
 - If `open_condition` is absent, `gate_state = ne primjenjuje se`.
 - Terminal-gate fallback for both kinds is defined in §6.5.
 - Forbidden gate logic (reinforcement): `open_condition` MUST NOT express forecast-based, numeric-threshold, compound multi-factor, absence-as-evidence, user-intent, or projected-time conditions. The `kind` set is closed; no third variant may be introduced without a locked-document amendment.
+
+**Decision-support scope (DS) — S2.8:**
+
+- **DS1.** `open_condition` is the ONLY structural gate mechanism in the model. It admits exactly `requires_prior_activity` and `requires_observation({stage_obs | symptom}, state, within_days)`. Both shapes produce a deterministic boolean from catalog-defined predicates over recorded evidence.
+- **DS2.** `open_condition` does NOT cover, and MUST NOT be extended to cover:
+  - **Trap counts** (`observation.kind = trap`). No `state` enum exists on `trap` payload; no threshold DSL exists; `requires_observation(trap, ...)` is forbidden.
+  - **Scouting findings** (`observation.kind = scouting`). No threshold DSL; `requires_observation(scouting, ...)` is forbidden.
+  - **Trend or rate-of-change** across observations. Not a formal gate.
+  - **Composite conditions.** No AND/OR across observation types; at most one `requires_observation` and at most one `requires_prior_activity` per window definition.
+  - **Weather-derived gates.** Weather is advisory per Principle 3 and MUST NOT become a gate input.
+- **DS3.** Decision support for pest treatments flows from Observation history, action-window `notes` (§1.2), and monitoring program display (§1.7). These are UI surfaces the grower reads; they are not automated.
+- **DS4.** A future agent reading the S2.8 amendment MUST NOT assume that "all pest-treatment logic is now solved by formal gates." Concretely forbidden future work:
+  1. Adding a threshold DSL to `requires_observation` payload to admit trap/scouting inputs.
+  2. Introducing derived "pressure" or "recommendation" state from any combination of evidence.
+  3. Auto-opening or auto-closing action-windows based on evidence not declared in `open_condition`.
+  4. Treating the absence of `open_condition` as equivalent to "no decision context needed" — the absence means decision context lives in notes + history + monitoring display, not in automation.
+- **DS5.** Audit rule (applied in S3–S5): for pests with declared monitoring programs, a treatment action-window MAY declare a formal `open_condition` ONLY IF (a) the source material explicitly defines the gate (phenology precondition, symptom precondition, or prior-action sequence stated verbatim in source), OR (b) the source material explicitly states a condition that is already directly representable by the locked `stage_obs` or `symptom` Observation types, with no reformulation required. Verbatim-from-source is the only admissible basis. Semantic interpretation, inferred agronomic knowledge, conventions of any origin (Croatian or otherwise), curator judgment about restrictiveness, and trap/scouting thresholds MUST NOT be gate inputs. If neither (a) nor (b) holds: NO GATE — the window ships gate-less, and decision context lives in notes + history + monitoring display per DS3. Missing `cadence` is never a reason to invent a gate. Audit detail lives in `V2_CATALOG_AUDIT.md`.
 
 #### 0.9.3 Monitoring vs symptom
 
@@ -157,12 +176,12 @@ S2.2 specifies shape and adds fields:
 
 | Field                 | Type / shape                                                                                                          | Cardinality | Semantics                                                                                                             |
 |-----------------------|-----------------------------------------------------------------------------------------------------------------------|-------------|-----------------------------------------------------------------------------------------------------------------------|
-| `action_type`         | string from the controlled vocabulary: `oil`, `copper`, `fungicide`, `insecticide`, `pruning`, `monitoring`, `irrigation`, `harvest`, `fertilization`, `other` | required    | Category tag for filtering and display. Activity records carry a copy for history. Not window identity.               |
+| `action_type`         | string from the controlled vocabulary: `oil`, `copper`, `fungicide`, `insecticide`, `pruning`, `monitoring`, `irrigation`, `harvest`, `fertilization`, `other` | required    | Category tag for filtering and display. Activity records carry a copy for history. Not window identity. **`monitoring` is reserved exclusively for monitoring-device installation (trap, sticky plate) and MUST be referenced by at least one `monitoring_program.setup_window_def_id` (§1.7). Orphan `monitoring` action-windows are validation errors (§1.6.2). Non-monitoring preparation work (netting, frost protection) MUST use `other`, not `monitoring`.** |
 | `label`               | string                                                                                                                | required    | Human-readable window label (e.g. "Bakar na rane nakon rezidbe"). May change across catalog versions; `window_def_id` remains stable. |
 | `anchor`              | `{ kind: "phenology", stage_code: string }` OR `{ kind: "calendar", month_day_open: MD, month_day_close: MD }`        | required    | Agronomic origin. Phenology is primary (Principle 2); calendar is fallback.                                           |
 | `calendar_bound`      | `{ not_before?: MD, not_after?: MD }`                                                                                 | optional    | Absolute-date guard. Only meaningful when `anchor.kind = "phenology"`. Forbidden when `anchor.kind = "calendar"`.     |
 | `tolerance`           | `{ before: duration, after: duration }`                                                                               | required    | Relative-duration sizing around the anchor. Distinct axis from `calendar_bound`.                                      |
-| `open_condition`      | `{ kind: "requires_prior_activity", prior_action_type: action_type vocab, within_days: integer ≥ 1 }` OR `{ kind: "requires_observation", observation_type: Observation.kind, state: string, within_days: integer ≥ 1 }` | optional    | Advisory gate per §0.9.2. Display-only; never blocks logging. No cross-window identity. `kind` set is closed.         |
+| `open_condition`      | `{ kind: "requires_prior_activity", prior_action_type: action_type vocab, within_days: integer ≥ 1 }` OR `{ kind: "requires_observation", observation_type: "stage_obs" \| "symptom", state: string, within_days: integer ≥ 1 }` | optional    | Advisory gate per §0.9.2. Display-only; never blocks logging. No cross-window identity. `kind` set is closed. `observation_type` narrowed to `{stage_obs, symptom}` in S2.8.   |
 | `author`              | string identifier                                                                                                     | optional    | Per-window provenance override. When absent, inherits catalog's `author` — deterministic fallback, not inference.     |
 | `evidence_source`     | string                                                                                                                | optional    | Per-window provenance override. When absent, inherits catalog's `evidence_source`.                                    |
 | `last_reviewed_on`    | ISO date                                                                                                              | optional    | Per-window provenance override. When absent, inherits catalog's `last_reviewed_on`.                                   |
@@ -213,16 +232,174 @@ Given the same catalog, and — for phenology anchors only — the same `Observa
 - `label` is absent or empty.
 - `open_condition.kind` is not exactly one of `requires_prior_activity` or `requires_observation`.
 - `open_condition.kind = requires_prior_activity` and `prior_action_type` is not in the §1.2 controlled vocabulary.
-- `open_condition.kind = requires_observation` and `observation_type` is not in the `Observation.kind` enum (§0.1).
+- `open_condition.kind = requires_observation` and `observation_type` is not in `{stage_obs, symptom}` (narrowed in S2.8; §0.9.2 DS2).
 - `open_condition.kind = requires_observation` and `state` is absent or empty.
 - `open_condition.within_days` is absent or not an integer ≥ 1.
 - No third variant of `open_condition.kind` may be introduced without a locked-document amendment.
+- `action_type = monitoring` and no `monitoring_program` in the same catalog references this `window_def_id` as its `setup_window_def_id` (orphan monitoring action-window; §1.2, §1.7).
 
 #### 1.6.3 Forbidden ambiguity
 
 - `anchor.kind` must be exactly one of `phenology` or `calendar`.
 - `calendar_bound` is an absolute-date guard only; it MUST NOT be used to express relative tolerance (use `tolerance` for that).
 - No implicit defaults beyond the provenance fallback rule in §1.4. Missing required fields are validation errors.
+
+### 1.7 Monitoring program — locked (S2.8)
+
+A **monitoring program** is a catalog-authored declaration of a season-long informational campaign for a specific pest/target on a plant. It is a child collection of the catalog template, parallel to `action_window_definitions`. Programs are not action-windows; they are a separate entity kind with their own state axis (§6.8).
+
+Programs exist because monitoring is **evidence gathering**, not task completion. A trap or scouting campaign runs across weeks; its purpose is to inform grower decisions, not to be "done" once. Modeling monitoring as action-windows produces incorrect state (single-completion against a campaign that should remain open all season). Programs solve this by decoupling monitoring from `§0.4` window-state semantics.
+
+#### 1.7.1 Monitoring program — MUST-HAVE fields
+
+| Field                  | Type / shape                                                                           | Cardinality | Semantics                                                                                                                                                                                                                                                                                        |
+|------------------------|----------------------------------------------------------------------------------------|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `program_id`           | string identifier                                                                      | required    | Opaque, stable, non-empty. Unique within this catalog's programs.                                                                                                                                                                                                                                 |
+| `catalog_id`           | string identifier                                                                      | required    | Parent catalog identity.                                                                                                                                                                                                                                                                          |
+| `label`                | string                                                                                 | required    | Human-readable program label (e.g. "Jabučni savijač — feromonska klopka"). May change across catalog versions; `program_id` remains stable.                                                                                                                                                      |
+| `target_code`          | string identifier                                                                      | required    | Pest or scouted target identifier. Opaque (catalog pest registry deferred). Observations carry a matching `target_pest_code` (kind=trap) or `target_code` (kind=scouting) per §3.2 which must equal this value when the Observation attaches to this program.                                    |
+| `method`               | `{ kind: "trap" | "scouting" }`                                                        | required    | Closed enum. `trap` = physical device (pheromone trap, sticky plate). `scouting` = visual inspection without device.                                                                                                                                                                              |
+| `setup_window_def_id`  | string identifier (window_def_id)                                                      | conditional | **REQUIRED when `method.kind = "trap"`.** References an `action_window_definition` in the same catalog whose `action_type = monitoring` — the one-shot install action. **FORBIDDEN when `method.kind = "scouting"`** (no physical device exists).                                                |
+| `season_start`         | MD (month-day)                                                                         | required    | Start of the program's annual active season. Resolved per cycle_year with `cycle_year = year(season_start)` for that occurrence.                                                                                                                                                                  |
+| `season_end`           | MD (month-day)                                                                         | required    | End of the program's annual active season. `season_start < season_end` within the same calendar year (programs crossing Dec 31 are out of scope per §6.4 cross-year rejection).                                                                                                                   |
+| `cadence`              | `duration`                                                                             | optional    | Suggested interval between observations (display advisory per §6.8 rule S3). ABSENT is legal — a program without cadence is valid; it produces no cadence display.                                                                                                                               |
+| `notes`                | string                                                                                 | optional    | Free-form agronomic context for the grower — purpose of campaign, threshold hints, target lifecycle. Rendered in UI as part of decision support (per §0.9.2 DS3).                                                                                                          |
+| `author`               | string identifier                                                                      | optional    | Per-program provenance override. When absent, inherits catalog's `author` per §1.4.                                                                                                                                                                                                               |
+| `evidence_source`      | string                                                                                 | optional    | Per-program provenance override.                                                                                                                                                                                                                                                                  |
+| `last_reviewed_on`     | ISO date                                                                               | optional    | Per-program provenance override.                                                                                                                                                                                                                                                                  |
+
+#### 1.7.2 Boundary rules
+
+- **B1.** Installing a monitoring device is an Activity record (§0.1 item 5) completing the program's setup action-window. It is NEVER an Observation. If a grower wants to record an initial count at install time, that is a separate Observation record.
+- **B2.** `setup_window_def_id` MUST be absent when `method.kind = "scouting"`. Validation error otherwise.
+- **B3.** A single setup action-window MAY be referenced by multiple monitoring programs. Each `monitoring_program` with `method.kind = "trap"` MUST reference exactly one `setup_window_def_id`. A single install Activity closes the shared setup window; each referencing program independently tracks observations via its own `program_id`.
+- **B4.** A program MAY have no setup at all (scouting case, per B2). The grower's first event for that program is an Observation, not an Activity.
+- **B5.** An `action_window_definition` with `action_type = monitoring` MUST be referenced by at least one program's `setup_window_def_id`. Orphan monitoring action-windows are catalog validation errors (§1.6.2). Non-monitoring preparation work uses `action_type = other`.
+
+#### 1.7.3 `program_id` lifecycle on Observations
+
+- **L1.** `program_id` on an Observation (§0.1) is a user-asserted field set at capture time. The model MUST NOT derive or infer `program_id` from `payload.target_pest_code`, `payload.target_code`, the plant's declared programs, or any heuristic.
+- **L2.** `program_id` is OPTIONAL on every Observation. When capture UI presents the observation as attached to a specific program (grower taps "Log check" on a program card), UI discipline sets `program_id`. The model does not enforce the coupling; ad-hoc observations legitimately omit `program_id` and are free-standing.
+- **L3.** When present, `program_id` MUST:
+  - resolve to a `program_id` declared in the plant's pinned catalog's monitoring programs,
+  - match the Observation's `kind` to the program's `method.kind` (`kind = trap` ↔ `method.kind = "trap"`; `kind = scouting` ↔ `method.kind = "scouting"`),
+  - match the Observation's payload target (`payload.target_pest_code` for `kind = trap`; `payload.target_code` for `kind = scouting`) to the program's `target_code`.
+- **L4.** `program_id` is immutable per Observation immutability (§0.1). No correction or reassignment. A mistaken attachment is addressed by recording a new Observation and annotating history externally.
+- **L5.** Retroactive logging (`observed_on < recorded_at`) is permitted. Program attachment and `cycle_year` derive exclusively from `observed_on`; `recorded_at` is never consulted for membership.
+- **L5a. Attachment rule (deterministic).** When an Observation carries `program_id` for program P, the Observation attaches to cycle_year Y if and only if `observed_on` lies within the half-open interval `[season_start(P, Y), season_end(P, Y))` (resolved per §6.3's half-open semantics adapted for programs).
+  - Exactly one cycle_year satisfies this → attaches to that cycle_year.
+  - Zero cycle_years satisfy this → see L5b.
+  - Two or more cycle_years satisfy this → grower's explicit `program_id` + `observed_on` combination must resolve to exactly one. Catalog overlap within the same program is a catalog bug; reject at capture and flag for owner review.
+- **L5b. Outside-season disposition.** If `observed_on` falls within no cycle_year's `[season_start, season_end)` for the referenced program, the Observation MUST be stored with `program_id = null` (free-standing). Capture UI MUST display a neutral disclosure: "This observation will be saved in history. It is outside the current [program-label] monitoring season." The model MUST NOT reject the capture, MUST NOT auto-shift `observed_on`, MUST NOT attach to an adjacent cycle_year, and MUST NOT discard the Observation.
+- **L5c. No grace period.** The half-open interval admits no tolerance. `season_end = June 20` means June 21 is outside. Catalog authors extending tolerance must adjust `season_end` explicitly.
+- **L6. Overlapping programs, same target.** If catalog declares two programs with overlapping seasons and related targets (e.g., one program ending while another program for the same pest begins), an Observation recorded during the overlap requires an explicit `program_id` choice. Capture UI MUST prompt the grower. If `program_id` is omitted under overlap, the Observation is stored free-standing (per L5b logic; no auto-partition).
+- **L7. Legacy / imported observations.** Observations imported from pre-V2 data or external sources may have `program_id` absent. This is legal; the Observation is treated as free-standing permanently. No process may retroactively assign `program_id` (reaffirmed in §1.7.7).
+
+#### 1.7.4 Free-standing observations — model invariant (FS-INV)
+
+Free-standing Observations (Observations with `program_id = null` or absent) are permanently disjoint from any monitoring program's evidence set. This is a **model integrity invariant**, not a rule that future work may relax, optimize, or override. Changes to this invariant require an explicit model-level re-charter, not a routine amendment.
+
+- **FS1.** A free-standing Observation is a valid, first-class history entry on the plant. Visible in plant history chronologically alongside all other activities and observations. Stored with identical fields and immutability as any other Observation.
+- **FS2.** A free-standing Observation is NOT incomplete, NOT pending attachment, NOT an error, NOT second-class.
+- **FS3.** FS-INV applies to every system layer:
+  - **Runtime** (plan-state derivation, UI rendering, `open_condition` evaluation, program-state computation): MUST NOT treat a free-standing Observation as a program's evidence under any circumstance.
+  - **Migration** (catalog version bumps, schema upgrades, legacy imports, data exports/re-imports): MUST NOT re-link a free-standing Observation to a program by any mechanism — target match, date proximity, payload similarity, heuristic, or ML.
+  - **Analytics / telemetry / reporting**: MUST NOT count free-standing Observations in any program-scoped metric or dashboard.
+  - **AI or ML layers**: MUST NOT use free-standing Observations as training signal, inference input, or recommendation basis in any program-scoped context.
+  - **Audit and curation tooling**: MUST NOT suggest attaching a free-standing Observation to a program, even as a curator-approved action. Attachment is permanently impossible per L4 immutability + FS-INV.
+- **FS4.** Payload coincidence does not breach FS-INV. Even when a free-standing Observation's payload would syntactically satisfy an `open_condition` predicate — same `target_code`, same timing window — FS-INV forbids its use as gate input. Disjointness is explicit via `program_id = null`, not inferred from payload.
+- **FS5.** UI: plant history view shows free-standing Observations with neutral visual treatment identical to program-attached Observations. Optionally, UI may render a small marker "not linked to a monitoring program" — informational, never warning styling. Program card views NEVER show free-standing Observations.
+
+#### 1.7.5 Program-state enum — closed (S2.8)
+
+Program state per `(plant_id, program_id, cycle_year)` is derived per §6.8 and is exactly one of:
+
+- `pre_season` — `today < season_start` for this cycle_year.
+- `active` — `season_start ≤ today < season_end` for this cycle_year.
+- `ended` — `today ≥ season_end` for this cycle_year.
+
+No other values exist. The enum is closed at three values. The model MUST NOT introduce `overdue`, `stale`, `warning`, `missed`, `done`, `skipped`, or any value implying judgment about observation presence, cadence compliance, or campaign quality. Program state is a separate axis from window state (§0.4) and gate state (§0.5); the three axes are orthogonal.
+
+#### 1.7.6 Neutrality rule — S2.8
+
+Lack of Observations during `active` or `ended` state is **neutral**. The model does NOT interpret observation absence as failure, incompleteness, or any negative condition.
+
+- **S1.** `active` with zero observations is a valid, unremarkable display state.
+- **S2.** `ended` with zero observations is a valid, unremarkable terminal state. It is NEVER labeled `missed`, `failed`, or equivalent in any system-authored text.
+- **S3.** A gap between observations (regardless of length) produces NO alarm state, color-coded warning, or badge. `cadence` is **display-only**; "time since last observation" is a display-derived value, never a state. An "overdue" signal MUST NOT be derived from `today - last_observation.observed_on > cadence.value`.
+- **S4.** UI translation discipline (enforced in S6–S7 per V2_UX_MODEL.md):
+  - `pre_season` → time-forward-looking language ("počinje <date>", "starts <date>"), never judgmental.
+  - `active` → present-state language ("aktivno", "active"), never with cadence-derived qualifiers like "aktivno, kasnite" ❌.
+  - `ended` → past-state language ("završeno", "ended"), never judgment-laden ("završeno, propušteno" ❌).
+  - "Bez zapisa" / "no records" is a neutral descriptor, never an error.
+- **S5.** Forbidden derived judgments — the model and every downstream layer MUST NOT:
+  - Compute "N programs missed this season" (counting `ended` states with zero observations).
+  - Compute "you've skipped M checks" (counting cadence intervals without observations).
+  - Display "attention: no trap data for N days" (alarm based on cadence drift).
+  - Expose any KPI, dashboard widget, or status line that treats observation absence as a performance signal.
+
+These S1–S5 rules extend to analytics, telemetry, and any reporting layer. See §1.7.6.a below.
+
+#### 1.7.6.a Analytics neutrality boundary
+
+The neutrality rule (S1–S5) extends to the analytics, telemetry, and reporting layer at hard-boundary force. Forbidden across all measurement surfaces:
+
+- **By observation presence:** "programs with at least one observation," "observation-logging activation rate," "users who recorded monitoring data."
+- **By observation absence:** "programs with zero observations," "monitoring gaps per plant," "programs ending without evidence," "inactive monitoring count."
+- **By observation frequency:** "average observations per program," "active monitoring rate," "monitoring cadence compliance," "coverage percentage," "engagement score" from any of the above.
+
+The rule binds on **semantics, not vocabulary**. A metric renamed to avoid forbidden tokens is still forbidden if its meaning matches one of the above categories. Analytics may legitimately measure non-monitoring-scoped things (overall usage, crash rates, non-monitoring feature adoption, aggregate catalog structure statistics).
+
+#### 1.7.7 Free-standing re-statement (no reinterpretation)
+
+Reaffirmed here for adjacency with program rules: no process — runtime, migration, audit, analytics, or AI — may reinterpret a free-standing Observation as program evidence (FS-INV, §1.7.4). The disjointness is explicit, permanent, and invariant. Payload match is not an exception; ML inference is not an exception; curator-approved reattachment is not an exception.
+
+#### 1.7.8 Validation rules (monitoring program)
+
+A catalog is invalid if any of the following hold:
+
+- Any required `monitoring_program` field missing (§1.7.1).
+- `program_id` is not unique within a catalog.
+- `method.kind` is not exactly one of `{"trap", "scouting"}`.
+- `method.kind = "trap"` and `setup_window_def_id` is absent.
+- `method.kind = "scouting"` and `setup_window_def_id` is present.
+- `setup_window_def_id` is present and does not resolve to an `action_window_definition` in the same catalog with `action_type = monitoring`.
+- `season_start` or `season_end` absent; or `season_start >= season_end` (cross-year programs rejected, mirroring §6.4 cross-year window rejection).
+- `cadence.value` present and not an integer ≥ 1.
+- Two `monitoring_program` records MAY declare overlapping seasons when they represent distinct monitoring contexts for the same target. Such programs MUST have distinct `program_id` and MUST be independently selectable by the grower.
+
+An Observation is invalid at the referential-integrity layer if:
+
+- `program_id` is present and does not resolve in the plant's pinned catalog's monitoring programs.
+- `program_id` resolves but the program's `method.kind` does not match the Observation's `kind`.
+- `program_id` resolves but the program's `target_code` does not match the Observation's payload target (`payload.target_pest_code` or `payload.target_code`).
+- `program_id` is present but `observed_on` does not lie within any cycle_year's `[season_start, season_end)` for the referenced program (per L5b, the capture flow MUST NOT produce such a record; it produces a free-standing record instead).
+
+#### 1.7.9 Non-scope — S2.8
+
+S2.8 monitoring-program scope explicitly EXCLUDES:
+
+- Threshold DSL for trap/scouting payload.
+- Auto-computed "pressure," "severity," or "recommendation" state.
+- Cross-plant pressure inference ("high counts on neighbor plant suggest pressure here").
+- AI-authored or AI-assisted monitoring recommendations (already forbidden by Principle 5; reaffirmed).
+- Automatic catalog-version upgrade of historical Observations (Observations are immutable; upgrades produce new entities).
+- Program cadence compliance tracking of any form.
+- Any analytics or telemetry metric derived from observation presence/absence/frequency (per §1.7.6.a).
+
+Any future proposal to introduce any of the above requires an explicit new session with a charter document; it does not reach the model through incremental amendment.
+
+#### 1.7.10 Terminology
+
+The model document MUST NOT use pest-generation terminology in any form. This rule binds on semantics, not tokens; renaming forbidden phrasing to avoid the literal tokens is still forbidden when the meaning matches.
+
+Forbidden tokens and phrases (and any semantic equivalent): `gen1`, `gen2`, `genN`, `generation(s)`, `first generation`, `second generation`, Croatian variants `generacija`, `prva generacija`, `druga generacija`, `let generacije`, and any token or phrase meaning "the Nth reproductive cycle of a pest within a season."
+
+Replacement phrasing: "consecutive monitoring programs for the same pest" (or "one program ending while another program for the same pest begins" for transition contexts).
+
+Catalog identifiers (`program_id`, `label`) MUST NOT encode generation semantics. Distinct monitoring programs are distinguished solely by their identifier values, without embedding domain meaning such as generation numbering.
+
+This is a model-document terminology rule. UI copy guidance lives in `V2_UX_MODEL.md`.
 
 ## 2. Phenology stage vocabulary — locked (S2.3)
 
@@ -479,6 +656,49 @@ S2.6 does not introduce, and §6 does not govern, any of the following:
   - Together they form the complete matching rule.
   - §6.3 is consistent with §0.4 but does not amend it.
 
+### 6.8 Monitoring program occurrence — locked (S2.8)
+
+A **monitoring program occurrence** is the derived per-year instance of a declared `monitoring_program` (§1.7) for a specific plan instance. Parallel to §6.2 for action windows.
+
+- Occurrences are derived; they are never stored.
+- Each occurrence is uniquely identified by: `plant_id`, `program_id`, and `cycle_year`.
+- `cycle_year` is the calendar year of the occurrence's `season_start` (resolved MD → absolute date for the year).
+- Each occurrence carries:
+  - `season_start` (absolute date for this cycle_year).
+  - `season_end` (absolute date for this cycle_year).
+- At most one occurrence exists per `(plant_id, program_id, cycle_year)` tuple.
+- Occurrences for future and past calendar years are legal; the grower may review last year's program history or preview next year's coming program season.
+
+**Program-state derivation (deterministic):**
+
+For a given occurrence `(plant_id, program_id, cycle_year)` with resolved `season_start` and `season_end`:
+
+- `today < season_start` → `pre_season`
+- `season_start ≤ today < season_end` → `active`
+- `today ≥ season_end` → `ended`
+
+Program state is a pure function of `today`, `season_start`, and `season_end`. It does NOT consult Observation count, Observation presence, cadence, or any other evidence. The state enum is closed per §1.7.5.
+
+**Observation attachment to occurrences:**
+
+An Observation with `program_id = P` attaches to occurrence `(P, cycle_year Y)` if and only if `observed_on` lies within `[season_start(P, Y), season_end(P, Y))` per §1.7.3 L5a. Outside any such interval, the Observation is free-standing (`program_id = null`) per L5b.
+
+**No propagation across cycle_years:**
+
+Program state for cycle_year N does not propagate to cycle_year N+1. Each cycle_year is evaluated independently. A retroactive Observation for cycle_year N does not revive state for that cycle_year — state remains calendar-derived from `today`. History gains a record; current displayed state is unchanged.
+
+**No cross-program propagation:**
+
+Each program's occurrence is evaluated independently. Observations for one program do not affect another program's state, even when programs share a `target_code` (e.g., two consecutive monitoring programs for the same pest).
+
+**Non-scope reaffirmed (monitoring-program edition):**
+
+§6.8 does not introduce, and no future addition to §6.8 may introduce:
+- Cadence compliance tracking per occurrence.
+- Program "overdue" or "stale" state (forbidden by §1.7.5 closed enum).
+- Migration that retroactively links free-standing Observations to occurrences (forbidden by FS-INV §1.7.4).
+- Per-program cycle_year archival or closure mechanism (occurrences are derived; no stored lifecycle).
+
 ## 7. Overlay semantics — locked (S2.7)
 
 ### 7.1 Overlay identity
@@ -501,4 +721,4 @@ S2.6 does not introduce, and §6 does not govern, any of the following:
 
 ## 9. Launch species list
 
-*Placeholder — owned by S2.8.*
+*Placeholder — owned by S2.8. Awaiting owner disposition (list of launch species; citrus counted as three).* 
