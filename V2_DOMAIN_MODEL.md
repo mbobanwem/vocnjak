@@ -70,6 +70,7 @@ Window state and gate state are computed independently. A window can be `open` w
 - `window_def_id` + `catalog_version` are the matching identity (§0.4, §6.3). `action_type` is the required category tag for search and human-readable history; it is NOT identity.
 - Absence rule: no activity record ⇒ the action did not happen. No inference from calendar, weather, or context.
 - Temporal order rule: `occurred_on ≤ recorded_at`. An Activity claiming an `occurred_on` in the future relative to its `recorded_at` is invalid. Records represent real-world events that have already happened; planned or future-dated captures are rejected at write-time.
+- Duplicate rule: two or more Activity records that are identical on meaningful fields (for example same `plant_id`, same `action_type`, same `window_def_id`, same `occurred_on`) MAY legally coexist as separate immutable records. The model does not deduplicate, merge, rewrite, or collapse them. Derivation remains deterministic: one valid matching Activity is sufficient for window-state derivation (§6.3); additional matching records do not create a second derived state. Duplicate presence is part of history, not a reason to mutate records automatically.
 
 ### 0.6a Observation MUST-HAVE fields
 
