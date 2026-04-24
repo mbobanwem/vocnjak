@@ -2079,7 +2079,7 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
 ## CITRUS model note
 
 Citrus plan templates koriste poseban model (seasonProfile) iz V2_PLANT_CATALOG.md.
-Nisu kompatibilni sa standardnim orchard ciklusom.
+U ovom PRE-S3 inputu ne koriste standardni shared ciklus.
 
 ```
 citrus subtypes:
@@ -2092,8 +2092,8 @@ citrus subtypes:
 
 ### 🍋 LEMON (Citrus limon) — seasonProfile: multi_cycle
 
-Limun cvate i rodi gotovo kontinuirano (3–4 ciklusa godišnje).
-Nema jednog berbalnog prozora — plodovi su prisutni cijelu godinu.
+U povoljnim ili zaštićenim uvjetima limun može imati više ciklusa cvatnje i plodonošenja tijekom godine.
+Nema jednog berbenog prozora — plodovi mogu biti prisutni kroz veći dio godine.
 
 ---
 
@@ -2115,9 +2115,9 @@ Nema jednog berbalnog prozora — plodovi su prisutni cijelu godinu.
   monthEnd: 10
   dayEnd: 1
   notes: >
-    Limun je pohlepan — gnojiti svaka 4–6 tjedana u vegetaciji.
+    Limun ima veće potrebe za hranivima — gnojiti svaka 4–6 tjedana u vegetaciji.
     Koristiti gnojivo za citrus s mikroelementima (Mg, Fe, Mn).
-    Žuto lišće = nedostatak željeza ili dušika.
+    Žuto lišće može upućivati na nedostatak željeza ili dušika.
 
 - activityType: "watering"
   title: "Navodnjavanje limuna"
@@ -2139,7 +2139,8 @@ Nema jednog berbalnog prozora — plodovi su prisutni cijelu godinu.
   notes: >
     Štitaste uši i lisne uši česti u zatvorenom/zaštićenom uzgoju.
     Vizualni pregled naličja listova tjedno.
-    Tretman (bijelo ulje) pri pojavi — ne preventivno.
+    Eventualni tretman razmatrati samo ako monitoring, vidljivi problem ili stručni savjet opravdavaju reakciju.
+    Koristiti samo sredstvo registrirano za kulturu i štetnika prema etiketi proizvoda; poštovati karencu, zaštitu pčela i lokalne propise.
 
 - activityType: "spraying"
   title: "Zaštita od štetnika – limun (po potrebi)"
@@ -2148,9 +2149,9 @@ Nema jednog berbalnog prozora — plodovi su prisutni cijelu godinu.
   monthEnd: 10
   dayEnd: 31
   notes: >
-    Bijelo mineralno ulje pri pojavi štitastih uši ili lisnih ušiju.
-    Paučinac: akaricid pri vidljivim znakovima.
-    Samo ako monitoring pokaže problem.
+    Bijelo ulje ili drugo registrirano sredstvo razmatrati samo ako je prikladno prema kulturi, štetniku, fenofazi i etiketi proizvoda.
+    Paučinac: registrirani pripravak razmatrati samo pri vidljivim znakovima i prema etiketi proizvoda.
+    Poštovati doziranje, karencu, zaštitu pčela i lokalne propise.
 
 - activityType: "harvest"
   title: "Berba limuna (kontinuirana)"
@@ -2170,9 +2171,9 @@ Nema jednog berbalnog prozora — plodovi su prisutni cijelu godinu.
   monthEnd: 11
   dayEnd: 15
   notes: >
-    Limun nije otporan na mraz — oštećenje ispod -3°C, grane stradaju ispod -5°C.
+    Limun nije otporan na mraz — moguća oštećenja ispod -3°C, a rizik od jačih oštećenja raste ispod -5°C.
     Za kontinentalnu klimu: premjestiti u zaštićeni prostor (5–10°C) prije mrazova.
-    Pregledati na štetnika pred zimski smještaj.
+    Pregledati na štetnike pred zimski smještaj.
 
 ---
 
@@ -2220,7 +2221,9 @@ Naranča cvate u proljeće, plodovi dozrijevaju zimi.
   dayEnd: 30
   notes: >
     Štitaste uši i lisne uši — vizualni pregled naličja listova.
-    Tretman (bijelo ulje) pri pojavi. Na otvorenom u sjevernoj klimi rijedak problem.
+    Eventualni tretman razmatrati samo ako monitoring, vidljivi problem ili stručni savjet opravdavaju reakciju.
+    Koristiti samo sredstvo registrirano za kulturu i štetnika prema etiketi proizvoda; poštovati karencu, zaštitu pčela i lokalne propise.
+    Na otvorenom u sjevernoj klimi rijedak problem.
 
 - activityType: "spraying"
   title: "Zaštita od štetnika – naranča (po potrebi)"
@@ -2229,8 +2232,8 @@ Naranča cvate u proljeće, plodovi dozrijevaju zimi.
   monthEnd: 6
   dayEnd: 30
   notes: >
-    Bijelo ulje pri pojavi štitastih uši.
-    Samo ako monitoring pokaže problem.
+    Bijelo ulje ili drugo registrirano sredstvo razmatrati samo ako je prikladno prema kulturi, štetniku, fenofazi i etiketi proizvoda.
+    Poštovati doziranje, karencu, zaštitu pčela i lokalne propise.
 
 - activityType: "harvest"
   title: "Berba naranče"
@@ -2240,7 +2243,7 @@ Naranča cvate u proljeće, plodovi dozrijevaju zimi.
   dayEnd: 28
   notes: >
     Naranča dozrijeva zimi — prosinac do veljača.
-    Može ostati na stablu tjednima nakon zrelosti bez kvarenja.
+    Može ostati na stablu neko vrijeme ako nema mraza ni oštećenja; redovito pratiti kvalitetu ploda.
     Za kontinentalnu klimu: uzgoj moguć u loncima, unutra zimi.
 
 - activityType: "observation"
@@ -2251,14 +2254,14 @@ Naranča cvate u proljeće, plodovi dozrijevaju zimi.
   dayEnd: 15
   notes: >
     Premjestiti u zaštićen prostor (min. 5°C) prije prvih mrazova.
-    Pregledati na štetnika.
+    Pregledati na štetnike.
     Smanjiti navodnjavanje.
 
 ---
 
 ### 🍊 MANDARIN (Citrus reticulata) — seasonProfile: autumn
 
-Mandarina dozrijeva u jesen. Najhladnootpornija citrus vrsta (do -7°C kratkoročno).
+Mandarina dozrijeva u jesen. Među ovdje navedenim citrusima relativno najotpornija na hladnoću (do oko -7°C kratkotrajno, ovisno o sorti, podlozi, starosti biljke, vlazi tla i mikrolokaciji).
 
 ---
 
@@ -2299,7 +2302,9 @@ Mandarina dozrijeva u jesen. Najhladnootpornija citrus vrsta (do -7°C kratkoro�
   dayEnd: 30
   notes: >
     Štitaste uši — vizualni pregled naličja listova.
-    Tretman pri pojavi. Rijedak problem u kontinentalnoj klimi.
+    Eventualni tretman razmatrati samo ako monitoring, vidljivi problem ili stručni savjet opravdavaju reakciju.
+    Koristiti samo sredstvo registrirano za kulturu i štetnika prema etiketi proizvoda; poštovati karencu, zaštitu pčela i lokalne propise.
+    Rijedak problem u kontinentalnoj klimi.
 
 - activityType: "spraying"
   title: "Zaštita od štetnika – mandarina (po potrebi)"
@@ -2308,8 +2313,8 @@ Mandarina dozrijeva u jesen. Najhladnootpornija citrus vrsta (do -7°C kratkoro�
   monthEnd: 6
   dayEnd: 30
   notes: >
-    Bijelo ulje pri pojavi štitastih uši.
-    Samo ako monitoring pokaže problem.
+    Bijelo ulje ili drugo registrirano sredstvo razmatrati samo ako je prikladno prema kulturi, štetniku, fenofazi i etiketi proizvoda.
+    Poštovati doziranje, karencu, zaštitu pčela i lokalne propise.
 
 - activityType: "harvest"
   title: "Berba mandarine"
@@ -2329,9 +2334,9 @@ Mandarina dozrijeva u jesen. Najhladnootpornija citrus vrsta (do -7°C kratkoro�
   monthEnd: 11
   dayEnd: 30
   notes: >
-    Najhladnootpornija citrus vrsta — podnosi kratke mrazeve do -7°C.
+    Među ovdje navedenim citrusima relativno najotpornija na hladnoću — može podnijeti kratkotrajno do oko -7°C, ovisno o sorti, podlozi, starosti biljke, vlazi tla i mikrolokaciji.
     Za lončani uzgoj: premjestiti unutra pri prvim mrazovima.
-    Pregledati na štetnika pred zimski smještaj.
+    Pregledati na štetnike pred zimski smještaj.
 
 ---
 
