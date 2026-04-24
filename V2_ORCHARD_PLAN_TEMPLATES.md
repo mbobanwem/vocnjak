@@ -149,7 +149,7 @@ Agronomic interpretation only. Not schema fields.
   monthEnd: 2
   dayEnd: 28
   notes: >
-    Zimski bakreni fungicid: zaštita od raka kore, pjegavosti, monililje i srodnih bolesti.
+    Zimski bakreni fungicid: zaštita od raka kore, pjegavosti, monilije i srodnih bolesti.
     Primijeniti uz razmak od bijelog ulja najmanje 7–10 dana.
     Preparat: registrirani bakreni pripravak prema etiketi proizvoda.
     Prskati po suhom vremenu.
@@ -390,28 +390,27 @@ Harvest window examples: Gala (aug–sep), Fuji / Idared (sep–oct).
 Cvatnja (Zagreb baseline): kraj ožujka – poč. travnja, nešto ranije od jabuke.
 Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Williams / Santa Maria (aug), Conference / Bosc (aug–sep), Abate Fetel (sep–oct).
-Posebna napomena: vatrostuh (Erwinia amylovora) je bakterijska bolest bez kemijskog lijeka.
+Posebna napomena: bakterijska palež (Erwinia amylovora) je bakterijska bolest bez kemijskog lijeka.
 Preventiva bakrom oko cvatnje je ključna.
 
 ---
 
-### 1. Bakar – zaštita od vatrostuh
+### 1. Bakar – zaštita od bakterijske paleži
 
 - activityType: "spraying"
-  title: "Bakar – preventivna zaštita od vatrostuh"
+  title: "Bakar – preventivna zaštita od bakterijske paleži"
   monthStart: 3
   dayStart: 15
   monthEnd: 4
   dayEnd: 10
   notes: >
-    Kruška je jedina standardna voćka s ozbiljnim rizikom vatrostuh (Erwinia amylovora).
+    Kruška ima visok rizik od bakterijske paleži (Erwinia amylovora); dunja također zahtijeva S3 provjeru.
     Primijeniti bakar preventivno oko cvatnje.
     Cvatnja kruške je ranije od jabuke — pratiti stanje pupova i prilagoditi termin.
     NE prskati direktno na otvorene cvjetove — oštećuje cvjetove i pčele.
     Registrirani bakreni pripravak prema etiketi proizvoda.
     Razmak od bijelog ulja: min. 7–10 dana.
-    Ako se pojave simptomi vatrostuh (tamnosmeđe uvenule grane): odmah rezati ispod vidljive zaraze,
-    dezinficirati alat između rezova, spaliti rezani material.
+    Ako se pojave simptomi bakterijske paleži (tamnosmeđe uvenule grane): postupanje uskladiti sa stručnim savjetom i lokalnim fitosanitarnim preporukama.
 
 ---
 
@@ -441,7 +440,7 @@ Preventiva bakrom oko cvatnje je ključna.
   monthEnd: 5
   dayEnd: 15
   notes: >
-    Zaštita od krastavosti kruške (Venturia pirina) i monililje.
+    Zaštita od krastavosti kruške (Venturia pirina) i monilije.
     Primijeniti nakon cvatnje.
     Koristiti registrirani fungicid za krastavost kruške i moniliju prema etiketi proizvoda.
     Insekticid razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
@@ -565,7 +564,7 @@ Gisela 5 podloga: slabobujnija, raniji prinos, lakša zaštita mrežom.
     Za ranije sorte (Burlat, berba od 1.6.): postaviti već kraj svibnja.
     Veličina: min. 4×4 m, preporučeno 5×5 m.
     Tip: s bočnim zipperom za pristup pri berbi bez skidanja mreže.
-    Mreža štiti i od kiše → smanjuje pucanje plodova pred berbu.
+    Mreža je primarno zaštita od ptica; zaštita od pucanja plodova zbog kiše zahtijeva posebnu provjeru/rain-cover pristup i ostaje S3 audit item.
     Skinuti odmah nakon berbe.
     Za mlada stabla god. 1–2 bez uroda: nije potrebno.
 
@@ -670,7 +669,7 @@ Cvatnja (Zagreb baseline): kraj ožujka – poč. travnja.
 Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Caldesi 2000 / Big Top (jul), Fantasia / Stark Redgold (aug), Venus (aug–sep).
 POSEBNA NAPOMENA: Nektarina je iznimno osjetljiva na kovrčavost lista (Taphrina deformans).
-Jednom zaražena grana nema lijeka — samo prevencija bakrom dok su pupovi zatvoreni.
+Nakon pojave simptoma mogućnosti su ograničene — naglasak je na prevenciji bakrom dok su pupovi zatvoreni.
 Propušteno prskanje u veljači/ožujku = visok rizik zaraze, posebno u vlažnom proljeću.
 
 ---
@@ -803,7 +802,7 @@ Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
   notes: >
     KRITIČNO ZA BRESKVU — identično kao kod nektarine, vrlo važan preventivni termin.
     Primijeniti dok su pupovi zatvoreni ili tek počinju bubriti.
-    Taphrina deformans — jednom zaražena grana, nema lijeka.
+    Taphrina deformans: nakon pojave simptoma mogućnosti su ograničene; naglasak je na prevenciji.
     Registrirani bakreni pripravak prema etiketi proizvoda.
     Vlažno proljeće: 2 tretmana u razmaku 7–10 dana.
     Ovo prskanje je DODATAK zimskom bakru iz shared bloka.
@@ -901,7 +900,7 @@ Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
 ### ⚠️ Poseban slučaj — najranija cvatnja, najveći rizik od mraza
 
 Marelica cvate NAJRANIJE — veljača do ožujak.
-Mraz ispod -1°C za cvatnje = propao rod. Nije bolest ni štetnik.
+Temperature ispod približno -1°C tijekom cvatnje mogu ozbiljno oštetiti ili uništiti rod, ovisno o fenofazi, trajanju zahlađenja i lokalnim uvjetima. Nije bolest ni štetnik.
 Lokacija sadnje je kritična: izbjegavati udoline i sjeverne strane.
 
 ### Agronomic context
@@ -944,7 +943,7 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
   notes: >
     Marelica cvate u veljači/ožujku — mraz je najveći neprijatelj.
     Pratiti vremensku prognozu svakodnevno za cvatnje.
-    Kritična temperatura: ispod -1°C za otvorene cvjetove → oštećenje.
+    Temperature ispod približno -1°C tijekom cvatnje mogu ozbiljno oštetiti ili uništiti rod, ovisno o fenofazi, trajanju zahlađenja i lokalnim uvjetima.
     Moguće mjere zaštite za manja stabla: agrotekstil (navlaka), dimni lonci.
     Ovo je informacijska radnja — korisnik mora reagirati prema lokalnim uvjetima.
     Loš rod marelice je najčešće uzrokovan mrazom, ne bolešću ni štetnicima.
@@ -962,7 +961,7 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
   notes: >
     Šarka (Plum pox virus) se prenosi lisnim ušima — pratiti kolonije na naličju listova.
     Vizualni pregled: žuti prstenovi/mrlje na listovima = mogući simptom šarke.
-    Šarka nema lijeka — zaražena stabla moraju se ukloniti.
+    Ako se sumnja na šarku, simptome treba potvrditi stručnjak, a postupanje uskladiti s lokalnim fitosanitarnim preporukama.
     Razmotriti registrirani insekticid za kulturu i štetnika prema etiketi proizvoda pri vidljivoj koloniji lisnih uši (preventivna kontrola vektora šarke).
     Za mlada stabla: posebno pratiti.
 
@@ -982,7 +981,7 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
     Insekticid razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
     Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
     Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
-    NIKAD prskati otvorene cvjetove.
+    Nikad ne prskati otvorene cvjetove.
     Za mlada stabla god. 1–2: nije obavezno.
 
 ---
@@ -1871,7 +1870,7 @@ Orah raste kao veliko stablo s kasnim listanjem i cvatnjom (svibanj).
 
 *S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
 
-Obilno krvari ako se reže u mirovanju — ljetna rezidba je jedini siguran prozor.
+Orah može jako suziti/krvariti kod rezidbe u mirovanju — ljetni termin je sigurniji/preporučeni prozor za veće rezove; točan termin ostaje S3 audit item.
 Standardni spray program NE primjenjuje se.
 Shared block NE primjenjuje se.
 Classified under `nut`. The Block 6 template below is the full work plan for this species — the species-specific block is authoritative. S3 may refine the group name; the template below is independent of that decision.
@@ -1887,8 +1886,8 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   monthEnd: 8
   dayEnd: 15
   notes: >
-    Orah obilno krvari ako se reže u mirovanju.
-    Ljeto = jedini siguran prozor.
+    Orah može jako suziti/krvariti kod rezidbe u mirovanju.
+    Ljetni termin je sigurniji/preporučeni prozor za veće rezove; točan termin ostaje S3 audit item.
     Ukloniti križajuće i suhe grane.
     Mlada stabla: formirati niski stablašić prvih 3–5 godina.
 
