@@ -1458,9 +1458,9 @@ Shared block NE primjenjuje se.
   monthEnd: 5
   dayEnd: 31
   notes: >
-    Paunovo oko (Spilocaea oleagina): žute mrlje s tamnim rubom na listu — tretman bakrom po potrebi.
+    Paunovo oko (Spilocaea oleagina): žute mrlje s tamnim rubom na listu.
     Maslinin moljac (Prays oleae): napada cvjetove i plodove.
-    Vizualni pregled — tretman samo pri vidljivom problemu.
+    Vizualni pregled — tretman razmatrati samo ako simptomi, lokalni uvjeti ili stručni savjet opravdavaju reakciju; koristiti samo registrirano sredstvo prema etiketi proizvoda i lokalnim propisima.
     U kontinentalnoj klimi rijedak problem na otvorenom.
 
 ---
@@ -1492,7 +1492,8 @@ Shared block NE primjenjuje se.
   dayEnd: 30
   notes: >
     Primijeniti SAMO ako praćenje (monitoring) pokaže visok ulov.
-    Registrirano sredstvo ili dopuštena metoda zaštite prema etiketi proizvoda (uključujući organske opcije) ili registrirana barijerna/repelentna metoda kao fizička barijera.
+    Barijerne ili repelentne metode razmatrati samo ako su prikladne i registrirane za kulturu/namjenu prema etiketi proizvoda.
+    Ako se razmatra tretman, poštovati etiketu proizvoda, doziranje, karencu, zaštitu pčela i lokalne propise.
     Nije preventivno prskanje.
     Za mlada stabla bez ploda: nije potrebno.
 
@@ -1595,7 +1596,7 @@ Posebna napomena: smokva podnosi do -10°C kratkoročno, ali mlada stabla su osj
   monthEnd: 3
   dayEnd: 1
   notes: >
-    Rezati kasno u zimi (veljača–ožujak) — smokva je osjetljiva na kasne mrazeve.
+    Rezati kasno zimi, nakon najjačih mrazeva — smokva je osjetljiva na kasne mrazeve.
     Ukloniti suhare i stare iscrpljene grane starije od 3–4 godine.
     Smokva rodi na jednogodišnjem i dvogodišnjem drvu — paziti što se reže.
     Bijeli mliječni sok iz rezova je normalan (pazi na kožu — može iritirati).
@@ -1660,7 +1661,7 @@ Posebna napomena: smokva podnosi do -10°C kratkoročno, ali mlada stabla su osj
   notes: >
     Smokva je otporna na sušu — odrasla stabla obično ne trebaju.
     Mlada stabla god. 1–3: 20–30 L tjedno za suhih perioda.
-    Prekomjerno navodnjavanje uzrokuje pucanje plodova.
+    Prekomjerno navodnjavanje može pridonijeti pucanju plodova.
 
 ---
 
@@ -1732,7 +1733,7 @@ Posebna napomena: smokva podnosi do -10°C kratkoročno, ali mlada stabla su osj
 ## 🔴 POMEGRANATE (Punica granatum) — custom Block 6
 
 ### Agronomic context
-Šipak je marginalan u kontinentalnoj EU klimi; u Samoboru / Zagrebu uspijeva kao veliki grm ili malo stablo s povremenom potrebom za zimskom zaštitom mladih stabala.
+Šipak je marginalan u kontinentalnoj EU klimi. U Samoboru / Zagrebu može uspijevati ovisno o mikrolokaciji, zimi i zaštiti mladih stabala.
 
 *S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
 
@@ -1784,7 +1785,8 @@ Shared block NE primjenjuje se.
   notes: >
     Šipak u kontinentalnom EU rijetko ima ozbiljne štetnike.
     Vizualni pregled za lisne uši na mladim izbojcima.
-    Korisnik odlučuje o tretmanu na temelju vidljivog problema.
+    Eventualni tretman razmatrati samo ako vidljivi problem, lokalni uvjeti ili stručni savjet opravdavaju reakciju.
+    Koristiti samo sredstvo registrirano za kulturu i štetnika prema etiketi proizvoda; poštovati karencu, zaštitu pčela i lokalne propise.
 
 ---
 
@@ -1797,7 +1799,7 @@ Shared block NE primjenjuje se.
   monthEnd: 10
   dayEnd: 15
   notes: >
-    Nagla voda nakon suše uzrokuje puknuće ploda.
+    Nagla voda nakon suše može uzrokovati ili pridonijeti pucanju ploda.
     Praćenje lokalnih uvjeta i stanja tla — savjetodavno; korisnik odlučuje o navodnjavanju.
 
 ---
@@ -1811,7 +1813,7 @@ Shared block NE primjenjuje se.
   monthEnd: 8
   dayEnd: 31
   notes: >
-    Duboko zalijevanje dok se plod razvija.
+    Po potrebi duboko zalijevanje dok se plod razvija.
     Mlada stabla: 20–30 L tjedno u suhim razdobljima.
 
 ---
