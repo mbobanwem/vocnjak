@@ -83,7 +83,7 @@ Agronomic interpretation only. Not schema fields.
 - Minimum 7–10 days gap between white oil and copper application
 - All spray activities assume: dry weather, no wind, temperature above 5°C
 - Insecticide must not be applied during bloom or active bee flight
-- Score + Mospilan may be mixed and applied in one pass, post-bloom only
+- Fungicide + insecticide tank-mix is not universally safe — follow each product label and local guidance; apply only post-bloom and outside active bee flight
 - Apricot copper must be applied BEFORE bloom (January–February window)
 - Nectarine and Peach copper for leaf curl must be applied while buds are still closed
 - Citrus: standard EU fruit tree spray rules do not apply
@@ -151,7 +151,7 @@ Agronomic interpretation only. Not schema fields.
   notes: >
     Zimski bakreni fungicid: zaštita od raka kore, pjegavosti, monililje i srodnih bolesti.
     Primijeniti uz razmak od bijelog ulja najmanje 7–10 dana.
-    Preparat: Cuprablau Z 35 WG ili ekvivalent.
+    Preparat: registrirani bakreni pripravak prema etiketi proizvoda.
     Prskati po suhom vremenu.
     Za mlada stabla: primijeniti.
 
@@ -170,7 +170,7 @@ Agronomic interpretation only. Not schema fields.
     Ukloniti suhe, bolesne, križajuće i preguste grane.
     Cilj: prozračna krošnja, kontrolirana visina stabla.
     Rezati po suhom vremenu. Alat dezinficirati između stabala.
-    Veće rane zaštititi premazom (Lac Balsam) za rezove iznad 2 cm.
+    Veće rane zaštititi sredstvom za zaštitu rana, ako je prikladno, prema preporuci stručnjaka ili etiketi proizvoda (za rezove iznad 2 cm).
     Za mlada stabla god. 1–2: fokus na formiranje uzgojnog oblika —
     vaza (koštičave) ili vreteno/spindle (jabuka, kruška). Ne rezati rodno drvo.
 
@@ -188,7 +188,7 @@ Agronomic interpretation only. Not schema fields.
   notes: >
     Primijeniti unutar 1–2 dana nakon rezidbe.
     Zaštita svježih reznih rana od prodora gljivica i bakterija.
-    Cuprablau Z 35 WG ili ekvivalent.
+    Registrirani bakreni pripravak prema etiketi proizvoda.
     Razmak od bijelog ulja: min. 7–10 dana.
 
 ---
@@ -306,7 +306,10 @@ Harvest window examples: Gala (aug–sep), Fuji / Idared (sep–oct).
     Ključna zaštita protiv krastavosti jabuke (Venturia inaequalis) i pepelnice.
     Primijeniti nakon cvatnje kada se formiraju mladi listovi i plodovi.
     NE tretirati za cvatnje — pčele moraju biti zaštićene.
-    Score 250 EC + Mospilan 20 SP mogu se miješati u jednom prolazu.
+    Koristiti registrirani fungicid za krastavost/pepelnicu prema etiketi proizvoda.
+    Insekticid razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
+    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
+    Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
     Tretmane ponavljati prema infekcijskom pritisku i kiši.
     Za mlada stabla god. 1–2 bez ploda: manje kritično, ali nije na odmet.
 
@@ -324,8 +327,8 @@ Harvest window examples: Gala (aug–sep), Fuji / Idared (sep–oct).
     Jabučni savijač (Cydia pomonella) — crvi u plodovima jabuke.
     Postaviti feromonsku klopku na 1.5–2 m visine, u sjenu krošnje.
     Tjedno pregledavati ulov.
-    Tretman insekticidom (Mospilan) samo ako ulov prijeđe prag štetnosti —
-    nagli porast = tretman unutar 7–10 dana.
+    Eventualni tretman registriranim insekticidom razmatrati samo ako vidljivi problem, lokalni pragovi ili stručni savjet opravdavaju reakciju.
+    Koristiti samo sredstvo registrirano za kulturu i štetnika prema etiketi proizvoda, uz poštovanje karence, zaštite pčela i lokalnih propisa.
     Za mlada stabla god. 1–2 bez ploda: nije prioritet.
 
 ---
@@ -405,7 +408,7 @@ Preventiva bakrom oko cvatnje je ključna.
     Primijeniti bakar preventivno oko cvatnje.
     Cvatnja kruške je ranije od jabuke — pratiti stanje pupova i prilagoditi termin.
     NE prskati direktno na otvorene cvjetove — oštećuje cvjetove i pčele.
-    Cuprablau Z 35 WG ili ekvivalent.
+    Registrirani bakreni pripravak prema etiketi proizvoda.
     Razmak od bijelog ulja: min. 7–10 dana.
     Ako se pojave simptomi vatrostuh (tamnosmeđe uvenule grane): odmah rezati ispod vidljive zaraze,
     dezinficirati alat između rezova, spaliti rezani material.
@@ -423,7 +426,7 @@ Preventiva bakrom oko cvatnje je ključna.
   notes: >
     Kruškina buha (Cacopsylla pyri): štitaste uši na naličju listova, medna rosa, čađavica.
     Vizualni pregled mladih izbojaka i listova tjedno.
-    Tretman (bijelo ulje ili Mospilan) samo pri vidljivom problemu.
+    Tretman razmatrati samo pri vidljivom problemu — koristiti registrirano sredstvo (npr. bijelo ulje ili registrirani insekticid) prema etiketi proizvoda.
     Kruškini savijač (Grapholita molesta): feromonska klopka ako je dostupna.
     Za mlada stabla: fokus na lisne uši i buhu.
 
@@ -439,7 +442,11 @@ Preventiva bakrom oko cvatnje je ključna.
   dayEnd: 15
   notes: >
     Zaštita od krastavosti kruške (Venturia pirina) i monililje.
-    Primijeniti nakon cvatnje. Score 250 EC + Mospilan 20 SP.
+    Primijeniti nakon cvatnje.
+    Koristiti registrirani fungicid za krastavost kruške i moniliju prema etiketi proizvoda.
+    Insekticid razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
+    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
+    Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
     NE tretirati za cvatnje.
     Za mlada stabla god. 1–2: manje kritično, ali korisno u vlažnim sezonama.
 
@@ -500,7 +507,7 @@ Preventiva bakrom oko cvatnje je ključna.
 Cvatnja (Zagreb baseline): kraj ožujka – poč. travnja.
 Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Burlat (jun 1–15), Kordia (jun 20 – jul 5), Regina / Sweetheart (jul 5–25).
-Trešnjina muha (Rhagoletis cerasi): jedini ozbiljan insektni štetnik trešnje u EU klimi.
+Trešnjina muha (Rhagoletis cerasi): jedan od glavnih insektnih štetnika trešnje u EU klimi.
 Trešnja puca od kiše pred berbu — mreža štiti i od toga.
 Gisela 5 podloga: slabobujnija, raniji prinos, lakša zaštita mrežom.
 
@@ -518,9 +525,9 @@ Gisela 5 podloga: slabobujnija, raniji prinos, lakša zaštita mrežom.
     Trešnjina muha (Rhagoletis cerasi) — najvažniji štetnik trešnje u EU.
     Postaviti 2–3 žute ljepljive ploče po stablu na visinu 1.5–2 m, u sjenu krošnje.
     Tjedno pregledavati:
-    — 0–2 muhe/tjedan → nema tretmana
-    — nagli porast → insekticid (Mospilan) unutar 7–10 dana od prvog masovnog leta.
-    Mospilan karenca: min. 14 dana do berbe — ne tretirati ako je berba za 10 dana ili manje.
+    — 0–2 muhe/tjedan → uobičajeno nema potrebe za tretmanom
+    — nagli porast ulova može značiti da treba provjeriti potrebu za reakcijom; eventualni tretman razmatrati samo ako lokalni pragovi, etiketa proizvoda ili stručni savjet opravdavaju reakciju.
+    Koristiti samo sredstvo registrirano za kulturu i štetnika prema etiketi proizvoda; poštovati karencu do berbe (ne tretirati ako je berba preblizu propisane karence), zaštitu pčela i lokalne propise.
     Za mlada stabla god. 1–2 bez ploda: nije prioritet.
 
 ---
@@ -664,7 +671,7 @@ Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Caldesi 2000 / Big Top (jul), Fantasia / Stark Redgold (aug), Venus (aug–sep).
 POSEBNA NAPOMENA: Nektarina je iznimno osjetljiva na kovrčavost lista (Taphrina deformans).
 Jednom zaražena grana nema lijeka — samo prevencija bakrom dok su pupovi zatvoreni.
-Propušteno prskanje u veljači/ožujku = sigurna zaraza u vlažnom proljeću.
+Propušteno prskanje u veljači/ožujku = visok rizik zaraze, posebno u vlažnom proljeću.
 
 ---
 
@@ -677,10 +684,10 @@ Propušteno prskanje u veljači/ožujku = sigurna zaraza u vlažnom proljeću.
   monthEnd: 3
   dayEnd: 5
   notes: >
-    KRITIČNO ZA NEKTARINU — ne smije se propustiti.
+    KRITIČNO ZA NEKTARINU — vrlo važan preventivni termin.
     Primijeniti dok su pupovi nektarine još zatvoreni ili tek počinju bubriti.
-    Taphrina deformans: nema lijeka nakon zaraze — jedino preventiva.
-    Cuprablau Z 35 WG ili ekvivalent.
+    Taphrina deformans: nakon pojave simptoma mogućnosti su ograničene; naglasak je na prevenciji.
+    Registrirani bakreni pripravak prema etiketi proizvoda.
     Ako je proljeće vlažno: 2 tretmana u razmaku 7–10 dana.
     Ovo prskanje je DODATAK zimskom bakru iz shared bloka — primijeniti specifično za nektarinu.
     Razmak od bijelog ulja: min. 7–10 dana.
@@ -698,7 +705,7 @@ Propušteno prskanje u veljači/ožujku = sigurna zaraza u vlažnom proljeću.
   dayEnd: 31
   notes: >
     Tjedno pregledavati naličje listova i mlade izbojke.
-    Lisne uši na nektarini mogu biti problem — Mospilan pri vidljivoj koloniji.
+    Lisne uši na nektarini mogu biti problem — razmotriti registrirani insekticid za kulturu i štetnika prema etiketi proizvoda, pri vidljivoj koloniji.
     Breskvin savijač (Grapholita molesta): feromonska klopka ako je dostupna.
     Tretman samo pri vidljivom problemu ili prijeđenom pragu.
     Za mlada stabla: fokus na lisne uši.
@@ -715,9 +722,10 @@ Propušteno prskanje u veljači/ožujku = sigurna zaraza u vlažnom proljeću.
   dayEnd: 25
   notes: >
     Primijeniti nakon završetka cvatnje.
-    Score 250 EC + Mospilan 20 SP — u jednom prolazu.
-    Zaštita od monililje (Monilinia laxa) i breskvinog savijača.
-    Mospilan NIKAD za cvatnje — toksičan za pčele.
+    Koristiti registrirani fungicid za moniliju (Monilinia laxa) prema etiketi proizvoda.
+    Insekticid za breskvinog savijača razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
+    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela — insekticidi su toksični za pčele.
+    Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
     Za mlada stabla god. 1–2: nije obavezno, ali preporučeno u vlažnim sezonama.
 
 ---
@@ -793,10 +801,10 @@ Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
   monthEnd: 3
   dayEnd: 5
   notes: >
-    KRITIČNO ZA BRESKVU — identično kao kod nektarine, ne smije se propustiti.
+    KRITIČNO ZA BRESKVU — identično kao kod nektarine, vrlo važan preventivni termin.
     Primijeniti dok su pupovi zatvoreni ili tek počinju bubriti.
     Taphrina deformans — jednom zaražena grana, nema lijeka.
-    Cuprablau Z 35 WG ili ekvivalent.
+    Registrirani bakreni pripravak prema etiketi proizvoda.
     Vlažno proljeće: 2 tretmana u razmaku 7–10 dana.
     Ovo prskanje je DODATAK zimskom bakru iz shared bloka.
     Razmak od bijelog ulja: min. 7–10 dana.
@@ -813,7 +821,7 @@ Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
   dayEnd: 31
   notes: >
     Tjedno pregledavati naličje listova i vršne izbojke.
-    Lisne uši: Mospilan pri vidljivoj koloniji.
+    Lisne uši: razmotriti registrirani insekticid za kulturu i štetnika prema etiketi proizvoda, pri vidljivoj koloniji.
     Breskvin savijač (Grapholita molesta): feromonska klopka ako je dostupna.
     Tretman samo pri vidljivom problemu.
 
@@ -828,9 +836,11 @@ Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
   monthEnd: 5
   dayEnd: 25
   notes: >
-    Nakon cvatnje. Score 250 EC + Mospilan 20 SP — u jednom prolazu.
-    Zaštita od monililje (Monilinia laxa) i breskvinog savijača.
-    Mospilan NIKAD za cvatnje.
+    Nakon cvatnje.
+    Koristiti registrirani fungicid za moniliju (Monilinia laxa) prema etiketi proizvoda.
+    Insekticid za breskvinog savijača razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
+    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
+    Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
     Za mlada stabla god. 1–2: nije obavezno, korisno u vlažnim sezonama.
 
 ---
@@ -899,6 +909,8 @@ Cvatnja (Zagreb baseline): VELJAČA – OŽUJAK (ovisno o sorti i godini).
 Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargrand (jun–jul), Bergeron (jul 5–25).
 
+*S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
+
 ---
 
 ### 1. Bakar – PRIJE cvatnje (KRITIČNO)
@@ -910,10 +922,11 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
   monthEnd: 2
   dayEnd: 15
   notes: >
-    KRITIČNO: marelica cvate u veljači/ožujku — bakar mora biti primijenjen PRIJE.
+    KRITIČNO: marelica cvate u veljači/ožujku — bakar treba primijeniti PRIJE, ako je prikladno prema fenofazi i etiketi proizvoda.
     Prskati dok su pupovi još zatvoreni ili tek počinju bubriti.
-    Zaštita od: šarke (Plum pox virus, vektori su lisne uši), monililje, pjegavosti kore.
-    Cuprablau Z 35 WG ili ekvivalent.
+    Registrirani bakreni pripravak prema etiketi proizvoda odnosi se na preventivnu zaštitu od relevantnih gljivičnih i bakterijskih bolesti, ne na liječenje virusnih bolesti.
+
+    Šarka (Plum pox virus) nema kurativni tretman; lisne uši su vektori. Simptome šarke treba potvrditi stručnjak, a postupanje uskladiti s lokalnim fitosanitarnim preporukama.
     Ako se propusti ovaj termin, ne može se naknadno kompenzirati.
     Razmak od bijelog ulja: min. 7–10 dana.
     Ovo je DODATAK zimskom bakru iz shared bloka — primijeniti ranije, prilagođeno marelici.
@@ -950,7 +963,7 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
     Šarka (Plum pox virus) se prenosi lisnim ušima — pratiti kolonije na naličju listova.
     Vizualni pregled: žuti prstenovi/mrlje na listovima = mogući simptom šarke.
     Šarka nema lijeka — zaražena stabla moraju se ukloniti.
-    Mospilan pri vidljivoj koloniji lisnih uši (preventivna kontrola vektora šarke).
+    Razmotriti registrirani insekticid za kulturu i štetnika prema etiketi proizvoda pri vidljivoj koloniji lisnih uši (preventivna kontrola vektora šarke).
     Za mlada stabla: posebno pratiti.
 
 ---
@@ -965,8 +978,10 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
   dayEnd: 15
   notes: >
     Nakon cvatnje (marelica cvate ranije — prilagoditi termin prema stanju stabla).
-    Score 250 EC za zaštitu od monililje (Monilinia laxa).
-    Mospilan dodati samo pri vidljivim štetnicima.
+    Koristiti registrirani fungicid za moniliju (Monilinia laxa) prema etiketi proizvoda.
+    Insekticid razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
+    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
+    Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
     NIKAD prskati otvorene cvjetove.
     Za mlada stabla god. 1–2: nije obavezno.
 
@@ -1004,7 +1019,7 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
     Brati pažljivo — lako se oštećuje i brzo trune.
     Rok: 2–3 dana na sobnoj temperaturi, do 1 tjedan na 0–4°C.
     Ne ostavljati prezrele plodove — privlače ose, uzrokuju moniliju.
-    Ako je rod manji od očekivanog → uzrok je gotovo uvijek mraz za cvatnje.
+    Ako je rod manji od očekivanog → uzrok je vrlo često mraz za cvatnje.
 
 ---
 
@@ -1029,7 +1044,7 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
     Šljivin savijač (Cydia funebrana) — crvi u plodovima šljive.
     Postaviti feromonsku klopku na 1.5–2 m visine.
     Tjedno pregledavati ulov.
-    Nagli porast ulova = insekticid unutar 7–10 dana.
+    Nagli porast ulova može značiti da treba provjeriti potrebu za reakcijom; eventualni tretman razmatrati samo ako lokalni pragovi, etiketa proizvoda ili stručni savjet opravdavaju reakciju.
     Praćenje traje i za 2. generaciju (sredina lipnja – sredina srpnja).
     Za mlada stabla god. 1–2 bez ploda: nije prioritet.
 
@@ -1044,14 +1059,18 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
   monthEnd: 5
   dayEnd: 25
   notes: >
-    Nakon cvatnje. Score 250 EC + Mospilan 20 SP — jedan prolaz.
-    Zaštita od monililje, pjegavosti lista i šljivinog savijača.
-    Mospilan NIKAD za cvatnje.
+    Nakon cvatnje.
+    Koristiti registrirani fungicid za moniliju i pjegavost lista prema etiketi proizvoda.
+    Insekticid za šljivinog savijača razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
+    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
+    Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
     Za mlada stabla god. 1–2: nije obavezno.
 
 ---
 
 ### 3. Insekticid – 2. generacija savijača
+
+*S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
 
 - activityType: "spraying"
   title: "Insekticid – 2. generacija šljivinog savijača"
@@ -1060,7 +1079,7 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
   monthEnd: 7
   dayEnd: 10
   notes: >
-    Mospilan 20 SP — SAMO ako klopke pokažu nagli porast ulova.
+    Registrirani insekticid za kulturu i štetnika prema etiketi proizvoda — razmatrati samo ako klopke pokažu jasan signal koji, u kombinaciji s lokalnim pragovima ili stručnim savjetom, opravdava reakciju.
     Nije preventivno prskanje.
     Primijeniti ujutro ili navečer.
     Za mlada stabla god. 1–2 bez ploda: nije potrebno.
@@ -1378,7 +1397,7 @@ Primjenjuje se shared block kao za ostale standardne voćke.
 ### Agronomic context
 Zimzelena biljka — nema zimskog mirovanja kao listopadne voćke.
 Otporna na sušu, osjetljiva na dugotrajne mrazeve ispod -7°C.
-Standardni spray program (bijelo ulje, bakar, Score, Mospilan) NE primjenjuje se.
+Standardni spray program (bijelo ulje, bakar, fungicidi i insekticidi uobičajeni za listopadne voćke) NE primjenjuje se.
 Shared block NE primjenjuje se.
 
 ---
@@ -1397,7 +1416,7 @@ Shared block NE primjenjuje se.
     Cilj: otvorena krošnja u obliku vaze, dobra cirkulacija zraka.
     Svake 2–3 godine: jača rezidba za obnovu rodnog drva.
     Mlada stabla god. 1–3: samo formiranje oblika, ne rezati agresivno.
-    Veće rane premazati (Lac Balsam) za rezove iznad 3 cm.
+    Veće rane premazati sredstvom za zaštitu rana, ako je prikladno, prema preporuci stručnjaka ili etiketi proizvoda (za rezove iznad 3 cm).
 
 ---
 
@@ -1412,7 +1431,7 @@ Shared block NE primjenjuje se.
   notes: >
     Primijeniti unutar 1–2 dana nakon rezidbe.
     Zaštita od bakterioze masline (Pseudomonas savastanoi — maslinin rak).
-    Cuprablau Z 35 WG ili ekvivalent.
+    Registrirani bakreni pripravak prema etiketi proizvoda.
 
 ---
 
@@ -1459,7 +1478,7 @@ Shared block NE primjenjuje se.
     Maslinova muha (Bactrocera oleae) — najvažniji štetnik masline.
     Postaviti žute ljepljive ploče s atraktantom.
     Tjedno pregledavati.
-    Pri jakom naletu: insekticid specifičan za maslinovu muhu (spinosad ili kaolin zemlja).
+    Pri jakom naletu: razmotriti registrirano sredstvo ili dopuštenu metodu zaštite prema etiketi proizvoda (uključujući organske opcije i registriranu barijernu ili repelentnu metodu, prema lokalnoj registraciji).
     Za mlada stabla bez ploda: manje relevantno.
 
 ---
@@ -1474,7 +1493,7 @@ Shared block NE primjenjuje se.
   dayEnd: 30
   notes: >
     Primijeniti SAMO ako praćenje (monitoring) pokaže visok ulov.
-    Spinosad (organsko) ili kaolin zemlja kao fizička barijera.
+    Registrirano sredstvo ili dopuštena metoda zaštite prema etiketi proizvoda (uključujući organske opcije) ili registrirana barijerna/repelentna metoda kao fizička barijera.
     Nije preventivno prskanje.
     Za mlada stabla bez ploda: nije potrebno.
 
@@ -1715,7 +1734,10 @@ Posebna napomena: smokva podnosi do -10°C kratkoročno, ali mlada stabla su osj
 
 ### Agronomic context
 Šipak je marginalan u kontinentalnoj EU klimi; u Samoboru / Zagrebu uspijeva kao veliki grm ili malo stablo s povremenom potrebom za zimskom zaštitom mladih stabala.
-Standardni spray program (bijelo ulje, zimski bakar, Score, Mospilan) NE primjenjuje se.
+
+*S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
+
+Standardni spray program (bijelo ulje, zimski bakar, fungicidi i insekticidi uobičajeni za listopadne voćke) NE primjenjuje se.
 Shared block NE primjenjuje se.
 **Template-structure note:** Pomegranate is classified under `mediterranean` for organizing purposes. Its Block 6 template below is the full work plan for pomegranate and is structurally independent of olive and fig — the species-specific block is authoritative.
 
@@ -1846,6 +1868,9 @@ Shared block NE primjenjuje se.
 
 ### Agronomic context
 Orah raste kao veliko stablo s kasnim listanjem i cvatnjom (svibanj).
+
+*S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
+
 Obilno krvari ako se reže u mirovanju — ljetna rezidba je jedini siguran prozor.
 Standardni spray program NE primjenjuje se.
 Shared block NE primjenjuje se.
@@ -1951,6 +1976,9 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
 
 ### Agronomic context
 Lijeska se uzgaja kao grm s više produktivnih izbojnica.
+
+*S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
+
 Cvate izrazito rano (veljača), samoopraživanje vjetrom.
 Standardni spray program NE primjenjuje se.
 Shared block NE primjenjuje se.
@@ -2339,8 +2367,8 @@ Young-tree relevance and condition-based execution are described in `notes` per 
 ## Spray rules
 
 - White oil and copper: NEVER on same day — min. 7–10 day gap
-- Mospilan: NEVER during bloom or active bee flight
-- Score + Mospilan: can be mixed in one pass, post-bloom only
+- Insecticides: NEVER during bloom or active bee flight — follow each product label for specific restrictions
+- Fungicide + insecticide tank-mix: not universally safe — follow each product label and local guidance; apply only post-bloom and outside active bee flight
 - Apricot copper: must come BEFORE bloom (January–February)
 - Nectarine / Peach copper (leaf curl): must come while buds still closed
 - Citrus: standard EU fruit tree spray rules do NOT apply

@@ -670,6 +670,8 @@ The JSON below is the machine-readable form of the species tables and prose abov
 }
 ```
 
+**S3 audit item:** decide whether citrus remains one catalog entry with lemon/orange/mandarin subtypes, or whether lemon, orange, and mandarin become top-level supported plant identities.
+
 ---
 
 ## 14. What is not in scope for the current catalog
