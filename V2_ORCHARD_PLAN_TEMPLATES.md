@@ -135,7 +135,7 @@ Agronomic interpretation only. Not schema fields.
     grinje, lisne uši, štitaste uši.
     Prskati po suhom, bez vjetra, iznad 5°C. Dobro natopiti grane i koru.
     VAŽNO: minimalni razmak od bakra je 7–10 dana — ne miješati, ne primjenjivati previše blizu.
-    Za mlada stabla: primijeniti.
+    Za mlada stabla: primijeniti samo ako je prikladno prema stanju stabla, fenofazi i etiketi proizvoda.
 
 ---
 
@@ -152,7 +152,7 @@ Agronomic interpretation only. Not schema fields.
     Registrirani bakreni pripravak prema etiketi proizvoda: zaštita od raka kore, pjegavosti, monilije i srodnih bolesti.
     Primijeniti uz razmak od bijelog ulja najmanje 7–10 dana.
     Prskati po suhom vremenu.
-    Za mlada stabla: primijeniti.
+    Za mlada stabla: primijeniti samo ako je prikladno prema stanju stabla, fenofazi i etiketi proizvoda.
 
 ---
 
@@ -515,10 +515,10 @@ Gisela 5 podloga: slabobujnija, raniji prinos, lakša zaštita mrežom.
   monthEnd: 6
   dayEnd: 20
   notes: >
-    Trešnjina muha (Rhagoletis cerasi) — najvažniji štetnik trešnje u EU.
+    Trešnjina muha (Rhagoletis cerasi) — jedan od najvažnijih štetnika trešnje u EU uvjetima.
     Postaviti 2–3 žute ljepljive ploče po stablu na visinu 1.5–2 m, u sjenu krošnje.
     Tjedno pregledavati:
-    — 0–2 muhe/tjedan → uobičajeno nema potrebe za tretmanom
+    — nizak ulov → uobičajeno nastaviti praćenje, osim ako lokalni pragovi ili stručni savjet upućuju drukčije
     — nagli porast ulova može značiti da treba provjeriti potrebu za reakcijom; eventualni tretman razmatrati samo ako lokalni pragovi, etiketa proizvoda ili stručni savjet opravdavaju reakciju.
     Koristiti samo sredstvo registrirano za kulturu i štetnika prema etiketi proizvoda; poštovati karencu do berbe (ne tretirati ako je berba preblizu propisane karence), zaštitu pčela i lokalne propise.
     Za mlada stabla god. 1–2 bez ploda: nije prioritet.
@@ -535,7 +535,7 @@ Gisela 5 podloga: slabobujnija, raniji prinos, lakša zaštita mrežom.
   dayEnd: 1
   notes: >
     Trešnja nije obavezna za prorjeđivanje — stablo samo regulira broj plodova.
-    Gisela 5 ne prerodi ekscesivno.
+    Kod slabobujnih podloga opterećenje rodom svejedno pratiti.
     Po želji: ukloniti blizance (dva srasla ploda) i sitne zaostale plodove.
     Ostaviti ~5–8 cm razmaka između plodova u grozdu.
     Znakovi previše: grane vise jako pod težinom, svi plodovi sitni i blijedi.
@@ -603,9 +603,10 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   dayEnd: 10
   notes: >
     Ista vrsta kao kod slatke trešnje (Rhagoletis cerasi).
-    Tlak kod višnje obično niži, ali praćenje opravdano.
+    Tlak kod višnje često je niži nego kod trešnje, ali ovisi o lokaciji, sorti i godini.
     Žute ljepljive ploče, tjedni pregled.
-    Korisnik odlučuje o eventualnom tretiranju — vidi etiketu proizvoda za karencu.
+    Eventualni tretman razmatrati samo ako lokalni pragovi, etiketa proizvoda ili stručni savjet opravdavaju reakciju.
+    Koristiti samo sredstvo registrirano za kulturu i štetnika prema etiketi proizvoda; poštovati karencu, zaštitu pčela i lokalne propise.
 
 ---
 
@@ -681,7 +682,7 @@ Propušteno prskanje u veljači/ožujku = visok rizik zaraze, posebno u vlažnom
     Primijeniti dok su pupovi nektarine još zatvoreni ili tek počinju bubriti.
     Taphrina deformans: nakon pojave simptoma mogućnosti su ograničene; naglasak je na prevenciji.
     Registrirani bakreni pripravak prema etiketi proizvoda.
-    Ako je proljeće vlažno: 2 tretmana u razmaku 7–10 dana.
+    U vlažnom proljeću drugi tretman razmotriti prema fenofazi, oborinama, etiketi proizvoda i stručnom/lokalnom savjetu.
     Ovo prskanje je DODATAK zimskom bakru iz shared bloka — primijeniti specifično za nektarinu.
     Razmak od bijelog ulja: min. 7–10 dana.
     Za mlada stabla: primijeniti — posebno važno u prvim godinama.
@@ -769,7 +770,7 @@ Propušteno prskanje u veljači/ožujku = visok rizik zaraze, posebno u vlažnom
     Termin ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
     VIŠE PROLAZA — plodovi ne dozrijevaju istovremeno (3–4 prolaza u ~3 tjedna).
     Test zrelosti: blago popuštanje pri pritisku oko peteljke, osnovna boja žuto-narančasta.
-    NE brati prerano — nektarina ne dozrijeva nakon berbe kao kruška.
+    NE brati prerano — prerano ubrani plodovi ne razvijaju punu aromu i šećer kao plodovi ubrani u odgovarajućoj zrelosti.
     Brati pažljivo — tanka kožica lako se oštećuje.
     Čuvati na 0–4°C do 2 tjedna.
 
@@ -798,7 +799,7 @@ Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
     Primijeniti dok su pupovi zatvoreni ili tek počinju bubriti.
     Taphrina deformans: nakon pojave simptoma mogućnosti su ograničene; naglasak je na prevenciji.
     Registrirani bakreni pripravak prema etiketi proizvoda.
-    Vlažno proljeće: 2 tretmana u razmaku 7–10 dana.
+    U vlažnom proljeću drugi tretman razmotriti prema fenofazi, oborinama, etiketi proizvoda i stručnom/lokalnom savjetu.
     Ovo prskanje je DODATAK zimskom bakru iz shared bloka.
     Razmak od bijelog ulja: min. 7–10 dana.
 
@@ -920,7 +921,7 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
     Registrirani bakreni pripravak prema etiketi proizvoda odnosi se na preventivnu zaštitu od relevantnih gljivičnih i bakterijskih bolesti, ne na liječenje virusnih bolesti.
 
     Šarka (Plum pox virus) nema kurativni tretman; lisne uši su vektori. Simptome šarke treba potvrditi stručnjak, a postupanje uskladiti s lokalnim fitosanitarnim preporukama.
-    Ako se propusti ovaj termin, ne može se naknadno kompenzirati.
+    Ako se propusti ovaj termin, ne može se u potpunosti nadoknaditi; kasnije mjere ovise o stvarnom problemu, fenofazi i etiketi proizvoda.
     Razmak od bijelog ulja: min. 7–10 dana.
     Ovo je DODATAK zimskom bakru iz shared bloka — primijeniti ranije, prilagođeno marelici.
 
@@ -954,6 +955,7 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
   dayEnd: 15
   notes: >
     Šarka (Plum pox virus) se prenosi lisnim ušima — pratiti kolonije na naličju listova.
+    Smanjenje lisnih uši ne jamči zaštitu od šarke.
     Vizualni pregled: žuti prstenovi/mrlje na listovima = mogući simptom šarke.
     Ako se sumnja na šarku, simptome treba potvrditi stručnjak, a postupanje uskladiti s lokalnim fitosanitarnim preporukama.
     Razmotriti registrirani insekticid za kulturu i štetnika prema etiketi proizvoda pri vidljivoj koloniji lisnih uši (preventivna kontrola vektora šarke).
@@ -1061,12 +1063,12 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
 
 ---
 
-### 3. Insekticid – 2. generacija savijača
+### 3. Reakcija po potrebi – 2. generacija savijača
 
 *S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
 
 - activityType: "spraying"
-  title: "Insekticid – 2. generacija šljivinog savijača"
+  title: "Reakcija po potrebi – 2. generacija šljivinog savijača"
   monthStart: 6
   dayStart: 15
   monthEnd: 7
@@ -1231,10 +1233,11 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   dayEnd: 20
   notes: >
     KRITIČNO za badem — cvate izrazito rano.
-    Preventivni bakar nužan prije otvaranja pupova.
+    Preventivni bakar je važan termin ako je prikladno prema fenofazi, vremenu i etiketi proizvoda.
     NIKAD na otvorenom cvatu.
     Razmak od bijelog ulja: vidi etiketu proizvoda.
     Ovo je DODATAK zimskom bakru iz shared bloka — primijeniti ranije, prilagođeno bademu.
+    Ne duplicirati bakrene tretmane ako je isti fenološki prozor već pokriven; poštovati razmak, fenofazu i etiketu proizvoda.
 
 ---
 
@@ -1265,7 +1268,7 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   notes: >
     Badem dijeli rizik Taphrina deformans s breskvom/nektarinom.
     Bakar dok su pupovi još zatvoreni.
-    Nakon infekcije lijeka nema — timing kritičan.
+    Nakon pojave simptoma mogućnosti su ograničene; naglasak je na prevenciji.
     Razmak od bijelog ulja: vidi etiketu.
 
 ---
