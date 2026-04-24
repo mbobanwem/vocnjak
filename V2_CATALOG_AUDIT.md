@@ -58,6 +58,47 @@ S3 may validate variety windows and agronomic correctness, but owner approval is
 
 ---
 
+## Pre-S3 input stabilization checkpoint
+
+Pre-S3 catalog/template input stabilization is complete for the initial 18 plant types.
+
+Completed stabilization passes:
+
+- pome group
+- stone group
+- mediterranean group
+- nut group
+- citrus group
+
+After this checkpoint, `V2_PLANT_CATALOG.md` and `V2_ORCHARD_PLAN_TEMPLATES.md` should be treated as stabilized S3 input.
+
+Do not make further wording, variety, group, timing, template, or safety-generalization changes before S3 unless one of these is true:
+
+- the owner explicitly approves the change;
+- a clear factual error is found;
+- a clear safety issue is found;
+- the change is part of the S3 audit itself.
+
+This checkpoint does not promote the files to authoritative V2 truth.
+
+The files remain PRE-S3 input only. S3 must still audit and validate:
+
+- species and subtype identity;
+- variety coverage and owner-approved variety decisions;
+- harvest, bloom, fallback, and seasonProfile timing;
+- shared-block applicability;
+- monitoring vs action vs observation vs advisory semantics;
+- final `activityType` mapping;
+- citrus identity model;
+- pomegranate grouping;
+- nut group naming;
+- treatment safety wording and label constraints;
+- localization / final user-facing language.
+
+S3 must read `V2_VARIETY_COVERAGE_POLICY.md` before adding, removing, or promoting variety entries.
+
+---
+
 ## 2. Signal table — human audit guidance
 
 **Classification:** this signal table is **human audit guidance** — a reading aid for the curator processing source entries. It is NOT a rule, parser specification, regex set, runtime classifier, NLP pipeline, migration-script decision tree, ML model, or any form of automated text analysis.
