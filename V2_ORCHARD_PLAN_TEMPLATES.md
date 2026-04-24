@@ -1872,7 +1872,7 @@ Orah raste kao veliko stablo s kasnim listanjem i cvatnjom (svibanj).
 
 *S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
 
-Orah može jako suziti/krvariti kod rezidbe u mirovanju — ljetni termin je sigurniji/preporučeni prozor za veće rezove; točan termin ostaje S3 audit item.
+Orah može jače ispuštati sok/krvariti kod rezidbe u mirovanju — ljetni termin je sigurniji/preporučeni prozor za veće rezove; točan termin ostaje S3 audit item.
 Standardni spray program NE primjenjuje se.
 Shared block NE primjenjuje se.
 Classified under `nut`. The Block 6 template below is the full work plan for this species — the species-specific block is authoritative. S3 may refine the group name; the template below is independent of that decision.
@@ -1888,7 +1888,7 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   monthEnd: 8
   dayEnd: 15
   notes: >
-    Orah može jako suziti/krvariti kod rezidbe u mirovanju.
+    Orah može jače ispuštati sok/krvariti kod rezidbe u mirovanju.
     Ljetni termin je sigurniji/preporučeni prozor za veće rezove; točan termin ostaje S3 audit item.
     Ukloniti križajuće i suhe grane.
     Mlada stabla: formirati niski stablašić prvih 3–5 godina.
@@ -1906,7 +1906,8 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   notes: >
     Preventivni bakar protiv bakterijske pjegavosti oraha (Xanthomonas arboricola).
     Aplikacija kod bubrenja pupa i cvatnje resa.
-    NIJE potrebno svake godine — ako je prethodna sezona bila suha, tlak nizak.
+    NIJE potrebno svake godine — ako je prethodna sezona bila suha, pritisak nizak.
+    Koristiti registrirani pripravak prema etiketi proizvoda; poštovati doziranje, karencu, zaštitu pčela i lokalne propise.
     Hobi uzgoj: često bez tretmana.
 
 ---
@@ -1923,7 +1924,7 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
     Rhagoletis completa — žuta ljepljiva klopka s amonijevim mamcem.
     Tjedni pregled.
     Muha obezbojuje kožuh, ali jezgra često ostaje jestiva.
-    Tretman samo na jasno značajan ulov.
+    Eventualni tretman razmatrati samo ako lokalni pragovi ili stručni savjet opravdavaju reakciju; koristiti samo registrirano sredstvo za kulturu i štetnika prema etiketi proizvoda, uz poštovanje karence, zaštite pčela i lokalnih propisa.
 
 ---
 
@@ -1939,6 +1940,7 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
     Cydia pomonella napada i orah.
     Feromonska klopka.
     Hobi uzgoj: tretman rijetko nužan.
+    Eventualni tretman razmatrati samo ako monitoring, lokalni pragovi ili stručni savjet opravdavaju reakciju; koristiti samo registrirano sredstvo za kulturu i štetnika prema etiketi proizvoda, uz poštovanje karence, zaštite pčela i lokalnih propisa.
 
 ---
 
@@ -1968,7 +1970,7 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   dayEnd: 30
   notes: >
     Pregledati deblo na znakove dosadnika.
-    Ukloniti bolesne kožuhe (smanjenje sljedećesezonskog inokuluma).
+    Ukloniti bolesne kožuhe (smanjenje inokuluma za sljedeću sezonu).
     Malčirati bazu mladih stabala protiv glodavaca.
 
 ---
@@ -1980,7 +1982,7 @@ Lijeska se uzgaja kao grm s više produktivnih izbojnica.
 
 *S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
 
-Cvate izrazito rano (veljača), samoopraživanje vjetrom.
+Cvate izrazito rano (veljača), oprašivanje vjetrom; sortna kompatibilnost i samooplodnost ostaju S3 audit item.
 Standardni spray program NE primjenjuje se.
 Shared block NE primjenjuje se.
 Classified under `nut`. The Block 6 template below is the full work plan for this species — the species-specific block is authoritative. S3 may refine the group name; the template below is independent of that decision.
@@ -2003,10 +2005,10 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
 
 ---
 
-### 2. Praćenje ljeskovog pipe
+### 2. Praćenje ljeskove pipe
 
 - activityType: "monitoring"
-  title: "Praćenje ljeskovog pipe"
+  title: "Praćenje ljeskove pipe"
   monthStart: 5
   dayStart: 1
   monthEnd: 7
@@ -2015,7 +2017,7 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
     Curculio nucum — odrasla ženka polaže jaja u razvijajuće plodove.
     Kuckanje grana preko bijele plahte za prebrojavanje odraslih.
     Hobi uzgoj: mehaničko uklanjanje napadnutih plodova obično dovoljno;
-    kemijski tretman po potrebi — vidi etiketu.
+    Eventualni tretman razmatrati samo ako lokalni pragovi, vidljiva šteta ili stručni savjet opravdavaju reakciju; koristiti samo registrirano sredstvo za kulturu i štetnika prema etiketi proizvoda, uz poštovanje karence, zaštite pčela i lokalnih propisa.
 
 ---
 
@@ -2029,8 +2031,8 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   dayEnd: 30
   notes: >
     Phytoptus avellanae — nabrekli zimski pupovi vidljivi kasnom zimom.
-    Primarni hobi pristup: mehaničko uklanjanje i spaljivanje napadnutih pupova.
-    Sumporni tretman kod teže zaraze — vidi etiketu.
+    Primarni hobi pristup: mehaničko uklanjanje i zbrinjavanje napadnutih pupova prema lokalnim propisima.
+    Kod teže potvrđene zaraze eventualni tretman razmatrati samo prema etiketi proizvoda, lokalnim propisima i stručnom savjetu.
 
 ---
 
