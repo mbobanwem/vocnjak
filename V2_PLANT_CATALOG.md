@@ -1,4 +1,7 @@
-# PLANT_CATALOG_V1 (FINAL)
+# V2 PLANT CATALOG — DOMAIN INPUT (pre-S3)
+
+## Status
+Input-only material for S3 audit. NOT authoritative V2 truth. Domain content (species, varieties, harvest windows, mediterranean / citrus / nut handling) is preserved as-is; V1 runtime / storage / generation framing has been removed. Promotion to V2 spec requires S3–S5 audit and owner sign-off.
 
 ---
 
@@ -19,19 +22,9 @@ Catalog provides structured input for:
 
 ---
 
-## V1 Storage Rules (CRITICAL)
+## Plant identity (domain note)
 
-The catalog is the runtime input layer for plant identity. It is NOT pure UI — catalog selection writes the canonical stored `plant.type` (Session 17.4).
-
-Rules:
-- `plant.type` IS a stored field in v4 (Session 17.4 approved schema extension; closed set of 10 allowed values)
-- catalog selection populates `plant.type` (canonical identity) and may also populate `plant.name` and `plant.variety` (display labels)
-- catalog reference data beyond `plant.type` (varieties, harvestWindow, fallback timing groups, citrus subtypes) is NOT persisted into the plant model — it stays external in this file and is recomputed at render time
-- `plant.type` MUST be selected from the catalog — free-text type is FORBIDDEN for new plants
-- `plant.type` MUST NEVER be reverse-derived from `plant.name`, `plant.variety`, or any other field
-- no new plant fields beyond the approved `plant.type` may be introduced without explicit approval
-- timing profiles and region offsets are future features — do NOT implement in V1
-- legacy plants without `plant.type` remain valid; they are NOT auto-migrated and produce zero generated plans
+The catalog identifies each plant by its species key (apple, pear, quince, …) plus an optional variety. Section 12 is the structured reference for species keys, groups, varieties, harvest windows, and mediterranean / citrus / nut handling. Persistence and runtime routing decisions are out of scope for this input file.
 
 ---
 
@@ -52,10 +45,13 @@ Rules:
 - Apple
 - Pear
 - Plum
-- Cherry
+- Sweet cherry
+- Sour cherry
 - Peach
 - Nectarine
 - Apricot
+- Quince
+- Almond
 
 ---
 
@@ -63,6 +59,13 @@ Rules:
 
 - Olive
 - Fig
+- Pomegranate
+
+---
+
+### Nut trees
+
+Walnut, hazelnut (classified under `nut` for user selection, organization, and shared-template discovery; each species has its own template — see `V2_ORCHARD_PLAN_TEMPLATES.md` Block 6).
 
 ---
 
@@ -76,80 +79,28 @@ Citrus is one category with subtype:
 
 ---
 
-## 4. Selection Model
+## 4. Knowledge tiers
 
-Three-tier selection — user picks whichever level they know:
+A catalog plant can be described at one of three levels of knowledge:
 
-### Tier 1 — User knows the variety
+**Tier 1 — variety known**
+A specific variety is identified (e.g. *Fuji apple*). Timing is taken from the variety entry.
 
-User selects plant type → then selects variety from list.
+**Tier 2 — timing band known, variety unknown**
+The variety is unknown but the approximate ripening band is known: **Early / Mid / Late**. Timing is taken from the fallback band.
+Example: an old apple tree of unknown variety that ripens in August → Early.
 
-System derives timing automatically from catalog.
-No further input required.
+**Tier 3 — species only**
+Neither variety nor band is known. Timing defaults to **Mid**.
+Example: a just-bought apple sapling with no label → Mid.
 
-Example: *"I have a Fuji apple"* → timing: late, harvest: Sep 25–Oct 15
-
----
-
-### Tier 2 — User knows when it ripens, but not the variety
-
-User selects plant type → then selects fallback timing: **Early / Mid / Late**
-
-Covers the case: old tree in garden, unknown variety, but user knows roughly when it ripens.
-
-Example: *"I have an apple tree that ripens in August"* → Early
+Variety and fallback band describe the same axis (timing); exactly one applies per plant.
 
 ---
 
-### Tier 3 — User knows only the plant type
+## 5. Timing profile
 
-User selects plant type only.
-
-System defaults to **Mid** automatically. No additional input.
-
-Example: *"I bought an apple sapling, variety unknown"* → Mid
-
----
-
-### Rules
-
-- Variety and fallback are mutually exclusive
-- System must enforce exactly one timing source:
-  - Variety selected → timing from variety catalog entry
-  - Fallback selected → timing from fallback group
-  - Nothing selected → system defaults to Mid
-- Variety selection makes fallback selection NOT required
-- Fallback selection makes variety selection NOT required
-
----
-
-## 5. Timing Profile
-
-Each plant resolves to a **timing profile**.
-
-### Resolution logic
-
-```
-if variety selected  → timing = variety.timing
-else if fallback selected → timing = fallback (early | mid | late)
-else → timing = "mid" (default)
-```
-
----
-
-## Timing Resolution Rule (FINAL)
-
-The system MUST resolve timing using exactly one of these sources, in this order:
-
-1. variety timing
-2. fallback timing
-3. default = mid
-
-Rules:
-- no other timing source is allowed in V1
-- region offsets are NOT part of V1
-- fine tuning is NOT part of V1
-- rootstock influence is NOT part of V1
+Each plant resolves to a timing profile via: variety → fallback band → default Mid. No other timing sources are defined in this input file. Region offsets, fine tuning, and rootstock influence are out of scope.
 
 ---
 
@@ -180,25 +131,10 @@ Each variety has exactly:
 ### Rules
 
 - `timing` is required
-- `harvestWindow` is required for V1
-- `bloomWindow` is optional in V1, reserved for future phenology engine
+- `harvestWindow` is required
+- `bloomWindow` is optional — reserved metadata for future phenology work; not part of current domain logic
 - No combined timing values (e.g. early_mid) — single value only
-- All windows are Zagreb baseline — region offsets are future (V2+)
-
----
-
-## Bloom Window (Future)
-
-`bloomWindow` is future-ready metadata only.
-
-Rules:
-- `bloomWindow` is NOT used by the V1 engine
-- `harvestWindow` is the only active timing window used by V1 runtime logic
-- `bloomWindow` may later support:
-  - phenology modeling
-  - disease timing
-  - advanced planning
-- V1 implementation MUST NOT depend on `bloomWindow`
+- All windows are Zagreb baseline — region offsets are deferred
 
 ---
 
@@ -210,7 +146,7 @@ Allowed timing values:
 - `mid`
 - `late`
 
-No combined values. Reason: keeps engine simple, avoids ambiguity.
+No combined values. Reason: keeps the timing model simple, avoids ambiguity.
 
 ---
 
@@ -237,27 +173,9 @@ Months are 1-indexed (1 = January).
 - mid   → Aug 20 – Sep 30
 - late  → Sep 25 – Oct 20
 
-```json
-"apple": {
-  "varieties": {
-    "gala":             { "timing": "mid",  "harvestWindow": { "monthStart": 8, "dayStart": 20, "monthEnd": 9,  "dayEnd": 10 } },
-    "golden_delicious": { "timing": "mid",  "harvestWindow": { "monthStart": 9, "dayStart": 10, "monthEnd": 9,  "dayEnd": 30 } },
-    "jonagold":         { "timing": "mid",  "harvestWindow": { "monthStart": 9, "dayStart": 15, "monthEnd": 10, "dayEnd": 5  } },
-    "fuji":             { "timing": "late", "harvestWindow": { "monthStart": 9, "dayStart": 25, "monthEnd": 10, "dayEnd": 15 } },
-    "granny_smith":     { "timing": "late", "harvestWindow": { "monthStart": 10,"dayStart": 1,  "monthEnd": 10, "dayEnd": 20 } },
-    "idared":           { "timing": "late", "harvestWindow": { "monthStart": 10,"dayStart": 1,  "monthEnd": 10, "dayEnd": 20 } }
-  },
-  "fallback": {
-    "early": { "harvestWindow": { "monthStart": 8,  "dayStart": 1,  "monthEnd": 9,  "dayEnd": 5  } },
-    "mid":   { "harvestWindow": { "monthStart": 8,  "dayStart": 20, "monthEnd": 9,  "dayEnd": 30 } },
-    "late":  { "harvestWindow": { "monthStart": 9,  "dayStart": 25, "monthEnd": 10, "dayEnd": 20 } }
-  }
-}
-```
-
 ---
 
-### 🍒 CHERRY
+### 🍒 SWEET CHERRY
 
 | Variety     | Key         | Timing | Harvest window (Zagreb) | Bloom (approx)   |
 |-------------|-------------|--------|-------------------------|------------------|
@@ -272,22 +190,20 @@ Months are 1-indexed (1 = January).
 - mid   → Jun 15 – Jul 5
 - late  → Jul 5 – Jul 25
 
-```json
-"cherry": {
-  "varieties": {
-    "burlat":     { "timing": "early", "harvestWindow": { "monthStart": 6, "dayStart": 1,  "monthEnd": 6, "dayEnd": 15 } },
-    "kordia":     { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 5  } },
-    "lapins":     { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 25, "monthEnd": 7, "dayEnd": 10 } },
-    "regina":     { "timing": "late",  "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 20 } },
-    "sweetheart": { "timing": "late",  "harvestWindow": { "monthStart": 7, "dayStart": 10, "monthEnd": 7, "dayEnd": 25 } }
-  },
-  "fallback": {
-    "early": { "harvestWindow": { "monthStart": 6, "dayStart": 1,  "monthEnd": 6, "dayEnd": 15 } },
-    "mid":   { "harvestWindow": { "monthStart": 6, "dayStart": 15, "monthEnd": 7, "dayEnd": 5  } },
-    "late":  { "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 25 } }
-  }
-}
-```
+---
+
+### 🍒 SOUR CHERRY
+
+| Variety         | Key           | Timing | Harvest window (Zagreb) | Bloom (approx)  |
+|-----------------|---------------|--------|-------------------------|-----------------|
+| Oblačinska      | oblacinska    | early  | Jun 20 – Jul 5          | early April     |
+| Marasca         | marasca       | mid    | Jul 1 – Jul 15          | early April     |
+| Montmorency     | montmorency   | mid    | Jul 5 – Jul 20          | early April     |
+
+**Fallback harvest windows:**
+- early → Jun 20 – Jul 10
+- mid   → Jul 1 – Jul 20
+- late  → Jul 15 – Jul 31
 
 ---
 
@@ -306,23 +222,6 @@ Months are 1-indexed (1 = January).
 - mid   → Aug 10 – Aug 31
 - late  → Aug 20 – Sep 20
 
-```json
-"plum": {
-  "varieties": {
-    "cacanska_rana":      { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 20, "monthEnd": 8, "dayEnd": 10 } },
-    "cacanska_lepotica":  { "timing": "early", "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 20 } },
-    "cacanska_najbolja":  { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 10, "monthEnd": 8, "dayEnd": 31 } },
-    "stanley":            { "timing": "late",  "harvestWindow": { "monthStart": 8, "dayStart": 20, "monthEnd": 9, "dayEnd": 10 } },
-    "prezident":          { "timing": "late",  "harvestWindow": { "monthStart": 9, "dayStart": 1,  "monthEnd": 9, "dayEnd": 20 } }
-  },
-  "fallback": {
-    "early": { "harvestWindow": { "monthStart": 7, "dayStart": 20, "monthEnd": 8, "dayEnd": 15 } },
-    "mid":   { "harvestWindow": { "monthStart": 8, "dayStart": 10, "monthEnd": 8, "dayEnd": 31 } },
-    "late":  { "harvestWindow": { "monthStart": 8, "dayStart": 20, "monthEnd": 9, "dayEnd": 20 } }
-  }
-}
-```
-
 ---
 
 ### 🍑 PEACH
@@ -340,23 +239,6 @@ Months are 1-indexed (1 = January).
 - mid   → Jul 20 – Aug 20
 - late  → Aug 10 – Sep 5
 
-```json
-"peach": {
-  "varieties": {
-    "springcrest": { "timing": "early", "harvestWindow": { "monthStart": 6, "dayStart": 25, "monthEnd": 7, "dayEnd": 15 } },
-    "redhaven":    { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 20 } },
-    "royal_glory": { "timing": "mid",   "harvestWindow": { "monthStart": 7, "dayStart": 20, "monthEnd": 8, "dayEnd": 5  } },
-    "fayette":     { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 20 } },
-    "o_henry":     { "timing": "late",  "harvestWindow": { "monthStart": 8, "dayStart": 10, "monthEnd": 8, "dayEnd": 31 } }
-  },
-  "fallback": {
-    "early": { "harvestWindow": { "monthStart": 6, "dayStart": 25, "monthEnd": 7, "dayEnd": 20 } },
-    "mid":   { "harvestWindow": { "monthStart": 7, "dayStart": 20, "monthEnd": 8, "dayEnd": 20 } },
-    "late":  { "harvestWindow": { "monthStart": 8, "dayStart": 10, "monthEnd": 9, "dayEnd": 5  } }
-  }
-}
-```
-
 ---
 
 ### 🍑 NECTARINE
@@ -373,23 +255,6 @@ Months are 1-indexed (1 = January).
 - early → Jul 1 – Jul 31
 - mid   → Aug 1 – Aug 25
 - late  → Aug 15 – Sep 10
-
-```json
-"nectarine": {
-  "varieties": {
-    "caldesi_2000":  { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 20 } },
-    "big_top":       { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 10, "monthEnd": 7, "dayEnd": 31 } },
-    "fantasia":      { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 20 } },
-    "stark_redgold": { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 5,  "monthEnd": 8, "dayEnd": 25 } },
-    "venus":         { "timing": "late",  "harvestWindow": { "monthStart": 8, "dayStart": 15, "monthEnd": 9, "dayEnd": 5  } }
-  },
-  "fallback": {
-    "early": { "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 31 } },
-    "mid":   { "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 25 } },
-    "late":  { "harvestWindow": { "monthStart": 8, "dayStart": 15, "monthEnd": 9, "dayEnd": 10 } }
-  }
-}
-```
 
 ---
 
@@ -410,22 +275,19 @@ Months are 1-indexed (1 = January).
 
 **⚠️ Important for all pear varieties:** harvest BEFORE full ripeness — pear ripens off the tree. If it softens on the tree it will be mealy.
 
-```json
-"pear": {
-  "varieties": {
-    "santa_maria":  { "timing": "early", "harvestWindow": { "monthStart": 8, "dayStart": 5,  "monthEnd": 8, "dayEnd": 25 } },
-    "williams":     { "timing": "early", "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 20 } },
-    "conference":   { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 25, "monthEnd": 9, "dayEnd": 15 } },
-    "boscs_bottle": { "timing": "mid",   "harvestWindow": { "monthStart": 9, "dayStart": 1,  "monthEnd": 9, "dayEnd": 20 } },
-    "abate_fetel":  { "timing": "late",  "harvestWindow": { "monthStart": 9, "dayStart": 15, "monthEnd": 10,"dayEnd": 5  } }
-  },
-  "fallback": {
-    "early": { "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 25 } },
-    "mid":   { "harvestWindow": { "monthStart": 8, "dayStart": 25, "monthEnd": 9, "dayEnd": 20 } },
-    "late":  { "harvestWindow": { "monthStart": 9, "dayStart": 15, "monthEnd": 10,"dayEnd": 5  } }
-  }
-}
-```
+---
+
+### 🍐 QUINCE
+
+| Variety       | Key           | Timing | Harvest window (Zagreb) | Bloom (approx)  |
+|---------------|---------------|--------|-------------------------|-----------------|
+| Leskovačka    | leskovacka    | mid    | Oct 1 – Oct 20          | early May       |
+| Vranjska      | vranjska      | mid    | Oct 5 – Oct 25          | early May       |
+| Champion      | champion      | late   | Oct 15 – Nov 5          | early May       |
+
+**Fallback harvest windows:**
+- mid   → Oct 1 – Oct 25
+- late  → Oct 15 – Nov 10
 
 ---
 
@@ -446,34 +308,62 @@ Months are 1-indexed (1 = January).
 
 **⚠️ Important for all apricot varieties:** apricot blooms in February–March. Late frost is the main risk. Copper spray must be applied BEFORE bloom (January–February). Poor harvest is often caused by frost, not pests or disease.
 
-```json
-"apricot": {
-  "varieties": {
-    "novosadska_rodna": { "timing": "early", "harvestWindow": { "monthStart": 6, "dayStart": 5,  "monthEnd": 6, "dayEnd": 25 } },
-    "kioto":            { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 10 } },
-    "goldrich":         { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 10 } },
-    "hargrand":         { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 25, "monthEnd": 7, "dayEnd": 15 } },
-    "bergeron":         { "timing": "late",  "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 25 } }
-  },
-  "fallback": {
-    "early": { "harvestWindow": { "monthStart": 6, "dayStart": 5,  "monthEnd": 6, "dayEnd": 25 } },
-    "mid":   { "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 15 } },
-    "late":  { "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 31 } }
-  }
-}
-```
+---
+
+### 🟤 ALMOND
+
+| Variety     | Key         | Timing | Harvest window (Zagreb) | Bloom (approx)         |
+|-------------|-------------|--------|-------------------------|------------------------|
+| Ferragnès   | ferragnes   | late   | Sep 5 – Sep 25          | late Feb – early March |
+| Ferraduel   | ferraduel   | late   | Sep 10 – Sep 30         | late Feb – early March |
+| Supernova   | supernova   | mid    | Aug 25 – Sep 15         | early March            |
+
+**Fallback harvest windows:**
+- mid   → Aug 20 – Sep 15
+- late  → Sep 5 – Sep 30
+
+**⚠️ Important for all almond varieties:** almond blooms extremely early (late Feb – March). Frost during bloom is the main cause of crop loss in continental EU. Preventive copper must be applied BEFORE bud swell. Never spray during open bloom.
 
 ---
 
-## 10. Mediterranean Plants (no variety model in V1)
+### 🌰 WALNUT
 
-Olive and Fig do not have a variety-based timing model in V1.
-User selects type only. No fallback, no variety.
+| Variety    | Key         | Timing | Harvest window (Zagreb) | Bloom (approx) |
+|------------|-------------|--------|-------------------------|----------------|
+| Chandler   | chandler    | late   | Sep 20 – Oct 15         | mid May        |
+| Franquette | franquette  | late   | Sep 25 – Oct 20         | mid May        |
+| Šejnovo    | sejnovo     | mid    | Sep 10 – Oct 1          | early May      |
 
-```json
-"olive": { "group": "mediterranean", "seasonProfile": "mediterranean" },
-"fig":   { "group": "mediterranean", "seasonProfile": "mediterranean" }
-```
+**Fallback harvest windows:**
+- mid   → Sep 10 – Oct 5
+- late  → Sep 20 – Oct 20
+
+**Note:** walnut "harvest window" in this file describes the natural drop / gathering period (nuts fall when ripe); semantic refinement deferred to S3 audit.
+
+---
+
+### 🌰 HAZELNUT
+
+| Variety           | Key               | Timing | Harvest window (Zagreb) | Bloom (approx) |
+|-------------------|-------------------|--------|-------------------------|----------------|
+| Istarski dugi     | istarski_dugi     | mid    | Aug 25 – Sep 15         | late Feb       |
+| Tonda di Giffoni  | tonda_di_giffoni  | mid    | Aug 20 – Sep 10         | late Feb       |
+| Ennis             | ennis             | late   | Sep 1 – Sep 25          | early March    |
+
+**Fallback harvest windows:**
+- mid   → Aug 25 – Sep 15
+- late  → Sep 1 – Sep 25
+
+**Note:** hazelnut "harvest window" in this file describes the natural drop / gathering period; semantic refinement deferred to S3 audit.
+
+---
+
+## 10. Mediterranean Plants (no variety model)
+
+Olive, Fig, and Pomegranate do not have a variety-based timing model.
+User selects type only. No fallback, no variety. The structured form lives in Section 12.
+
+Pomegranate is classified under `mediterranean` for organizing purposes; its template in `V2_ORCHARD_PLAN_TEMPLATES.md` is structurally independent of olive and fig, and the species-specific template is authoritative.
 
 ---
 
@@ -482,35 +372,25 @@ User selects type only. No fallback, no variety.
 Applies to:
 - Olive
 - Fig
+- Pomegranate
 
 Rules:
 - Mediterranean plants do NOT use Early / Mid / Late fallback timing
-- Mediterranean plants do NOT require variety timing in V1
-- Mediterranean plants use simplified seasonal handling in V1
-- detailed regional adaptation is future work
+- Mediterranean plants do NOT require variety timing
+- Mediterranean plants use simplified seasonal handling
+- detailed regional adaptation is deferred
 
-V1 interpretation:
-- olive and fig are supported plant types
+Interpretation:
+- olive, fig, and pomegranate are supported plant types
 - they use a simplified season profile
-- exact phenology is not modeled in V1
+- exact phenology is not modeled in the current catalog
 
 ---
 
 ## 11. Citrus Special Handling
 
-Citrus uses seasonProfile model — no timing groups, no variety timing.
+Citrus uses a seasonProfile model — no timing groups, no variety timing. The structured form (group, subtypes, seasonProfile values) lives in Section 12.
 
-```json
-{
-  "citrus": {
-    "group": "citrus",
-    "subtypes": {
-      "lemon":    { "seasonProfile": "multi_cycle" },
-      "orange":   { "seasonProfile": "winter" },
-      "mandarin": { "seasonProfile": "autumn" }
-    }
-  }
-}
 ### Citrus Season Profiles
 
 `multi_cycle`
@@ -527,25 +407,72 @@ Citrus uses seasonProfile model — no timing groups, no variety timing.
 - typical for mandarin
 
 Rules:
-- user selects citrus → subtype required (lemon / orange / mandarin)
+- citrus selection requires a subtype (lemon / orange / mandarin)
 - citrus does NOT use Early/Mid/Late
-- citrus does NOT use variety selection in V1
+- citrus does NOT use variety selection
 - uses seasonProfile instead
 
 ---
 
-## ⚠️ Source of Truth
+> **Pre-audit status (content expansion pass, 2026-04-24)**
+>
+> The following species are new to this input file and have NOT yet been audited:
+> - sour_cherry (Prunus cerasus)
+> - quince (Cydonia oblonga)
+> - almond (Prunus dulcis)
+> - walnut (Juglans regia)
+> - hazelnut (Corylus avellana)
+> - pomegranate (Punica granatum)
+>
+> Variety harvest windows, bloom timing, and disease notes are conservative baseline
+> proposals drawn from general continental-EU hobby-orchard practice. They do NOT
+> carry regional-source provenance. S3 audit must verify against regional references
+> (Savjetodavna služba publications, Glasnik zaštite bilja, established pomology
+> references for nut trees and marginal warm-climate plants) before release.
+>
+> **Group definition and species-specific override rule**
+>
+> Group (`pome`, `stone`, `mediterranean`, `citrus`, `nut`) is an **organizing classification**. It is used for:
+>
+> - **user selection** — a user picking a plant can filter by agronomic family;
+> - **organization** — species sharing a broad agronomic profile are grouped together for navigation and display;
+> - **shared-template discovery** — group membership makes it easy to find the shared baseline that applies to the family (e.g. the shared block for `pome` + `stone`);
+> - **identifying baseline actions** — where a baseline is genuinely applicable across the group (e.g. winter copper and dormant oil for `pome` + `stone`).
+>
+> Group membership does **not** imply that all species in the group share the same full work plan.
+>
+> Each species' actual work plan is built up from, in order:
+>
+> 1. the **shared block**, where it is explicitly applicable to the species (per the block's own scope statement);
+> 2. the **species-specific template block** in `V2_ORCHARD_PLAN_TEMPLATES.md`;
+> 3. **subtype-specific handling** where defined (currently: `citrus` species carry a `lemon` | `orange` | `mandarin` subtype used inside the Block 6 citrus template).
+>
+> **Species-specific override rule — species-specific template wins.** Where a species' per-species block introduces, modifies, or contradicts the shared baseline, the per-species block is authoritative for that species. Group membership never forces a species to follow a plan that does not match its own template. See `V2_ORCHARD_PLAN_TEMPLATES.md` for the full Species-specific override rule paragraph and the concrete divergence examples.
+>
+> Concrete examples of divergence inside `stone`:
+>
+> - peach and nectarine carry leaf-curl (kovrčavost) copper;
+> - apricot and almond carry pre-bloom copper + frost-risk handling (early bloomers);
+> - sweet_cherry and sour_cherry carry cherry-fly monitoring and optional bird-net;
+> - plum carries plum-specific pest and fruit handling;
+> - pear (within `pome`) carries fire-blight (vatrostuh) copper.
+>
+> Within `mediterranean`, olive, fig, and pomegranate each have a distinct Block 6 template. Pomegranate's template is structurally independent of olive and fig. The `mediterranean` label organizes the three species together for navigation; it does not generate template content for any of them.
+>
+> **S3 items that remain open:**
+>
+> - agronomic validation of the six new species (variety timing, bloom windows, pest / disease notes);
+> - `nut` group name — S3 may keep, rename (e.g. `tree_nut`), or split. Templates are independent of the chosen name;
+> - pomegranate's final grouping — S3 may keep it under `mediterranean` as an organizing label or promote it to its own group. Pomegranate's template is already structurally independent, so this is a labeling decision, not a template-structure decision.
+>
+> Individual note entries above do NOT carry per-line audit markers — the entire
+> block for these six species is subject to full S3 review.
 
-The JSON block in **Section 12 — Complete Data Model** is the ONLY source of truth used by the application.
-
-Rules:
-- tables above are documentation only
-- descriptive text above is explanatory only
-- if any table or paragraph conflicts with the JSON in Section 12, the JSON wins
-- runtime logic must depend on the JSON block only
 ---
 
-## 12. Complete Data Model (V1, implementation-ready)
+## 12. Consolidated catalog data (reference JSON)
+
+The JSON below is the machine-readable form of the species tables and prose above. Where a table and the JSON disagree, the JSON is the reference for this input file. Final V2 authority is established only after S3–S5 audit and owner sign-off.
 
 ```json
 {
@@ -566,7 +493,7 @@ Rules:
     }
   },
 
- "cherry": {
+ "sweet_cherry": {
   "group": "stone",
   "varieties": {
       "burlat":     { "timing": "early", "harvestWindow": { "monthStart": 6, "dayStart": 1,  "monthEnd": 6, "dayEnd": 15 } },
@@ -579,6 +506,20 @@ Rules:
       "early": { "harvestWindow": { "monthStart": 6, "dayStart": 1,  "monthEnd": 6, "dayEnd": 15 } },
       "mid":   { "harvestWindow": { "monthStart": 6, "dayStart": 15, "monthEnd": 7, "dayEnd": 5  } },
       "late":  { "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 25 } }
+    }
+  },
+
+  "sour_cherry": {
+  "group": "stone",
+  "varieties": {
+      "oblacinska":  { "timing": "early", "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 5  } },
+      "marasca":     { "timing": "mid",   "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 15 } },
+      "montmorency": { "timing": "mid",   "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 20 } }
+    },
+    "fallback": {
+      "early": { "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 10 } },
+      "mid":   { "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 20 } },
+      "late":  { "harvestWindow": { "monthStart": 7, "dayStart": 15, "monthEnd": 7, "dayEnd": 31 } }
     }
   },
 
@@ -646,6 +587,19 @@ Rules:
     }
   },
 
+  "quince": {
+  "group": "pome",
+  "varieties": {
+      "leskovacka": { "timing": "mid",  "harvestWindow": { "monthStart": 10, "dayStart": 1,  "monthEnd": 10, "dayEnd": 20 } },
+      "vranjska":   { "timing": "mid",  "harvestWindow": { "monthStart": 10, "dayStart": 5,  "monthEnd": 10, "dayEnd": 25 } },
+      "champion":   { "timing": "late", "harvestWindow": { "monthStart": 10, "dayStart": 15, "monthEnd": 11, "dayEnd": 5  } }
+    },
+    "fallback": {
+      "mid":  { "harvestWindow": { "monthStart": 10, "dayStart": 1,  "monthEnd": 10, "dayEnd": 25 } },
+      "late": { "harvestWindow": { "monthStart": 10, "dayStart": 15, "monthEnd": 11, "dayEnd": 10 } }
+    }
+  },
+
   "apricot": {
   "group": "stone",
   "varieties": {
@@ -662,8 +616,48 @@ Rules:
     }
   },
 
-  "olive": { "group": "mediterranean", "seasonProfile": "mediterranean" },
-  "fig":   { "group": "mediterranean", "seasonProfile": "mediterranean" },
+  "almond": {
+  "group": "stone",
+  "varieties": {
+      "ferragnes": { "timing": "late", "harvestWindow": { "monthStart": 9, "dayStart": 5,  "monthEnd": 9, "dayEnd": 25 } },
+      "ferraduel": { "timing": "late", "harvestWindow": { "monthStart": 9, "dayStart": 10, "monthEnd": 9, "dayEnd": 30 } },
+      "supernova": { "timing": "mid",  "harvestWindow": { "monthStart": 8, "dayStart": 25, "monthEnd": 9, "dayEnd": 15 } }
+    },
+    "fallback": {
+      "mid":  { "harvestWindow": { "monthStart": 8, "dayStart": 20, "monthEnd": 9, "dayEnd": 15 } },
+      "late": { "harvestWindow": { "monthStart": 9, "dayStart": 5,  "monthEnd": 9, "dayEnd": 30 } }
+    }
+  },
+
+  "walnut": {
+  "group": "nut",
+  "varieties": {
+      "chandler":   { "timing": "late", "harvestWindow": { "monthStart": 9, "dayStart": 20, "monthEnd": 10, "dayEnd": 15 } },
+      "franquette": { "timing": "late", "harvestWindow": { "monthStart": 9, "dayStart": 25, "monthEnd": 10, "dayEnd": 20 } },
+      "sejnovo":    { "timing": "mid",  "harvestWindow": { "monthStart": 9, "dayStart": 10, "monthEnd": 10, "dayEnd": 1  } }
+    },
+    "fallback": {
+      "mid":  { "harvestWindow": { "monthStart": 9, "dayStart": 10, "monthEnd": 10, "dayEnd": 5  } },
+      "late": { "harvestWindow": { "monthStart": 9, "dayStart": 20, "monthEnd": 10, "dayEnd": 20 } }
+    }
+  },
+
+  "hazelnut": {
+  "group": "nut",
+  "varieties": {
+      "istarski_dugi":    { "timing": "mid",  "harvestWindow": { "monthStart": 8, "dayStart": 25, "monthEnd": 9, "dayEnd": 15 } },
+      "tonda_di_giffoni": { "timing": "mid",  "harvestWindow": { "monthStart": 8, "dayStart": 20, "monthEnd": 9, "dayEnd": 10 } },
+      "ennis":            { "timing": "late", "harvestWindow": { "monthStart": 9, "dayStart": 1,  "monthEnd": 9, "dayEnd": 25 } }
+    },
+    "fallback": {
+      "mid":  { "harvestWindow": { "monthStart": 8, "dayStart": 25, "monthEnd": 9, "dayEnd": 15 } },
+      "late": { "harvestWindow": { "monthStart": 9, "dayStart": 1,  "monthEnd": 9, "dayEnd": 25 } }
+    }
+  },
+
+  "olive":       { "group": "mediterranean", "seasonProfile": "mediterranean" },
+  "fig":         { "group": "mediterranean", "seasonProfile": "mediterranean" },
+  "pomegranate": { "group": "mediterranean", "seasonProfile": "mediterranean" },
 
 "citrus": {
   "group": "citrus",
@@ -678,17 +672,7 @@ Rules:
 
 ---
 
-## 13. UX Constraints
-
-- User never types plant name or variety — always selects from list
-- Icon + label required for every item
-- Selection must be fast (one-hand use on mobile)
-- Variety list is scrollable, not paginated — max 6 varieties per type keeps it manageable
-- "I don't know" option always visible → goes to fallback or default Mid
-
----
-
-## 14. What is NOT included (V1)
+## 14. What is not in scope for the current catalog
 
 - Berries (strawberry, blueberry, etc.)
 - Exotic plants
@@ -700,24 +684,21 @@ Rules:
 
 ---
 
-## 15. Future Extensions (V2+)
+## 15. Future extension candidates (non-binding)
 
-Possible future extensions:
+Non-binding ideas for later consideration. None of the items below are active in the current catalog, and listing them here does not imply approval:
 
 - add more varieties
 - add region-specific defaults
 - add disease susceptibility
 - add rootstock influence
 - remote catalog updates
-- activate `bloomWindow` in runtime logic
+- activate `bloomWindow` in timing logic
 - add climate-zone offsets
 - add user fine-tuning for timing
 - add phenology-based planning
 
-Rules:
-- none of the above are active in V1
-- V1 runtime logic uses `harvestWindow` only
-- no future field may be treated as implemented unless explicitly opened in roadmap
+The current catalog uses `harvestWindow` as the only active timing window. No future field may be treated as implemented unless explicitly opened in the roadmap.
 
 ---
 
@@ -725,6 +706,6 @@ Rules:
 
 Catalog must be:
 - simple enough for user
-- structured enough for engine
+- structured enough to be consumed deterministically
 - stable enough to avoid refactoring
 

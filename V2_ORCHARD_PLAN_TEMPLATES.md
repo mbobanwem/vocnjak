@@ -1,150 +1,77 @@
-# ORCHARD_PLAN_TEMPLATES_V1.md
+# V2 ORCHARD PLAN TEMPLATES — DOMAIN INPUT (pre-S3)
 
 ## Status
-FINAL DRAFT — Source of truth for predefined orchard plans (V1)
-Aligned with PLANT_CATALOG_V1.md and DOMAIN_RULES_V1.md.
+Input-only material for S3 audit. NOT authoritative V2 truth. Agronomic content (species work entries, timing windows, product references, notes) is preserved as-is; V1 runtime / plan-schema / generation framing has been removed. Promotion to V2 spec requires S3–S5 audit and owner sign-off.
 
 ---
 
 ## Purpose
 
-This file defines **predefined orchard work (plans)** per plant species.
+This file defines **predefined orchard work** per plant species. It captures:
+- what orchard work should happen during the year
+- the agronomic context for each action, kept in `notes`
 
-It serves as a **canonical template source** for generating `plans[]` in the app.
-
-This file does NOT:
-- store user data
-- modify schema
-- introduce new fields
-- duplicate plant catalog logic
-
-This file DOES:
-- define WHAT orchard work should happen during the year
-- map that work to existing V1 plan structure
-- enable deterministic plan generation
-- preserve agronomic context in notes
+It is not a runtime specification and does not define plan persistence, schema, or generation behavior.
 
 ---
 
-## Core Principles
+## Template entry shape (domain note)
 
-1. Plans = intent
-2. Activities = reality
-3. Plan state = derived (never stored)
+Each template entry is described with:
 
-This file must fully respect:
-- DOMAIN_RULES_V1.md
-- MIGRATION_PLAN_V1.md
-- TARGET_ARCHITECTURE_V1.md
+- `activityType` — legacy pre-audit category tag (see "Activity categories" below)
+- `title` — short human-readable label
+- `monthStart`, `dayStart`, `monthEnd`, `dayEnd` — calendar window (1-indexed months)
+- `notes` — agronomic context, warnings, product references, young-tree relevance, condition-based execution guidance
+- `appliesToAll` — when `true`, marks shared-block entries that apply to all pome + stone species
 
----
-
-## Constraints (STRICT)
-
-- DO NOT introduce new fields
-- DO NOT change plan schema
-- DO NOT add heuristics or AI logic
-- DO NOT include user-specific data
-- DO NOT include IDs (plantIds generated later)
-- MUST be deterministic
-- MUST map to existing plan structure
-- MUST use only V1-compatible activityType values
-
----
-
-## Plan Structure Mapping
-
-Each template entry must map to existing plan fields:
-
-| Template Field | Maps to           |
-|----------------|-------------------|
-| activityType   | plan.activityType |
-| title          | plan.title        |
-| monthStart     | plan.monthStart   |
-| dayStart       | plan.dayStart     |
-| monthEnd       | plan.monthEnd     |
-| dayEnd         | plan.dayEnd       |
-| notes          | plan.notes        |
-| appliesToAll   | plan.appliesToAll (if true) |
-
-No other fields are allowed in template entries.
+Young-tree relevance and condition-based execution live inside `notes`, not as custom fields.
 
 ---
 
 ## Supported Plant Types
 
-Defined in PLANT_CATALOG_V1.md:
+Defined in V2_PLANT_CATALOG.md:
 
-**Core fruit trees:** apple, pear, plum, cherry, peach, nectarine, apricot
+**Pome:** apple, pear, quince
 
-**Mediterranean:** olive, fig
+**Stone:** sweet_cherry, sour_cherry, plum, peach, nectarine, apricot, almond
 
-**Citrus (special model):** lemon, orange, mandarin
+**Mediterranean:** olive, fig, pomegranate (pomegranate's template is structurally independent of olive and fig — see Block 6)
 
----
+**Citrus:** lemon, orange, mandarin (subtype handling inside Block 6)
 
-## Template Interpretation Rules
+**Nut:** walnut, hazelnut
 
-Templates define orchard work only. They do NOT encode engine logic.
-
-Rules:
-- template entries must use only existing V1-compatible plan fields
-- no custom fields are allowed in entries
-- young-tree relevance must be described in `notes`, not in custom fields
-- condition-based execution must be described in `notes`, not in custom fields
-- agronomic complexity belongs in `notes`
-- variety timing belongs in PLANT_CATALOG_V1.md, not here
-
-### Young tree interpretation (notes only)
-
-Some activities are not relevant for trees in year 1–2 before first bearing.
-
-Examples: fruit thinning, bird netting, fruit pest trap programs.
-
-These are documented in `notes` per entry.
-This file does NOT enforce suppression — notes describe relevance only.
-Any future filtering must follow the active roadmap session when that scope is opened.
-Current V1 does not suppress plans based on tree age at generation or render time.
-
-### Condition-based interpretation (notes only)
-
-Some activities should only happen if a condition is met.
-
-Examples: insecticide after trap threshold, second copper spray in wet spring, bird net if pressure observed.
-
-These are documented in `notes` per entry.
-This file does NOT encode conditions as fields.
+Group is an organizing classification used for user selection, organization, shared-template discovery, and identifying baseline actions where genuinely applicable. Group membership does not determine a species' full work plan — the species-specific template block is authoritative where it diverges.
 
 ---
 
-## ActivityType Mapping Rule
+## Template interpretation (domain note)
 
-Templates MUST use only V1-compatible internal activity types:
+Young-tree relevance (year 1–2, no fruit yet) and condition-based execution (e.g. insecticide only after trap threshold, second copper only in wet spring, bird net only if pressure observed) are described inside `notes` per entry. This file does not encode them as custom fields, and does not specify how or when they are surfaced to the grower. Variety-specific timing lives in V2_PLANT_CATALOG.md, not here.
 
-| Allowed internal type | Used for |
-|-----------------------|----------|
-| spraying              | all spray treatments |
-| pruning               | all pruning and pinching |
-| fertilizing           | all fertilization |
-| watering              | irrigation activities |
-| planting              | planting operations |
-| harvest               | all harvest activities |
-| observation           | whitewash, thinning, netting, inspection, shutdown reminders |
-| problem               | visible pest or disease incidents |
-| monitoring            | trap placement, scouting, visual checks |
+---
 
-**Mapping examples for orchard-specific titles:**
+## Activity categories
 
-- "Krečenje debla" → activityType: `observation`
-- "Prorjeđivanje plodova" → activityType: `observation`
-- "Mreža protiv ptica" → activityType: `observation`
-- "Gašenje navodnjavanja" → activityType: `observation`
-- "Pregled za zimu" → activityType: `observation`
-- "Praćenje feromonskih klopki" → activityType: `monitoring`
-- "Gnojidba" → activityType: `fertilizing`
+Each entry carries an `activityType` tag drawn from the following pre-audit category set:
 
-The orchard meaning stays in `title`.
-The V1 model compatibility stays in `activityType`.
+- `spraying` — spray treatments
+- `pruning` — pruning and pinching
+- `fertilizing` — fertilization
+- `watering` — irrigation activities
+- `planting` — planting operations
+- `harvest` — harvest activities
+- `observation` — whitewash, thinning, netting, inspection, shutdown reminders
+- `problem` — visible pest or disease incidents
+- `monitoring` — trap placement, scouting, visual checks
+
+The `activityType` values in this file are **legacy pre-audit source metadata**. The final V2 mapping (including whether these categories survive as-is, get renamed, or get replaced) is decided by the S3–S5 audit.
+
+**Monitoring entries require special audit.** Entries tagged `monitoring` capture observation cadence, target pests/diseases, and human decision context. They must NOT be treated as direct V2 action-windows; their shape in the V2 model (standalone monitoring program, trigger-only action, or otherwise) is an open S3–S5 question.
+
+The orchard meaning stays in `title` and `notes`; the category tag is a coarse grouping only.
 
 ---
 
@@ -163,39 +90,15 @@ Agronomic interpretation only. Not schema fields.
 
 ---
 
-## Completeness Principle
-
-Every supported plant type must have sufficient template coverage to generate a useful annual orchard plan.
-
-Expected coverage for standard fruit trees:
-- winter trunk care
-- dormant spray (oil)
-- dormant spray (copper)
-- pruning
-- wound protection after pruning
-- spring monitoring
-- post-bloom protection
-- fruit thinning guidance
-- bird protection guidance
-- irrigation period
-- summer pruning
-- harvest
-- season shutdown
-- autumn inspection
-
-Mediterranean plants and citrus follow different coverage logic — see their sections.
-
----
-
 ---
 
 # ══════════════════════════════════════════════════════
 # SHARED BLOCK
 # Common baseline for all standard fruit trees:
-# apple, pear, plum, cherry, peach, nectarine, apricot
+# apple, pear, plum, sweet_cherry, sour_cherry, peach, nectarine, apricot, quince, almond
 #
-# Mediterranean plants and citrus are handled separately.
-# Do NOT apply this block to olive, fig, or citrus.
+# Mediterranean plants, citrus, and nut trees are handled separately.
+# Do NOT apply this block to olive, fig, pomegranate, citrus, walnut, or hazelnut.
 # ══════════════════════════════════════════════════════
 
 ## SHARED — STANDARD FRUIT TREES
@@ -386,7 +289,7 @@ Mediterranean plants and citrus follow different coverage logic — see their se
 
 ### Agronomic context
 Cvatnja (Zagreb baseline): travanj.
-Berba: ovisno o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md.
+Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Gala (aug–sep), Fuji / Idared (sep–oct).
 
 ---
@@ -468,7 +371,7 @@ Harvest window examples: Gala (aug–sep), Fuji / Idared (sep–oct).
   monthEnd: 10
   dayEnd: 20
   notes: >
-    Termin berbe ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.
+    Termin berbe ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
     Primjeri: Gala (aug 20 – sep 10), Fuji / Idared (sep 25 – oct 15).
     Brati zakretanjem ploda — ne čupati, ne vući.
     Test zrelosti: plod lako otpada pri laganom zakretanju, sjemenke smeđe.
@@ -482,7 +385,7 @@ Harvest window examples: Gala (aug–sep), Fuji / Idared (sep–oct).
 
 ### Agronomic context
 Cvatnja (Zagreb baseline): kraj ožujka – poč. travnja, nešto ranije od jabuke.
-Berba: ovisno o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md.
+Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Williams / Santa Maria (aug), Conference / Bosc (aug–sep), Abate Fetel (sep–oct).
 Posebna napomena: vatrostuh (Erwinia amylovora) je bakterijska bolest bez kemijskog lijeka.
 Preventiva bakrom oko cvatnje je ključna.
@@ -582,7 +485,7 @@ Preventiva bakrom oko cvatnje je ključna.
   monthEnd: 10
   dayEnd: 5
   notes: >
-    Termin berbe ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.
+    Termin berbe ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
     KRITIČNO: brati PRIJE potpune konzumne zrelosti — kruška dozrijeva nakon berbe, ne na stablu.
     Test na stablu: plod se lako odvaja zakretanjem, ali još čvrst.
     Dozrijevanje nakon berbe: sobna temperatura 3–7 dana.
@@ -591,12 +494,12 @@ Preventiva bakrom oko cvatnje je ključna.
 
 ---
 
-## 🍒 CHERRY (Prunus avium)
+## 🍒 SWEET CHERRY (Prunus avium)
 
 ### Agronomic context
 Cvatnja (Zagreb baseline): kraj ožujka – poč. travnja.
-Berba: ovisno o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md.
-Harvest window examples: Burlat (jun 1–15), Kordia (jun 20 – jul 5), Regina / Summit (jul 5–25).
+Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
+Harvest window examples: Burlat (jun 1–15), Kordia (jun 20 – jul 5), Regina / Sweetheart (jul 5–25).
 Trešnjina muha (Rhagoletis cerasi): jedini ozbiljan insektni štetnik trešnje u EU klimi.
 Trešnja puca od kiše pred berbu — mreža štiti i od toga.
 Gisela 5 podloga: slabobujnija, raniji prinos, lakša zaštita mrežom.
@@ -670,7 +573,7 @@ Gisela 5 podloga: slabobujnija, raniji prinos, lakša zaštita mrežom.
   monthEnd: 7
   dayEnd: 25
   notes: >
-    Termin ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.
+    Termin ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
     Brati sa peteljkom — plod bez peteljke traje znatno kraće (max 1–2 dana).
     Brati po suhom vremenu, u hladnijem dijelu dana (jutro, večer).
     Test zrelosti: puna tamnocrvena boja, čvrstoća uz blag pritisak popušta.
@@ -680,11 +583,84 @@ Gisela 5 podloga: slabobujnija, raniji prinos, lakša zaštita mrežom.
 
 ---
 
+## 🍒 SOUR CHERRY (Prunus cerasus)
+
+### Agronomic context
+Cvatnja (Zagreb baseline): kraj ožujka – poč. travnja (uglavnom nekoliko dana iza slatke trešnje).
+Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
+Harvest window examples: Oblačinska (jun 20 – jul 5), Marasca / Montmorency (jul).
+Primjenjuje se shared block kao za ostale standardne voćke.
+
+---
+
+### 1. Praćenje trešnjine muhe
+
+- activityType: "monitoring"
+  title: "Praćenje trešnjine muhe – višnja"
+  monthStart: 4
+  dayStart: 25
+  monthEnd: 7
+  dayEnd: 10
+  notes: >
+    Ista vrsta kao kod slatke trešnje (Rhagoletis cerasi).
+    Tlak kod višnje obično niži, ali praćenje opravdano.
+    Žute ljepljive ploče, tjedni pregled.
+    Korisnik odlučuje o eventualnom tretiranju — vidi etiketu proizvoda za karencu.
+
+---
+
+### 2. Mreža protiv ptica (opcionalno)
+
+- activityType: "observation"
+  title: "Mreža protiv ptica – višnja (opcionalno)"
+  monthStart: 6
+  dayStart: 15
+  monthEnd: 7
+  dayEnd: 20
+  notes: >
+    Tlak ptica kod višnje manji nego kod slatke trešnje.
+    Mreža i dalje korisna za koncentrirane hobi-sadnje.
+    Postaviti oko 2 tjedna prije berbe.
+    Za mlada stabla bez uroda: nije potrebno.
+
+---
+
+### 3. Prorjeđivanje (po potrebi)
+
+- activityType: "observation"
+  title: "Prorjeđivanje višnje (po potrebi)"
+  monthStart: 5
+  dayStart: 15
+  monthEnd: 6
+  dayEnd: 1
+  notes: >
+    Višnja se uglavnom samoregulira.
+    Zabilježeno za korisnike koji žele krupniji plod za preradu.
+    Za mlada stabla bez uroda: nije potrebno.
+
+---
+
+### 4. Berba
+
+- activityType: "harvest"
+  title: "Berba višnje"
+  monthStart: 6
+  dayStart: 20
+  monthEnd: 7
+  dayEnd: 31
+  notes: >
+    Termin ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
+    Za preradu moguće ostaviti na stablu do veće slatkoće.
+    Brati po suhom vremenu.
+    Ne ostavljati prezrele plodove — privlače ose.
+
+---
+
 ## 🍑 NECTARINE (Prunus persica var. nucipersica)
 
 ### Agronomic context
 Cvatnja (Zagreb baseline): kraj ožujka – poč. travnja.
-Berba: ovisno o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md.
+Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Caldesi 2000 / Big Top (jul), Fantasia / Stark Redgold (aug), Venus (aug–sep).
 POSEBNA NAPOMENA: Nektarina je iznimno osjetljiva na kovrčavost lista (Taphrina deformans).
 Jednom zaražena grana nema lijeka — samo prevencija bakrom dok su pupovi zatvoreni.
@@ -787,9 +763,9 @@ Propušteno prskanje u veljači/ožujku = sigurna zaraza u vlažnom proljeću.
   monthStart: 7
   dayStart: 1
   monthEnd: 9
-  dayEnd: 5
+  dayEnd: 10
   notes: >
-    Termin ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.
+    Termin ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
     VIŠE PROLAZA — plodovi ne dozrijevaju istovremeno (3–4 prolaza u ~3 tjedna).
     Test zrelosti: blago popuštanje pri pritisku oko peteljke, osnovna boja žuto-narančasta.
     NE brati prerano — nektarina ne dozrijeva nakon berbe kao kruška.
@@ -802,7 +778,7 @@ Propušteno prskanje u veljači/ožujku = sigurna zaraza u vlažnom proljeću.
 
 ### Agronomic context
 Cvatnja (Zagreb baseline): kraj ožujka – poč. travnja, nešto ranije od nektarine.
-Berba: ovisno o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md.
+Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Springcrest / Redhaven (jun–jul), Royal Glory / Fayette (jul–aug), O'Henry (aug).
 Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
 
@@ -898,10 +874,10 @@ Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
   title: "Berba breskve"
   monthStart: 6
   dayStart: 25
-  monthEnd: 8
-  dayEnd: 31
+  monthEnd: 9
+  dayEnd: 5
   notes: >
-    Termin ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.
+    Termin ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
     Više prolaza — plodovi ne dozrijevaju istovremeno.
     Test zrelosti: blago popuštanje pri pritisku, osnovna boja žuto-narančasta.
     Brati pažljivo — dlakava kožica nježnija nego što izgleda.
@@ -920,7 +896,7 @@ Lokacija sadnje je kritična: izbjegavati udoline i sjeverne strane.
 
 ### Agronomic context
 Cvatnja (Zagreb baseline): VELJAČA – OŽUJAK (ovisno o sorti i godini).
-Berba: ovisno o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md.
+Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargrand (jun–jul), Bergeron (jul 5–25).
 
 ---
@@ -1022,7 +998,7 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
   monthEnd: 7
   dayEnd: 25
   notes: >
-    Termin ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.
+    Termin ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
     Marelica dozrijeva brzo i neravnomjerno — 2–3 prolaza kroz ~2 tjedna.
     Test zrelosti: narančasta boja s crvenim rumenilom, blago popuštanje pri pritisku.
     Brati pažljivo — lako se oštećuje i brzo trune.
@@ -1036,7 +1012,7 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
 
 ### Agronomic context
 Cvatnja (Zagreb baseline): kraj ožujka – poč. travnja.
-Berba: ovisno o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md.
+Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug), Stanley / Président (aug–sep).
 
 ---
@@ -1134,7 +1110,7 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
   monthEnd: 9
   dayEnd: 20
   notes: >
-    Termin ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.
+    Termin ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
     Brati u više navrata — ne dozrijeva sve odjednom.
     Test: plod omekšao, puna boja, lako se odvaja.
     Ne ostavljati prezrele plodove — privlače ose, uzrokuju moniliju.
@@ -1142,21 +1118,257 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
 
 ---
 
+## 🍐 QUINCE (Cydonia oblonga)
+
+### Agronomic context
+Cvatnja (Zagreb baseline): kraj travnja – početak svibnja (kasnije od jabuke/kruške).
+Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
+Harvest window examples: Leskovačka / Vranjska (oct), Champion (oct – early nov).
+Dunja pripada pome grupi; dijeli rizik vatrene truleži (Erwinia amylovora) s kruškom.
+Primjenjuje se shared block kao za ostale standardne voćke.
+
+---
+
+### 1. Bakar – pred cvatnju
+
+- activityType: "spraying"
+  title: "Bakar – pred cvatnju dunje"
+  monthStart: 3
+  dayStart: 20
+  monthEnd: 4
+  dayEnd: 15
+  notes: >
+    Preventivni bakar oko mirovanja pupa protiv vatrene truleži (Erwinia amylovora).
+    NIKAD na otvorenom cvatu.
+    Razmak od dormant ulja: vidi preporuku na etiketi proizvoda.
+
+---
+
+### 2. Praćenje savijača i monilije
+
+- activityType: "monitoring"
+  title: "Praćenje savijača i monilije – dunja"
+  monthStart: 4
+  dayStart: 25
+  monthEnd: 8
+  dayEnd: 15
+  notes: >
+    Kruškin savijač (Cydia pyrivora), povremeno jabučni (C. pomonella).
+    Monilija (Monilinia) na plodu u vlažnim sezonama.
+    Tjedni vizualni pregled.
+    Korisnik odlučuje o akciji na temelju opažanja.
+
+---
+
+### 3. Fungicid/insekticid post-cvatnja (po potrebi)
+
+- activityType: "spraying"
+  title: "Post-cvatnja zaštita – dunja (po potrebi)"
+  monthStart: 5
+  dayStart: 1
+  monthEnd: 5
+  dayEnd: 25
+  notes: >
+    Nakon cvatnje, po potrebi, ako je praćenje pokazalo pritisak.
+    NIKAD tijekom cvatnje.
+    Tip proizvoda, doziranje i karenca: vidi etiketu.
+
+---
+
+### 4. Berba
+
+- activityType: "harvest"
+  title: "Berba dunje"
+  monthStart: 10
+  dayStart: 1
+  monthEnd: 11
+  dayEnd: 10
+  notes: >
+    Termin ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
+    Dunja dozrijeva i nakon skidanja; čuvati hladno i suho 2–4 tjedna prije prerade.
+
+---
+
+## 🟤 ALMOND (Prunus dulcis)
+
+### ⚠️ Poseban slučaj — iznimno rana cvatnja, najveći rizik od mraza u kontinentalnoj klimi
+
+Badem cvate izrazito rano (veljača – ožujak, moguća slična dinamika kao marelica).
+Mraz za cvatnje je primarni uzrok gubitka roda, ne bolest.
+Lokacija sadnje je kritična: izbjegavati udoline.
+
+### Agronomic context
+Cvatnja (Zagreb baseline): VELJAČA – OŽUJAK (ovisno o sorti i godini).
+Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
+Harvest window examples: Supernova (aug–sep), Ferragnès / Ferraduel (sep).
+Badem dijeli rizik Taphrina deformans (kovrčavost lista) s breskvom/nektarinom.
+Primjenjuje se shared block kao za ostale standardne voćke.
+
+---
+
+### 1. Bakar – PRIJE cvatnje (KRITIČNO)
+
+- activityType: "spraying"
+  title: "Bakar – PRIJE cvatnje badema (KRITIČNO)"
+  monthStart: 1
+  dayStart: 25
+  monthEnd: 2
+  dayEnd: 20
+  notes: >
+    KRITIČNO za badem — cvate izrazito rano.
+    Preventivni bakar nužan prije otvaranja pupova.
+    NIKAD na otvorenom cvatu.
+    Razmak od bijelog ulja: vidi etiketu proizvoda.
+    Ovo je DODATAK zimskom bakru iz shared bloka — primijeniti ranije, prilagođeno bademu.
+
+---
+
+### 2. Praćenje mraza tijekom cvatnje
+
+- activityType: "monitoring"
+  title: "Praćenje mraza za cvatnje badema"
+  monthStart: 2
+  dayStart: 1
+  monthEnd: 3
+  dayEnd: 31
+  notes: >
+    Mraz je primarni uzrok gubitka roda badema u kontinentalnom podneblju, ne bolest.
+    Pratiti lokalnu prognozu.
+    Aplikacija ne donosi odluke — korisnik bira zaštitu (agrotekstil, itd.).
+    Loš rod badema je najčešće uzrokovan mrazom.
+
+---
+
+### 3. Bakar – kovrčavost lista
+
+- activityType: "spraying"
+  title: "Bakar – kovrčavost lista (badem)"
+  monthStart: 2
+  dayStart: 10
+  monthEnd: 3
+  dayEnd: 10
+  notes: >
+    Badem dijeli rizik Taphrina deformans s breskvom/nektarinom.
+    Bakar dok su pupovi još zatvoreni.
+    Nakon infekcije lijeka nema — timing kritičan.
+    Razmak od bijelog ulja: vidi etiketu.
+
+---
+
+### 4. Praćenje bolesti i štetnika
+
+- activityType: "monitoring"
+  title: "Praćenje bolesti i štetnika – badem"
+  monthStart: 4
+  dayStart: 15
+  monthEnd: 8
+  dayEnd: 15
+  notes: >
+    Vizualni pregled listova i plodova.
+    Korisnik odlučuje o tretmanu na temelju opažanja.
+
+---
+
+### 5. Fungicid/insekticid post-cvatnja (po potrebi)
+
+- activityType: "spraying"
+  title: "Post-cvatnja zaštita – badem (po potrebi)"
+  monthStart: 4
+  dayStart: 10
+  monthEnd: 5
+  dayEnd: 10
+  notes: >
+    Nakon cvatnje, po potrebi, ako praćenje pokaže pritisak (monilija, lisne uši).
+    NIKAD tijekom cvatnje.
+    Tip proizvoda i karenca: vidi etiketu.
+
+---
+
+### 6. Berba
+
+- activityType: "harvest"
+  title: "Berba badema"
+  monthStart: 8
+  dayStart: 20
+  monthEnd: 9
+  dayEnd: 30
+  notes: >
+    Termin ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
+    Žetva kad kožuh prirodno puca; stresti stablo ili pustiti da padne na ceradu.
+    Sušiti u ljusci 1–2 tjedna.
+
+---
+
+---
+
+> **Pre-audit status (content expansion pass, 2026-04-24)**
+>
+> The following species are new to this input file and have NOT yet been audited:
+> - sour_cherry (Prunus cerasus)
+> - quince (Cydonia oblonga)
+> - almond (Prunus dulcis)
+> - walnut (Juglans regia)
+> - hazelnut (Corylus avellana)
+> - pomegranate (Punica granatum)
+>
+> Variety harvest windows, bloom timing, and disease notes are conservative baseline
+> proposals drawn from general continental-EU hobby-orchard practice. They do NOT
+> carry regional-source provenance. S3 audit must verify against regional references
+> (Savjetodavna služba publications, Glasnik zaštite bilja, established pomology
+> references for nut trees and marginal warm-climate plants) before release.
+>
+> **Group definition and species-specific override rule**
+>
+> Group (`pome`, `stone`, `mediterranean`, `citrus`, `nut`) is an **organizing classification**. It is used for:
+>
+> - **user selection** — a user picking a plant can filter by agronomic family;
+> - **organization** — species sharing a broad agronomic profile are grouped together for navigation and display;
+> - **shared-template discovery** — group membership makes it easy to find the shared baseline that applies to the family (e.g. the shared block for `pome` + `stone`);
+> - **identifying baseline actions** — where a baseline is genuinely applicable across the group (e.g. winter copper and dormant oil for `pome` + `stone`).
+>
+> Group membership does **not** imply that all species in the group share the same full work plan.
+>
+> Each species' actual work plan is built up from, in order:
+>
+> 1. the **shared block**, where it is explicitly applicable to the species (per the block's own scope statement);
+> 2. the **species-specific template block** in this file;
+> 3. **subtype-specific handling** where defined (currently: `citrus` species carry a `lemon` | `orange` | `mandarin` subtype used inside the Block 6 citrus template).
+>
+> **Species-specific override rule — species-specific template wins.** Where a species' per-species block introduces, modifies, or contradicts the shared baseline, the per-species block is authoritative for that species. Group membership never forces a species to follow a plan that does not match its own template.
+>
+> Concrete examples of divergence inside `stone`:
+>
+> - peach and nectarine carry leaf-curl (kovrčavost) copper;
+> - apricot and almond carry pre-bloom copper + frost-risk handling (early bloomers);
+> - sweet_cherry and sour_cherry carry cherry-fly monitoring and optional bird-net;
+> - plum carries plum-specific pest and fruit handling;
+> - pear (within `pome`) carries fire-blight (vatrostuh) copper.
+>
+> Within `mediterranean`, olive, fig, and pomegranate each have a distinct Block 6 template. Pomegranate's template is structurally independent of olive and fig. The `mediterranean` label organizes the three species together for navigation; it does not generate template content for any of them.
+>
+> **S3 items that remain open:**
+>
+> - agronomic validation of the six new species (variety timing, bloom windows, pest / disease notes);
+> - `nut` group name — S3 may keep, rename (e.g. `tree_nut`), or split. Templates are independent of the chosen name;
+> - pomegranate's final grouping — S3 may keep it under `mediterranean` as an organizing label or promote it to its own group. Pomegranate's template is already structurally independent, so this is a labeling decision, not a template-structure decision.
+>
+> Individual note entries below do NOT carry per-line audit markers — the entire block for these six species is subject to full S3 review.
+
 ---
 
 # ══════════════════════════════════════════════════════
-# BLOCK 6 — MEDITERRANEAN & CITRUS (Special Templates)
+# BLOCK 6 — MEDITERRANEAN, NUT & CITRUS (Special Templates)
 #
 # These plants DO NOT use:
 # — standard orchard cycle
 # — early / mid / late timing groups
 # — shared block from above
 #
-# # Session 17.6 generation context:
-# the persisted plan generation layer reads stored `plant.type` (Session 17.4) and routes templates as follows:
-# - olive / fig use Block 6 Mediterranean templates only
-# - citrus uses Block 6 Citrus subtype templates only
-# - standard fruit trees use shared block + per-species block
+# Mediterranean (olive, fig, pomegranate), citrus (lemon, orange, mandarin),
+# and nut (walnut, hazelnut) each have their own species-specific template set
+# below. Pomegranate is grouped under mediterranean as an organizing label
+# but has its own template structurally independent of olive and fig.
+# Citrus uses a subtype (lemon | orange | mandarin) inside the citrus template.
 # ══════════════════════════════════════════════════════
 
 ---
@@ -1499,20 +1711,343 @@ Posebna napomena: smokva podnosi do -10°C kratkoročno, ali mlada stabla su osj
 
 ---
 
+## 🔴 POMEGRANATE (Punica granatum) — custom Block 6
+
+### Agronomic context
+Šipak je marginalan u kontinentalnoj EU klimi; u Samoboru / Zagrebu uspijeva kao veliki grm ili malo stablo s povremenom potrebom za zimskom zaštitom mladih stabala.
+Standardni spray program (bijelo ulje, zimski bakar, Score, Mospilan) NE primjenjuje se.
+Shared block NE primjenjuje se.
+**Template-structure note:** Pomegranate is classified under `mediterranean` for organizing purposes. Its Block 6 template below is the full work plan for pomegranate and is structurally independent of olive and fig — the species-specific block is authoritative.
+
+---
+
+### 1. Zimska rezidba šipka
+
+- activityType: "pruning"
+  title: "Zimska rezidba šipka"
+  monthStart: 2
+  dayStart: 1
+  monthEnd: 3
+  dayEnd: 15
+  notes: >
+    Šipak raste kao veliki grm ili malo stablo.
+    Ukloniti izdanke (osim kod obnove), suhe grane, unutarnje guste izbojke.
+    Oblikovati za prodor sunca.
+    Mlada stabla: samo lagano formiranje.
+
+---
+
+### 2. Gnojidba šipka (umjerena)
+
+- activityType: "fertilizing"
+  title: "Gnojidba šipka (umjerena)"
+  monthStart: 3
+  dayStart: 1
+  monthEnd: 4
+  dayEnd: 15
+  notes: >
+    Šipak je nezahtjevan.
+    Previše dušika odgađa plodonošenje.
+    Umjereno organsko ili mineralno gnojivo u proljeće; doziranje prema etiketi.
+
+---
+
+### 3. Praćenje štetnika
+
+- activityType: "monitoring"
+  title: "Praćenje štetnika – šipak"
+  monthStart: 5
+  dayStart: 1
+  monthEnd: 8
+  dayEnd: 31
+  notes: >
+    Šipak u kontinentalnom EU rijetko ima ozbiljne štetnike.
+    Vizualni pregled za lisne uši na mladim izbojcima.
+    Korisnik odlučuje o tretmanu na temelju vidljivog problema.
+
+---
+
+### 4. Praćenje pucanja ploda
+
+- activityType: "monitoring"
+  title: "Praćenje pucanja ploda – šipak"
+  monthStart: 8
+  dayStart: 1
+  monthEnd: 10
+  dayEnd: 15
+  notes: >
+    Nagla voda nakon suše uzrokuje puknuće ploda.
+    Praćenje lokalnih uvjeta i stanja tla — savjetodavno; korisnik odlučuje o navodnjavanju.
+
+---
+
+### 5. Navodnjavanje šipka
+
+- activityType: "watering"
+  title: "Navodnjavanje šipka"
+  monthStart: 6
+  dayStart: 15
+  monthEnd: 8
+  dayEnd: 31
+  notes: >
+    Duboko zalijevanje dok se plod razvija.
+    Mlada stabla: 20–30 L tjedno u suhim razdobljima.
+
+---
+
+### 6. Berba šipka
+
+- activityType: "harvest"
+  title: "Berba šipka"
+  monthStart: 10
+  dayStart: 1
+  monthEnd: 11
+  dayEnd: 15
+  notes: >
+    Termin: kad je plod potpuno obojen i pri kuckanju zvuči metalno.
+    Rezati škarama; ne čupati.
+    Čuvanje hladno i suho 1–2 mjeseca.
+
+---
+
+### 7. Zimska zaštita šipka (mlada stabla)
+
+- activityType: "observation"
+  title: "Zimska zaštita šipka (mlada stabla)"
+  monthStart: 11
+  dayStart: 15
+  monthEnd: 12
+  dayEnd: 31
+  notes: >
+    Šipak podnosi kratkotrajno -10°C; mlada stabla osjetljivija.
+    Omotati deblo agrotekstilom ili slamom prve 2–3 godine u kontinentalnom podneblju.
+    Uklanjanje zaštite u proljeće — kad prođe posljednja opasnost od mraza — obavit će se u sljedećoj sezoni.
+
+---
+
+---
+
+# ══════════════════════════════════════════════════════
+# BLOCK 6 — NUT TREES (Special Templates, `nut` group)
+#
+# walnut and hazelnut do NOT use:
+# — standard orchard cycle
+# — shared block
+#
+# Group `nut`: walnut and hazelnut. The group organizes these species for user
+# selection, navigation, and shared-template discovery. Each species below has
+# its own Block 6 template, which is authoritative for that species. S3 may
+# rename the group; the templates are unaffected.
+# ══════════════════════════════════════════════════════
+
+---
+
+## 🌰 WALNUT (Juglans regia) — custom Block 6
+
+### Agronomic context
+Orah raste kao veliko stablo s kasnim listanjem i cvatnjom (svibanj).
+Obilno krvari ako se reže u mirovanju — ljetna rezidba je jedini siguran prozor.
+Standardni spray program NE primjenjuje se.
+Shared block NE primjenjuje se.
+Classified under `nut`. The Block 6 template below is the full work plan for this species — the species-specific block is authoritative. S3 may refine the group name; the template below is independent of that decision.
+
+---
+
+### 1. Ljetna rezidba oraha
+
+- activityType: "pruning"
+  title: "Ljetna rezidba oraha"
+  monthStart: 7
+  dayStart: 15
+  monthEnd: 8
+  dayEnd: 15
+  notes: >
+    Orah obilno krvari ako se reže u mirovanju.
+    Ljeto = jedini siguran prozor.
+    Ukloniti križajuće i suhe grane.
+    Mlada stabla: formirati niski stablašić prvih 3–5 godina.
+
+---
+
+### 2. Bakar – rano u proljeće (po potrebi)
+
+- activityType: "spraying"
+  title: "Bakar – rano u proljeće (orah, po potrebi)"
+  monthStart: 4
+  dayStart: 1
+  monthEnd: 4
+  dayEnd: 20
+  notes: >
+    Preventivni bakar protiv bakterijske pjegavosti oraha (Xanthomonas arboricola).
+    Aplikacija kod bubrenja pupa i cvatnje resa.
+    NIJE potrebno svake godine — ako je prethodna sezona bila suha, tlak nizak.
+    Hobi uzgoj: često bez tretmana.
+
+---
+
+### 3. Praćenje orahove muhe
+
+- activityType: "monitoring"
+  title: "Praćenje orahove muhe"
+  monthStart: 7
+  dayStart: 1
+  monthEnd: 9
+  dayEnd: 15
+  notes: >
+    Rhagoletis completa — žuta ljepljiva klopka s amonijevim mamcem.
+    Tjedni pregled.
+    Muha obezbojuje kožuh, ali jezgra često ostaje jestiva.
+    Tretman samo na jasno značajan ulov.
+
+---
+
+### 4. Praćenje jabučnog savijača na orahu
+
+- activityType: "monitoring"
+  title: "Praćenje jabučnog savijača – orah"
+  monthStart: 5
+  dayStart: 1
+  monthEnd: 8
+  dayEnd: 15
+  notes: >
+    Cydia pomonella napada i orah.
+    Feromonska klopka.
+    Hobi uzgoj: tretman rijetko nužan.
+
+---
+
+### 5. Berba oraha
+
+- activityType: "harvest"
+  title: "Berba oraha"
+  monthStart: 9
+  dayStart: 15
+  monthEnd: 10
+  dayEnd: 31
+  notes: >
+    Termin ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
+    Orasi prirodno padaju kad su zreli; kožuh puca.
+    Skupljati dnevno u vrhuncu otpadanja.
+    Sušiti u ljusci u jednom sloju 2–3 tjedna prije skladištenja.
+
+---
+
+### 6. Pregled oraha za zimu
+
+- activityType: "observation"
+  title: "Pregled oraha za zimu"
+  monthStart: 10
+  dayStart: 15
+  monthEnd: 11
+  dayEnd: 30
+  notes: >
+    Pregledati deblo na znakove dosadnika.
+    Ukloniti bolesne kožuhe (smanjenje sljedećesezonskog inokuluma).
+    Malčirati bazu mladih stabala protiv glodavaca.
+
+---
+
+## 🌰 HAZELNUT (Corylus avellana) — custom Block 6
+
+### Agronomic context
+Lijeska se uzgaja kao grm s više produktivnih izbojnica.
+Cvate izrazito rano (veljača), samoopraživanje vjetrom.
+Standardni spray program NE primjenjuje se.
+Shared block NE primjenjuje se.
+Classified under `nut`. The Block 6 template below is the full work plan for this species — the species-specific block is authoritative. S3 may refine the group name; the template below is independent of that decision.
+
+---
+
+### 1. Zimska rezidba lijeske
+
+- activityType: "pruning"
+  title: "Zimska rezidba lijeske"
+  monthStart: 2
+  dayStart: 1
+  monthEnd: 3
+  dayEnd: 15
+  notes: >
+    Lijeska se uzgaja kao grm.
+    Ukloniti 1–2 najstarije izbojnice godišnje, zadržati 6–8 produktivnih.
+    Prorijediti unutarnje izbojke za svjetlo.
+    Izdanci: ukloniti osim kod obnove grma.
+
+---
+
+### 2. Praćenje ljeskovog pipe
+
+- activityType: "monitoring"
+  title: "Praćenje ljeskovog pipe"
+  monthStart: 5
+  dayStart: 1
+  monthEnd: 7
+  dayEnd: 15
+  notes: >
+    Curculio nucum — odrasla ženka polaže jaja u razvijajuće plodove.
+    Kuckanje grana preko bijele plahte za prebrojavanje odraslih.
+    Hobi uzgoj: mehaničko uklanjanje napadnutih plodova obično dovoljno;
+    kemijski tretman po potrebi — vidi etiketu.
+
+---
+
+### 3. Praćenje pupoljkove grinje
+
+- activityType: "monitoring"
+  title: "Praćenje pupoljkove grinje – lijeska"
+  monthStart: 3
+  dayStart: 1
+  monthEnd: 4
+  dayEnd: 30
+  notes: >
+    Phytoptus avellanae — nabrekli zimski pupovi vidljivi kasnom zimom.
+    Primarni hobi pristup: mehaničko uklanjanje i spaljivanje napadnutih pupova.
+    Sumporni tretman kod teže zaraze — vidi etiketu.
+
+---
+
+### 4. Berba lješnjaka
+
+- activityType: "harvest"
+  title: "Berba lješnjaka"
+  monthStart: 8
+  dayStart: 25
+  monthEnd: 10
+  dayEnd: 10
+  notes: >
+    Termin ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
+    Plodovi padaju prirodno kad su zreli; skupljati dnevno u vrhuncu.
+    Oljuštiti kožuh unutar nekoliko dana, sušiti 1–2 tjedna.
+    NE brati sa stabla dok je kožuh zelen — nezreli.
+
+---
+
+### 5. Pregled lijeske za zimu
+
+- activityType: "observation"
+  title: "Pregled lijeske za zimu"
+  monthStart: 10
+  dayStart: 15
+  monthEnd: 11
+  dayEnd: 30
+  notes: >
+    Ukloniti pale bolesne plodove (prezimljenje pipe).
+    Pregledati izbojnice na znakove bakterijskog propadanja.
+    Malčirati bazu mladih grmova.
+
+---
+
 ---
 
 # ══════════════════════════════════════════════════════
 # CITRUS — SPECIAL MODEL
 # Citrus uses subtype seasonProfile — NOT standard timing groups.
-# Subtype required: lemon | orange | mandarin
-# Shared block does NOT apply.
-# The Session 17.6 persisted plan generation layer uses citrus subtype selection
-# (stored as `plant.variety` from catalog) to route the correct template below.
+# Subtype required: lemon | orange | mandarin.
+# Shared block does NOT apply. Each subtype has its own entries below.
 # ══════════════════════════════════════════════════════
 
 ## CITRUS model note
 
-Citrus plan templates koriste poseban model (seasonProfile) iz PLANT_CATALOG_V1.md.
+Citrus plan templates koriste poseban model (seasonProfile) iz V2_PLANT_CATALOG.md.
 Nisu kompatibilni sa standardnim orchard ciklusom.
 
 ```
@@ -1775,56 +2310,33 @@ Mandarina dozrijeva u jesen. Najhladnootpornija citrus vrsta (do -7°C kratkoro�
 # FINAL RULES
 # ══════════════════════════════════════════════════════
 
-## Template path reference (Session 17.6 generation context)
+## Grouping reference
 
-This section describes how the persisted plan generation layer (Session 17.6) uses the stored
-canonical `plant.type` to route templates correctly.
+Groups used in this file are an organizing classification only:
 
-`plant.type` IS a stored field in the V1 data model (Session 17.4 approved schema extension).
-Catalog selection writes `plant.type` at Add Plant time (Session 17.5), and the persisted plan
-generation layer (Session 17.6) reads `plant.type` to pick the correct template path.
-Generated plans are PERSISTED into `v4.plans[]` — runtime-only / derived-only generation is FORBIDDEN.
+- `pome`          — apple, pear, quince
+- `stone`         — sweet_cherry, sour_cherry, plum, peach, nectarine, apricot, almond
+- `mediterranean` — olive, fig, pomegranate
+- `citrus`        — lemon, orange, mandarin
+- `nut`           — walnut, hazelnut
 
-`plant.group` is NOT stored — it is derived at render/generation time from `plant.type` using the
-group reference below.
+**Species-specific override rule.** Where a species' per-species block introduces, modifies, or contradicts the shared baseline, the per-species block is authoritative for that species. Group membership never overrides the species-specific block.
 
-When the Session 17.6 generation layer runs (immediately after Add Plant for the new plant only):
+- `stone` members share a real baseline (trunk care, dormant oil, winter copper, pruning, watering, shutdown, inspection), and each species carries specifics in its own block — leaf-curl copper (peach / nectarine), early-bloom + frost-risk handling (apricot, almond), cherry-fly monitoring + optional bird-net (sweet_cherry, sour_cherry), plum-specific pest / fruit handling.
+- `pome` members share the same baseline, with per-species specifics for pear (fire-blight copper) and quince (pome-specific copper timing).
+- `mediterranean`, `citrus`, and `nut` members do not share the baseline. Each species has its own Block 6 template. Pomegranate's template is structurally independent of olive and fig. Citrus uses a subtype (lemon | orange | mandarin) inside its Block 6 template.
 
-```
-catalog.group == "pome" or "stone"
-  -- standard templates: shared block + per-species block
+## Template composition
 
-catalog.group == "mediterranean"
-  -- Block 6 Mediterranean templates only (olive or fig)
-  -- do NOT apply shared block
+A species' work plan is composed from, in order:
 
-catalog.group == "citrus"
-  -- Block 6 Citrus templates only
-  -- subtype required (lemon | orange | mandarin)
-  -- do NOT apply shared block
-```
+1. the **shared block**, where the block's scope explicitly applies to the species (pome + stone);
+2. the **species-specific template block** in this file;
+3. **subtype-specific handling** where defined (currently: citrus species carry a `lemon` | `orange` | `mandarin` subtype inside the Block 6 citrus template).
 
-Reference:
-- "pome"          -- apple, pear
-- "stone"         -- cherry, plum, peach, nectarine, apricot
-- "mediterranean" -- olive, fig
-- "citrus"        -- lemon, orange, mandarin
+Young-tree relevance and condition-based execution are described in `notes` per entry and are not encoded as custom fields. How and when they are surfaced to the grower is out of scope for this input file.
 
-## Template composition notes (Session 17.6 generation context)
-
-These notes describe the composition rules used by the Session 17.6 persisted plan generation layer.
-Generated plans are PERSISTED into `v4.plans[]`; runtime-only / derived-only generation is FORBIDDEN.
-
-1. Shared block is the common baseline for standard fruit trees (pome + stone)
-2. Per-species blocks add species-specific activities on top of the shared baseline
-3. Young-tree relevance is described in notes per entry -- the existing Session 14 context-aware
-   filtering layer interprets these notes at render time (e.g. harvest plans hidden for young plants);
-   filtering is render-only and does NOT mutate persisted plans
-4. Condition-based activities are described in notes -- a future advisory layer may surface them
-   when conditions are met; current V1 does not enforce conditions
-5. Mediterranean and citrus follow separate template paths -- Block 6 only
-
-## Spray rules (agronomic notes — for future generation and display context)
+## Spray rules
 
 - White oil and copper: NEVER on same day — min. 7–10 day gap
 - Mospilan: NEVER during bloom or active bee flight
@@ -1835,18 +2347,7 @@ Generated plans are PERSISTED into `v4.plans[]`; runtime-only / derived-only gen
 
 ## Harvest timing
 
-Harvest window for standard fruit trees is NOT encoded here.
-It comes from PLANT_CATALOG_V1.md (variety.harvestWindow or fallback.harvestWindow).
-This file provides harvest activity templates with broad windows.
-The Session 17.6 generation layer narrows the harvest window using catalog `harvestWindow` data (variety.harvestWindow when a variety is selected, otherwise fallback.harvestWindow).
-
-## ActivityType validity
-
-All entries in this file use only V1-compatible activity types:
-spraying, pruning, fertilizing, watering, planting, harvest, observation, problem, monitoring.
-
-No custom fields exist in any entry in this file.
-All special logic (young tree, condition-based, timing notes) is in `notes` text only.
+Harvest window for standard fruit trees is not encoded here. The catalog (`V2_PLANT_CATALOG.md`) holds the authoritative harvest window (variety.harvestWindow when a variety is selected, otherwise fallback.harvestWindow). Entries in this file use broad windows per species.
 
 ---
 
@@ -1854,28 +2355,44 @@ All special logic (young tree, condition-based, timing notes) is in `notes` text
 # COMPLETENESS VERIFICATION
 # ══════════════════════════════════════════════════════
 
-## Coverage check — all plant types from PLANT_CATALOG_V1
+## Coverage check — all plant types from V2_PLANT_CATALOG.md
 
-| Plant     | Trunk care | Oil  | Cu-winter | Cu-special | Pruning | Monitoring | Spray | Thinning | Net  | Fertilize | Water | Harvest | Shutdown | Inspect |
-|-----------|-----------|------|-----------|------------|---------|------------|-------|----------|------|-----------|-------|---------|----------|---------|
-| Apple     | SHARED    |SHARED| SHARED    | —          | SHARED  | ✓          | ✓     | ✓        | ✓    | —         |SHARED | ✓       | SHARED   | SHARED  |
-| Pear      | SHARED    |SHARED| SHARED    | ✓ vatrostuh| SHARED  | ✓          | ✓     | ✓        | ✓    | —         |SHARED | ✓       | SHARED   | SHARED  |
-| Cherry    | SHARED    |SHARED| SHARED    | —          | SHARED  | ✓          | —     | ✓ (opt)  | ✓    | —         |SHARED | ✓       | SHARED   | SHARED  |
-| Nectarine | SHARED    |SHARED| SHARED    | ✓ kovrčavost| SHARED | ✓          | ✓     | ✓        | ✓    | —         |SHARED | ✓       | SHARED   | SHARED  |
-| Peach     | SHARED    |SHARED| SHARED    | ✓ kovrčavost| SHARED | ✓          | ✓     | ✓        | ✓    | —         |SHARED | ✓       | SHARED   | SHARED  |
-| Plum      | SHARED    |SHARED| SHARED    | —          | SHARED  | ✓          | ✓     | ✓        | ✓    | —         |SHARED | ✓       | SHARED   | SHARED  |
-| Apricot   | SHARED    |SHARED| SHARED    | ✓ pred cvatnj| SHARED| ✓ mraz+šark| ✓     | ✓        | —    | —         |SHARED | ✓       | SHARED   | SHARED  |
-| Olive     | —         | —    | —         | —          | ✓ ×2    | ✓ ×2       | ✓ opt | —        | —    | ✓         | ✓     | ✓       | —        | ✓       |
-| Fig       | —         | —    | —         | —          | ✓ ×2    | ✓          | —     | —        | —    | ✓         | ✓     | ✓ ×2    | ✓ (mlada) | ✓      |
-| Lemon     | —         | —    | —         | —          | ✓       | ✓          | ✓ opt | —        | —    | ✓         | ✓     | ✓       | ✓        | —       |
-| Orange    | —         | —    | —         | —          | ✓       | ✓          | ✓ opt | —        | —    | ✓         | ✓     | ✓       | ✓        | —       |
-| Mandarin  | —         | —    | —         | —          | ✓       | ✓          | ✓ opt | —        | —    | ✓         | ✓     | ✓       | ✓        | —       |
+| Plant        | Trunk care | Oil  | Cu-winter | Cu-special   | Pruning  | Monitoring | Spray | Thinning | Net  | Fertilize | Water  | Harvest | Shutdown  | Inspect |
+|--------------|-----------|------|-----------|--------------|----------|------------|-------|----------|------|-----------|--------|---------|-----------|---------|
+| Apple        | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | ✓     | ✓        | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
+| Pear         | SHARED    |SHARED| SHARED    | ✓ vatrostuh  | SHARED   | ✓          | ✓     | ✓        | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
+| Quince       | SHARED    |SHARED| SHARED    | ✓ pred cvatnj| SHARED   | ✓          | ✓     | —        | —    | —         | SHARED | ✓       | SHARED    | SHARED  |
+| Sweet cherry | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | —     | ✓ (opt)  | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
+| Sour cherry  | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | —     | ✓ (opt)  | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
+| Plum         | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | ✓     | ✓        | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
+| Peach        | SHARED    |SHARED| SHARED    | ✓ kovrčavost | SHARED   | ✓          | ✓     | ✓        | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
+| Nectarine    | SHARED    |SHARED| SHARED    | ✓ kovrčavost | SHARED   | ✓          | ✓     | ✓        | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
+| Apricot      | SHARED    |SHARED| SHARED    | ✓ pred cvatnj| SHARED   | ✓ mraz+šark| ✓     | ✓        | —    | —         | SHARED | ✓       | SHARED    | SHARED  |
+| Almond       | SHARED    |SHARED| SHARED    | ✓ ×2 (pred+krč)| SHARED | ✓ mraz+bol | ✓     | —        | —    | —         | SHARED | ✓       | SHARED    | SHARED  |
+| Olive        | —         | —    | —         | —            | ✓ ×2     | ✓ ×2       | ✓ opt | —        | —    | ✓         | ✓      | ✓       | —         | ✓       |
+| Fig          | —         | —    | —         | —            | ✓ ×2     | ✓          | —     | —        | —    | ✓         | ✓      | ✓ ×2    | ✓ (mlada) | ✓       |
+| Pomegranate  | —         | —    | —         | —            | ✓        | ✓ ×2       | —     | —        | —    | ✓         | ✓      | ✓       | ✓ (mlada) | —       |
+| Lemon        | —         | —    | —         | —            | ✓        | ✓          | ✓ opt | —        | —    | ✓         | ✓      | ✓       | ✓         | —       |
+| Orange       | —         | —    | —         | —            | ✓        | ✓          | ✓ opt | —        | —    | ✓         | ✓      | ✓       | ✓         | —       |
+| Mandarin     | —         | —    | —         | —            | ✓        | ✓          | ✓ opt | —        | —    | ✓         | ✓      | ✓       | ✓         | —       |
+| Walnut       | —         | —    | —         | ✓ rano prolj | ✓ ljetna | ✓ ×2       | —     | —        | —    | —         | —      | ✓       | —         | ✓ zima  |
+| Hazelnut     | —         | —    | —         | —            | ✓ zimska | ✓ ×2       | —     | —        | —    | —         | —      | ✓       | —         | ✓ zima  |
 
 Legend: SHARED = covered in shared block | ✓ = defined in species/block section | opt = notes indicate optional / condition-dependent relevance | — = not applicable
 
-## All 12 plant types confirmed present: ✓
-Apple ✓ | Pear ✓ | Cherry ✓ | Nectarine ✓ | Peach ✓ | Plum ✓ | Apricot ✓
-Olive ✓ | Fig ✓ | Lemon ✓ | Orange ✓ | Mandarin ✓
+## All 18 plant types confirmed present: ✓
+
+Pome + stone (standard — shared block + per-species block applies):
+Apple ✓ | Pear ✓ | Quince ✓ | Sweet cherry ✓ | Sour cherry ✓ | Plum ✓ | Peach ✓ | Nectarine ✓ | Apricot ✓ | Almond ✓
+
+Mediterranean (Block 6 — no shared block):
+Olive ✓ | Fig ✓ | Pomegranate ✓ (custom Block 6, structurally independent of olive/fig)
+
+Citrus (Block 6 — no shared block):
+Lemon ✓ | Orange ✓ | Mandarin ✓
+
+Nut (Block 6 — no shared block; each species has its own custom template):
+Walnut ✓ | Hazelnut ✓
 
 ---
 
