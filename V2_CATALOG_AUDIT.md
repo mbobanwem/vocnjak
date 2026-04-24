@@ -36,6 +36,28 @@ All four break catalog integrity. Maintaining this document is not optional over
 
 ---
 
+## Variety coverage policy prerequisite
+
+Before auditing, adding, removing, or promoting variety entries, read:
+
+- `V2_VARIETY_COVERAGE_POLICY.md`
+
+Variety additions MUST NOT be made ad hoc during S3.
+
+Each variety candidate must be classified using the policy workflow before catalog edits:
+
+- ADD NOW
+- DEFER
+- DO NOT ADD
+- S3 AUDIT ITEM
+- OWNER DECISION
+
+The policy defines paid-market weighting, local-validation weighting, recommended target counts, inclusion criteria, and the required candidate review table.
+
+S3 may validate variety windows and agronomic correctness, but owner approval is required before adding new varieties to `V2_PLANT_CATALOG.md`.
+
+---
+
 ## 2. Signal table — human audit guidance
 
 **Classification:** this signal table is **human audit guidance** — a reading aid for the curator processing source entries. It is NOT a rule, parser specification, regex set, runtime classifier, NLP pipeline, migration-script decision tree, ML model, or any form of automated text analysis.
