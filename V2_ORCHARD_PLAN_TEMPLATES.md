@@ -117,7 +117,7 @@ Agronomic interpretation only. Not schema fields.
     Posebno važno za koštičave vrste i stabla s tankom korom.
     Vapnena boja ili komercijalni bijeli premaz za voćke.
     Primijeniti po suhom vremenu, temperatura iznad 0°C.
-    Za mlada stabla: preporučeno, ne preskakati.
+    Preporučeno posebno za mlada ili izložena stabla; primjenu prilagoditi stanju stabla i lokalnim uvjetima.
 
 ---
 
@@ -149,9 +149,8 @@ Agronomic interpretation only. Not schema fields.
   monthEnd: 2
   dayEnd: 28
   notes: >
-    Zimski bakreni fungicid: zaštita od raka kore, pjegavosti, monilije i srodnih bolesti.
+    Registrirani bakreni pripravak prema etiketi proizvoda: zaštita od raka kore, pjegavosti, monilije i srodnih bolesti.
     Primijeniti uz razmak od bijelog ulja najmanje 7–10 dana.
-    Preparat: registrirani bakreni pripravak prema etiketi proizvoda.
     Prskati po suhom vremenu.
     Za mlada stabla: primijeniti.
 
@@ -186,7 +185,7 @@ Agronomic interpretation only. Not schema fields.
   monthEnd: 3
   dayEnd: 20
   notes: >
-    Primijeniti unutar 1–2 dana nakon rezidbe.
+    Ako je primjena prikladna prema stanju rana, vremenu i etiketi proizvoda, razmotriti primjenu unutar 1–2 dana nakon rezidbe.
     Zaštita svježih reznih rana od prodora gljivica i bakterija.
     Registrirani bakreni pripravak prema etiketi proizvoda.
     Razmak od bijelog ulja: min. 7–10 dana.
@@ -238,10 +237,7 @@ Agronomic interpretation only. Not schema fields.
   monthEnd: 9
   dayEnd: 15
   notes: >
-    Završetak sezonskog navodnjavanja pred kasne berbe.
-    Jabuka i kasne sorte: ugasiti 2–3 tjedna prije berbe za bolji okus i čvrstoću ploda.
-    Ako je cijeli vrt na jednom ventilu: gasiti oko 1. rujna —
-    trešnja, nektarina, breskva i šljiva su tada već pobrane.
+    Smanjiti ili završiti navodnjavanje kada vremenski uvjeti i stanje tla to dopuštaju; kod mladih stabala i suše ne prekidati prerano.
     Tumačiti kao orchard management podsjetnik, ne kao obaveznu radnju u svakom scenariju.
 
 ---
@@ -305,12 +301,11 @@ Harvest window examples: Gala (aug–sep), Fuji / Idared (sep–oct).
   notes: >
     Ključna zaštita protiv krastavosti jabuke (Venturia inaequalis) i pepelnice.
     Primijeniti nakon cvatnje kada se formiraju mladi listovi i plodovi.
-    NE tretirati za cvatnje — pčele moraju biti zaštićene.
     Koristiti registrirani fungicid za krastavost/pepelnicu prema etiketi proizvoda.
     Insekticid razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
     Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
     Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
-    Tretmane ponavljati prema infekcijskom pritisku i kiši.
+    Ponavljanje tretmana razmatrati prema infekcijskom pritisku, oborinama, etiketi proizvoda i stručnom/lokalnom savjetu.
     Za mlada stabla god. 1–2 bez ploda: manje kritično, ali nije na odmet.
 
 ---
@@ -423,7 +418,7 @@ Preventiva bakrom oko cvatnje je ključna.
   monthEnd: 8
   dayEnd: 15
   notes: >
-    Kruškina buha (Cacopsylla pyri): štitaste uši na naličju listova, medna rosa, čađavica.
+    Kruškina buha (Cacopsylla pyri): ličinke/nimfe na mladim izbojima i naličju listova, medna rosa, čađavica.
     Vizualni pregled mladih izbojaka i listova tjedno.
     Tretman razmatrati samo pri vidljivom problemu — koristiti registrirano sredstvo (npr. bijelo ulje ili registrirani insekticid) prema etiketi proizvoda.
     Kruškini savijač (Grapholita molesta): feromonska klopka ako je dostupna.
@@ -446,7 +441,6 @@ Preventiva bakrom oko cvatnje je ključna.
     Insekticid razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
     Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
     Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
-    NE tretirati za cvatnje.
     Za mlada stabla god. 1–2: manje kritično, ali korisno u vlažnim sezonama.
 
 ---
@@ -507,7 +501,7 @@ Cvatnja (Zagreb baseline): kraj ožujka – poč. travnja.
 Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Burlat (jun 1–15), Kordia (jun 20 – jul 5), Regina / Sweetheart (jul 5–25).
 Trešnjina muha (Rhagoletis cerasi): jedan od glavnih insektnih štetnika trešnje u EU klimi.
-Trešnja puca od kiše pred berbu — mreža štiti i od toga.
+Trešnja je sklona pucanju plodova nakon kiše pred berbu; to ostaje S3 audit item odvojeno od mreže protiv ptica.
 Gisela 5 podloga: slabobujnija, raniji prinos, lakša zaštita mrežom.
 
 ---
@@ -1142,7 +1136,7 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
 Cvatnja (Zagreb baseline): kraj travnja – početak svibnja (kasnije od jabuke/kruške).
 Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Leskovačka / Vranjska (oct), Champion (oct – early nov).
-Dunja pripada pome grupi; dijeli rizik vatrene truleži (Erwinia amylovora) s kruškom.
+Dunja pripada pome grupi; dijeli rizik bakterijske paleži (Erwinia amylovora) s kruškom.
 Primjenjuje se shared block kao za ostale standardne voćke.
 
 ---
@@ -1156,8 +1150,9 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 4
   dayEnd: 15
   notes: >
-    Preventivni bakar oko mirovanja pupa protiv vatrene truleži (Erwinia amylovora).
-    NIKAD na otvorenom cvatu.
+    Preventivni bakar oko mirovanja pupa protiv bakterijske paleži (Erwinia amylovora).
+    Koristiti registrirani bakreni pripravak prema etiketi proizvoda.
+    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
     Razmak od dormant ulja: vidi preporuku na etiketi proizvoda.
 
 ---
@@ -1187,9 +1182,11 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 5
   dayEnd: 25
   notes: >
-    Nakon cvatnje, po potrebi, ako je praćenje pokazalo pritisak.
-    NIKAD tijekom cvatnje.
-    Tip proizvoda, doziranje i karenca: vidi etiketu.
+    Nakon cvatnje, po potrebi, ako praćenje, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
+    Koristiti registrirani fungicid za ciljanu bolest dunje prema etiketi proizvoda.
+    Insekticid razmatrati samo ako monitoring, vidljivi štetnici dunje ili stručni savjet opravdavaju reakciju.
+    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
+    Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
 
 ---
 
@@ -1360,7 +1357,7 @@ Primjenjuje se shared block kao za ostale standardne voćke.
 > - apricot and almond carry pre-bloom copper + frost-risk handling (early bloomers);
 > - sweet_cherry and sour_cherry carry cherry-fly monitoring and optional bird-net;
 > - plum carries plum-specific pest and fruit handling;
-> - pear (within `pome`) carries fire-blight (vatrostuh) copper.
+> - pear (within `pome`) carries fire-blight / bakterijska palež copper.
 >
 > Within `mediterranean`, olive, fig, and pomegranate each have a distinct Block 6 template. Pomegranate's template is structurally independent of olive and fig. The `mediterranean` label organizes the three species together for navigation; it does not generate template content for any of them.
 >
@@ -2387,7 +2384,7 @@ Harvest window for standard fruit trees is not encoded here. The catalog (`V2_PL
 | Plant        | Trunk care | Oil  | Cu-winter | Cu-special   | Pruning  | Monitoring | Spray | Thinning | Net  | Fertilize | Water  | Harvest | Shutdown  | Inspect |
 |--------------|-----------|------|-----------|--------------|----------|------------|-------|----------|------|-----------|--------|---------|-----------|---------|
 | Apple        | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | ✓     | ✓        | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
-| Pear         | SHARED    |SHARED| SHARED    | ✓ vatrostuh  | SHARED   | ✓          | ✓     | ✓        | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
+| Pear         | SHARED    |SHARED| SHARED    | ✓ bakt. palež| SHARED   | ✓          | ✓     | ✓        | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
 | Quince       | SHARED    |SHARED| SHARED    | ✓ pred cvatnj| SHARED   | ✓          | ✓     | —        | —    | —         | SHARED | ✓       | SHARED    | SHARED  |
 | Sweet cherry | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | —     | ✓ (opt)  | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
 | Sour cherry  | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | —     | ✓ (opt)  | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
