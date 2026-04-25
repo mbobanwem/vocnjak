@@ -245,6 +245,8 @@ Months are 1-indexed (1 = January).
 | Gala             | gala             | mid    | Aug 20 – Sep 10            | early April        |
 | Golden Delicious | golden_delicious | mid    | Sep 10 – Sep 30            | early April        |
 | Jonagold         | jonagold         | mid    | Sep 15 – Oct 5             | mid April          |
+| Topaz            | topaz            | mid    | Sep 20 – Oct 10            | mid April          |
+| Elstar           | elstar           | mid    | Sep 10 – Sep 30            | mid April          |
 | Fuji             | fuji             | late   | Sep 25 – Oct 15            | mid April          |
 | Granny Smith     | granny_smith     | late   | Oct 1 – Oct 20             | mid April          |
 | Idared           | idared           | late   | Oct 1 – Oct 20             | mid April          |
@@ -280,6 +282,7 @@ Months are 1-indexed (1 = January).
 | Oblačinska      | oblacinska    | early  | Jun 20 – Jul 5          | early April     |
 | Marasca         | marasca       | mid    | Jul 1 – Jul 15          | early April     |
 | Montmorency     | montmorency   | mid    | Jul 5 – Jul 20          | early April     |
+| Morello / Schattenmorelle | morello | late | Jul 10 – Jul 31 | early April |
 
 **Fallback harvest windows:**
 - early → Jun 20 – Jul 10
@@ -296,6 +299,7 @@ Months are 1-indexed (1 = January).
 | Čačanska lepotica  | cacanska_lepotica    | early  | Aug 1 – Aug 20          | late March       |
 | Čačanska najbolja  | cacanska_najbolja    | mid    | Aug 10 – Aug 31         | early April      |
 | Stanley            | stanley              | late   | Aug 20 – Sep 10         | early April      |
+| Bistrica / Požegača | bistrica            | late   | Aug 25 – Sep 20         | early April      |
 | Président          | prezident            | late   | Sep 1 – Sep 20          | mid April        |
 
 **Fallback harvest windows:**
@@ -380,6 +384,7 @@ Months are 1-indexed (1 = January).
 | Kioto             | kioto              | mid    | Jun 20 – Jul 10         | early March             |
 | Goldrich          | goldrich           | mid    | Jun 20 – Jul 10         | early March             |
 | Hargrand          | hargrand           | mid    | Jun 25 – Jul 15         | early March             |
+| Mađarska najbolja / Magyar kajszi | madjarska_najbolja | mid | Jun 25 – Jul 15 | early March |
 | Bergeron          | bergeron           | late   | Jul 5 – Jul 25          | mid March               |
 
 **Fallback harvest windows:**
@@ -598,6 +603,8 @@ The JSON below is the machine-readable form of the species tables and prose abov
       "gala":             { "timing": "mid",  "harvestWindow": { "monthStart": 8,  "dayStart": 20, "monthEnd": 9,  "dayEnd": 10 } },
       "golden_delicious": { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 10, "monthEnd": 9,  "dayEnd": 30 } },
       "jonagold":         { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 15, "monthEnd": 10, "dayEnd": 5  } },
+      "topaz":            { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 20, "monthEnd": 10, "dayEnd": 10 } },
+      "elstar":           { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 10, "monthEnd": 9,  "dayEnd": 30 } },
       "fuji":             { "timing": "late", "harvestWindow": { "monthStart": 9,  "dayStart": 25, "monthEnd": 10, "dayEnd": 15 } },
       "granny_smith":     { "timing": "late", "harvestWindow": { "monthStart": 10, "dayStart": 1,  "monthEnd": 10, "dayEnd": 20 } },
       "idared":           { "timing": "late", "harvestWindow": { "monthStart": 10, "dayStart": 1,  "monthEnd": 10, "dayEnd": 20 } }
@@ -630,7 +637,8 @@ The JSON below is the machine-readable form of the species tables and prose abov
   "varieties": {
       "oblacinska":  { "timing": "early", "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 5  } },
       "marasca":     { "timing": "mid",   "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 15 } },
-      "montmorency": { "timing": "mid",   "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 20 } }
+      "montmorency": { "timing": "mid",   "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 20 } },
+      "morello":     { "timing": "late",  "harvestWindow": { "monthStart": 7, "dayStart": 10, "monthEnd": 7, "dayEnd": 31 } }
     },
     "fallback": {
       "early": { "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 10 } },
@@ -646,7 +654,8 @@ The JSON below is the machine-readable form of the species tables and prose abov
       "cacanska_lepotica": { "timing": "early", "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 20 } },
       "cacanska_najbolja": { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 10, "monthEnd": 8, "dayEnd": 31 } },
       "stanley":           { "timing": "late",  "harvestWindow": { "monthStart": 8, "dayStart": 20, "monthEnd": 9, "dayEnd": 10 } },
-      "prezident":         { "timing": "late",  "harvestWindow": { "monthStart": 9, "dayStart": 1,  "monthEnd": 9, "dayEnd": 20 } }
+      "prezident":         { "timing": "late",  "harvestWindow": { "monthStart": 9, "dayStart": 1,  "monthEnd": 9, "dayEnd": 20 } },
+      "bistrica":          { "timing": "late",  "harvestWindow": { "monthStart": 8, "dayStart": 25, "monthEnd": 9, "dayEnd": 20 } }
     },
     "fallback": {
       "early": { "harvestWindow": { "monthStart": 7, "dayStart": 20, "monthEnd": 8, "dayEnd": 15 } },
@@ -723,7 +732,8 @@ The JSON below is the machine-readable form of the species tables and prose abov
       "kioto":            { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 10 } },
       "goldrich":         { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 10 } },
       "hargrand":         { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 25, "monthEnd": 7, "dayEnd": 15 } },
-      "bergeron":         { "timing": "late",  "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 25 } }
+      "bergeron":         { "timing": "late",  "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 25 } },
+      "madjarska_najbolja": { "timing": "mid", "harvestWindow": { "monthStart": 6, "dayStart": 25, "monthEnd": 7, "dayEnd": 15 } }
     },
     "fallback": {
       "early": { "harvestWindow": { "monthStart": 6, "dayStart": 5,  "monthEnd": 6, "dayEnd": 25 } },
