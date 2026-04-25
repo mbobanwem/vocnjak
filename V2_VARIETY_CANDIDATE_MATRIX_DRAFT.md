@@ -4,13 +4,20 @@
 
 Draft decision-support input.
 
-This document is not authoritative V2 truth, not schema, not runtime behavior, not implementation, and not an edit to `V2_PLANT_CATALOG.md`.
+This document is not authoritative V2 truth, not schema, not runtime behavior, not implementation, and not an edit to `V2_PLANT_CATALOG.md` or `V2_ORCHARD_PLAN_TEMPLATES.md`.
 
-No variety listed here is approved for catalog insertion unless explicitly marked ADD NOW and separately approved by the owner.
+This matrix is decision-support input only. It does not authorize any catalog change.
 
-S3 must validate timing, naming, disease-resistance claims, regional suitability, and catalog impact before promotion.
+Reading rules — binding on every future agent and curator:
 
-No external source verification was performed for this draft. Rows marked `Source need: yes` require S3 or owner source validation before catalog promotion.
+- No variety in this matrix is approved for catalog insertion under any circumstance based on this document alone.
+- `ADD NOW` means "highest-priority owner review candidate". It is not permission to edit `V2_PLANT_CATALOG.md`. It is not an instruction to add now.
+- Per `V2_VARIETY_COVERAGE_POLICY.md` §8, `ADD NOW` requires explicit owner approval before it has any force.
+- Owner approval must be explicit, recorded, and per-row. A blanket approval of this matrix is not per-row approval.
+- After per-row owner approval, S3 must still source-validate timing, naming, disease-resistance claims, regional suitability, and catalog impact before any catalog edit.
+- The final canonical catalog key for any candidate is decided during S3, not in this matrix. The `Proposed key` column is a draft suggestion only.
+- No external source verification was performed for this draft. Rows marked `Source need: yes` require S3 or owner source validation before any promotion.
+- `V2_PLANT_CATALOG.md` and `V2_ORCHARD_PLAN_TEMPLATES.md` remain stabilized Pre-S3 input per `V2_CATALOG_AUDIT.md` (Pre-S3 input stabilization checkpoint). Do not edit them based on this matrix.
 
 ---
 
@@ -40,12 +47,12 @@ This draft does not add, remove, rename, or restructure catalog entries.
 
 | Species / subtype | Current count | Current varieties / subtypes | Current model | Obvious gap |
 |---|---:|---|---|---|
-| apple | 6 | Gala, Golden Delicious, Jonagold, Fuji, Granny Smith, Idared | variety timing with early/mid/late fallback | No true early named variety; no disease-aware candidate such as Topaz |
+| apple | 6 | Gala, Golden Delicious, Jonagold, Fuji, Granny Smith, Idared | variety timing with early/mid/late fallback | Possible gap in disease-aware coverage; early band may rely on fallback unless an early variety is added — both claims need S3 review |
 | pear | 5 | Santa Maria, Williams, Conference, Bosc's Bottle, Abate Fetel | variety timing with early/mid/late fallback | Alias/naming cleanup for Bosc/Kaiser; possible paid-market dessert pears |
 | quince | 3 | Leskovacka, Vranjska, Champion | variety timing with mid/late fallback | Small but probably acceptable; possible Central European aliases need S3 |
 | sweet_cherry | 5 | Burlat, Kordia, Lapins, Regina, Sweetheart | variety timing with early/mid/late fallback | Some classic pollination/market varieties absent |
 | sour_cherry | 3 | Oblacinska, Marasca, Montmorency | variety timing with early/mid/late fallback | Naming gap around Morello/Schattenmorelle and Central European sour cherries |
-| plum | 5 | Cacanska rana, Cacanska lepotica, Cacanska najbolja, Stanley, Prezident | variety timing with early/mid/late fallback | Heritage/local plum Bistrica/Pozegaca absent; German prune-plum naming unresolved |
+| plum | 5 | Cacanska rana, Cacanska lepotica, Cacanska najbolja, Stanley, Prezident | variety timing with early/mid/late fallback | Heritage/local plum Bistrica/Pozegaca absent; German prune-plum naming (Hauszwetsche / Hauspflaume) is an open alias question — defer to S3 |
 | peach | 5 | Springcrest, Redhaven, Royal Glory, Fayette, O'Henry | variety timing with early/mid/late fallback | Reasonable base; specialty/regional types may bloat catalog |
 | nectarine | 5 | Caldesi 2000, Big Top, Fantasia, Stark Redgold, Venus | variety timing with early/mid/late fallback | Reasonable base; specialty white/high-flavor entries need market proof |
 | apricot | 5 | Novosadska rodna, Kioto, Goldrich, Hargrand, Bergeron | variety timing with early/mid/late fallback | Regional classic Magyar/Madarska candidate absent; frost/bloom claims need S3 |
@@ -67,7 +74,7 @@ This draft does not add, remove, rename, or restructure catalog entries.
 
 | Current catalog entries | Candidate | Candidate type | Paid-market relevance | Local-validation relevance | Timing band contribution | Reason to consider | Risk / caution | Proposed key | Recommendation | Confidence | Source need |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| current set: Gala, Golden Delicious, Jonagold, Fuji, Granny Smith, Idared | Topaz | disease-aware candidate | high | medium | late | Strong disease-aware and Central European candidate; fills a strategic gap beyond dessert-market standards | Resistance, harvest timing, and regional fit must be source-validated | topaz | ADD NOW | medium | yes |
+| current set: Gala, Golden Delicious, Jonagold, Fuji, Granny Smith, Idared | Topaz | disease-aware candidate | high | medium | late | Strong disease-aware and Central European candidate; fills a strategic gap beyond dessert-market standards | Resistance, harvest timing, and regional fit must be source-validated; Source need + medium confidence keeps this below ADD NOW threshold per policy §8. | topaz | S3 AUDIT ITEM | medium | yes |
 | same current set | Elstar | paid-market candidate | high | medium | early | Common paid-market apple candidate; could help early-season coverage | May overlap with existing mid-market dessert apples; timing needs validation | elstar | OWNER DECISION | medium | yes |
 | same current set | Braeburn | paid-market candidate | high | low | late | Recognizable commercial variety in paid markets | May be climate/site-sensitive and redundant with late dessert apples | braeburn | S3 AUDIT ITEM | medium | yes |
 | same current set | Boskoop | regional candidate | medium | medium | late | Traditional Central European cooking/storage apple | Niche use case; may not justify UX space unless owner values heritage/cooking types | boskoop | OWNER DECISION | medium | yes |
@@ -126,7 +133,7 @@ This draft does not add, remove, rename, or restructure catalog entries.
 
 | Current catalog entries | Candidate | Candidate type | Paid-market relevance | Local-validation relevance | Timing band contribution | Reason to consider | Risk / caution | Proposed key | Recommendation | Confidence | Source need |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| current set: Cacanska rana, Cacanska lepotica, Cacanska najbolja, Stanley, Prezident | Bistrica / Pozegaca | synonym / alias | medium | high | late | Strong local/regional heritage plum; omission may weaken Balkan validation | Alias and exact timing require S3 validation; avoid duplicate names | bistrica | ADD NOW | medium | yes |
+| current set: Cacanska rana, Cacanska lepotica, Cacanska najbolja, Stanley, Prezident | Bistrica / Pozegaca | synonym / alias | medium | high | late | Strong local/regional heritage plum; omission may weaken Balkan validation | Alias must be resolved (canonical key) before any promotion; exact timing requires S3 validation; avoid duplicate names | bistrica | OWNER DECISION | medium | yes |
 | same current set | Hauszwetsche / Hauspflaume | synonym / alias | high | medium | late | German/Austrian prune-plum concept relevant to paid markets | Could be cultivar group rather than single variety; avoid unclear key | hauszwetsche | S3 AUDIT ITEM | medium | yes |
 | same current set | Hanita | paid-market candidate | high | medium | late | Modern Central European plum candidate | Timing and market relevance need source validation | hanita | OWNER DECISION | medium | yes |
 | same current set | Valjevka | regional candidate | medium | high | late | Regional plum candidate that complements Cacanska entries | May duplicate local plum niche; source needed | valjevka | OWNER DECISION | low | yes |
@@ -161,7 +168,7 @@ This draft does not add, remove, rename, or restructure catalog entries.
 
 | Current catalog entries | Candidate | Candidate type | Paid-market relevance | Local-validation relevance | Timing band contribution | Reason to consider | Risk / caution | Proposed key | Recommendation | Confidence | Source need |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| current set: Novosadska rodna, Kioto, Goldrich, Hargrand, Bergeron | Madarska najbolja / Magyar kajszi | synonym / alias | medium | high | mid | Strong regional apricot candidate; likely important for local validation | Bloom/frost timing and exact alias handling require S3 | madarska_najbolja | ADD NOW | medium | yes |
+| current set: Novosadska rodna, Kioto, Goldrich, Hargrand, Bergeron | Madarska najbolja / Magyar kajszi | synonym / alias | medium | high | mid | Strong regional apricot candidate; likely important for local validation | Alias must be resolved (canonical key) before any promotion; bloom/frost timing and exact alias handling require S3 | madarska_najbolja | OWNER DECISION | medium | yes |
 | same current set | Keckemetska ruza | regional candidate | medium | high | mid | Regional apricot candidate with local/hobby relevance | Name, timing, and source-backed regional value needed | keckemetska_ruza | OWNER DECISION | low | yes |
 | same current set | Orange Red / Bhart / Orangered | synonym / alias | high | medium | mid | Modern market apricot candidate; could strengthen paid-market relevance | Alias/trademark naming, timing, and climate fit need source validation | orangered | S3 AUDIT ITEM | medium | yes |
 | same current set | Luizet | regional candidate | medium | low | mid | Alpine/French-Swiss heritage candidate | Specialty candidate; not needed before S3 | luizet | DEFER | low | yes |
@@ -186,7 +193,7 @@ This draft does not add, remove, rename, or restructure catalog entries.
 
 | Current catalog entries | Candidate | Candidate type | Paid-market relevance | Local-validation relevance | Timing band contribution | Reason to consider | Risk / caution | Proposed key | Recommendation | Confidence | Source need |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| current model: no varieties; mediterranean seasonProfile | keep no-variety model | no-variety model | medium | high | not applicable | Current catalog deliberately avoids olive variety timing; keeps scope stable | Owner may later want cultivar UX for coastal/Croatian validation | olive_no_variety_model | OWNER DECISION | high | no |
+| current model: no varieties; mediterranean seasonProfile | keep no-variety model | no-variety model | medium | high | not applicable | Current catalog deliberately avoids olive variety timing; keeps scope stable | Owner may later want cultivar UX for coastal/Croatian validation | olive_no_variety_model | OWNER DECISION | n/a (model decision) | no |
 | same current model | Oblica | regional candidate | low | high | not applicable | Strong Croatian/local olive candidate if owner adds olive varieties | Would require cultivar-specific timing and region handling | oblica | S3 AUDIT ITEM | medium | yes |
 | same current model | Leccino | paid-market candidate | high | medium | not applicable | Common Italian/international olive candidate | Adding one olive variety implies broader cultivar model | leccino | OWNER DECISION | medium | yes |
 | same current model | Pendolino | paid-market candidate | medium | medium | not applicable | Common pollinizer-style olive candidate | Pollination role should not become hidden runtime logic | pendolino | S3 AUDIT ITEM | low | yes |
@@ -199,7 +206,7 @@ This draft does not add, remove, rename, or restructure catalog entries.
 
 | Current catalog entries | Candidate | Candidate type | Paid-market relevance | Local-validation relevance | Timing band contribution | Reason to consider | Risk / caution | Proposed key | Recommendation | Confidence | Source need |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| current model: no varieties; mediterranean seasonProfile | keep no-variety model | no-variety model | medium | high | multi-cycle | Current catalog handles figs by simplified species profile; avoids crop-type complexity | Owner may later want first-crop/main-crop variety UX | fig_no_variety_model | OWNER DECISION | high | no |
+| current model: no varieties; mediterranean seasonProfile | keep no-variety model | no-variety model | medium | high | multi-cycle | Current catalog handles figs by simplified species profile; avoids crop-type complexity | Owner may later want first-crop/main-crop variety UX | fig_no_variety_model | OWNER DECISION | n/a (model decision) | no |
 | same current model | Brown Turkey | variety | high | medium | multi-cycle | Widely recognized hobby/market fig candidate | Name may be broad/ambiguous; cold hardiness claims need sources | brown_turkey | OWNER DECISION | medium | yes |
 | same current model | Petrovka / Petrovaca | synonym / alias | low | high | multi-cycle | Local/regional fig candidate if Croatian validation expands | Naming and crop timing need source validation | petrovka | S3 AUDIT ITEM | low | yes |
 | same current model | Dottato / Kadota | synonym / alias | high | medium | multi-cycle | Important Mediterranean/Italian fig candidate | Alias and regional suitability require S3 | dottato | S3 AUDIT ITEM | medium | yes |
@@ -212,7 +219,7 @@ This draft does not add, remove, rename, or restructure catalog entries.
 
 | Current catalog entries | Candidate | Candidate type | Paid-market relevance | Local-validation relevance | Timing band contribution | Reason to consider | Risk / caution | Proposed key | Recommendation | Confidence | Source need |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| current model: no varieties; mediterranean seasonProfile | keep no-variety model | no-variety model | medium | medium | autumn | Current catalog treats pomegranate as species-level mediterranean profile; simplest stable model | Owner may later want hardy/local cultivar handling | pomegranate_no_variety_model | OWNER DECISION | high | no |
+| current model: no varieties; mediterranean seasonProfile | keep no-variety model | no-variety model | medium | medium | autumn | Current catalog treats pomegranate as species-level mediterranean profile; simplest stable model | Owner may later want hardy/local cultivar handling | pomegranate_no_variety_model | OWNER DECISION | n/a (model decision) | no |
 | same current model | Wonderful | paid-market candidate | high | low | autumn | High-recognition commercial pomegranate candidate | Commercial fame may not map to Zagreb/regional hardiness | wonderful | DEFER | medium | yes |
 | same current model | Hicaz | regional candidate | medium | medium | autumn | Regional/Mediterranean market candidate | Naming, hardiness, and availability require validation | hicaz | S3 AUDIT ITEM | low | yes |
 | same current model | Akko | paid-market candidate | medium | low | autumn | Modern commercial pomegranate candidate | Weak local validation unless sources support | akko | DEFER | low | yes |
@@ -225,7 +232,7 @@ This draft does not add, remove, rename, or restructure catalog entries.
 | Current catalog entries | Candidate | Candidate type | Paid-market relevance | Local-validation relevance | Timing band contribution | Reason to consider | Risk / caution | Proposed key | Recommendation | Confidence | Source need |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | current set: Chandler, Franquette, Sejnovo | Lara | paid-market candidate | high | medium | late | Major European walnut candidate; improves paid-market relevance | Timing and local suitability need S3 | lara | OWNER DECISION | medium | yes |
-| same current set | Fernor | paid-market candidate | high | medium | late | Strong European/cold-climate walnut candidate; likely high strategic value | Bloom/harvest timing and disease claims require sources | fernor | ADD NOW | medium | yes |
+| same current set | Fernor | paid-market candidate | high | medium | late | Strong European/cold-climate walnut candidate; likely high strategic value | Bloom/harvest timing and disease claims require sources; Source need + medium confidence keeps this below ADD NOW threshold per policy §8. | fernor | S3 AUDIT ITEM | medium | yes |
 | same current set | Fernette | paid-market candidate | medium | medium | late | Companion/pollination-style walnut candidate | Pollination role must not become hidden behavior; may be alias-adjacent to Fernor context | fernette | S3 AUDIT ITEM | low | yes |
 | same current set | Geisenheim 139 | paid-market candidate | medium | low | late | German-market walnut candidate | Specialty cultivar; source and naming required | geisenheim_139 | DEFER | low | yes |
 | same current set | Jupiter | regional candidate | medium | medium | mid | Central European walnut candidate | Needs source-backed timing and relevance | jupiter | DEFER | low | yes |
@@ -250,7 +257,7 @@ This draft does not add, remove, rename, or restructure catalog entries.
 
 | Current catalog entries | Candidate | Candidate type | Paid-market relevance | Local-validation relevance | Timing band contribution | Reason to consider | Risk / caution | Proposed key | Recommendation | Confidence | Source need |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| current citrus subtype: lemon; no variety selection | keep subtype-only model | subtype identity | medium | medium | multi-cycle | Matches stabilized catalog: citrus remains one category with lemon subtype and no variety selection | Owner/S3 still must decide later whether citrus subtypes become top-level identities | citrus.subtypes.lemon | OWNER DECISION | high | no |
+| current citrus subtype: lemon; no variety selection | keep subtype-only model | subtype identity | medium | medium | multi-cycle | Matches stabilized catalog: citrus remains one category with lemon subtype and no variety selection | Owner/S3 still must decide later whether citrus subtypes become top-level identities | n/a (subtype identity, not a catalog key) | OWNER DECISION | n/a (model decision) | no |
 | same subtype model | Meyer | variety | high | medium | multi-cycle | Highly recognizable lemon-like candidate for hobby users | Hybrid/name/category issue; could confuse subtype model | meyer | S3 AUDIT ITEM | medium | yes |
 | same subtype model | Eureka | paid-market candidate | high | low | multi-cycle | Common commercial lemon candidate | Citrus variety depth is currently out of model scope | eureka | DEFER | medium | yes |
 | same subtype model | Lisbon | paid-market candidate | high | low | multi-cycle | Common commercial lemon candidate | Likely redundant with Eureka unless citrus varieties are modeled | lisbon | DEFER | medium | yes |
@@ -261,7 +268,7 @@ This draft does not add, remove, rename, or restructure catalog entries.
 
 | Current catalog entries | Candidate | Candidate type | Paid-market relevance | Local-validation relevance | Timing band contribution | Reason to consider | Risk / caution | Proposed key | Recommendation | Confidence | Source need |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| current citrus subtype: orange; no variety selection | keep subtype-only model | subtype identity | medium | low | winter | Matches stabilized catalog: orange remains a citrus subtype with winter seasonProfile | Owner/S3 still must decide citrus identity later | citrus.subtypes.orange | OWNER DECISION | high | no |
+| current citrus subtype: orange; no variety selection | keep subtype-only model | subtype identity | medium | low | winter | Matches stabilized catalog: orange remains a citrus subtype with winter seasonProfile | Owner/S3 still must decide citrus identity later | n/a (subtype identity, not a catalog key) | OWNER DECISION | n/a (model decision) | no |
 | same subtype model | Washington Navel | paid-market candidate | high | low | winter | Recognizable orange cultivar candidate | Citrus varieties are out of current model; hardiness/local relevance low | washington_navel | DEFER | medium | yes |
 | same subtype model | Valencia | paid-market candidate | high | low | winter | Globally recognized orange candidate | May not improve app value unless citrus variety UX exists | valencia | DEFER | medium | yes |
 | same subtype model | Tarocco | paid-market candidate | high | low | winter | Italian blood orange candidate relevant to paid markets | Specialty cultivar; source and scope decision needed | tarocco | OWNER DECISION | medium | yes |
@@ -272,7 +279,7 @@ This draft does not add, remove, rename, or restructure catalog entries.
 
 | Current catalog entries | Candidate | Candidate type | Paid-market relevance | Local-validation relevance | Timing band contribution | Reason to consider | Risk / caution | Proposed key | Recommendation | Confidence | Source need |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| current citrus subtype: mandarin; no variety selection | keep subtype-only model | subtype identity | medium | high | autumn | Matches stabilized catalog: mandarin remains a citrus subtype with autumn seasonProfile | Owner/S3 still must decide citrus identity later | citrus.subtypes.mandarin | OWNER DECISION | high | no |
+| current citrus subtype: mandarin; no variety selection | keep subtype-only model | subtype identity | medium | high | autumn | Matches stabilized catalog: mandarin remains a citrus subtype with autumn seasonProfile | Owner/S3 still must decide citrus identity later | n/a (subtype identity, not a catalog key) | OWNER DECISION | n/a (model decision) | no |
 | same subtype model | Satsuma / Unshiu | synonym / alias | high | high | autumn | Important cold-tolerant mandarin concept; likely relevant to local coastal/hobby users | Alias/category handling and hardiness claims require sources | satsuma_unshiu | S3 AUDIT ITEM | medium | yes |
 | same subtype model | Clementine | paid-market candidate | high | medium | autumn | High-recognition EU mandarin/clementine market candidate | Category boundary with mandarin needs owner/S3 decision | clementine | OWNER DECISION | medium | yes |
 | same subtype model | Okitsu | regional candidate | medium | high | autumn | Early satsuma-style candidate relevant to Adriatic/local context | Naming and timing need source validation | okitsu | S3 AUDIT ITEM | low | yes |
@@ -285,22 +292,22 @@ This draft does not add, remove, rename, or restructure catalog entries.
 ## 5. Highest-priority owner decisions
 
 1. Add Topaz to apple?
-   - Recommended owner choice: approve as `ADD NOW` candidate, pending S3 source validation.
+   - Recommended owner choice: promote to `ADD NOW` only after S3 source-validates resistance claim and harvest timing. Until then, classification remains `S3 AUDIT ITEM`.
    - Why: it fills the clearest apple gap: disease-aware, Central European, paid-market-relevant coverage beyond standard dessert/storage apples.
    - Risk if deferred: apple remains commercially broad but misses a low-input/disease-aware signal before S3.
 
 2. Add Bistrica / Pozegaca to plum?
-   - Recommended owner choice: approve as `ADD NOW` candidate with one canonical key and alias handling resolved by S3.
+   - Recommended owner choice: resolve alias first (single canonical key), then consider promotion to `ADD NOW`. Until alias is resolved, classification remains `OWNER DECISION`.
    - Why: it is the strongest local/regional plum gap and supports Croatian/Balkan validation.
    - Risk if deferred: plum coverage remains modern and Cacanska-heavy but omits an obvious regional heritage concept.
 
 3. Add Madarska najbolja / Magyar kajszi to apricot?
-   - Recommended owner choice: approve as `ADD NOW` candidate, with S3 validating naming, harvest, and bloom/frost context.
-   - Why: it is a high-value regional apricot candidate and complements the current international/modern set.
-   - Risk if deferred: apricot local-validation relevance remains weaker than necessary for Zagreb/regional review.
+   - Recommended owner choice: resolve alias first (single canonical key), then consider promotion to `ADD NOW` after S3 validates regional/timing claims. Until then, classification remains `OWNER DECISION`.
+   - Why: it fills the clearest local/regional apricot gap.
+   - Risk if deferred: apricot remains adequate but misses a recognizable regional classic.
 
-4. Add Fernor/Lara to walnut?
-   - Recommended owner choice: prioritize Fernor as `ADD NOW`; keep Lara as `OWNER DECISION`.
+4. Add Fernor / Lara to walnut?
+   - Recommended owner choice: after S3 source-validates timing and resistance, owner may promote Fernor to `ADD NOW`. Lara remains `OWNER DECISION` for paid-market depth.
    - Why: Fernor appears to be the stronger strategic cold-climate/European candidate; Lara may still improve paid-market coverage.
    - Risk if deferred: walnut remains a narrow three-variety set with limited paid-market breadth.
 
