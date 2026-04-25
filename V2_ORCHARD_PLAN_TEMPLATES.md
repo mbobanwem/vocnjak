@@ -194,7 +194,25 @@ Agronomic interpretation only. Not schema fields.
 
 ---
 
-### 6. Sezonsko navodnjavanje
+### 6. Rana proljetna gnojidba
+
+- activityType: "fertilizing"
+  title: "Rana proljetna gnojidba"
+  appliesToAll: true
+  monthStart: 3
+  dayStart: 1
+  monthEnd: 4
+  dayEnd: 15
+  notes: >
+    Rana proljetna gnojidba podržava početak vegetacije, umjeren rast mladih stabala i formiranje uroda.
+    Primijeniti prema stanju stabla, bujnosti, starosti, analizi tla ako postoji i uputama gnojiva.
+    Ne gnojiti automatski ako je stablo već vrlo bujno, ako je tlo dobro opskrbljeno ili ako stručni savjet/analiza tla kaže drukčije.
+    Ne pretjerivati s dušikom, posebno kod bujnih stabala ili kasno u sezoni.
+    Za mlada stabla: cilj je umjeren rast i razvoj krošnje, ne forsiranje roda.
+
+---
+
+### 7. Sezonsko navodnjavanje
 
 - activityType: "watering"
   title: "Sezonsko navodnjavanje"
@@ -213,7 +231,7 @@ Agronomic interpretation only. Not schema fields.
 
 ---
 
-### 7. Ljetna rezidba
+### 8. Ljetna rezidba
 
 - activityType: "pruning"
   title: "Ljetna rezidba"
@@ -230,7 +248,7 @@ Agronomic interpretation only. Not schema fields.
 
 ---
 
-### 8. Gašenje navodnjavanja
+### 9. Gašenje navodnjavanja
 
 - activityType: "observation"
   title: "Gašenje navodnjavanja"
@@ -245,7 +263,7 @@ Agronomic interpretation only. Not schema fields.
 
 ---
 
-### 9. Pregled za zimu
+### 10. Pregled za zimu
 
 - activityType: "observation"
   title: "Pregled za zimu"
@@ -426,10 +444,12 @@ Preventiva bakrom oko cvatnje je ključna.
   dayEnd: 15
   notes: >
     Kruškina buha (Cacopsylla pyri): ličinke/nimfe na mladim izbojima i naličju listova, medna rosa, čađavica.
-    Vizualni pregled mladih izbojaka i listova tjedno.
-    Tretman razmatrati samo pri vidljivom problemu — koristiti registrirano sredstvo (npr. bijelo ulje ili registrirani insekticid) prema etiketi proizvoda.
-    Kruškini savijač (Grapholita molesta): feromonska klopka ako je dostupna.
-    Za mlada stabla: fokus na lisne uši i buhu.
+    Kruškina buha se prati vizualnim pregledom mladih izbojaka i naličja listova, osobito u proljeće i rano ljeto.
+    Ako nema vidljivih kolonija, medne rose, čađavice ili deformacija mladog rasta, tretman nije opravdan.
+    Eventualni tretman razmatrati samo pri vidljivom problemu i koristiti samo sredstvo registrirano za krušku i ciljanu štetnu vrstu prema etiketi proizvoda.
+    Savijač / moljac ploda: feromonska klopka ako je dostupna; klopka služi za procjenu pritiska, ne za automatsku odluku o tretmanu.
+    Ako se ulov ponavlja ili se vide svježa oštećenja plodova, usporediti s lokalnim pragovima ili stručnim savjetom prije tretmana.
+    Za mlada stabla: fokus na lisne uši, kruškinu buhu i zdrav rast; zaštita ploda nije prioritet ako nema uroda.
 
 ---
 
@@ -1047,7 +1067,7 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
     Postaviti feromonsku klopku na 1.5–2 m visine.
     Tjedno pregledavati ulov.
     Nagli porast ulova može značiti da treba provjeriti potrebu za reakcijom; eventualni tretman razmatrati samo ako lokalni pragovi, etiketa proizvoda ili stručni savjet opravdavaju reakciju.
-    Praćenje traje i za 2. generaciju (sredina lipnja – sredina srpnja).
+    Praćenje može biti relevantno i kasnije u sezoni, posebno ako se ulov nastavlja ili se pojavljuju svježa oštećenja plodova. Točan period i terminologiju provjeriti u S3 auditiranju.
     Za mlada stabla god. 1–2 bez ploda: nije prioritet.
 
 ---
@@ -1166,19 +1186,24 @@ Primjenjuje se shared block kao za ostale standardne voćke.
 
 ---
 
-### 2. Praćenje savijača i monilije
+### 2. Praćenje bolesti lista, ploda i savijača
 
 - activityType: "monitoring"
-  title: "Praćenje savijača i monilije – dunja"
+  title: "Praćenje bolesti lista, ploda i savijača – dunja"
   monthStart: 4
   dayStart: 25
   monthEnd: 8
   dayEnd: 15
   notes: >
-    Kruškin savijač (Cydia pyrivora), povremeno jabučni (C. pomonella).
-    Monilija (Monilinia) na plodu u vlažnim sezonama.
-    Tjedni vizualni pregled.
-    Korisnik odlučuje o akciji na temelju opažanja.
+    Dunja može imati probleme s pjegama na listu i plodu, preranim otpadanjem lista te truleži/plodnim infekcijama, osobito u vlažnim sezonama.
+    Tjedno ili nakon duljeg kišnog razdoblja pregledati:
+    — pjege na listovima
+    — prerano žućenje ili otpadanje lista
+    — pjege, deformacije ili trulež na plodu
+    — svježe ubode ili ulazne rupe na plodu
+    Kruškin savijač (Cydia pyrivora) i povremeno jabučni savijač (C. pomonella) mogu biti relevantni, ali tretman se ne izvodi automatski.
+    Ako se simptomi pojačavaju, ako postoji povijest bolesti ili ako stručni savjet/lokalni pragovi opravdavaju reakciju, razmotriti registrirano sredstvo za dunju i ciljanu bolest/štetnika prema etiketi proizvoda.
+    Poštovati etiketu proizvoda, karencu, zaštitu pčela i lokalne propise.
 
 ---
 
@@ -1191,15 +1216,30 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 5
   dayEnd: 25
   notes: >
-    Nakon cvatnje, po potrebi, ako praćenje, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
+    Nakon cvatnje, po potrebi, ako praćenje, vidljivi simptomi, povijest bolesti ili stručni savjet opravdavaju reakciju.
     Koristiti registrirani fungicid za ciljanu bolest dunje prema etiketi proizvoda.
     Insekticid razmatrati samo ako monitoring, vidljivi štetnici dunje ili stručni savjet opravdavaju reakciju.
     Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
-    Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
+    Poštovati etiketu proizvoda, doziranje, karencu, zaštitu pčela i lokalne propise.
 
 ---
 
-### 4. Berba
+### 4. Provjera opterećenja plodovima – dunja
+
+- activityType: "observation"
+  title: "Provjera opterećenja plodovima – dunja"
+  monthStart: 5
+  dayStart: 20
+  monthEnd: 6
+  dayEnd: 20
+  notes: >
+    Dunja se ne prorjeđuje rutinski kao jabuka.
+    Ako je stablo mlado, slabo ili se grane jako savijaju pod teretom plodova, ukloniti dio plodova radi sprječavanja loma grana i boljeg razvoja stabla.
+    Ako je urod normalan i grane nisu opterećene, preskočiti.
+
+---
+
+### 5. Berba
 
 - activityType: "harvest"
   title: "Berba dunje"
@@ -1209,6 +1249,9 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   dayEnd: 10
   notes: >
     Termin ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
+    Znakovi zrelosti: plod prelazi iz zelene u žutu/zlatnu boju, razvija jak miris i ostaje čvrst.
+    Brati prije jačeg mraza; ne čekati da plod omekša na stablu.
+    Plodovi su tvrdi, ali se lako nagnječe — brati pažljivo.
     Dunja dozrijeva i nakon skidanja; čuvati hladno i suho 2–4 tjedna prije prerade.
 
 ---
@@ -1303,9 +1346,11 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 5
   dayEnd: 10
   notes: >
-    Nakon cvatnje, po potrebi, ako praćenje pokaže pritisak (monilija, lisne uši).
-    NIKAD tijekom cvatnje.
-    Tip proizvoda i karenca: vidi etiketu.
+    Nakon cvatnje, po potrebi, ako praćenje, vidljivi simptomi, povijest bolesti ili stručni savjet opravdavaju reakciju.
+    Koristiti registrirani fungicid za ciljanu bolest badema prema etiketi proizvoda.
+    Insekticid razmatrati samo ako monitoring, vidljivi štetnici badema ili stručni savjet opravdavaju reakciju.
+    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
+    Poštovati etiketu proizvoda, doziranje, karencu, zaštitu pčela i lokalne propise.
 
 ---
 
@@ -2402,16 +2447,16 @@ Harvest window for standard fruit trees is not encoded here. The catalog (`V2_PL
 
 | Plant        | Trunk care | Oil  | Cu-winter | Cu-special   | Pruning  | Monitoring | Spray | Thinning | Net  | Fertilize | Water  | Harvest | Shutdown  | Inspect |
 |--------------|-----------|------|-----------|--------------|----------|------------|-------|----------|------|-----------|--------|---------|-----------|---------|
-| Apple        | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | ✓     | ✓        | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
-| Pear         | SHARED    |SHARED| SHARED    | ✓ bakt. palež| SHARED   | ✓          | ✓     | ✓        | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
-| Quince       | SHARED    |SHARED| SHARED    | ✓ pred cvatnj| SHARED   | ✓          | ✓     | —        | —    | —         | SHARED | ✓       | SHARED    | SHARED  |
-| Sweet cherry | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | —     | ✓ (opt)  | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
-| Sour cherry  | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | —     | ✓ (opt)  | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
-| Plum         | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | ✓     | ✓        | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
-| Peach        | SHARED    |SHARED| SHARED    | ✓ kovrčavost | SHARED   | ✓          | ✓     | ✓        | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
-| Nectarine    | SHARED    |SHARED| SHARED    | ✓ kovrčavost | SHARED   | ✓          | ✓     | ✓        | ✓    | —         | SHARED | ✓       | SHARED    | SHARED  |
-| Apricot      | SHARED    |SHARED| SHARED    | ✓ pred cvatnj| SHARED   | ✓ mraz+šark| ✓     | ✓        | —    | —         | SHARED | ✓       | SHARED    | SHARED  |
-| Almond       | SHARED    |SHARED| SHARED    | ✓ ×2 (pred+krč)| SHARED | ✓ mraz+bol | ✓     | —        | —    | —         | SHARED | ✓       | SHARED    | SHARED  |
+| Apple        | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | ✓     | ✓        | ✓    | SHARED    | SHARED | ✓       | SHARED    | SHARED  |
+| Pear         | SHARED    |SHARED| SHARED    | ✓ bakt. palež| SHARED   | ✓          | ✓     | ✓        | ✓    | SHARED    | SHARED | ✓       | SHARED    | SHARED  |
+| Quince       | SHARED    |SHARED| SHARED    | ✓ pred cvatnj| SHARED   | ✓          | ✓     | ✓ (opt)  | —    | SHARED    | SHARED | ✓       | SHARED    | SHARED  |
+| Sweet cherry | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | —     | ✓ (opt)  | ✓    | SHARED    | SHARED | ✓       | SHARED    | SHARED  |
+| Sour cherry  | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | —     | ✓ (opt)  | ✓    | SHARED    | SHARED | ✓       | SHARED    | SHARED  |
+| Plum         | SHARED    |SHARED| SHARED    | —            | SHARED   | ✓          | ✓     | ✓        | ✓    | SHARED    | SHARED | ✓       | SHARED    | SHARED  |
+| Peach        | SHARED    |SHARED| SHARED    | ✓ kovrčavost | SHARED   | ✓          | ✓     | ✓        | ✓    | SHARED    | SHARED | ✓       | SHARED    | SHARED  |
+| Nectarine    | SHARED    |SHARED| SHARED    | ✓ kovrčavost | SHARED   | ✓          | ✓     | ✓        | ✓    | SHARED    | SHARED | ✓       | SHARED    | SHARED  |
+| Apricot      | SHARED    |SHARED| SHARED    | ✓ pred cvatnj| SHARED   | ✓ mraz+šark| ✓     | ✓        | —    | SHARED    | SHARED | ✓       | SHARED    | SHARED  |
+| Almond       | SHARED    |SHARED| SHARED    | ✓ ×2 (pred+krč)| SHARED | ✓ mraz+bol | ✓     | —        | —    | SHARED    | SHARED | ✓       | SHARED    | SHARED  |
 | Olive        | —         | —    | —         | —            | ✓ ×2     | ✓ ×2       | ✓ opt | —        | —    | ✓         | ✓      | ✓       | —         | ✓       |
 | Fig          | —         | —    | —         | —            | ✓ ×2     | ✓          | —     | —        | —    | ✓         | ✓      | ✓ ×2    | ✓ (mlada) | ✓       |
 | Pomegranate  | —         | —    | —         | —            | ✓        | ✓ ×2       | —     | —        | —    | ✓         | ✓      | ✓       | ✓ (mlada) | —       |
