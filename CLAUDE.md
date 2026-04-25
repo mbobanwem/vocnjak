@@ -6,6 +6,14 @@
 
 Documents are not equal. Use the classes below exactly.
 
+## V2 Agent Entrypoint
+
+Before any V2 catalog, domain, catalog-audit, or S3 work, read:
+
+- `V2_AGENT_ENTRYPOINT.md`
+
+This file is a routing document only. It does not override locked source-of-truth documents. Its purpose is to tell agents which documents to read for the current phase and prevent context drift.
+
 ### LOCKED CORE
 
 - `PRODUCT_VISION.md`
