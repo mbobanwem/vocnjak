@@ -127,6 +127,27 @@ The app should feel like a seasonal guide, not a backlog manager.
 
 ---
 
+## Location, climate baseline, and phenology
+
+Vocnjak must not treat one fixed calendar as universal truth.
+
+The initial validation baseline may use Zagreb / continental Croatia, but the product must support regional and microclimate differences.
+
+The user's orchard location or selected climate profile should eventually shift reminder windows:
+
+- warmer coastal / Mediterranean locations may start earlier;
+- continental baseline locations use the default baseline;
+- colder Central European or alpine-influenced locations may start later;
+- local microclimate can still override regional expectations.
+
+Calendar windows are reminders, not final truth.
+
+Observed plant state has priority over calendar date. For example: dormant/bud-swell, petal fall, fruitlet size, pest trap activity, visible damage, soil moisture, and harvest maturity indicators should guide whether an action is appropriate.
+
+The app should give concrete user guidance: what to check, what to do, when to skip/reduce/intensify, and why the action matters. It should not hide behind vague wording like "adjust to conditions" without explaining which conditions matter.
+
+---
+
 ## 5. Actions always have purpose
 
 Every action must answer one question clearly:

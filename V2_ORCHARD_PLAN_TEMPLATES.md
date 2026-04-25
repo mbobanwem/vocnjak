@@ -133,9 +133,11 @@ Agronomic interpretation only. Not schema fields.
   notes: >
     Dormant oil tretman protiv prezimljujućih jaja i oblika štetnika:
     grinje, lisne uši, štitaste uši.
+    Primijeniti u kasnoj dormanciji, što bliže bubrenju pupa, ali prije cvatnje i samo prema etiketi proizvoda.
     Prskati po suhom, bez vjetra, iznad 5°C. Dobro natopiti grane i koru.
+    Ne primjenjivati ako je najavljen mraz, ako je stablo pod stresom ili ako etiketa ne dopušta primjenu u toj fenofazi.
     VAŽNO: minimalni razmak od bakra je 7–10 dana — ne miješati, ne primjenjivati previše blizu.
-    Za mlada stabla: primijeniti samo ako je prikladno prema stanju stabla, fenofazi i etiketi proizvoda.
+    Za mlada stabla: primijeniti samo ako postoji stvaran razlog ili stručni/lokalni savjet.
 
 ---
 
@@ -185,10 +187,10 @@ Agronomic interpretation only. Not schema fields.
   monthEnd: 3
   dayEnd: 20
   notes: >
-    Ako je primjena prikladna prema stanju rana, vremenu i etiketi proizvoda, razmotriti primjenu unutar 1–2 dana nakon rezidbe.
-    Zaštita svježih reznih rana od prodora gljivica i bakterija.
-    Registrirani bakreni pripravak prema etiketi proizvoda.
-    Razmak od bijelog ulja: min. 7–10 dana.
+    Ako je rezidba obavljena u kasnoj dormanciji i registrirani bakreni tretman je prikladan prema etiketi proizvoda, vremenu i lokalnom savjetu, bakar može pokriti svježe rezne rane prije otvaranja pupova.
+    Ne tretirati automatski nakon svake rezidbe: procijeniti veličinu rana, povijest bolesti i najavu kiše.
+    Registrirani bakreni pripravak koristiti samo prema etiketi proizvoda.
+    Ne prskati tijekom cvatnje; poštovati razmak i kompatibilnost s drugim pripravcima prema etiketi.
 
 ---
 
@@ -204,8 +206,9 @@ Agronomic interpretation only. Not schema fields.
   notes: >
     Sezonski period navodnjavanja za sušni dio godine.
     Pokrenuti kada prestane redovita kiša, obično kraj lipnja.
-    Odrasla stabla: okvirno 20–40 L po stablu tjedno, prilagoditi oborinama i tlu.
-    Mlada stabla: prioritet — pratiti vlagu tla redovito, 30–50 L tjedno.
+    Cilj je da zona korijena tijekom sušnog razdoblja dobije oko 25 mm vode tjedno iz kiše ili navodnjavanja.
+    Prije zalijevanja provjeriti vlagu tla nekoliko centimetara ispod površine: ako je tlo još vlažno, smanjiti ili preskočiti; ako je suho i plod raste, zaliti dubinski.
+    Mlada stabla imaju prioritet jer se korijen još razvija.
     Navodnjavanje ujutro ili navečer. Drip sustav preporučen.
 
 ---
@@ -287,6 +290,7 @@ Agronomic interpretation only. Not schema fields.
 Cvatnja (Zagreb baseline): travanj.
 Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Gala (aug–sep), Fuji / Idared (sep–oct).
+Kalendarski prozori su baseline podsjetnici. U toplijim regijama radnje mogu krenuti ranije, u hladnijim kasnije. Fenološko stanje stabla i lokalni uvjeti imaju prednost pred datumom.
 
 ---
 
@@ -299,14 +303,13 @@ Harvest window examples: Gala (aug–sep), Fuji / Idared (sep–oct).
   monthEnd: 5
   dayEnd: 10
   notes: >
-    Ključna zaštita protiv krastavosti jabuke (Venturia inaequalis) i pepelnice.
-    Primijeniti nakon cvatnje kada se formiraju mladi listovi i plodovi.
-    Koristiti registrirani fungicid za krastavost/pepelnicu prema etiketi proizvoda.
+    Zaštita protiv krastavosti jabuke (Venturia inaequalis) i pepelnice važna je od opadanja latica kroz rani razvoj mladih listova i plodova, osobito nakon kiše i u voćnjacima s poviješću bolesti.
+    Koristiti samo registrirani fungicid za jabuku i ciljanu bolest prema etiketi proizvoda.
+    Ako je proljeće suho, sorta/nasad nema povijest bolesti i plod nije prioritet, tretman se može smanjiti ili preskočiti.
+    Ako su proljeće i krošnja vlažni, ako je bolest bila jaka prethodnih godina ili se vide prve pjege, pratiti kraći interval s etikete i lokalni/stručni savjet.
     Insekticid razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
-    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
-    Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
-    Ponavljanje tretmana razmatrati prema infekcijskom pritisku, oborinama, etiketi proizvoda i stručnom/lokalnom savjetu.
-    Za mlada stabla god. 1–2 bez ploda: manje kritično, ali nije na odmet.
+    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela. Poštovati doziranje, karencu i lokalne propise.
+    Za mlada stabla god. 1–2 bez ploda: zaštita ploda nije prioritet; reagirati samo ako bolest ugrožava zdravlje stabla.
 
 ---
 
@@ -319,11 +322,13 @@ Harvest window examples: Gala (aug–sep), Fuji / Idared (sep–oct).
   monthEnd: 8
   dayEnd: 15
   notes: >
-    Jabučni savijač (Cydia pomonella) — crvi u plodovima jabuke.
-    Postaviti feromonsku klopku na 1.5–2 m visine, u sjenu krošnje.
-    Tjedno pregledavati ulov.
-    Eventualni tretman registriranim insekticidom razmatrati samo ako vidljivi problem, lokalni pragovi ili stručni savjet opravdavaju reakciju.
-    Koristiti samo sredstvo registrirano za kulturu i štetnika prema etiketi proizvoda, uz poštovanje karence, zaštite pčela i lokalnih propisa.
+    Jabučni savijač (Cydia pomonella) uzrokuje crvljivost i ulazne rupe u plodovima jabuke.
+    Postaviti feromonsku klopku pri početku sezone leta, najkasnije oko cvatnje do neposredno nakon cvatnje, prema lokalnim uvjetima.
+    Klopku postaviti na rubni ili vanjski dio krošnje, približno 1.5–2 m visine za kućni voćnjak, i pregledavati najmanje jednom tjedno.
+    Pri svakom pregledu ukloniti ulov, zapisati broj i zamijeniti mamac prema uputi proizvođača.
+    Ako nema ulova i nema oštećenja plodova, insekticid nije opravdan.
+    Ako se ulov ponavlja ili se vide svježi ubodi/ulazne rupe na plodovima, usporediti s lokalnim pragovima ili stručnim savjetom prije tretmana.
+    Koristiti samo sredstvo registrirano za jabuku i jabučnog savijača prema etiketi proizvoda, uz poštovanje karence, zaštite pčela i lokalnih propisa.
     Za mlada stabla god. 1–2 bez ploda: nije prioritet.
 
 ---
@@ -337,10 +342,11 @@ Harvest window examples: Gala (aug–sep), Fuji / Idared (sep–oct).
   monthEnd: 6
   dayEnd: 15
   notes: >
-    Uklanjanje viška plodova radi bolje veličine i kvalitete uroda.
-    Ostaviti 1 plod na 10–15 cm grane. Ukloniti blizance i oštećene plodove.
-    Jabuka je sklona alternativnoj rodnosti — redovito prorjeđivanje smanjuje taj problem.
-    Za mlada stabla god. 1–2 bez značajnog uroda: nije potrebno.
+    Prorjeđivati nakon prirodnog otpadanja plodića, kada su plodići približno veličine klikera.
+    Prvo ukloniti oštećene, deformirane, sitne i zbijene plodove.
+    Kao osnovno pravilo ostaviti najbolji 1–2 ploda po cvjetnom grozdu ili približno 10–15 cm razmaka između plodova na grani.
+    Ako je urod već slab, prorjeđivati minimalno. Ako je mlado ili slabo stablo preopterećeno, ostaviti vrlo malo plodova ili ih ukloniti radi razvoja krošnje.
+    Prorjeđivanje poboljšava veličinu i kvalitetu plodova te smanjuje rizik alternativne rodnosti.
 
 ---
 
@@ -353,9 +359,10 @@ Harvest window examples: Gala (aug–sep), Fuji / Idared (sep–oct).
   monthEnd: 10
   dayEnd: 1
   notes: >
-    Jabuka Fuji i kasne sorte rijetko su intenzivno napadnute pticama dok su plodovi čvrsti.
-    Postaviti mrežu samo ako postoji vidljiv pritisak ptica.
-    Za rane i srednje sorte: pratiti i reagirati prema situaciji.
+    Mreža nije standardna mjera za svaku jabuku; koristiti je kada postoje peckani plodovi, oboren plod ili ponavljani lokalni pritisak ptica.
+    Rane sorte i plodovi koji rano dobivaju boju mogu biti izloženiji napadu.
+    Postaviti mrežu prije većeg oštećenja, dok plodovi dozrijevaju, i učvrstiti je tako da ptice ne mogu dohvatiti rubne plodove kroz mrežu.
+    Ako nema vidljivog pritiska ptica, mrežu preskočiti.
     Za mlada stabla god. 1–2 bez uroda: nije potrebno.
 
 ---
@@ -370,12 +377,12 @@ Harvest window examples: Gala (aug–sep), Fuji / Idared (sep–oct).
   dayEnd: 20
   notes: >
     Termin berbe ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
-    Primjeri: Gala (aug 20 – sep 10), Fuji / Idared (sep 25 – oct 15).
-    Brati zakretanjem ploda — ne čupati, ne vući.
-    Test zrelosti: plod lako otpada pri laganom zakretanju, sjemenke smeđe.
+    Primjeri: Gala (aug 20 – sep 10), Fuji (sep 25 – oct 15), Idared (oct 1 – oct 20).
+    Prije berbe provjeriti zrelost na nekoliko plodova: osnovna boja prelazi iz zelene prema žutoj, okus više nije škrobast, sjemenke su smeđe, a plod se lako odvaja laganim podizanjem i zakretanjem.
+    Ne brati sve odjednom ako dio plodova još nije zreo; isto stablo može trebati više prolaza.
     Fuji: čekati punu zrelost — prerano ubrana Fuji jabuka nema okusa.
     Brati po suhom, izbjegavati jutarnju rosu.
-    Ne ostavljati oštećene plodove — uzrokuju moniliju.
+    Oštećene, trule i mumificirane plodove ukloniti iz krošnje i ispod stabla jer mogu održavati bolesti i štetnike.
 
 ---
 
