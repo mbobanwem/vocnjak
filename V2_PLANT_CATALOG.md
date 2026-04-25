@@ -33,7 +33,7 @@ The catalog identifies each plant by its species key (apple, pear, quince, …) 
 - No free text input
 - Minimal but sufficient coverage (EU focus)
 - Variety optional
-- Always have fallback (timing group)
+- Always have a deterministic timing source: fallback timing bands for timing-driving species, or species/subtype seasonProfile where fallback bands do not apply
 - Avoid over-engineering
 
 ---
@@ -79,12 +79,14 @@ Citrus is one category with subtype:
 
 ---
 
-## 4. Knowledge tiers
+## 4. Knowledge tiers / selection levels
 
-A catalog plant can be described at one of three levels of knowledge:
+A catalog plant can be described at the most specific supported level the user knows.
+
+For timing-driving species, the three-tier timing model applies:
 
 **Tier 1 — variety known**
-A specific variety is identified (e.g. *Fuji apple*). Timing is taken from the variety entry.
+A timing-driving variety is identified (e.g. *Fuji apple*). Timing is taken from the variety entry.
 
 **Tier 2 — timing band known, variety unknown**
 The variety is unknown but the approximate ripening band is known: **Early / Mid / Late**. Timing is taken from the fallback band.
@@ -94,13 +96,28 @@ Example: an old apple tree of unknown variety that ripens in August → Early.
 Neither variety nor band is known. Timing defaults to **Mid**.
 Example: a just-bought apple sapling with no label → Mid.
 
-Variety and fallback band describe the same axis (timing); exactly one applies per plant.
+For timing-driving species, variety and fallback band describe the same timing axis; exactly one applies per plant.
+
+For seasonProfile species, fallback timing bands do not apply. Timing is taken from the species or subtype `seasonProfile`.
+
+A seasonProfile species may still expose user-facing-only varieties where useful for selection/display/trust. These varieties do not change timing or plan behavior.
+
+Current seasonProfile handling:
+- olive may expose user-facing-only varieties
+- fig and pomegranate are species-level only
+- citrus uses subtype-level `seasonProfile` via lemon / orange / mandarin
 
 ---
 
 ## 5. Timing profile
 
-Each plant resolves to a timing profile via: variety → fallback band → default Mid. No other timing sources are defined in this input file. Region offsets, fine tuning, and rootstock influence are out of scope.
+Each plant resolves to a timing source deterministically from its catalog shape:
+
+- timing-driving species: variety harvestWindow → fallback harvestWindow → default Mid fallback
+- seasonProfile species: species seasonProfile
+- citrus: subtype seasonProfile
+
+No other timing sources are defined in this input file. Region offsets, fine tuning, and rootstock influence are out of scope.
 
 ---
 
@@ -118,23 +135,87 @@ Used when variety is unknown.
 
 ## 7. Variety Data Model
 
-Each variety has exactly:
+A supported species may expose optional `varieties`.
+
+There are two variety forms. The parent species shape determines which form applies.
+
+### Form A — timing-driving variety
+
+Used under species that declare `fallback` timing bands.
+
+Required fields:
+
+- `timing`: one of `early`, `mid`, `late`
+- `harvestWindow`: month/day harvest range
+
+Optional fields:
+
+- `bloomWindow`: reserved metadata only; not active logic unless already stated elsewhere
+
+Example:
 
 ```json
 {
   "timing": "early | mid | late",
-  "harvestWindow": { "monthStart": int, "dayStart": int, "monthEnd": int, "dayEnd": int },
-  "bloomWindow": { "monthStart": int, "dayStart": int, "monthEnd": int, "dayEnd": int }
+  "harvestWindow": { "monthStart": int, "dayStart": int, "monthEnd": int, "dayEnd": int }
 }
 ```
 
-### Rules
+Rules:
 
-- `timing` is required
-- `harvestWindow` is required
-- `bloomWindow` is optional — reserved metadata for future phenology work; not part of current domain logic
-- No combined timing values (e.g. early_mid) — single value only
-- All windows are Zagreb baseline — region offsets are deferred
+- timing-driving varieties are used only where variety-specific timing is source-backed and useful
+- do not use combined timing values like `early-mid` or `mid-late`
+- existing timing-driving species keep their current strict requirements
+
+Timing-driving varieties:
+
+- apple
+- pear
+- quince
+- sweet_cherry
+- sour_cherry
+- plum
+- peach
+- nectarine
+- apricot
+- almond
+- walnut
+- hazelnut
+
+### Form B — user-facing-only variety
+
+Used under species that declare a `seasonProfile`.
+
+Representation:
+
+```json
+{
+  "variety_key": {}
+}
+```
+
+Rules:
+
+- empty object is intentional
+- it means selectable/displayable variety label only
+- no `timing`
+- no `harvestWindow`
+- no `bloomWindow`
+- no variety-specific plan behavior
+- timing remains species-level through `seasonProfile`
+
+SeasonProfile species with user-facing-only varieties:
+
+- olive
+
+SeasonProfile species without varieties in this phase:
+
+- fig
+- pomegranate
+
+Subtype model:
+
+- citrus
 
 ---
 
@@ -358,11 +439,45 @@ Months are 1-indexed (1 = January).
 
 ---
 
-## 10. Mediterranean Plants (no variety model)
+## 10. Mediterranean Plants
 
-Olive, Fig, and Pomegranate do not have a variety-based timing model.
-User selects type only. No fallback, no variety. The structured form lives in Section 12.
+Mediterranean is a UX/navigation grouping, not a weaker domain model.
+Olive, fig, and pomegranate are full fruit species.
+Group membership does not determine whether a species can have varieties.
 
+Olive uses `seasonProfile: "mediterranean"` and supports user-facing-only varieties, Form B per Section 7.
+Olive varieties are selectable for user recognition, orchard memory, and product trust.
+Olive varieties do NOT affect timing.
+Olive varieties do NOT affect plan templates.
+Olive varieties must NOT have `timing`, `harvestWindow`, or `bloomWindow`.
+
+Olive starter set:
+
+| Cultivar | Key | Primary relevance | Timing role |
+|----------|-----|-------------------|-------------|
+| Oblica | oblica | Croatia / Adriatic | none |
+| Istarska bjelica | istarska_bjelica | Croatia / Istria | none |
+| Leccino | leccino | Italy / broad EU | none |
+| Frantoio | frantoio | Italy / broad EU | none |
+| Coratina | coratina | Italy | none |
+| Picholine | picholine | France / Provence | none |
+| Aglandau | aglandau | France / Provence | none |
+
+Deferred olive variety entries:
+
+- Lastovka
+- Levantinka
+- Buža
+- Pendolino
+
+Reason:
+
+- Lastovka, Levantinka, and Buža are valid future local/regional additions but not needed in the starter set.
+- Pendolino is deferred because pollination-role semantics must not become hidden runtime behavior.
+
+Fig remains species-level in this phase: no varieties; variety modeling deferred.
+
+Pomegranate remains species-level in this phase: no varieties; variety modeling deferred.
 Pomegranate is classified under `mediterranean` for organizing purposes; its template in `V2_ORCHARD_PLAN_TEMPLATES.md` is structurally independent of olive and fig, and the species-specific template is authoritative.
 
 ---
@@ -390,6 +505,7 @@ Interpretation:
 ## 11. Citrus Special Handling
 
 Citrus uses a seasonProfile model — no timing groups, no variety timing. The structured form (group, subtypes, seasonProfile values) lives in Section 12.
+Citrus uses a subtype model (lemon | orange | mandarin), each subtype carrying its own seasonProfile. Subtypes do not carry varieties in this pass; citrus identity remains an S3 / owner decision.
 
 ### Citrus Season Profiles
 
@@ -655,7 +771,19 @@ The JSON below is the machine-readable form of the species tables and prose abov
     }
   },
 
-  "olive":       { "group": "mediterranean", "seasonProfile": "mediterranean" },
+  "olive": {
+    "group": "mediterranean",
+    "seasonProfile": "mediterranean",
+    "varieties": {
+      "oblica": {},
+      "istarska_bjelica": {},
+      "leccino": {},
+      "frantoio": {},
+      "coratina": {},
+      "picholine": {},
+      "aglandau": {}
+    }
+  },
   "fig":         { "group": "mediterranean", "seasonProfile": "mediterranean" },
   "pomegranate": { "group": "mediterranean", "seasonProfile": "mediterranean" },
 
