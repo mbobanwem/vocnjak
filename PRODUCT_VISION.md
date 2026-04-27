@@ -127,24 +127,78 @@ The app should feel like a seasonal guide, not a backlog manager.
 
 ---
 
-## Location, climate baseline, and phenology
+## Location, climate baseline, calendar planning, and phenology
 
 Vocnjak must not treat one fixed calendar as universal truth.
 
-The initial validation baseline may use Zagreb / continental Croatia, but the product must support regional and microclimate differences.
+At the same time, the product must preserve approximate calendar periods because they are essential to the beginner user's planning model.
 
-The user's orchard location or selected climate profile should eventually shift reminder windows:
+A hobby grower who does not yet understand orchard timing still needs to know roughly when work is coming:
 
-- warmer coastal / Mediterranean locations may start earlier;
-- continental baseline locations use the default baseline;
-- colder Central European or alpine-influenced locations may start later;
-- local microclimate can still override regional expectations.
+- late-winter oil
+- late-winter copper
+- pruning
+- trap setup
+- post-bloom checks
+- thinning
+- fruit protection
+- harvest windows
+- irrigation start/stop
+- winter preparation
 
-Calendar windows are reminders, not final truth.
+Calendar windows help the user plan ahead: buy materials, prepare tools, schedule work, understand the season, and avoid being surprised by orchard tasks.
 
-Observed plant state has priority over calendar date. For example: dormant/bud-swell, petal fall, fruitlet size, pest trap activity, visible damage, soil moisture, and harvest maturity indicators should guide whether an action is appropriate.
+Therefore:
 
-The app should give concrete user guidance: what to check, what to do, when to skip/reduce/intensify, and why the action matters. It should not hide behind vague wording like "adjust to conditions" without explaining which conditions matter.
+- Calendar windows are the primary user-facing planning surface.
+- Calendar windows tell the user when to pay attention.
+- Calendar windows must remain visible and useful.
+- The app must not remove useful baseline dates just because plant-state cues are more agronomically precise.
+- The app must not become a phenology-only expert system.
+
+Observed plant state, monitoring, weather, and local conditions refine execution.
+
+Plant-state cues help the user decide whether the action makes sense inside or near the calendar window.
+
+Examples:
+
+- dormant / before bud opening
+- bud swell
+- bloom
+- after petal fall
+- fruitlet size
+- fruit color change
+- visible pest or disease symptoms
+- trap activity
+- soil moisture
+- harvest readiness
+
+Correct product interpretation:
+
+- Calendar = planning surface.
+- Plant state / phenology = execution context.
+- Weather = advisory context.
+- Monitoring = evidence gathering, not automatic treatment.
+- History = proof of what was actually done.
+
+The initial validation baseline may use Zagreb / continental Croatia, but the product must support the reality that different regions move differently through the season.
+
+For current V2:
+
+- Zagreb / continental baseline windows may be used as the initial catalog baseline where already defined.
+- Warmer coastal / Mediterranean locations may reach relevant stages earlier.
+- Colder continental, alpine, Austrian, German, or similar locations may reach relevant stages later.
+- Local microclimate can still override regional expectations.
+
+Current V2 must not introduce numeric regional offsets, hidden calendar shifts, or hardcoded formulas such as “Dalmatia = 0 days, Istria = +X days, Zagreb = +Y days.”
+
+Regional adaptation is future work.
+
+For now, the app should preserve useful baseline calendar windows and explain the relevant plant-state or real-world cues in plain language so the user knows what to check before acting.
+
+The app should give concrete beginner guidance: what to check, what the cue looks like, what product category is needed where relevant, when to skip or delay, and why the action matters.
+
+The app must not hide behind vague wording such as “adjust to conditions,” “in dormancy,” “threshold,” “pressure,” or “according to the product label” without explaining what that means for a non-agronomist.
 
 ---
 
@@ -432,6 +486,26 @@ These rules must remain true across all future changes.
 10. The product may evolve, but the user’s past orchard work must stay understandable.
 11. The app must stay simple, fast, and practical in real outdoor use.
 12. The product must stay orchard-first and decision-first, never drift into generic task software.
+
+---
+
+## Owner decision and vision-change rule
+
+`PRODUCT_VISION.md` is the product anchor for V2 work.
+
+Agents must preserve the product vision when proposing domain, UX, architecture, audit, or implementation changes.
+
+If a proposal would weaken beginner planning, remove useful calendar visibility, turn the app into a phenology-only system, add automatic spray decisions, hide practical guidance behind vague agronomic wording, or assume Zagreb dates are universal, the agent must stop and ask the owner.
+
+If an agent believes a different long-term direction would be better, the agent must clearly explain:
+
+- what would change
+- why it may be better
+- what product value may be lost
+- what risk it introduces
+- which documents would need to change
+
+The owner may approve a change, but agents must not silently override or reinterpret the vision.
 
 ---
 
