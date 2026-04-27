@@ -1135,3 +1135,379 @@ Reasoning:
 - Do not invent almond/apricot regional timing rules.
 - Do not invent almond disease names without source backing.
 - Do not implement runtime code, gates, weather logic, or recommendation logic.
+
+---
+
+# S3.5 Mediterranean Audit — Olive + Fig + Pomegranate
+
+## 1. Executive verdict
+
+Olive, fig, and pomegranate are ready for S3 scale-up as-is.
+
+The three Mediterranean species correctly handle the structural shift away from the standard pome/stone shared block. Each species' template explicitly states that the standard spray program and shared block do not apply.
+
+Olive is the most domain-rich Mediterranean template. It contains strong pruning, fertilization, irrigation, monitoring, conditional treatment, harvest, and winter-check guidance. It also preserves the catalog rule that olive varieties are user-facing-only and must not drive timing.
+
+Fig has correct early-crop / main-crop harvest split, beginner-readable winter protection, and clear continental-climate sensitivity notes.
+
+Pomegranate is the lightest of the three, but it is correctly framed as marginal in continental EU climate and self-flagged for source audit. Its spring/summer thinness is acceptable for current S3 scope.
+
+Recommendation:
+
+- Append S3.5 findings to `V2_S3_AUDIT_FINDINGS_DRAFT.md`.
+- Then proceed to S3.6 citrus audit: lemon, orange, mandarin.
+- Do not run a targeted Mediterranean wording fix before S3.6.
+
+After this section is appended, 13 of 18 supported species/subtypes are audited.
+
+---
+
+## 2. Mediterranean coverage summary
+
+| Area | Olive status | Fig status | Pomegranate status | Notes |
+|---|---|---|---|---|
+| Species-specific yearly work | OK | OK | Minor gap | Olive has 11 entries, fig 9, pomegranate 7. Pomegranate is lighter but defensible. |
+| Harvest / variety linkage | OK | OK | OK | Olive harvest is species-level and use-case based. Fig has early crop + main crop. Pomegranate has one species-level window. |
+| Monitoring | Excellent | OK | OK | Olive has dedicated disease/pest monitoring and conditional olive-fly response. Fig monitoring is light but appropriate. Pomegranate has scouting + cracking watch. |
+| Spray/protection safety | OK | n/a | n/a | Olive conditional spray entries preserve no-auto-spray. Fig and pomegranate are deliberately spray-light/spray-free in this hobby context. |
+| Winter / climate sensitivity | OK | Excellent | OK | Olive/fig/pomegranate all include continental winter sensitivity guidance for young trees. |
+| Beginner clarity | Minor gap | Minor gap | Minor gap | Olive Latin pest names are useful but expert/local-threshold wording still needs decoder. Fig uses `pinciranje`, decoded inline. Pomegranate has a few pruning terms to decode. |
+| Regional caveat | Needs Mediterranean-specific caveat | Needs Mediterranean-specific caveat | Partially present | Pomegranate has the best continental/marginal framing. Olive/fig have scattered continental caveats. |
+| Product/material category clarity | OK | Minor gap | Minor gap | Olive is strong. Fig and pomegranate fertilizer/product wording could be tightened. |
+
+---
+
+## 3. Shared-block / non-shared-block findings
+
+Olive, fig, and pomegranate correctly do not use the standard shared pome/stone block.
+
+This is correct.
+
+The template explicitly states for these species:
+
+- standard pome/stone spray program does not apply
+- shared block does not apply
+- species-specific block is authoritative
+
+Therefore, shared-block findings from S3.1–S3.4 such as shared winter copper wording, shared fertilization wording, and shared oil/copper spacing do not carry over directly.
+
+Cross-cutting findings that still apply:
+
+- `stručni savjet`, `lokalni pragovi`, and `lokalna registracija` need beginner-friendly decoding.
+- regional caveat is still needed, but for Mediterranean species it must be Mediterranean-specific rather than a direct copy of the apple wording.
+
+No structural shared-block ambiguity found.
+
+---
+
+## 4. Olive entry-by-entry findings
+
+| Entry | Source section | Calendar planning window | Purpose clarity | Beginner cues | Product/material category | Skip/delay/avoid | Monitoring/treatment safety | Regional caveat | Status | Finding |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Zimska rezidba masline | OLIVE §1 | `2.1–3.15` | OK — open vase-shaped canopy and air circulation. | OK — after coldest winter period; remove watershoots / inward branches. | OK — wound protection for large cuts if appropriate. | OK — young-tree and renewal pruning caveats. | n/a | absent | OK | `Vaza` pruning shape may need beginner glossary. |
+| Bakar na rane (maslina) | OLIVE §2 | `2.1–3.31` | OK — bacterial olive knot / `Pseudomonas savastanoi`. | Excellent — within 1–2 days after pruning. | OK — registered copper preparation. | Minor gap — skip/weather/stress wording is light. | OK | absent | Minor gap | Add skip/delay wording in S5. Do not turn into automatic post-pruning gate. |
+| Gnojidba masline | OLIVE §3 | `3.1–4.15` | OK — supports vegetative growth. | OK — apply around tree, not directly on trunk/root; young-tree half-dose. | OK — NPK with higher nitrogen named. | Minor gap — no soil/tree-state skip wording. | n/a | n/a | Minor gap | Stronger than shared fertilization, but S5 could tighten product/material and overfertilization wording. |
+| Vizualni pregled – paunovo oko i maslinin moljac | OLIVE §4 | `4.1–5.31` | OK — `Spilocaea oleagina` and `Prays oleae` named. | OK — yellow spots with dark edge; moth affects flowers/fruit. | OK — registered product only if justified. | OK — rare in continental open-ground conditions. | OK — monitoring does not equal treatment. | partial | OK | Multi-target scouting candidate. Expert/local advice decoder still needed. |
+| Praćenje maslinove muhe | OLIVE §5 | `6.1–9.30` | Excellent — `Bactrocera oleae` named as key olive pest. | OK — yellow sticky plates with attractant, weekly checks. | Excellent — yellow sticky plates with attractant; organic/barrier/repellent options mentioned. | OK — young-tree/no-fruit relevance. | OK — evidence only. | n/a | OK | Clean single-target trap-monitoring candidate. |
+| Zaštita od maslinove muhe (po potrebi) | OLIVE §6 | `6.1–9.30` | OK — response to high olive-fly pressure. | n/a, linked to monitoring. | OK — registered method/product, including barrier/repellent options where registered. | Excellent — only if monitoring shows high catch; not preventive spraying; young/no-fruit skip. | Excellent — gold-standard monitoring → conditional treatment pair. | n/a | OK | Do not convert trap catch into formal gate. Keep notes/advisory. |
+| Ljetna korekcijska rezidba masline | OLIVE §7 | `6.1–7.15` | OK — remove watershoots / overly dense shoots. | OK — olive bears on one-year wood. | n/a | Excellent — not mandatory every year; do not cut aggressively. | n/a | n/a | OK | Strong optional/reverse-default pattern. |
+| Navodnjavanje masline (mlada stabla) | OLIVE §8 | `6.1–8.31` | OK — young-tree support in dry periods. | Excellent — young trees 20–30 L weekly in dry periods; adults usually do not need irrigation. | n/a | OK — overwatering harms. | n/a | n/a | OK | Long seasonal-care shape; S5 mapping decision shared with other irrigation entries. |
+| Berba maslina | OLIVE §9 | `10.1–12.31` | OK. | Excellent — green oil, black oil, table olive use cases; processing within 24–48h. | OK — net under tree / electric comb. | n/a | n/a | n/a | OK | Strongest use-case-aware harvest entry. Species-level only; no variety timing. |
+| Korekcijska rezidba masline nakon berbe | OLIVE §10 | `12.1–1.15` | OK — prepare canopy for next season. | OK — light correction after harvest. | n/a | OK — do not cut aggressively. | n/a | n/a | OK | Cross-year window; S5 implementation concern. |
+| Pregled masline za zimu | OLIVE §11 | `10.15–11.30` | OK — winter readiness. | OK — dry branches, disease signs, frost forecast; young-tree agrotekstil below severe cold. | OK — agrotekstil. | n/a | n/a | partial | OK | Continental-climate hedge present. |
+
+Olive catalog/model check:
+
+- Olive varieties exist as user-facing-only Form B.
+- Template does not create variety-specific olive timing.
+- Template does not add harvestWindow/bloomWindow per olive variety.
+- This is correct and must be preserved.
+
+---
+
+## 5. Fig entry-by-entry findings
+
+| Entry | Source section | Calendar planning window | Purpose clarity | Beginner cues | Product/material category | Skip/delay/avoid | Monitoring/treatment safety | Regional caveat | Status | Finding |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Zimska rezidba smokve | FIG §1 | `2.1–3.1` | OK — remove dry/old exhausted branches. | Excellent — fruiting on one-year/two-year wood; young-tree 3–5 main branches; milky sap skin warning. | OK — wound protection for larger cuts. | OK — after strongest frost. | n/a | partial | OK | Unique tool/skin safety warning; preserve. |
+| Gnojidba smokve | FIG §2 | `3.1–4.15` | OK — moderate feeding. | Excellent — too much nitrogen = lots of leaves, few fruit. | OK — NPK with higher potassium. | Excellent — reverse-default: fig does not need much. | n/a | n/a | OK | Strong overfertilization consequence wording. |
+| Pregled smokve – štetnici i bolesti | FIG §3 | `5.1–6.30` | OK — low-pressure scouting. | Minor gap — visual review named, but target detail is light. | n/a | Excellent — serious pests rare in continental climate. | OK — no automatic spray implied. | partial | OK | Lightness is acceptable for continental hobby fig; source-check if owner wants stronger target naming. |
+| Ljetno skraćivanje izdanaka smokve | FIG §4 | `6.15–7.15` | OK — direct energy to fruit. | OK — `pinciranje` decoded inline as shortening; 5–6 leaves above fruit. | n/a | OK — do not overcut. | n/a | n/a | OK | Good inline terminology pattern. |
+| Navodnjavanje smokve (mlada stabla) | FIG §5 | `6.20–8.20` | OK — young-tree drought support. | OK — young trees 20–30 L weekly. | n/a | OK — adults usually do not need irrigation; overwatering may contribute to fruit cracking. | n/a | n/a | OK | Strong drought-tolerant reverse-default pattern. |
+| Berba ranih (zimskih) smokava | FIG §6 | `6.15–7.10` | OK — early crop from overwintered fruit. | Excellent — soft, drooping tip, honey droplet visible. | n/a | OK — not present on all varieties; depends on variety/climate. | n/a | partial | OK | Strong harvest cue; variety/climate dependency handled without variety expansion. |
+| Berba glavnog roda smokve | FIG §7 | `8.1–10.15` | OK. | Excellent — soft fruit, skin begins cracking, color darkens, multiple passes. | n/a | OK — do not leave overripe fruit; wasp/rot warning. | n/a | n/a | OK | Strong harvest entry. |
+| Zimska zaštita smokve – mlada stabla | FIG §8 | `11.15–2.15` | OK — young-tree winter protection. | Excellent — agrotekstil or straw; short-term -10°C tolerance; remove protection after frost danger. | OK — agrotekstil or straw. | OK — adults usually do not need protection. | n/a | excellent | OK | Reference-quality young-tree winter protection wording. |
+| Pregled smokve za zimu | FIG §9 | `10.15–11.30` | OK — remove unripe fruit and check damage. | OK — unripe fruit as infection source; trunk/branch cracks. | n/a | n/a | n/a | n/a | OK | Good hygiene loop. |
+
+Fig catalog/model check:
+
+- Fig has no current variety model.
+- Template does not invent fig varieties.
+- Early-crop + main-crop two-window harvest pattern is useful but needs S5 design confirmation.
+
+---
+
+## 6. Pomegranate entry-by-entry findings
+
+| Entry | Source section | Calendar planning window | Purpose clarity | Beginner cues | Product/material category | Skip/delay/avoid | Monitoring/treatment safety | Regional caveat | Status | Finding |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Zimska rezidba šipka | POMEGRANATE §1 | `2.1–3.15` | OK — shape for sun penetration. | OK — grows as shrub or small tree; remove suckers/dry/dense inward growth. | n/a | Minor gap — skip wording light. | n/a | n/a | OK | `Izdanci` / `obnova grma` may need beginner glossary. |
+| Gnojidba šipka (umjerena) | POMEGRANATE §2 | `3.1–4.15` | OK — modest spring feeding. | OK — too much nitrogen delays fruiting. | Minor gap — organic/mineral fertilizer is generic. | OK — moderate/reverse-default framing. | n/a | n/a | OK | Product/material category could be tighter in S5. |
+| Praćenje štetnika – šipak | POMEGRANATE §3 | `5.1–8.31` | OK — pest scouting in low-pressure continental context. | OK — aphids on young shoots. | OK — registered product only if justified. | OK — treatment only if visible problem / local conditions / expert advice justify. | OK — monitoring does not equal treatment. | partial | OK | Low-pressure scouting is acceptable. |
+| Praćenje pucanja ploda – šipak | POMEGRANATE §4 | `8.1–10.15` | OK — sudden water after drought can cause/contribute to cracking. | OK — local conditions and soil moisture. | n/a | OK — advisory only; user decides irrigation. | OK — non-pest observation, not treatment trigger. | n/a | OK | Strong non-pest observation/advisory pattern. |
+| Navodnjavanje šipka | POMEGRANATE §5 | `6.15–8.31` | OK — deep watering while fruit develops. | OK — young trees 20–30 L weekly in dry periods. | n/a | OK — as needed. | n/a | n/a | OK | Same long seasonal-care mapping question as olive/fig irrigation. |
+| Berba šipka | POMEGRANATE §6 | `10.1–11.15` | OK. | Excellent — fully colored fruit, metallic sound when tapped, cut with shears, storage 1–2 months. | OK — pruning shears. | n/a | n/a | n/a | OK | Distinctive acoustic harvest cue; preserve. |
+| Zimska zaštita šipka (mlada stabla) | POMEGRANATE §7 | `11.15–12.31` | OK — young-tree winter protection. | OK — agrotekstil/straw, first 2–3 years, continental climate. | OK — agrotekstil or straw. | Minor gap — removal wording is awkward. | n/a | excellent | OK | Minor wording polish only. |
+
+Pomegranate readiness note:
+
+- Pomegranate spring/summer guidance is lighter than olive/fig.
+- This is acceptable for current S3 because pomegranate is explicitly marked as marginal in continental EU climate and the template is self-flagged for S3 audit.
+- No targeted fix required before S3.6.
+
+---
+
+## 7. Candidate mapping notes
+
+Audit notes only. These are not final V2 records.
+
+| Source entry | Possible V2 concept | Confidence | Why | Do not finalize because |
+|---|---|---|---|---|
+| Olive winter pruning | action-window candidate, pruning | High | Bounded calendar window and pruning purpose. | Renewal cycle remains advisory note; final shape S5. |
+| Olive copper on wounds | action-window candidate + sequencing note | High | Explicit 1–2 days after pruning. | Do not finalize prior-activity gate without S4/S5 gate audit. |
+| Olive fertilization | action-window candidate, fertilizing | High | Bounded window and material category. | S5. |
+| Olive visual scouting for paunovo oko / olive moth | multi-target scouting monitoring-program candidate | Medium | Named targets and visible cue. | Multi-target vs split shape is S5 design decision. |
+| Olive fruit fly monitoring | setup action window + monitoring-program candidate | High | Device, target, install, cadence all present. | Final program/window split belongs to S5. |
+| Olive fruit fly protection | conditional action-window/advisory note | High | Explicit monitoring → conditional response pair. | Trap catch must not become formal gate. |
+| Olive summer pruning | action-window candidate, optional pruning | High | Bounded window and optional framing. | S5. |
+| Olive irrigation | long seasonal action/advisory care period | Owner decision | Young-tree weekly amount and adult skip-default present. | Same shape question as prior irrigation entries. |
+| Olive harvest | species-level harvest action | High | Template has broad use-case-based harvest; no variety timing. | Catalog has user-facing-only olive varieties; do not introduce variety timing. |
+| Olive post-harvest pruning | action-window candidate, cross-year pruning | High | Bounded cross-year window. | Cross-year handling is S5. |
+| Olive winter check | observation action-window candidate | High | Bounded observation window. | S5. |
+| Fig winter pruning | action-window candidate, pruning | High | Bounded window and safety note. | S5. |
+| Fig fertilization | action-window candidate, fertilizing | High | Bounded window and NPK-K category. | S5. |
+| Fig pest/disease scouting | scouting monitoring-program candidate, low confidence | Low-medium | Visual scouting exists but target detail is weak. | Source-check before strengthening; low pressure may justify lightness. |
+| Fig summer pinching | action-window candidate, pruning/pinching | High | Bounded window and inline-decoded cue. | S5. |
+| Fig irrigation | long seasonal action/advisory care period | Owner decision | Young-tree weekly amount, adult skip-default. | Same irrigation shape question as olive. |
+| Fig early-crop harvest | species-level harvest action | High | Early crop window and clear cues. | Two harvest windows per species need S5 confirmation. |
+| Fig main-crop harvest | species-level harvest action | High | Main crop window and strong cues. | Same two-window harvest design item. |
+| Fig winter protection | observation/action-window candidate | High | Cross-year young-tree protection window. | S5. |
+| Fig winter check | observation action-window candidate | High | Bounded observation window. | S5. |
+| Pomegranate pruning | action-window candidate, pruning | High | Bounded window. | S5. |
+| Pomegranate fertilization | action-window candidate, fertilizing | High | Bounded window. | S5. |
+| Pomegranate pest scouting | scouting monitoring-program candidate | Medium | One target named: aphids on young shoots. | S5 finalization. |
+| Pomegranate fruit cracking watch | observation/advisory action-window candidate, not monitoring-program | Medium | Fruit cracking is not a pest/disease target. | Map as observation/advisory, not monitoring_program. |
+| Pomegranate irrigation | long seasonal action/advisory care period | Owner decision | Young-tree amount and fruit-development window. | Same irrigation shape question. |
+| Pomegranate harvest | species-level harvest action | High | Distinctive maturity cue. | S5. |
+| Pomegranate winter protection | observation/action-window candidate | High | Young-tree protection window. | S5. |
+
+Cross-Mediterranean pattern:
+
+- non-pest `praćenje` entries should map to observation/advisory action windows, not `monitoring_program`.
+- multi-target scouting remains an S5 design decision.
+- long irrigation/care windows remain an S5 owner/design decision.
+
+---
+
+## 8. Beginner-clarity findings
+
+| ID | Finding | Where | Disposition |
+|---|---|---|---|
+| BC-O1 | `Vaza` pruning shape not decoded. | Olive pruning. | Queue for S4/S5 glossary. |
+| BC-O2 | Olive copper-on-wounds lacks skip/weather/stress wording. | Olive copper on wounds. | Queue for S4/S5. |
+| BC-O3 | `Stručni savjet`, `lokalni uvjeti`, `lokalna registracija` remain vague. | Olive monitoring/protection. | Queue for S4/S5 decoder. |
+| BC-O4 | `Visok ulov` not decoded into beginner evidence language. | Olive fruit fly protection. | Queue for S4/S5; do not invent thresholds. |
+| BC-O5 | `Polifenoli` may be unclear. | Olive harvest. | Nice-to-have / defer. |
+| BC-F1 | `Pinciranje` is decoded inline and should be used as positive pattern. | Fig summer pruning. | Reference for S5. |
+| BC-F2 | Milky sap / skin-irritation warning is unique and useful. | Fig winter pruning. | Reference for S5. |
+| BC-F3 | Fig pest-monitoring targets are light. | Fig scouting. | Accept or source-check if owner wants more. |
+| BC-Pom1 | `Izdanci` / `obnova grma` could be decoded. | Pomegranate pruning. | Queue for S4/S5 glossary. |
+| BC-Pom2 | Metallic-sound harvest cue is distinctive and should be preserved. | Pomegranate harvest. | Reference for S5. |
+| BC-Pom3 | Winter-protection removal wording is awkward. | Pomegranate winter protection. | Nice-to-have / defer. |
+| BC-Med1 | Mediterranean-specific regional caveat needed. | All three agronomic-context blocks. | Queue for S5; owner wording decision. |
+
+No finding blocks S3.6.
+
+---
+
+## 9. Safety / no-auto-spray findings
+
+| Constraint | Olive | Fig | Pomegranate |
+|---|---|---|---|
+| No automatic spray calendar | Preserved. | Preserved. | Preserved. |
+| Monitoring does not equal treatment | Preserved. | Preserved through low-pressure scouting. | Preserved. |
+| Trap catch / visible symptoms are evidence only | Preserved. | n/a. | Preserved. |
+| Weather constraints | Mostly OK; olive copper-on-wounds could use skip/weather wording. | n/a. | n/a. |
+| Label / local regulation constraints | Preserved, especially in olive fruit-fly protection. | n/a. | Preserved in pest scouting. |
+| No standard pome/stone spray program applied | Preserved explicitly. | Preserved explicitly. | Preserved explicitly. |
+| Olive variety selection does not drive timing | Preserved. | n/a. | n/a. |
+| Winter protection remains advisory | Preserved. | Preserved. | Preserved. |
+| Marginal-climate guidance remains advisory | n/a. | Preserved. | Preserved. |
+
+No safety blocker found.
+
+Gold-standard patterns identified:
+
+- Olive fruit fly monitoring/protection pair = best monitoring → conditional treatment pattern.
+- Olive organic/barrier/repellent wording = best registered-method flexibility pattern.
+- Fig milky-sap warning = best tool/handler safety pattern.
+- Pomegranate fruit-cracking watch = strong non-pest observation/advisory pattern.
+- Pomegranate metallic-sound cue = distinctive harvest readiness pattern.
+
+---
+
+## 10. Regional / climate findings
+
+Mediterranean species need a different caveat than apple/pome/stone fruit.
+
+For pome and stone fruit, apple's generic caveat works:
+
+- warmer regions earlier
+- colder regions later
+- plant state and local conditions override date
+
+For Mediterranean species, the issue is inverted:
+
+- in Mediterranean/coastal locations, work may start earlier, pest pressure may be higher, and winter protection is often less relevant
+- in continental/Zagreb-like locations, growth may be slower, winter protection is more important, and pest pressure is often lower
+- in colder alpine/continental locations, winter survival may be the main constraint
+
+Current documents partially handle this:
+
+- olive has continental notes in monitoring and winter check
+- fig has continental notes in pest pressure and winter protection
+- pomegranate explicitly says it is marginal in continental EU climate
+
+Gap:
+
+- no unified Mediterranean-specific regional caveat exists in the agronomic-context blocks.
+
+Recommended S5 direction:
+
+- add a Mediterranean-specific caveat to olive, fig, and pomegranate
+- do not add numeric offsets
+- do not introduce climateProfile / regionProfile / offsetDays
+- keep caveat qualitative and plant-state/local-condition aware
+
+Suggested future wording for owner/S5 consideration:
+
+"Kalendarski prozori su baseline za kontinentalni uzgoj. U mediteranskim/jadranskim podnebljima radnje mogu krenuti ranije, pritisak štetnika može biti veći, a zimska zaštita često nije potrebna. U hladnijim kontinentalnim/alpskim podnebljima rast je sporiji, a zimska zaštita kritična. Stanje biljke i lokalni uvjeti imaju prednost pred datumom."
+
+Do not apply this now.
+
+---
+
+## 11. Catalog consistency check
+
+### Olive
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Group | mediterranean | olive block | Yes |
+| Season profile | mediterranean | not directly referenced | OK |
+| Varieties | Oblica, Istarska bjelica, Leccino, Frantoio, Coratina, Picholine, Aglandau | not used in template timing | Correct |
+| Variety object shape | empty objects `{}` | no timing use | Correct |
+| Variety timing / harvestWindow / bloomWindow | none | none | Correct |
+| Species harvest timing | catalog silent | template `10.1–12.31` broad harvest | S5 design note |
+
+Olive is compliant with user-facing-only variety model. Do not add olive timing by variety.
+
+### Fig
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Group | mediterranean | fig block | Yes |
+| Season profile | mediterranean | not directly referenced | OK |
+| Varieties | none | none | Correct |
+| Harvest timing | catalog silent | early crop `6.15–7.10`, main crop `8.1–10.15` | S5 design note |
+
+Fig two-window harvest is useful and agronomically plausible, but needs S5 design confirmation.
+
+### Pomegranate
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Group | mediterranean | pomegranate block | Yes |
+| Season profile | mediterranean | not directly referenced | OK |
+| Varieties | none | none | Correct |
+| Harvest timing | catalog silent | `10.1–11.15` | S5 design note |
+| Structural independence | catalog says pomegranate template is independent | template says independent | Correct |
+
+No blocking catalog inconsistency.
+
+---
+
+## 12. Owner decision items
+
+| Decision | Why owner decision is needed | Options | Recommended default |
+|---|---|---|---|
+| Mediterranean-specific regional caveat wording | Apple caveat does not fit Mediterranean species perfectly. | A) Add Mediterranean-specific caveat in S5. B) Use apple caveat. C) Defer. | A. |
+| Olive species-level harvest timing vs catalog silence | Template has broad timing, catalog is silent. | A) Add species-level harvest window to catalog. B) Keep template as timing reference. C) Defer. | B. |
+| Fig two-window harvest pattern | Two harvest windows for one species needs S5 design confirmation. | A) Keep two windows. B) Merge broad window. C) Defer. | A. |
+| Pomegranate spring/summer thinness | Readiness audit flagged it; S3.5 confirms it is light but defensible. | A) Accept. B) Source-check more entries. C) Defer. | A. |
+| Multi-target scouting program shape | Olive, quince, apricot and others use multi-target scouting. | A) Single program with multi-target list. B) Split per target. C) Defer. | A, to be confirmed in S5. |
+| Non-pest `praćenje` mapping | Fruit cracking/frost/winter checks are not pest monitoring. | A) Map to observation action windows. B) Add new advisory concept. C) Defer. | A. |
+
+No owner decision blocks S3.6.
+
+---
+
+## 13. Better-than-current opportunities
+
+| Opportunity | Why better | Risk | Recommendation |
+|---|---|---|---|
+| Promote olive §6 as monitoring → conditional treatment reference pattern. | Best no-auto-spray pair in file. | Low. | Queue for S4/S5. |
+| Promote olive §5 organic/barrier/repellent wording. | Best registered-method flexibility wording. | Low. | Queue for S4/S5. |
+| Promote fig milky-sap warning. | Best handler-safety note. | Low. | Nice-to-have / S5. |
+| Promote pomegranate metallic-sound cue. | Strong distinctive harvest cue. | Low. | Preserve in S5. |
+| Promote reverse-default patterns from olive/fig irrigation and pruning. | Reduces unnecessary work. | Low. | Queue for S5. |
+| Add Mediterranean-specific regional caveat. | Better than apple wording for these species. | Low. | Queue for S5, owner wording decision. |
+| Add olive §2 skip/weather wording. | Aligns copper-on-wounds safety with rest of file. | Low. | Queue for S5. |
+| Tighten olive/fig/pomegranate fertilization category wording. | More beginner-actionable. | Low. | Queue for S5. |
+| Add beginner glossary covering Mediterranean terms too. | `vaza`, `pinciranje`, `izdanci`, `polifenoli`, local thresholds. | Low. | Queue for S5. |
+| Keep pomegranate light unless owner expands Mediterranean-market scope. | Avoids fake precision. | Low. | Defer. |
+
+---
+
+## 14. Recommended next step
+
+Append S3.5 findings to `V2_S3_AUDIT_FINDINGS_DRAFT.md`, then proceed to S3.6 citrus audit:
+
+- lemon
+- orange
+- mandarin
+
+Reasoning:
+
+- The findings format scales without modification.
+- Mediterranean species surface no blocker.
+- Olive variety model is preserved.
+- Non-shared-block behavior is correct.
+- Pomegranate thinness is acceptable for current scope.
+- All gaps are wording polish, S5 design items, or owner decisions.
+- No targeted S3.5 fix is required before S3.6.
+
+---
+
+## 15. What NOT to do next
+
+- Do not rewrite all templates broadly.
+- Do not rewrite olive, fig, or pomegranate blocks.
+- Do not add `climateProfile`, `regionProfile`, `baseClimate`, `offsetDays`, or numeric regional offsets.
+- Do not add hardcoded commercial product brand names.
+- Do not add new olive, fig, or pomegranate varieties.
+- Do not add olive variety harvest windows.
+- Do not add timing, harvestWindow, or bloomWindow to olive variety objects.
+- Do not create variety-specific timing for olive.
+- Do not finalize `action_window_definition`, `monitoring_program`, `stage_vocabulary`, or `open_condition` records.
+- Do not declare trap catch / high catch as a formal gate.
+- Do not declare olive copper-on-wounds as a formal prior-activity gate without S4/S5 gate audit.
+- Do not apply the pome/stone shared spray program to olive, fig, or pomegranate.
+- Do not invent winter-protection automation.
+- Do not invent fig pest targets without source backing.
+- Do not treat pomegranate's S3 audit marker as blocker.
+- Do not finalize fig two-window harvest pattern before S5 design pass.
+- Do not introduce olive variety-driven timing in S5.
+- Do not discuss citrus structural changes in S3.5 output.
+- Do not modify `V2_PLANT_CATALOG.md` to add olive/fig/pomegranate species harvest windows without owner decision.
+- Do not implement runtime code, gates, weather logic, or recommendation logic.
