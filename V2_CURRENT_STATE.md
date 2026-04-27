@@ -24,9 +24,9 @@ Finish documentation control so the project stops looping and can enter structur
 
 Current immediate next step:
 
-S3.2 — Pome group audit: pear + quince.
+S3.3 — Stone fruit audit batch 1: sweet_cherry, sour_cherry, plum.
 
-S3.0B and S3.1 are complete; proceed to the pome group audit.
+S3.0B, S3.1, and S3.2 are complete; proceed to stone fruit audit batch 1.
 
 ---
 
@@ -334,14 +334,63 @@ Disposition:
 
 ### S3.2 — Pome group audit
 
+Status: DONE — pome findings appended.
+
+Commit:
+
+- `82d754b Append S3 pome audit findings`
+
+Output:
+
+- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+
+Scope completed:
+
+- apple — completed in S3.1
+- pear — completed in S3.2
+- quince — completed in S3.2
+
+Verdict:
+
+- Pome group is ready for S3 scale-up as-is.
+- Pear and quince findings scale the apple S3.1 format without modification.
+- No targeted pome wording fix is required before S3.3.
+- Pome findings should be resolved later through S4/S5 owner decisions and targeted fixes.
+
+Known pome follow-up items preserved for S4/S5:
+
+- Apple regional caveat pattern should be considered for pear, quince, and later all species.
+- Shared beginner wording still needs cleanup for terms such as `fenofaza`, `dormancy`, bud stage, bloom stage, `stručni/lokalni savjet`, `threshold`, and `pressure`.
+- Shared fertilization entry should name a beginner-readable product/material category.
+- Shared winter copper should receive clearer plant-state wording and consistent label/regulation wording.
+- Pear monitoring may need to split into pear psylla scouting and moth/codling trap monitoring, but only as an S5 design decision.
+- Quince codling/moth trap handling requires S3 source check before adding trap guidance.
+- Cumulative early-season copper wording should be considered in S4/S5, especially where shared winter copper, post-pruning copper, and pear/quince pre-bloom copper can stack.
+- Pear/quince bird-net and product/material specificity should be considered for S4/S5 consistency.
+- Bosc / Bosc's Bottle display wording is a minor naming polish item for S5.
+
+Do not fix these now.
+
+Disposition:
+
+- Queue pome wording, monitoring-shape, and mapping items for S4/S5 targeted resolution.
+- Proceed to S3.3 stone fruit batch 1.
+
+### S3.3 — Stone fruit audit batch 1
+
 Status: NEXT
 
 Scope:
 
-- pear
-- quince
+- sweet_cherry
+- sour_cherry
+- plum
 
-Apple is already covered by S3.1 and should be used as the reference pattern, not re-audited unless a specific cross-check is needed.
+Goal:
+
+Audit cherry-fly monitoring, bird protection, plum-moth monitoring, optional treatment wording, harvest cues, beginner clarity, product/material category clarity, and no-auto-spray behavior.
+
+Do not audit peach, nectarine, apricot, or almond in S3.3; they belong to S3.4.
 
 Expected S3 output:
 
