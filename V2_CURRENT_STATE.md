@@ -24,9 +24,9 @@ Finish documentation control so the project stops looping and can enter structur
 
 Current immediate next step:
 
-S3.0B — Plan Template Readiness Audit.
+S3.1 — Apple-only S3 audit dry-run.
 
-Do not start S3 apple-only dry-run until the owner confirms whether the plan templates are ready enough for S3.
+S3.0B is complete; proceed to the apple-only dry-run.
 
 ---
 
@@ -147,6 +147,27 @@ Status:
 ### S3.0B — Plan Template Readiness Audit
 
 Type: read-only audit.
+
+Status: DONE — read-only analysis completed.
+
+Verdict:
+
+- `V2_ORCHARD_PLAN_TEMPLATES.md` is structurally ready for S3.
+- All 18 supported plant types / subtypes have template coverage.
+- No major blocker was found.
+- Proceed to `S3.1 — Apple-only S3 audit dry-run`.
+- Do not run a broad S3.0C rewrite before S3.1.
+
+Known non-blocking findings to preserve for S3/S4/S5:
+
+- Regional caveat wording is strongest in apple and should be evaluated for consistent use elsewhere.
+- Beginner explanations should be checked for terms such as dormancy, fenofaza, bud swell, threshold, pressure, wet spring, expert/local advice, and product-label wording.
+- “Stručni savjet” / “lokalni pragovi” should become more beginner-actionable where used.
+- Walnut and hazelnut lack explicit fertilization/irrigation entries; S3 should verify whether this is acceptable or needs targeted guidance, especially for young plants.
+- Pomegranate spring/summer guidance is light and should be source-checked.
+- Almond is somewhat lighter than peach/nectarine and should be source-checked.
+- No automatic spray calendar was found.
+- Product/material categories are generally present and no hardcoded product-brand recommendation pattern was found.
 
 Goal:
 
