@@ -148,6 +148,19 @@ A hobby grower who does not yet understand orchard timing still needs to know ro
 
 Calendar windows help the user plan ahead: buy materials, prepare tools, schedule work, understand the season, and avoid being surprised by orchard tasks.
 
+A calendar window such as `15.1.–31.1.` is not a blind instruction to act on those dates. It is an approximate planning period that tells the user when a seasonal action is likely to become relevant.
+
+When the user opens that action, the app must explain the practical agronomic meaning in beginner language:
+
+- what the action is for
+- what problem it prevents or reduces
+- what plant state or real-world cue to check
+- what weather or safety conditions matter
+- what product/material category is needed where relevant
+- when to skip, delay, or avoid the action
+
+Example: a late-winter oil window should not only say “apply in dormancy.” It should explain that the action is done while the tree is still without leaves or open flowers, before buds open, in dry calm weather, to reduce overwintering pest eggs and forms on bark and branches, using white/mineral/paraffin oil registered for fruit trees.
+
 Therefore:
 
 - Calendar windows are the primary user-facing planning surface.
