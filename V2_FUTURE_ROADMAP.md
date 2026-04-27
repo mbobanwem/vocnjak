@@ -86,6 +86,22 @@ Nothing from this document may enter V2 core unless:
 - user-adjustable timing shifts
 - localized catalog variants
 
+Deferred architecture decision — regional / climate timing:
+
+- Regional and climate-based timing was considered during the pre-S3 catalog/template stabilization work.
+- Decision for current V2: do **not** introduce `climateProfile`, `regionProfile`, `baseClimate`, `offsetDays`, or numeric regional calendar shifts.
+- Reason: V2 is phenology-first. Calendar windows are baseline reminders, not universal truth. Observed plant state and user-recorded observations should remain the primary timing authority where available.
+- Numeric regional offsets such as “Dalmatia = 0 days, Istria = +X days, Zagreb = +Y days” are intentionally deferred because they risk unsourced false precision.
+- Mediterranean species, citrus, fig, and pomegranate should continue to use wide seasonal windows, species/subtype `seasonProfile`, and observation-oriented notes until a dedicated future session audits regional timing.
+- Future regional adaptation, if opened, should evaluate:
+  - climate zone profiles
+  - region-based timing offsets
+  - user-adjustable timing shifts
+  - localized catalog variants
+  - container / protected overwintering context
+  - phenology / observation gates before numeric offsets
+- Any future promotion into V2 core requires a dedicated session, source-backed audit, explicit owner approval, and rewrite into the correct active V2 document.
+
 ---
 
 ### 4.6 Catalog evolution
