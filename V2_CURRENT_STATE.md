@@ -24,9 +24,9 @@ Finish documentation control so the project stops looping and can enter structur
 
 Current immediate next step:
 
-S3.5 — Mediterranean audit: olive, fig, pomegranate.
+S3.6 — Citrus audit: lemon, orange, mandarin.
 
-S3.0B, S3.1, S3.2, S3.3, and S3.4 are complete; proceed to Mediterranean audit.
+S3.0B, S3.1, S3.2, S3.3, S3.4, and S3.5 are complete; proceed to citrus audit.
 
 ---
 
@@ -292,7 +292,7 @@ S3 starts small:
 - S3.3 — Stone fruit audit batch 1: sweet_cherry, sour_cherry, plum
 - S3.4 — Stone fruit audit batch 2: peach, nectarine, apricot, almond
 - S3.5 — Mediterranean audit: olive, fig, pomegranate
-- S3.6 — Citrus subtype audit: lemon, orange, mandarin
+- S3.6 — Citrus audit: lemon, orange, mandarin
 - S3.7 — Nut audit: walnut, hazelnut
 - S3.8 — S3 findings consolidation
 
@@ -491,38 +491,70 @@ Disposition:
 
 ### S3.5 — Mediterranean audit
 
-Status: NEXT
+Status: DONE — Mediterranean findings appended.
 
-Scope:
+Commit:
+
+- `1cbeff2 Append S3 Mediterranean findings`
+
+Output:
+
+- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+
+Scope completed:
 
 - olive
 - fig
 - pomegranate
 
+Verdict:
+
+- Mediterranean species are ready for S3 scale-up as-is.
+- Olive, fig, and pomegranate findings scale the established S3 format without modification.
+- Olive correctly preserves user-facing-only variety handling: olive varieties are selectable/displayable but do not drive timing.
+- Fig correctly preserves early-crop / main-crop harvest split.
+- Pomegranate is lighter than olive/fig, but acceptable for current S3 because it is explicitly marginal in continental EU climate and self-flagged for source audit.
+- No targeted Mediterranean wording fix is required before S3.6.
+- After S3.5, 13 of 18 supported species/subtypes are audited.
+
+Known Mediterranean follow-up items preserved for S4/S5:
+
+- Do not add olive variety timing, harvestWindow, or bloomWindow.
+- Do not apply the pome/stone shared spray program to olive, fig, or pomegranate.
+- Olive §6 monitoring → conditional treatment is the reference pattern for no-auto-spray monitoring/spray pairs.
+- Olive organic/barrier/repellent wording is the reference pattern for registered-method flexibility.
+- Fig milky-sap warning is a useful handler-safety pattern.
+- Pomegranate fruit-cracking watch should map as observation/advisory, not pest/disease monitoring_program.
+- Mediterranean species need a Mediterranean-specific regional caveat, not a direct copy of the apple caveat.
+- Fig two-window harvest pattern needs S5 design confirmation.
+- Long irrigation/care windows remain an S5 mapping/design item.
+- Multi-target scouting program shape remains an S5 design item.
+- Non-pest `praćenje` entries should likely map to observation action windows.
+- Pomegranate spring/summer thinness is accepted for current scope unless owner opens a deeper Mediterranean-market expansion.
+- Beginner glossary should include Mediterranean terms such as `vaza`, `pinciranje`, `izdanci`, `polifenoli`, local thresholds, and local registration.
+
+Do not fix these now.
+
+Disposition:
+
+- Queue Mediterranean wording, source-check, monitoring-shape, observation/advisory mapping, regional caveat, and glossary items for S4/S5 targeted resolution.
+- Proceed to S3.6 citrus audit.
+
+### S3.6 — Citrus audit
+
+Status: NEXT
+
+Scope:
+
+- lemon
+- orange
+- mandarin
+
 Goal:
 
-Audit non-shared-block Mediterranean species, olive user-facing-only variety handling, olive monitoring, fig continental/Mediterranean suitability, fig harvest/winter protection, pomegranate marginal-continental suitability, fruit cracking, harvest cues, beginner clarity, product/material category clarity, monitoring vs treatment, no-auto-spray behavior, and source-check items.
+Audit subtype-driven citrus templates, citrus seasonProfile handling, pruning, fertilization, irrigation, pest monitoring, optional spray wording, harvest windows, winter protection, container/protected-location assumptions if present, beginner clarity, product/material category clarity, monitoring vs treatment, no-auto-spray behavior, and source-check items.
 
-Do not audit citrus, walnut, or hazelnut in S3.5.
-
-Expected S3 output:
-
-- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
-- findings by species/template entry
-- beginner-clarity gaps
-- source-validation gaps
-- unsafe/ambiguous wording
-- owner decision queue
-- deferred regional/climate findings
-- candidate mapping notes for S4/S5
-
-S3 is not:
-
-- final schema
-- implementation
-- runtime behavior
-- automatic recommendation logic
-- final catalog mutation unless owner explicitly opens a targeted edit pass
+Do not audit walnut or hazelnut in S3.6.
 
 ### S4 — Owner decision resolution and source-backed audit closure
 
