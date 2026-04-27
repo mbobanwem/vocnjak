@@ -24,9 +24,9 @@ Finish documentation control so the project stops looping and can enter structur
 
 Current immediate next step:
 
-S3.4 — Stone fruit audit batch 2: peach, nectarine, apricot, almond.
+S3.5 — Mediterranean audit: olive, fig, pomegranate.
 
-S3.0B, S3.1, S3.2, and S3.3 are complete; proceed to stone fruit audit batch 2.
+S3.0B, S3.1, S3.2, S3.3, and S3.4 are complete; proceed to Mediterranean audit.
 
 ---
 
@@ -425,7 +425,15 @@ Disposition:
 
 ### S3.4 — Stone fruit audit batch 2
 
-Status: NEXT
+Status: DONE — stone fruit batch 2 findings appended.
+
+Commit:
+
+- `b8387b0 Append S3 stone fruit batch 2 findings`
+
+Output:
+
+- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
 
 Scope:
 
@@ -434,11 +442,68 @@ Scope:
 - apricot
 - almond
 
+Scope completed:
+
+- peach
+- nectarine
+- apricot
+- almond
+
+Verdict:
+
+- Stone fruit batch 2 is ready for S3 scale-up as-is.
+- Peach, nectarine, apricot, and almond findings scale the established S3 format without modification.
+- No targeted stone batch 2 wording fix is required before S3.5.
+- Stone batch 2 findings should be resolved later through S4/S5 owner decisions, source checks, and targeted fixes.
+- After S3.4, all 10 standard fruit trees that use the shared standard fruit tree block are audited:
+  - apple
+  - pear
+  - quince
+  - sweet_cherry
+  - sour_cherry
+  - plum
+  - peach
+  - nectarine
+  - apricot
+  - almond
+
+Known stone batch 2 follow-up items preserved for S4/S5:
+
+- Peach and nectarine leaf-curl entries are strong and should remain pre-bud / pre-bloom, not bloom or post-bloom treatment.
+- Peach/nectarine monitoring entries combine aphids and oriental fruit moth; split vs combined shape is an S5 design decision.
+- Apricot frost monitoring is a strong reference pattern for information/advisory actions and should not become unsupported frost-protection automation.
+- Apricot šarka / Plum pox wording is a strong reference pattern for viral disease handling and must preserve the no-curative-treatment stance.
+- Almond is the lightest species in this batch and needs source-backed S5 polish, especially disease/pest monitoring and post-bloom target naming.
+- Almond monitoring must not be finalized as a `monitoring_program` without source-validating named targets.
+- Almond cumulative-copper wording is the strongest anti-duplication copper wording in the file and should be considered for promotion to shared Spray Safety Notes.
+- Apricot/almond frost monitoring should likely map as observation/advisory action-window candidates, not pest/disease `monitoring_program` records.
+- Mađarska najbolja / Magyar kajszi is missing from apricot template examples and should be considered for S5 display polish.
+- Suncrest, Texas, Tuono, Nonpareil, and Harcot are not current catalog/template varieties and must not be added without the variety workflow and owner approval.
+- Regional caveat remains missing across stone batch 2 and should be handled as cross-species S5 wording polish.
+- Mediterranean-vs-continental qualitative frost-risk caveat may be needed for apricot/almond, without numeric offsets.
+
+Do not fix these now.
+
+Disposition:
+
+- Queue stone batch 2 wording, source-check, monitoring-shape, glossary, regional caveat, and mapping items for S4/S5 targeted resolution.
+- Proceed to S3.5 Mediterranean audit.
+
+### S3.5 — Mediterranean audit
+
+Status: NEXT
+
+Scope:
+
+- olive
+- fig
+- pomegranate
+
 Goal:
 
-Audit leaf-curl copper timing, pre-bloom copper, frost monitoring, post-bloom protection, fruit thinning, harvest cues, beginner clarity, product/material category clarity, monitoring vs treatment, no-auto-spray behavior, and source-check items for high-risk bloom/frost/leaf-curl wording.
+Audit non-shared-block Mediterranean species, olive user-facing-only variety handling, olive monitoring, fig continental/Mediterranean suitability, fig harvest/winter protection, pomegranate marginal-continental suitability, fruit cracking, harvest cues, beginner clarity, product/material category clarity, monitoring vs treatment, no-auto-spray behavior, and source-check items.
 
-Do not audit olive, fig, pomegranate, citrus, walnut, or hazelnut in S3.4.
+Do not audit citrus, walnut, or hazelnut in S3.5.
 
 Expected S3 output:
 
