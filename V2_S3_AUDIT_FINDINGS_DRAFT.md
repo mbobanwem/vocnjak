@@ -1511,3 +1511,393 @@ Reasoning:
 - Do not discuss citrus structural changes in S3.5 output.
 - Do not modify `V2_PLANT_CATALOG.md` to add olive/fig/pomegranate species harvest windows without owner decision.
 - Do not implement runtime code, gates, weather logic, or recommendation logic.
+
+---
+
+# S3.6 Citrus Audit — Lemon + Orange + Mandarin
+
+## 1. Executive verdict
+
+Lemon, orange, and mandarin are ready for S3 scale-up as-is, but they contain the largest concentration of S5 wording-polish gaps found so far.
+
+The three citrus subtypes are structurally sound:
+
+- all three have a parallel seven-entry structure
+- citrus remains subtype-based
+- templates preserve `citrus → lemon / orange / mandarin`
+- lemon correctly uses `multi_cycle`
+- orange correctly uses `winter`
+- mandarin correctly uses `autumn`
+- no citrus varieties are introduced
+- no variety-specific citrus timing is introduced
+- the pome/stone shared spray block is not applied to citrus
+- optional spray entries remain conditional
+- monitoring remains evidence only
+
+No blocker was found.
+
+Recommendation:
+
+- Append S3.6 findings to `V2_S3_AUDIT_FINDINGS_DRAFT.md`.
+- Do not run a targeted citrus fix before S3.7.
+- Proceed to S3.7 nut audit: walnut + hazelnut.
+- Queue citrus wording, protected-location clarity, container reality, and selected source checks for S4/S5.
+
+After S3.6, 16 of 18 supported species/subtypes are audited.
+
+---
+
+## 2. Citrus coverage summary
+
+| Area | Lemon status | Orange status | Mandarin status | Notes |
+|---|---|---|---|---|
+| Subtype-specific yearly work | OK | OK | OK | All three have the same seven-entry structure: pruning, fertilizing, watering, pest monitoring, optional spray, harvest, winter prep. |
+| Harvest / subtype linkage | Excellent | OK | OK | Lemon continuous harvest matches `multi_cycle`; orange winter harvest matches `winter`; mandarin autumn harvest matches `autumn`. |
+| Pest monitoring | OK | OK | OK | All three preserve visual monitoring and conditional response. Lemon has the best container/protected-cultivation pest wording. |
+| Optional treatment safety | OK | OK | OK | Optional spray entries remain conditional and do not create an automatic spray calendar. |
+| Winter / protected-location handling | Minor gap | Minor gap | Minor gap | All three mention moving indoors/protected location, but “protected location” is not beginner-decoded. |
+| Fertilization / watering | Minor gap | Minor gap | Minor gap | Lemon has the strongest fertilization and watering wording; orange/mandarin should inherit some lemon wording in S5. |
+| Beginner clarity | Minor gap | Minor gap | Minor gap | Main gaps: `zaštićeni prostor`, `fenofaza`, container overwintering, winter watering, and spring return outside. |
+| Regional caveat | Missing | Missing | Missing | Citrus needs a stronger Mediterranean-vs-continental caveat than standard pome/stone species. |
+| Product/material category clarity | OK | Minor gap | Minor gap | Lemon names citrus micronutrients and low-lime water; orange/mandarin are lighter. |
+
+---
+
+## 3. Citrus subtype model findings
+
+The citrus subtype model is internally consistent.
+
+Current catalog structure remains:
+
+```text
+citrus
+  lemon
+  orange
+  mandarin
+```
+
+Per catalog direction, citrus does not currently use variety selection. This is preserved.
+
+S3.6 confirms:
+
+- no citrus varieties are named in templates
+- no lemon varieties are added
+- no orange varieties are added
+- no mandarin varieties are added
+- no variety-specific citrus timing is created
+- subtype `seasonProfile` is the timing driver
+- lemon = `multi_cycle`
+- orange = `winter`
+- mandarin = `autumn`
+
+Current model is sufficient for S3.
+
+Future citrus variety modeling is a separate owner decision and must not be opened in S3.6.
+
+Deferred variety examples must remain deferred:
+
+- lemon: Eureka, Lisbon, Meyer / Improved Meyer
+- orange: Washington Navel, Valencia, Tarocco, Moro, Sanguinello
+- mandarin: Satsuma, Clementine, Nadorcott, Tangor
+
+If citrus varieties are ever opened, they require the `V2_VARIETY_COVERAGE_POLICY.md` workflow and owner approval.
+
+---
+
+## 4. Lemon findings
+
+Lemon is the strongest citrus subtype.
+
+Key strengths:
+
+- `multi_cycle` is correctly reflected in wide fertilization, watering, and harvest windows
+- harvest is continuous and based on fruit maturity
+- fertilization entry names citrus micronutrients
+- yellow leaves are linked to possible iron/nitrogen deficiency
+- watering entry explicitly mentions container growing
+- watering entry mentions low-lime water
+- pest monitoring acknowledges protected/indoor cultivation
+- optional spray remains conditional
+- winter prep includes cold thresholds
+
+Key S4/S5 follow-up items:
+
+- define what `zaštićeni prostor` means for beginners
+- add winter watering guidance for lemon
+- clarify protected-location light and ventilation needs
+- add return-to-outdoor / spring acclimatization guidance only after source check
+- keep continuous harvest as subtype-level, not variety-level
+- do not create variety timing
+
+Reference patterns from lemon:
+
+- Lemon fertilization is the gold-standard citrus micronutrient pattern.
+- Lemon watering is the gold-standard container-aware watering pattern.
+- Lemon pest monitoring is the best citrus protected-cultivation pest wording.
+
+Disposition:
+
+- Lemon is ready for S3 scale-up as-is.
+- Queue wording polish for S5.
+
+---
+
+## 5. Orange findings
+
+Orange is structurally correct but lighter than lemon.
+
+Key strengths:
+
+- `winter` season profile is correctly reflected in the harvest window
+- winter harvest timing is useful for planning
+- winter harvest entry acknowledges continental container growing
+- pest monitoring keeps treatment conditional
+- winter prep includes protected-space requirement
+- no variety timing is introduced
+
+Key gaps:
+
+- orange winter prep gives protected-space target (`min. 5°C`) but does not state a source-backed damage threshold
+- orange fertilization lacks lemon’s yellow-leaf / iron cue
+- orange fertilization does not list specific micronutrients
+- orange watering lacks lemon’s container and low-lime-water guidance
+- orange harvest cue is lighter than lemon/mandarin
+- protected-location wording needs beginner explanation
+
+S3 source-check item:
+
+- Verify orange cold-tolerance / damage-threshold wording before adding any numeric threshold.
+
+Disposition:
+
+- Orange is ready for S3 scale-up as-is.
+- Queue cold-threshold source check and S5 wording polish.
+- Do not add an orange threshold from general knowledge.
+
+---
+
+## 6. Mandarin findings
+
+Mandarin is structurally correct and has the best cold-tolerance wording among citrus.
+
+Key strengths:
+
+- `autumn` season profile is correctly reflected in the harvest window
+- harvest window and harvest cue are useful for planning
+- mandarin has the strongest hedged cold-tolerance wording
+- it is correctly presented as the most cold-tolerant of the three citrus subtypes
+- winter prep explicitly mentions container growing
+- optional spray remains conditional
+- no variety timing is introduced
+
+Key gaps:
+
+- mandarin fertilization is lighter than lemon
+- mandarin watering lacks container and low-lime-water details
+- mandarin pest monitoring is lighter than lemon
+- `mikrolokacija`, `podloga`, and similar terms may need beginner glossary support
+- protected-location wording needs beginner explanation
+
+Reference pattern from mandarin:
+
+- Mandarin §7 is the best citrus cold-tolerance wording pattern because it is hedged and multi-factor:
+  - cultivar/subtype
+  - rootstock
+  - plant age
+  - soil moisture
+  - microclimate
+
+Disposition:
+
+- Mandarin is ready for S3 scale-up as-is.
+- Queue wording polish for S5.
+
+---
+
+## 7. Candidate mapping notes
+
+Audit notes only. These are not final V2 records.
+
+| Source entry | Possible V2 concept | Confidence | Why | Do not finalize because |
+|---|---|---|---|---|
+| Citrus pruning entries | action-window candidate, pruning | High | Bounded calendar windows and subtype-specific pruning notes. | Final records belong to S5. |
+| Citrus fertilization entries | action-window candidate, fertilizing | Medium | Lemon has recurring 4–6 week cadence; orange/mandarin are lighter. | Recurrence wording is advisory; final mapping belongs to S5. |
+| Citrus watering entries | long seasonal care/action window | Owner decision | Multi-month watering behavior behaves more like seasonal care than a single discrete task. | Same long-window design question as prior irrigation entries. |
+| Citrus pest monitoring entries | scouting monitoring-program candidate | Medium | Visual inspection and named pest categories exist. | Multi-target scouting shape remains S5 design item. |
+| Citrus optional spray entries | conditional action/advisory note | High | `Po potrebi` and monitoring/visible-problem conditions are explicit. | Scouting observations must not become formal gates. |
+| Citrus harvest entries | subtype-level harvest action | High | Harvest timing follows subtype `seasonProfile`. | Do not introduce variety timing. |
+| Lemon continuous harvest | full-year subtype harvest action | Owner decision | `1.1–12.31` is structurally unusual but matches `multi_cycle`. | Accept as full-year action window unless S5 owner decision says otherwise. |
+| Citrus winter prep entries | observation/action-window candidate | High | Bounded winter-prep windows exist. | Return-to-outdoor guidance is missing and needs source check before addition. |
+
+---
+
+## 8. Beginner-clarity findings
+
+| ID | Finding | Where | Disposition |
+|---|---|---|---|
+| BC-Cit1 | `Zaštićeni prostor` / `premjestiti unutra` is not decoded. Beginner does not know whether this means garage, greenhouse, bright room, unheated room, etc. | Lemon/orange/mandarin winter prep. | Queue for S4/S5. |
+| BC-Cit2 | Winter protected-location guidance lacks light, ventilation, watering reduction, and pest re-check details. | Citrus winter prep. | Queue for S4/S5. |
+| BC-Cit3 | No return-to-outdoor / spring acclimatization guidance. | Citrus winter prep. | S3 source check, then S5 if approved. |
+| BC-Cit4 | No frost-damage symptom / recovery guidance. | Citrus winter prep. | S3 source check / owner decision. |
+| BC-Cit5 | `Fenofaza` appears in optional spray wording without beginner decoding. | Citrus optional spray entries. | Queue for S4/S5 glossary. |
+| BC-Cit6 | `Stručni savjet`, `lokalni propisi`, and similar safety phrases still need a beginner resource decoder. | Citrus monitoring/spray entries. | Queue for S4/S5. |
+| BC-Cit7 | Lemon’s yellow-leaf / iron-deficiency cue is not repeated for orange/mandarin. | Orange/mandarin fertilization. | Queue for S5. |
+| BC-Cit8 | Lemon’s low-lime-water note is not repeated for orange/mandarin. | Orange/mandarin watering. | Queue for S5. |
+| BC-Cit9 | Orange lacks a source-backed damage-threshold sentence. | Orange winter prep. | S3 source check before adding. |
+| BC-Cit10 | Terms such as `mikrolokacija`, `podloga`, `multi_cycle`, `kontinuirani rod`, `mikroelementi`, and `kloroza` need glossary support. | Citrus and cross-file glossary. | Queue for S5. |
+
+No beginner-clarity issue blocks S3.7.
+
+---
+
+## 9. Safety / no-auto-spray findings
+
+Citrus preserves the no-auto-spray stance.
+
+Confirmed:
+
+- no automatic spray calendar
+- monitoring does not equal treatment
+- optional spray remains conditional
+- visible pest pressure is evidence only
+- label/local-regulation wording is present
+- citrus does not inherit pome/stone shared spray program
+- citrus uses subtype timing, not variety timing
+- no runtime gate is created
+- no pesticide recommendation engine is introduced
+
+Important preservation rule:
+
+- Do not turn citrus scouting observations into formal `open_condition` gates.
+- Keep optional spray logic in notes/advisory wording until S5 explicitly decides otherwise.
+
+---
+
+## 10. Regional / climate findings
+
+Citrus is the most regionally divergent group audited so far.
+
+The same citrus subtype behaves very differently across:
+
+- coastal Croatia / Adriatic
+- Italy / southern France / Mediterranean regions
+- Zagreb / continental Croatia
+- Austria / Germany / alpine/continental regions
+
+Current templates partially handle this, but the caveats are scattered.
+
+S5 should add a citrus-specific regional caveat to the citrus agronomic-context section.
+
+Recommended future wording for owner/S5 consideration:
+
+```md
+Kalendarski prozori su baseline za hobi uzgoj. Citrus je u mediteranskim/jadranskim podnebljima moguće uzgajati u tlu na zaštićenoj mikrolokaciji; u kontinentalnim i alpskim podnebljima realan je uglavnom lončani uzgoj sa zaštićenim zimskim smještajem. Toplije lokacije imaju dulju vegetacijsku sezonu, mogući veći urod i manju potrebu za zimskom zaštitom. Hladnije lokacije skraćuju vegetaciju, povećavaju važnost zaštite od mraza i ograničavaju izbor podtipa; mandarina je među ova tri podtipa najotpornija. Stanje biljke i lokalna mikrolokacija imaju prednost pred datumom.
+```
+
+Do not apply this now.
+
+Do not add numeric regional offsets.
+
+Do not introduce:
+
+- `climateProfile`
+- `regionProfile`
+- `baseClimate`
+- `offsetDays`
+- hidden regional shifts
+- regional formulas
+
+---
+
+## 11. Catalog consistency check
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Top-level entity | `citrus` | Citrus Block 6 special template | Yes |
+| Subtypes | `lemon`, `orange`, `mandarin` | Lemon, orange, mandarin blocks | Yes |
+| Lemon seasonProfile | `multi_cycle` | Continuous harvest, extended fertilization/watering | Yes |
+| Orange seasonProfile | `winter` | Winter harvest | Yes |
+| Mandarin seasonProfile | `autumn` | Autumn harvest | Yes |
+| Citrus varieties | none | none | Correct |
+| Variety timing | none | none | Correct |
+| Shared spray block | not applicable | not applied | Correct |
+| S3 audit item | decide subtype model vs top-level species | still owner decision | Correct |
+
+No catalog/template inconsistency blocks S3.7.
+
+---
+
+## 12. Owner decision items
+
+| Decision | Why owner decision is needed | Options | Recommended default |
+|---|---|---|---|
+| Citrus identity model | Catalog currently models citrus as one entry with subtypes; future may promote subtypes to top-level species. | A) Keep subtype model. B) Promote lemon/orange/mandarin to top-level species. C) Defer. | A for current V2. |
+| Citrus variety model | Citrus varieties could be useful in future paid markets, but current catalog explicitly defers them. | A) Defer. B) Open variety workflow. C) Add Form B only. | A. |
+| Citrus regional caveat | Citrus needs stronger container-vs-ground and Mediterranean-vs-continental wording. | A) Add citrus-specific caveat in S5. B) Use generic apple caveat. C) Defer. | A. |
+| Lemon full-year harvest window | `1.1–12.31` is unusual but matches multi-cycle lemon behavior. | A) Accept as full-year action window. B) Create special always-available semantic. C) Defer. | A. |
+| Return-to-outdoor guidance | Winter prep exists, spring return does not. | A) Add single advisory note after source check. B) Add per-subtype entries. C) Defer. | A. |
+| Orange cold-tolerance threshold | Orange lacks a source-backed damage threshold. | A) Source-check before adding. B) Leave as protected-space target only. C) Add unsourced estimate. | A. |
+| Multi-target citrus scouting shape | Citrus adds more multi-target scouting examples. | A) Single program with multi-target list. B) Split per target. C) Defer. | A, confirm in S5. |
+
+No owner decision blocks S3.7.
+
+---
+
+## 13. Better-than-current opportunities
+
+| Opportunity | Why better | Risk | Recommendation |
+|---|---|---|---|
+| Promote lemon fertilization wording to orange/mandarin. | Adds visual yellow-leaf cue and specific micronutrients. | Low. | Queue for S5. |
+| Promote lemon watering wording to orange/mandarin. | Adds container-aware watering and low-lime-water guidance. | Low. | Queue for S5. |
+| Promote mandarin cold-tolerance hedge as pattern. | Best multi-factor cold-tolerance wording in file. | Low. | Queue for S5. |
+| Promote orange continental-container sentence as regional pattern. | Names the real difference between coastal and continental citrus. | Low. | Queue for S5. |
+| Add protected-location decoder. | Largest beginner clarity gap in citrus. | Low. | Queue for S5. |
+| Add return-to-outdoor guidance after source check. | Continental container users need it. | Medium if unsourced. | Source-check first. |
+| Add orange cold-threshold wording after source check. | Brings orange in line with lemon/mandarin. | Medium if unsourced. | Source-check first. |
+| Add citrus terms to glossary. | Solves repeated beginner vocabulary gaps. | Low. | Queue for S5. |
+
+---
+
+## 14. Recommended next step
+
+Append S3.6 findings to `V2_S3_AUDIT_FINDINGS_DRAFT.md`, then proceed to S3.7 nut audit:
+
+- walnut
+- hazelnut
+
+Do not run a citrus fix before S3.7.
+
+Reasoning:
+
+- no citrus blocker was found
+- subtype model is internally consistent
+- seasonProfile mapping works
+- no varieties are introduced
+- optional spray wording is safe
+- most findings are S5 wording-polish or source-check items
+
+After S3.7 is appended, all 18 supported species/subtypes will be audited and S3 can move to consolidation.
+
+---
+
+## 15. What NOT to do next
+
+- Do not rewrite all templates broadly.
+- Do not rewrite lemon, orange, or mandarin blocks now.
+- Do not restructure citrus.
+- Do not promote lemon/orange/mandarin to top-level species without owner decision.
+- Do not add citrus varieties.
+- Do not add lemon varieties.
+- Do not add orange varieties.
+- Do not add mandarin varieties.
+- Do not add variety-specific citrus timing.
+- Do not add `harvestWindow` or `bloomWindow` to citrus varieties.
+- Do not add `climateProfile`, `regionProfile`, `baseClimate`, `offsetDays`, or numeric regional formulas.
+- Do not add hardcoded commercial product brands.
+- Do not apply pome/stone shared spray program to citrus.
+- Do not turn scouting observations into formal gates.
+- Do not add orange cold-tolerance thresholds without source check.
+- Do not invent return-to-outdoor or spring acclimatization timing without source backing.
+- Do not implement runtime code.
+- Do not finalize domain records.
+- Do not start S4 before S3.7 is appended and tracker is updated.
