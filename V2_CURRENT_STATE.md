@@ -24,9 +24,9 @@ Finish documentation control so the project stops looping and can enter structur
 
 Current immediate next step:
 
-S3.7 — Nut audit: walnut, hazelnut.
+S3.8 — S3 findings consolidation.
 
-S3.0B, S3.1, S3.2, S3.3, S3.4, S3.5, and S3.6 are complete; proceed to nut audit.
+S3.0B, S3.1, S3.2, S3.3, S3.4, S3.5, S3.6, and S3.7 are complete; proceed to S3 consolidation.
 
 ---
 
@@ -295,6 +295,30 @@ S3 starts small:
 - S3.6 — Citrus audit: lemon, orange, mandarin
 - S3.7 — Nut audit: walnut, hazelnut
 - S3.8 — S3 findings consolidation
+
+S3 species/subtype audit status:
+
+DONE — all 18 supported species/subtypes have been audited.
+
+Completed S3 audit batches:
+
+- S3.1 — apple
+- S3.2 — pear, quince
+- S3.3 — sweet_cherry, sour_cherry, plum
+- S3.4 — peach, nectarine, apricot, almond
+- S3.5 — olive, fig, pomegranate
+- S3.6 — lemon, orange, mandarin
+- S3.7 — walnut, hazelnut
+
+Audit findings output:
+
+- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+
+Next required step:
+
+- S3.8 — S3 findings consolidation
+
+Do not start S4 before S3.8 consolidation is complete.
 
 ### S3.1 — Apple-only S3 audit dry-run
 
@@ -599,18 +623,87 @@ Disposition:
 
 ### S3.7 — Nut audit
 
-Status: NEXT
+Status: DONE — Nut findings appended.
 
-Scope:
+Commit:
+
+- `451cfa7 Append S3 nut findings`
+
+Output:
+
+- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+
+Scope completed:
 
 - walnut
 - hazelnut
 
+Verdict:
+
+- Walnut and hazelnut are ready for S3 scale-up as-is.
+- S3.7 findings scale the established S3 format without modification.
+- Nut handling remains species-specific.
+- Walnut and hazelnut varieties remain unchanged.
+- No new nut varieties were added or recommended for current S3.
+- No nut group rename was performed.
+- Pome/stone shared spray block remains excluded from walnut and hazelnut.
+- Optional treatment wording remains conditional.
+- Monitoring remains evidence only.
+- No targeted nut wording fix is required before S3.8.
+- After S3.7, all 18 supported species/subtypes are audited.
+
+Known nut follow-up items preserved for S4/S5:
+
+- Do not add walnut or hazelnut varieties in current S3.
+- Do not rename the `nut` group without owner decision.
+- Do not add scheduled fertilization or irrigation for established walnut or hazelnut.
+- Young-tree watering for walnut and hazelnut is a real practical gap and should be resolved as an S4/S5 owner decision.
+- Young-tree fertilization is more source-sensitive and needs source check or explicit owner decision before adding.
+- hazelnut pollination / cross-compatibility is a real productivity item and needs source check before adding guidance.
+- Hazelnut frost-during-bloom advisory may be useful but needs source-backed wording.
+- Walnut summer pruning timing is self-flagged and needs source validation before S5 finalization.
+- Natural-drop / gathering harvest semantics for walnut and hazelnut should remain notes/advisory unless owner decides otherwise.
+- Do not create `harvest_natural_drop` subtype now.
+- Walnut bleeding-aware pruning wording is a reference pattern.
+- Hazelnut bush-renewal pruning numbers are a reference pattern.
+- Hazelnut mechanical-first IPM wording is a reference pattern.
+- Walnut hobby-context skip-by-default copper wording is a reference pattern.
+- Walnut damage-vs-loss walnut-fly wording is a reference pattern.
+- Nut terms such as `resa`, `izbojnica`, `smanjenje inokuluma`, and `bakterijsko propadanje` should be included in the S5 glossary/clarity pass.
+
+Do not fix these now.
+
+Disposition:
+
+- Queue nut wording, source-check, young-tree watering, pollination, regional caveat, natural-drop harvest semantics, observation/advisory mapping, and glossary items for S4/S5 targeted resolution.
+- Proceed to S3.8 findings consolidation.
+
+### S3.8 — S3 findings consolidation
+
+Status: NEXT
+
 Goal:
 
-Audit walnut and hazelnut templates, nut-specific pruning, harvest and post-harvest handling, drying/storage guidance, walnut fly, hazelnut weevil, bud mite monitoring, optional treatment wording, fertilization and irrigation gaps, young-tree relevance, beginner clarity, product/material category clarity, monitoring vs treatment, no-auto-spray behavior, regional caveats, and source-check items.
+Consolidate the seven S3 audit batches from `V2_S3_AUDIT_FINDINGS_DRAFT.md` into a clear owner/action-ready structure.
 
-Do not start S3 consolidation before S3.7 findings are appended and tracker is updated.
+Scope:
+
+- consolidate cross-cutting findings
+- consolidate beginner-clarity findings
+- consolidate regional/climate caveat findings
+- consolidate source-check queue
+- consolidate owner decision queue
+- consolidate S5 documentation-fix candidates
+- consolidate candidate mapping notes for later S5/S6 design
+- identify gold-standard/reference wording patterns
+- identify items that must explicitly remain deferred
+- confirm no S3 species/subtype audit gaps remain
+
+Expected output:
+
+- updated `V2_S3_AUDIT_FINDINGS_DRAFT.md` or a new owner-approved consolidation document, depending on owner decision in the S3.8 prompt
+
+Do not start S4 owner decision resolution before S3.8 is complete.
 
 ### S4 — Owner decision resolution and source-backed audit closure
 
