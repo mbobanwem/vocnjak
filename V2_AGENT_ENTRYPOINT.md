@@ -12,9 +12,9 @@ Its purpose is to tell agents which documents to read for the current phase and 
 
 ---
 
-## Mandatory first read for V2/S3 catalog-domain work
+## Mandatory first read for V2 catalog-domain work
 
-For any V2 catalog, domain, catalog-audit, or S3 work, read in this order:
+For any V2 catalog, domain, catalog-audit, S4, or S5 work, read in this order:
 
 1. `CLAUDE.md`
 2. `V2_AGENT_ENTRYPOINT.md`
@@ -23,7 +23,7 @@ For any V2 catalog, domain, catalog-audit, or S3 work, read in this order:
 5. `V2_PRINCIPLES.md`
 6. `V2_DOMAIN_MODEL.md`
 7. `V2_CATALOG_AUDIT.md`
-8. `V2_S3_CATALOG_AUDIT_EXECUTION_PLAN.md`
+8. `V2_S3_AUDIT_CONSOLIDATION.md`
 9. `V2_PLANT_CATALOG.md`
 10. `V2_ORCHARD_PLAN_TEMPLATES.md`
 11. `V2_VARIETY_COVERAGE_POLICY.md`
@@ -31,17 +31,22 @@ For any V2 catalog, domain, catalog-audit, or S3 work, read in this order:
 
 If any listed document is missing, stop and report.
 
+Historical / supporting reading only:
+
+- `V2_S3_CATALOG_AUDIT_EXECUTION_PLAN.md` — original S3 execution plan; S3.1–S3.8 are complete. Not active current-state guidance.
+- `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md` — detailed per-species audit evidence. Read only when consolidation evidence must be inspected.
+
 ---
 
 ## Current phase
 
-Current phase: S3 catalog audit.
+Current phase: S4 owner decision resolution.
 
-Current next step: Apple-only dry-run.
+Current next step: Resolve S3 owner decisions from `V2_S3_AUDIT_CONSOLIDATION.md`.
 
 Allowed next output:
 
-- create `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+- S4 owner decision resolution output, using `V2_S3_AUDIT_CONSOLIDATION.md` as the active S3 input
 
 Do not edit during the next step:
 
@@ -106,17 +111,26 @@ S3 implication:
 
 ---
 
-## S3 operating boundary
+## Current S3 output and S4 boundary
 
-S3 is:
+Active S3 output:
 
-- source-backed audit
-- findings
-- ambiguity/defer queue
-- owner decision queue
-- candidate mapping notes
+- `V2_S3_AUDIT_CONSOLIDATION.md`
 
-S3 is not:
+Archived detailed evidence:
+
+- `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md`
+
+S3.1–S3.8 are complete.
+
+S4 is:
+
+- owner decision resolution
+- source-check disposition
+- approved/deferred/rejected fix selection
+- handoff preparation for targeted S5 documentation fixes
+
+S4 is not:
 
 - final schema authoring
 - runtime behavior
@@ -125,7 +139,7 @@ S3 is not:
 - UI localization
 - recommendation engine
 
-For details, read `V2_S3_CATALOG_AUDIT_EXECUTION_PLAN.md`.
+Use `V2_S3_AUDIT_CONSOLIDATION.md` as the active action-ready input. Read archived detail only when evidence behind a consolidation item must be inspected.
 
 ---
 

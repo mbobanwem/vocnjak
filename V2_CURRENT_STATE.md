@@ -24,9 +24,9 @@ Finish documentation control so the project stops looping and can enter structur
 
 Current immediate next step:
 
-S3.8 — S3 findings consolidation.
+S4 — Owner decision resolution and source-backed audit closure.
 
-S3.0B, S3.1, S3.2, S3.3, S3.4, S3.5, S3.6, and S3.7 are complete; proceed to S3 consolidation.
+S3.0B, S3.1, S3.2, S3.3, S3.4, S3.5, S3.6, S3.7, and S3.8 are complete; proceed to S4 owner decision resolution.
 
 ---
 
@@ -312,13 +312,17 @@ Completed S3 audit batches:
 
 Audit findings output:
 
-- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+- `V2_S3_AUDIT_CONSOLIDATION.md`
+
+Archived detailed evidence:
+
+- `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md`
 
 Next required step:
 
-- S3.8 — S3 findings consolidation
+- S4 — Owner decision resolution and source-backed audit closure
 
-Do not start S4 before S3.8 consolidation is complete.
+Do not start S5 before S4 owner decision resolution is complete.
 
 ### S3.1 — Apple-only S3 audit dry-run
 
@@ -330,7 +334,7 @@ Commit:
 
 Output:
 
-- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+- `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md`
 
 Verdict:
 
@@ -366,7 +370,7 @@ Commit:
 
 Output:
 
-- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+- `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md`
 
 Scope completed:
 
@@ -410,7 +414,7 @@ Commit:
 
 Output:
 
-- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+- `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md`
 
 Scope completed:
 
@@ -457,7 +461,7 @@ Commit:
 
 Output:
 
-- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+- `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md`
 
 Scope:
 
@@ -523,7 +527,7 @@ Commit:
 
 Output:
 
-- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+- `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md`
 
 Scope completed:
 
@@ -574,7 +578,7 @@ Commit:
 
 Output:
 
-- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+- `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md`
 
 Scope completed:
 
@@ -631,7 +635,7 @@ Commit:
 
 Output:
 
-- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+- `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md`
 
 Scope completed:
 
@@ -680,11 +684,25 @@ Disposition:
 
 ### S3.8 — S3 findings consolidation
 
-Status: NEXT
+Status: DONE — S3 audit findings consolidated.
+
+Output:
+
+- `V2_S3_AUDIT_CONSOLIDATION.md`
+
+Archived evidence:
+
+- `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md`
+
+Disposition:
+
+- S3.1–S3.7 detailed findings are preserved as archive evidence.
+- The active S3 output for S4/S5 is now `V2_S3_AUDIT_CONSOLIDATION.md`.
+- S4 owner decision resolution is the next required step.
 
 Goal:
 
-Consolidate the seven S3 audit batches from `V2_S3_AUDIT_FINDINGS_DRAFT.md` into a clear owner/action-ready structure.
+Consolidate the seven S3 audit batches into a clear owner/action-ready structure.
 
 Scope:
 
@@ -701,9 +719,9 @@ Scope:
 
 Expected output:
 
-- updated `V2_S3_AUDIT_FINDINGS_DRAFT.md` or a new owner-approved consolidation document, depending on owner decision in the S3.8 prompt
+- `V2_S3_AUDIT_CONSOLIDATION.md`
 
-Do not start S4 owner decision resolution before S3.8 is complete.
+S3.8 is complete. Proceed to S4 owner decision resolution.
 
 ### S4 — Owner decision resolution and source-backed audit closure
 

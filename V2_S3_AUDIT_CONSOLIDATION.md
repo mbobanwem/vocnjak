@@ -1,0 +1,341 @@
+# V2 S3 Audit Consolidation
+
+## 0. Status
+
+- Active S3 output.
+- Consolidates S3.1-S3.7 audit findings.
+- Action-ready input for S4 owner decisions and S5 targeted documentation fixes.
+- Not source of truth for runtime/schema.
+- Not an implementation spec.
+- Detailed per-species evidence is archived at `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md`.
+
+## 1. Scope
+
+Cover:
+
+- all 18 supported species/subtypes audited
+- input docs audited:
+  - `V2_PLANT_CATALOG.md`
+  - `V2_ORCHARD_PLAN_TEMPLATES.md`
+- no catalog/template/domain model changes were made during S3
+- no runtime changes were made
+- calendar-first, plant-state-aware stance preserved
+- no automatic spray calendar introduced
+
+## 2. Executive verdict
+
+S3.1-S3.7 species/subtype audit is complete.
+
+All 18 species/subtypes are usable for S4/S5 continuation. No blocker was found.
+
+Most remaining work is:
+
+- beginner clarity
+- regional caveat consistency
+- owner decisions
+- source-check items
+- S5 wording/documentation fixes
+
+No schema/runtime implementation should start before S4/S5 are complete.
+
+## 3. Coverage matrix — all 18 species/subtypes
+
+| Species/subtype | S3 batch | Status | Key open items |
+|---|---|---|---|
+| apple | S3.1 | Audited | Early fallback harvest mismatch; shared fertilizer category; glossary/label wording. |
+| pear | S3.2 | Audited | Monitoring split vs combined; cumulative copper wording; regional caveat. |
+| quince | S3.2 | Audited | Codling trap option source check; target disease names; regional caveat. |
+| sweet_cherry | S3.3 | Audited | Rain-cover/cracking source check; bird-net pattern propagation. |
+| sour_cherry | S3.3 | Audited | Monitoring install detail; bird-net material detail; regional caveat. |
+| plum | S3.3 | Audited | 2nd-generation plum moth timing/terminology source check. |
+| peach | S3.4 | Audited | Monitoring shape; post-bloom clarity; regional caveat. |
+| nectarine | S3.4 | Audited | Monitoring shape; post-bloom clarity; regional caveat. |
+| apricot | S3.4 | Audited | Pre-bloom copper source check; frost advisory mapping; variety display polish. |
+| almond | S3.4 | Audited | Monitoring targets; post-bloom disease names; cumulative copper pattern. |
+| olive | S3.5 | Audited | Mediterranean caveat; no variety timing; monitoring-to-treatment pattern. |
+| fig | S3.5 | Audited | Two-window harvest design; Mediterranean caveat; glossary terms. |
+| pomegranate | S3.5 | Audited | Light spring/summer guidance accepted; cracking observation mapping; source checks. |
+| lemon | S3.6 | Audited | Full-year harvest design; protected-location clarity; citrus caveat. |
+| orange | S3.6 | Audited | Cold-tolerance threshold source check; citrus caveat; wording polish. |
+| mandarin | S3.6 | Audited | Protected-location clarity; glossary terms; citrus caveat. |
+| walnut | S3.7 | Audited | Summer pruning timing source check; natural-drop harvest semantics; young-tree water. |
+| hazelnut | S3.7 | Audited | Pollination source check; young-tree water; natural-drop harvest semantics. |
+
+## 4. Cross-cutting findings
+
+- No-auto-spray stance held across all batches.
+- Monitoring remains evidence, not automatic treatment.
+- Pome/stone shared block is valid only for standard fruit trees.
+- Mediterranean/citrus/nut special blocks correctly exclude shared pome/stone block.
+- Beginner glossary debt exists across all groups.
+- Regional caveat wording is uneven.
+- Cumulative copper wording needs S5 clarity.
+- Long seasonal-care windows need S5 mapping/design decision.
+- Natural-drop harvest for walnut/hazelnut should stay notes/advisory unless owner decides otherwise.
+- No climate profile or numeric regional offset was introduced.
+
+## 5. Beginner glossary / clarity queue
+
+Queue these terms for S5 decoding. Do not write the full glossary in S3.8.
+
+```text
+fenofaza
+dormancija
+kasna dormancija
+bubrenje pupa
+opadanje latica
+plodić
+klikera
+podloga
+karenca
+fenološko stanje
+lokalni pragovi
+stručni savjet
+2. generacija
+vaza
+pinciranje
+izdanci
+obnova grma
+polifenoli
+zaštićeni prostor
+mikrolokacija
+multi_cycle
+kontinuirani rod
+mirovanje
+lončani uzgoj
+mikroelementi
+kloroza
+voda bez vapna
+resa
+izbojnica
+smanjenje inokuluma
+bakterijsko propadanje
+```
+
+## 6. Regional caveat queue
+
+Standard apple-style caveat should be applied to pome, stone, and nut species where absent:
+
+- warmer regions may be earlier
+- colder regions may be later
+- plant state and local conditions override date
+
+Mediterranean-specific caveat needed for:
+
+- olive
+- fig
+- pomegranate
+
+Citrus-specific caveat needed for:
+
+- lemon
+- orange
+- mandarin
+
+Do not add:
+
+- numeric offsets
+- `climateProfile`
+- `regionProfile`
+- `offsetDays`
+- formulas
+
+Use qualitative, plant-state/local-condition-aware caveats only.
+
+## 7. Source-check queue
+
+| Item | Species/group | Why source check is needed | Disposition |
+|---|---|---|---|
+| Plum 2nd generation plum moth timing | plum | Existing wording is beginner-opaque and timing-sensitive. | Source-check before S5 wording. |
+| Rain-cover / fruit cracking | sweet_cherry | Useful but absent from current source text. | Source-check before adding. |
+| Pre-bloom copper timing | apricot | Early-bloom copper timing is sensitive. | Source-check before S5 finalization. |
+| Monitoring targets | almond | Current monitoring target detail is thin. | Source-check named targets. |
+| Post-bloom target disease names | almond | Post-bloom entry names no clear diseases inline. | Source-check before naming. |
+| Timing/pest/disease regional claims | pomegranate | Template is light and marginal-climate framed. | Source-check if owner expands depth. |
+| Cold-tolerance threshold | orange | Numeric damage threshold should not be invented. | Source-check before adding. |
+| Return-to-outdoor / spring acclimatization | citrus | Missing for container users. | Source-check before adding. |
+| Frost-damage recovery cues | citrus | Useful but absent. | Source-check / owner decision. |
+| Summer pruning timing | walnut | Template self-flags timing validation. | Source-check before S5 finalization. |
+| Optional copper timing | walnut | Bud/catkin timing is source-sensitive. | Source-check before sharpening. |
+| Young-tree fertilization | walnut/hazelnut | More source-sensitive than watering. | Source-check or owner defer. |
+| Pollination / cross-compatibility | hazelnut | Real productivity factor. | Source-check before guidance. |
+| Frost-during-bloom advisory | hazelnut | Early bloom may matter. | Source-check before adding. |
+
+## 8. Owner decision queue
+
+| Decision | Context | Recommended default | Next phase |
+|---|---|---|---|
+| Apple early fallback harvest window mismatch | Template starts later than early fallback, but no current early apple variety. | Defer until early apple variety is added. | S4 |
+| Pear monitoring split vs combined entry | Pear has multiple monitoring concerns. | Decide shape in S5 design. | S4/S5 |
+| Quince codling trap option vs scouting-only | Trap guidance is not fully source-backed in current text. | Source-check before adding trap guidance. | S4 |
+| Cumulative copper wording promotion | Multiple copper entries can stack in user perception. | Promote anti-duplication wording where approved. | S4/S5 |
+| Multi-target scouting program shape | Several entries scout multiple targets. | Prefer one program with multi-target list, confirm in S5. | S4/S5 |
+| Non-pest `praćenje` mapping | Fruit cracking, frost, winter checks are not pest monitoring. | Map to observation/advisory action windows. | S4/S5 |
+| Fig two-window harvest model | Early crop + main crop creates two harvest windows. | Keep two windows if S5 confirms. | S4/S5 |
+| Olive species-level harvest timing vs catalog silence | Template has species-level timing; catalog has no olive timing. | Keep template as timing reference for now. | S4/S5 |
+| Pomegranate spring/summer thinness | Light but defensible for current scope. | Accept unless owner expands Mediterranean-market depth. | S4 |
+| Citrus subtype model vs top-level species | Catalog uses `citrus` with subtypes. | Keep subtype model for current V2. | S4 |
+| Citrus variety modeling | Current catalog defers citrus varieties. | Defer; use policy workflow if reopened. | S4 |
+| Lemon full-year harvest window | `1.1-12.31` is unusual but matches `multi_cycle`. | Accept as full-year action window unless owner decides otherwise. | S4/S5 |
+| Citrus spring return/outdoor acclimatization | Winter prep exists, spring return does not. | Add one advisory only after source check. | S4/S5 |
+| Walnut/hazelnut young-tree watering | Practical establishment gap. | Add young-tree-only watering if owner approves. | S4/S5 |
+| Hazelnut pollination/cross-compatibility | Real productivity item. | Source-check and add advisory if approved. | S4/S5 |
+| Natural-drop harvest semantic | Walnut/hazelnut harvest is gathering fallen ripe nuts. | Keep `harvest` with notes, no new subtype. | S4/S5 |
+| Nut group name | Current `nut` group is internally consistent. | Keep `nut`. | S4 |
+
+Do not resolve these decisions in S3.8.
+
+## 9. S5 documentation-fix queue
+
+Shared standard-fruit-tree block:
+
+- add file-level glossary
+- propagate regional caveat where approved
+- add cumulative copper anti-duplication wording
+- improve fertilizer category clarity
+- improve bird-net material/spec consistency
+- improve monitoring install detail consistency
+- keep trap threshold wording non-numeric unless source-backed
+- clarify post-bloom `opadanje latica`
+- propagate fruitlet `veličine klikera` cue where source-backed
+
+Pome:
+
+- resolve apple early fallback mismatch
+- decide pear monitoring split vs combined shape
+- source-check quince codling trap option
+- tighten quince disease target wording if source-backed
+
+Stone:
+
+- source-check plum 2nd-generation wording
+- source-check sweet cherry rain-cover/cracking
+- polish sour cherry monitoring/net detail
+- source-check almond monitoring targets and post-bloom disease names
+- preserve apricot frost-as-information and šarka/no-curative-treatment wording
+
+Mediterranean:
+
+- add Mediterranean-specific regional caveat
+- preserve olive no-variety-timing rule
+- confirm fig two-window harvest shape
+- map pomegranate fruit-cracking watch as observation/advisory
+- tighten fertilization/product wording where useful
+
+Citrus:
+
+- propagate lemon citrus micronutrient/water-quality pattern to orange/mandarin if approved
+- add `zaštićeni prostor` decoder
+- clarify container-vs-ground reality
+- source-check orange cold threshold
+- source-check spring return/outdoor acclimatization
+
+Nut:
+
+- add walnut/hazelnut young-tree watering if owner approves
+- add hazelnut pollination if source-backed and owner-approved
+- add mold/storage warnings for walnut/hazelnut drying
+- preserve walnut pruning and hazelnut mechanical-first patterns
+
+## 10. Gold-standard / reference wording patterns
+
+- apple regional caveat
+- apple codling monitoring
+- sweet cherry yellow sticky plate monitoring
+- sweet cherry bird-net material/timing
+- apricot frost-as-information wording
+- apricot šarka / no-curative-treatment wording
+- almond cumulative-copper anti-duplication wording
+- olive monitoring -> conditional treatment pair
+- olive registered organic/barrier/repellent method flexibility
+- fig milky-sap skin warning
+- pomegranate metallic-sound harvest cue
+- lemon container-aware watering + water-quality wording
+- lemon chlorosis / micronutrient cue
+- mandarin hedged cold-tolerance wording
+- orange continental-container hedge
+- walnut bleeding-aware pruning
+- walnut hobby-context skip-by-default copper wording
+- walnut damage-vs-loss walnut-fly wording
+- hazelnut bush-renewal pruning numbers
+- hazelnut mechanical-first IPM wording
+
+## 11. Candidate mapping notes for S5/S6
+
+Candidate-only notes:
+
+- monitoring_program candidates exist across apple, cherry, plum, olive, citrus, walnut, and hazelnut.
+- observation/advisory action-window candidates include winter checks, frost checks, fruit cracking, and other non-pest observations.
+- multi-target scouting shape remains unresolved.
+- non-pest monitoring should map to observation/advisory, not `monitoring_program`.
+- long irrigation/care windows need a design decision.
+- fig two harvest windows need design confirmation.
+- lemon full-year harvest window is accepted unless owner decides otherwise.
+- walnut/hazelnut natural-drop harvest stays notes/advisory unless owner decides otherwise.
+- trap/scouting observations must not become formal gates.
+- no final records were created during S3.
+
+## 12. Explicitly deferred / do-not-fix-now
+
+- no new varieties
+- no citrus varieties
+- no olive timing-driving varieties
+- no walnut/hazelnut variety expansion
+- no climate profiles or numeric offsets
+- no pesticide brand names
+- no automatic spray rules
+- no runtime gates from trap/scouting
+- no source-check fixes before S4/S5
+- no S4 owner decisions resolved inside S3.8
+- no S5 wording fixes applied inside S3.8
+
+## 13. S4 handoff
+
+S4 must resolve owner decisions from:
+
+- source-check queue
+- owner decision queue
+- S5 documentation-fix queue
+
+S4 outputs expected:
+
+- approved fixes
+- deferred items
+- rejected items
+- items needing external/source validation
+- items allowed into S5
+
+S4 must not:
+
+- rewrite all docs
+- add varieties without policy workflow
+- add climate offsets
+- implement runtime
+
+## 14. S5 handoff
+
+S5 applies only owner-approved targeted documentation fixes.
+
+S5 inputs:
+
+- this consolidation doc
+- archived detailed findings only when evidence is needed
+- S4 owner decision outcomes
+
+S5 expected outputs:
+
+- updated plant catalog/template docs where approved
+- glossary/clarity improvements
+- regional caveat consistency
+- source-backed wording fixes
+- no runtime implementation
+
+## 15. Archived detailed evidence
+
+Detailed per-species audit evidence is archived at:
+
+`archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md`
+
+The archived file is historical evidence only. It is not the active S3 output and should not be listed in mandatory read order.
+
+If a future audit cycle needs detailed evidence again, create a new dated detail file rather than editing the archived one.
