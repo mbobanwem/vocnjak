@@ -24,9 +24,9 @@ Finish documentation control so the project stops looping and can enter structur
 
 Current immediate next step:
 
-S3.6 — Citrus audit: lemon, orange, mandarin.
+S3.7 — Nut audit: walnut, hazelnut.
 
-S3.0B, S3.1, S3.2, S3.3, S3.4, and S3.5 are complete; proceed to citrus audit.
+S3.0B, S3.1, S3.2, S3.3, S3.4, S3.5, and S3.6 are complete; proceed to nut audit.
 
 ---
 
@@ -542,19 +542,75 @@ Disposition:
 
 ### S3.6 — Citrus audit
 
-Status: NEXT
+Status: DONE — Citrus findings appended.
 
-Scope:
+Commit:
+
+- `1b4bec3 Append S3 citrus findings`
+
+Output:
+
+- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+
+Scope completed:
 
 - lemon
 - orange
 - mandarin
 
+Verdict:
+
+- Citrus is ready for S3 scale-up as-is.
+- Lemon, orange, and mandarin findings scale the established S3 format without modification.
+- Citrus subtype model is internally consistent: `citrus → lemon / orange / mandarin`.
+- Lemon correctly uses `multi_cycle`.
+- Orange correctly uses `winter`.
+- Mandarin correctly uses `autumn`.
+- No citrus varieties were added or recommended for current S3.
+- No variety-specific citrus timing was introduced.
+- Optional spray wording remains conditional.
+- Monitoring remains evidence only.
+- No targeted citrus wording fix is required before S3.7.
+- After S3.6, 16 of 18 supported species/subtypes are audited.
+
+Known citrus follow-up items preserved for S4/S5:
+
+- Do not restructure citrus without owner decision.
+- Do not add lemon, orange, or mandarin varieties in current S3.
+- Do not add variety-specific citrus timing.
+- `zaštićeni prostor` / protected winter location needs beginner-friendly explanation.
+- Container-vs-ground reality needs clearer citrus wording.
+- Lemon fertilization wording is the reference pattern for citrus micronutrients and yellow-leaf / iron-deficiency cue.
+- Lemon watering wording is the reference pattern for container-aware watering and low-lime-water guidance.
+- Mandarin cold-tolerance wording is the reference pattern for hedged multi-factor cold-sensitivity language.
+- Orange cold-tolerance damage threshold needs source check before adding any number.
+- Citrus needs a Mediterranean-vs-continental regional caveat.
+- Return-to-outdoor / spring acclimatization guidance needs source check before adding.
+- Citrus pest monitoring and optional treatment must remain advisory; scouting observations must not become formal gates.
+- Lemon full-year harvest window remains an S5 design/owner decision item, but is acceptable for current S3.
+- Beginner glossary should include citrus terms such as `zaštićeni prostor`, `lončani uzgoj`, `mikroelementi`, `kloroza`, `multi_cycle`, `kontinuirani rod`, `mikrolokacija`, and `podloga`.
+
+Do not fix these now.
+
+Disposition:
+
+- Queue citrus wording, source-check, regional caveat, container/protected-location clarity, observation/advisory mapping, and glossary items for S4/S5 targeted resolution.
+- Proceed to S3.7 nut audit.
+
+### S3.7 — Nut audit
+
+Status: NEXT
+
+Scope:
+
+- walnut
+- hazelnut
+
 Goal:
 
-Audit subtype-driven citrus templates, citrus seasonProfile handling, pruning, fertilization, irrigation, pest monitoring, optional spray wording, harvest windows, winter protection, container/protected-location assumptions if present, beginner clarity, product/material category clarity, monitoring vs treatment, no-auto-spray behavior, and source-check items.
+Audit walnut and hazelnut templates, nut-specific pruning, harvest and post-harvest handling, drying/storage guidance, walnut fly, hazelnut weevil, bud mite monitoring, optional treatment wording, fertilization and irrigation gaps, young-tree relevance, beginner clarity, product/material category clarity, monitoring vs treatment, no-auto-spray behavior, regional caveats, and source-check items.
 
-Do not audit walnut or hazelnut in S3.6.
+Do not start S3 consolidation before S3.7 findings are appended and tracker is updated.
 
 ### S4 — Owner decision resolution and source-backed audit closure
 
