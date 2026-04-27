@@ -24,9 +24,9 @@ Finish documentation control so the project stops looping and can enter structur
 
 Current immediate next step:
 
-S3.1 — Apple-only S3 audit dry-run.
+S3.2 — Pome group audit: pear + quince.
 
-S3.0B is complete; proceed to the apple-only dry-run.
+S3.0B and S3.1 are complete; proceed to the pome group audit.
 
 ---
 
@@ -288,13 +288,60 @@ Purpose:
 S3 starts small:
 
 - S3.1 — Apple-only S3 audit dry-run
-- S3.2 — Pome group audit: apple, pear, quince
+- S3.2 — Pome group audit: pear + quince
 - S3.3 — Stone fruit audit batch 1: sweet_cherry, sour_cherry, plum
 - S3.4 — Stone fruit audit batch 2: peach, nectarine, apricot, almond
 - S3.5 — Mediterranean audit: olive, fig, pomegranate
 - S3.6 — Citrus subtype audit: lemon, orange, mandarin
 - S3.7 — Nut audit: walnut, hazelnut
 - S3.8 — S3 findings consolidation
+
+### S3.1 — Apple-only S3 audit dry-run
+
+Status: DONE — apple dry-run materialized.
+
+Commit:
+
+- `633e56c Add S3 apple audit findings draft`
+
+Output:
+
+- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+
+Verdict:
+
+- Apple is ready for S3 scale-up as-is.
+- The apple findings format is accepted as the working S3 findings format.
+- No targeted apple wording fix is required before S3.2.
+- Apple can serve as the reference pattern for scaling S3 to pome and later groups.
+
+Known apple follow-up items preserved for S4/S5:
+
+- Shared fertilization entry should name a beginner-readable product/material category.
+- `fenofaza`, `stručni/lokalni savjet`, `bujno stablo`, and similar terms should be decoded in beginner language.
+- Winter copper should receive a clearer plant-state cue and consistent label/regulation wording.
+- Apple bird-net entry should be considered for size/type/fixing specificity similar to cherry/peach entries.
+- Apple regional caveat is a good reusable pattern for other species.
+- Apple harvest template window does not cover the early fallback start, but no current catalog apple variety is `timing: early`; defer unless early apple varieties are added or owner decides otherwise.
+- Seasonal irrigation mapping remains an owner/S4/S5 decision because it behaves more like a care period than a discrete action.
+
+Do not fix these now.
+
+Disposition:
+
+- Queue apple wording and mapping items for S4/S5 targeted resolution.
+- Proceed to S3.2 pome audit.
+
+### S3.2 — Pome group audit
+
+Status: NEXT
+
+Scope:
+
+- pear
+- quince
+
+Apple is already covered by S3.1 and should be used as the reference pattern, not re-audited unless a specific cross-check is needed.
 
 Expected S3 output:
 
