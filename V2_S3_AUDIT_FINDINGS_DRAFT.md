@@ -228,3 +228,258 @@ Order:
 - Do not modify `V2_PLANT_CATALOG.md` to fix the early-fallback harvest mismatch.
 - Do not implement runtime code, gates, weather logic, or recommendation logic.
 - Do not scale to pome/stone audit until owner has approved this dry-run format.
+
+---
+
+# S3.2 Pome Group Audit — Pear + Quince
+
+## 1. Executive verdict
+
+Pear and quince are ready for S3 scale-up as-is.
+
+Both species mirror apple's overall quality: the shared block applies cleanly, species-specific blocks are present with expected entries, calendar windows are useful for planning, the no-auto-spray stance holds across spray entries, and fire-blight wording correctly avoids curative overclaim.
+
+Pear's harvest entry and quince's harvest entry are both strong beginner-facing examples.
+
+The findings format from S3.1 scales without modification. Pear and quince surface the same cross-cutting wording weaknesses already queued from apple, plus a few pome-specific gaps that are wording polish or S3 source-check items, not blockers.
+
+Recommendation:
+
+- Append S3.2 findings to `V2_S3_AUDIT_FINDINGS_DRAFT.md`.
+- Then proceed to S3.3 stone fruit batch 1: sweet cherry, sour cherry, plum.
+- Do not run a targeted pome wording fix before S3.3.
+
+---
+
+## 2. Pome coverage summary
+
+| Area | Pear status | Quince status | Notes |
+|---|---|---|---|
+| Shared yearly work | OK | OK | Both inherit all 10 shared entries; apple S3.1 shared findings carry over. |
+| Species-specific work | OK | OK | Pear: fire blight copper, monitoring, post-bloom, thinning, bird net, harvest. Quince: pre-bloom copper, monitoring, optional post-bloom, crop-load check, harvest. |
+| Harvest / variety linkage | OK | OK | Template harvest windows cover catalog variety + fallback windows in both species. |
+| Monitoring | Minor gap | Minor gap | Pear combines psylla scouting + moth/trap logic in one entry. Quince combines leaf/fruit disease + codling/scouting in one entry and does not offer a trap option. |
+| Spray/protection safety | OK | Minor gap | Quince pre-bloom copper entry is less explicit on oil/copper interval and full label/regulation decoder wording than apple/pear. |
+| Beginner clarity | Minor gap | Minor gap | Pear: `stanje pupova` / `oko cvatnje` could be clearer. Quince: `mirovanje pupa` is undefined for beginners. |
+| Regional caveat | Missing | Missing | Apple regional caveat pattern is absent from pear and quince agronomic-context blocks. Queue for S5. |
+| Product/material category clarity | OK | Minor gap | Pear product categories are generally clear. Quince post-bloom says only registered fungicide for target disease without naming the target diseases inline. |
+
+---
+
+## 3. Shared-block findings relevant to pear/quince
+
+The shared block applies to both pear and quince. Apple S3.1 findings on shared entries carry over unless a pear/quince-specific override changes them.
+
+Relevant shared findings that still apply:
+
+- `fenofaza` appears without full beginner translation in shared winter copper context.
+- `stručni/lokalni savjet` is not decoded into concrete resource types.
+- shared spring fertilization does not name a beginner-readable fertilizer category.
+- shared winter copper lacks the full label/regulation decoder line used elsewhere.
+- shared winter copper lacks a plain beginner plant-state cue such as dormant / buds still closed / before bloom.
+- apple's regional caveat pattern is not present in the shared block and is missing from pear/quince context.
+
+Pome-specific additional concern:
+
+Pear and quince can stack multiple early-season copper-related entries:
+
+- shared winter copper
+- shared copper after pruning
+- pear/quince pre-bloom or fire-blight copper
+
+Each entry is individually justified and not automatic. However, the templates are silent on copper-to-copper spacing and annual copper label limits. This is not a blocker, but S4/S5 should consider a single cross-cutting Spray Safety Note reminding users to respect the product label's seasonal copper limits and dose restrictions.
+
+---
+
+## 4. Pear entry-by-entry findings
+
+| Entry | Source section | Calendar planning window | Purpose clarity | Beginner cues | Product/material category | Skip/delay/avoid | Monitoring/treatment safety | Regional caveat | Status | Finding |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Bakar – preventivna zaštita od bakterijske paleži | PEAR §1 | `3.15–4.10` | Excellent — explicitly frames fire blight as bacterial disease without chemical cure and copper as preventive. | Minor gap — `oko cvatnje` and `stanje pupova` are less beginner-decoded than apple's best wording. | OK — registered copper preparation. | OK — do not spray directly on open flowers; oil/copper 7–10 day spacing. | Excellent — no curative overclaim; symptom cue included. | absent | OK | Add beginner decoder for bud/bloom stage and clearer `stručni savjet` resource wording in S5. |
+| Praćenje kruškine buhe i savijača | PEAR §2 | `4.20–8.15` | OK — covers pear psylla and fruit moth/codling pressure. | Excellent for psylla: nymphs/larvae, honeydew, sooty mold, deformed young growth. Weaker for moth/trap setup. | OK — registered product for pear/target pest; pheromone trap if available. | Excellent — no visible colonies/honeydew/sooty mold/deformed growth means treatment not justified. | OK — monitoring evidence does not equal treatment. | n/a | Minor gap | Combines two targets in one entry; codling/moth trap detail is weaker than apple's gold-standard monitoring entry. Queue S5 split/design check. |
+| Post-bloom zaštita – krastavost kruške | PEAR §3 | `4.15–5.15` | OK — pear scab and monilia. | Minor gap — says after bloom but lacks apple's `after petal fall` cue. | OK — registered fungicide for pear scab and monilia. | Minor gap — weaker than apple's dry-spring/no-history/no-fruit-priority skip clause. | OK — no bloom / no active bee flight. | n/a | OK | Borrow apple's post-bloom cue and skip-condition pattern in S5 where source-backed. |
+| Prorjeđivanje plodova – kruška | PEAR §4 | `5.20–6.15` | OK implicit. | Minor gap — gives 1–2 fruit per cluster / 10 cm spacing but lacks apple's fruitlet-size cue. | n/a | OK — pear does not require aggressive thinning. | n/a | n/a | Minor gap | Add apple-style fruitlet cue in S5 if source-backed. |
+| Mreža protiv ptica – kruška | PEAR §5 | `7.20–9.15` | OK — bird pressure near harvest. | OK — when fruits begin ripening. | Weak — only says net, without size/type/fixing details. | OK, but weaker than apple/cherry wording. | n/a | n/a | Minor gap | Same product/material specificity gap as apple bird-net entry. Queue S5. |
+| Berba kruške | PEAR §6 | `8.1–10.5` | OK. | Excellent — harvest before full eating ripeness; fruit still firm; twists/lifts off; ripens after harvest; do not wait until soft on tree. | n/a | OK. | n/a | n/a | OK | Strong pear entry; consistent with catalog warning. |
+
+---
+
+## 5. Quince entry-by-entry findings
+
+| Entry | Source section | Calendar planning window | Purpose clarity | Beginner cues | Product/material category | Skip/delay/avoid | Monitoring/treatment safety | Regional caveat | Status | Finding |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Bakar – pred cvatnju dunje | QUINCE §1 | `3.20–4.15` | OK — preventive copper against fire blight context. | Minor gap — `mirovanje pupa` is agronomic jargon and not decoded. | OK — registered copper preparation. | Partial — no bloom / no active bee flight; oil/copper interval should restate 7–10 days instead of only referring to label/global note. | OK — no curative overclaim. | absent | Minor gap | Add beginner decoder for bud-rest/pre-bloom state and more complete label/regulation wording in S5. |
+| Praćenje bolesti lista, ploda i savijača – dunja | QUINCE §2 | `4.25–8.15` | OK — leaf disease, fruit disease/rot, codling/moth pressure. | Excellent — leaf spots, early yellowing/drop, fruit spots/deformation/rot, fresh punctures/entry holes; weekly or after prolonged rain. | OK — registered product for quince and target disease/pest; full decoder line present. | OK — treatment not automatic. | Excellent — monitoring is evidence, not treatment. | n/a | Minor gap | Multi-target scouting is useful but complex; no trap option despite Cydia targets. S3 source check. |
+| Post-cvatnja zaštita – dunja (po potrebi) | QUINCE §3 | `5.1–5.25` | OK as conditional protection. | Minor gap — after bloom is implicit and target diseases are not named inline. | Weak — says registered fungicide for target quince disease but does not name the target diseases in this entry. | OK — only if monitoring/symptoms/history/expert advice justify. | OK — no bloom / no active bee flight; full decoder line. | n/a | Minor gap | Add target diseases inline or cross-reference monitoring entry in S5, source-backed. |
+| Provjera opterećenja plodovima – dunja | QUINCE §4 | `5.20–6.20` | OK — prevents branch breakage and supports tree development. | Excellent — branches bending strongly under fruit load. | n/a | Excellent — skip if crop is normal and branches are not overloaded. | n/a | n/a | OK | Strong visible-cue and skip-condition pattern. |
+| Berba dunje | QUINCE §5 | `10.1–11.10` | OK. | Excellent — green to yellow/golden color, strong aroma, firm fruit, harvest before strong frost, post-harvest conditioning. | n/a | OK — do not wait for soft fruit on tree; harvest before strong frost. | n/a | n/a | OK | Strong quince entry. |
+
+---
+
+## 6. Candidate mapping notes
+
+Audit notes only. These are not final V2 records.
+
+| Source entry | Possible V2 concept | Confidence | Why | Do not finalize because |
+|---|---|---|---|---|
+| Bakar – preventivna zaštita od bakterijske paleži (pear) | `action_window_definition` candidate, pre-bloom/bloom-context calendar anchor | High | Calendar window and bloom/bud context are present. | Stage vocabulary and bloom-avoidance constraint handling are S5 decisions. |
+| Praćenje kruškine buhe i savijača (pear) | Two monitoring-program candidates: pear psylla scouting + moth/codling trap | Medium | Template separates visual psylla scouting and optional pheromone trap. | Final split vs combined shape is S5; moth target is generic and needs source/naming check. |
+| Post-bloom zaštita – krastavost kruške (pear) | `action_window_definition` candidate, after-bloom anchor | High | Calendar + post-bloom disease protection context. | Stage cue wording should be sharpened before finalization. |
+| Prorjeđivanje plodova – kruška | `action_window_definition` candidate, fruit-thinning observation/action | Medium | Calendar + quantitative spacing guidance. | Fruitlet stage cue less explicit than apple; stage vocabulary not locked. |
+| Mreža protiv ptica – kruška | `action_window_definition` candidate with observed-pressure skip condition | High | Bounded window and pressure-based rationale. | Material specificity queued; final action shape S5. |
+| Berba kruške | harvest action linked to catalog variety/fallback timing | High | Template and catalog both emphasize harvest before full ripeness. | Variety-to-window runtime/pinning belongs later. |
+| Bakar – pred cvatnju dunje | `action_window_definition` candidate, pre-bloom calendar/phenology context | Medium | Calendar + pre-bloom preventive context. | `mirovanje pupa` wording needs beginner decoding/source confirmation. |
+| Praćenje bolesti lista, ploda i savijača – dunja | multi-target scouting monitoring-program candidate | Medium | Recurring scouting, named issues, visible cues, no device required. | Multi-target vs split-program decision is S4/S5; codling trap omission needs source check. |
+| Post-cvatnja zaštita – dunja | conditional action-window candidate, advisory note only | Medium | Conditional post-bloom protection present. | Do not turn `po potrebi` into formal gate without source/owner decision. |
+| Provjera opterećenja plodovima – dunja | observation-style action window | High | Bounded window, concrete visible cue, explicit skip condition. | Final action/observation mapping is S5. |
+| Berba dunje | harvest action linked to catalog variety/fallback timing + maturity cues | High | Catalog window and template cues align. | Stage vocabulary not locked. |
+
+---
+
+## 7. Beginner-clarity findings
+
+| ID | Finding | Where | Disposition |
+|---|---|---|---|
+| BC-P1 | `Stanje pupova` / `oko cvatnje` could be decoded in beginner language. | Pear fire-blight copper. | Queue for S4/S5. |
+| BC-P2 | Codling/moth trap setup detail is weaker than apple. | Pear monitoring. | Queue for S4/S5. |
+| BC-P3 | Pear monitoring combines two targets, making it less beginner-actionable. | Pear psylla + moth monitoring. | Queue for S5 design decision. |
+| BC-P4 | `Nakon cvatnje` lacks apple-style `after petal fall` cue. | Pear post-bloom. | Queue for S4/S5. |
+| BC-P5 | Pear post-bloom lacks apple-style dry-spring/no-history/no-fruit-priority skip clause. | Pear post-bloom. | Queue for S4/S5 if source-backed. |
+| BC-P6 | Pear thinning lacks fruitlet-size cue. | Pear thinning. | Queue for S4/S5. |
+| BC-P7 | Pear bird-net material details are weak. | Pear bird net. | Queue for S4/S5. |
+| BC-Q1 | `Mirovanje pupa` not decoded. | Quince pre-bloom copper. | Queue for S4/S5. |
+| BC-Q2 | Oil/copper interval should restate 7–10 days inline for quince pre-bloom copper. | Quince pre-bloom copper. | Queue for S4/S5. |
+| BC-Q3 | Label/dose/PHI/bee/local-rule decoder incomplete in quince pre-bloom copper. | Quince pre-bloom copper. | Queue for S4/S5. |
+| BC-Q4 | Quince post-bloom target diseases are not named inline. | Quince post-bloom. | Queue for S4/S5 with source check. |
+| BC-Q5 | Quince monitoring names Cydia targets but provides no trap option. | Quince monitoring. | S3 source check. |
+
+No finding blocks S3.3.
+
+---
+
+## 8. Safety / no-auto-spray findings
+
+| Constraint | Pear status | Quince status |
+|---|---|---|
+| No automatic spray calendar | Preserved. | Preserved. |
+| Monitoring does not equal treatment | Preserved; pear explicitly says no visible pressure means treatment not justified. | Preserved; monitoring entry says treatment is not automatic. |
+| No treatment during bloom / bee flight | Preserved. | Preserved. |
+| Weather constraints | Preserved through shared/per-entry notes. | Preserved through shared/per-entry notes. |
+| Label / local regulation constraints | Preserved; some decoder consistency improvements queued. | Mostly preserved; quince pre-bloom copper is weaker and queued. |
+| Fire-blight caution and no curative overclaim | Excellent. | Preserved, with S3 source-check context. |
+| Cumulative copper caution | Gap — templates do not explicitly discuss per-season copper cap. | Gap — same. |
+
+No safety blocker found.
+
+---
+
+## 9. Regional / climate findings
+
+Pear and quince do not include the apple regional caveat in their agronomic-context blocks.
+
+Pear acknowledges Zagreb baseline and earlier bloom than apple, but does not explicitly say warmer regions may be earlier and colder regions later.
+
+Quince also lacks the reusable apple regional caveat.
+
+Recommendation:
+
+- Apply apple's regional caveat pattern across species in S5, after S3 confirms it scales.
+- Do not add numeric offsets.
+- Keep regional/climate differences as notes/deferred findings in current V2.
+
+---
+
+## 10. Catalog consistency check
+
+### Pear
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Williams | early, Aug 1 – Aug 20 | Williams, August | Yes |
+| Santa Maria | early, Aug 5 – Aug 25 | Santa Maria, August | Yes |
+| Conference | mid, Aug 25 – Sep 15 | Conference, Aug–Sep | Yes |
+| Bosc's Bottle | mid, Sep 1 – Sep 20 | Bosc, Aug–Sep | Yes, minor display-name inconsistency |
+| Abate Fetel | late, Sep 15 – Oct 5 | Abate Fetel, Sep–Oct | Yes |
+| Fallback windows | Aug 1 – Oct 5 full range | template harvest `8.1–10.5` | Yes |
+| Pear harvest-before-full-ripeness rule | catalog warning present | template warning present | Yes |
+| Pear bloom | late March to mid April by variety | late March – early April baseline | Consistent |
+
+No blocking inconsistency found for pear.
+
+### Quince
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Leskovačka | mid, Oct 1 – Oct 20 | Leskovačka, October | Yes |
+| Vranjska | mid, Oct 5 – Oct 25 | Vranjska, October | Yes |
+| Champion | late, Oct 15 – Nov 5 | Champion, Oct – early Nov | Yes |
+| Fallback windows | Oct 1 – Nov 10 full range | template harvest `10.1–11.10` | Yes |
+| Quince bloom | early May | late April – early May | Consistent |
+
+No inconsistency found for quince.
+
+---
+
+## 11. Owner decision items
+
+| Decision | Why owner decision is needed | Options | Recommended default |
+|---|---|---|---|
+| Should pear monitoring be split into psylla scouting + moth/codling trap in S5? | Combined entry is less beginner-actionable and complicates monitoring-program mapping. | A) Split in S5. B) Keep combined. C) Defer. | C — defer to S5 monitoring-shape decision. |
+| Should quince offer a codling-moth pheromone trap option or rely on scouting only? | Quince names Cydia targets but provides no trap setup language. | A) Add trap if source-backed. B) Confirm scouting-only. C) Defer. | B after source check. |
+| Add cumulative copper season-limit note? | Pear/quince can accumulate multiple early-season copper entries. | A) Add one cross-cutting Spray Safety Note. B) Per-entry reminders. C) Defer. | A in S5. |
+| Normalize `Bosc` vs `Bosc's Bottle` display wording? | Template uses short form; catalog uses full name. | A) Normalize. B) Accept short form. C) Defer. | C — defer to S5 naming polish. |
+
+No owner decision blocks S3.3.
+
+---
+
+## 12. Better-than-current opportunities
+
+| Opportunity | Why better | Risk | Recommendation |
+|---|---|---|---|
+| Borrow apple's `after petal fall` cue for pear post-bloom. | More beginner-observable than `after bloom`. | Low if source-backed. | Queue for S4/S5. |
+| Borrow apple's dry-spring/no-history skip clause for pear post-bloom. | Makes no-auto-spray practical. | Must not over-copy across disease contexts. | Queue for S4/S5 where source-backed. |
+| Borrow apple's fruitlet-size cue for pear thinning. | Gives beginner a concrete timing cue. | Low. | Queue for S4/S5. |
+| Borrow apple codling-trap detail for pear. | Stronger monitoring-program candidate and better user guidance. | Low if source-backed. | Queue for S5. |
+| Decode `mirovanje pupa` inline for quince. | Removes jargon barrier. | Low. | Queue for S4/S5. |
+| Add target disease names inline in quince post-bloom. | Beginner understands why fungicide could be relevant. | Must be source-backed. | S3 source check + queue S5. |
+| Restate oil/copper 7–10 day interval in quince pre-bloom copper. | Better beginner readability. | Low. | Queue for S5. |
+| Apply apple regional caveat to pear/quince and later all species. | Product-vision consistency. | Low. | Queue for S5. |
+| Add cross-cutting copper season-limit reminder. | Avoids layered copper misunderstanding. | Low if label-based. | Queue for S5. |
+
+---
+
+## 13. Recommended next step
+
+Append S3.2 findings to `V2_S3_AUDIT_FINDINGS_DRAFT.md`, then proceed to S3.3 stone fruit batch 1:
+
+- sweet_cherry
+- sour_cherry
+- plum
+
+Reasoning:
+
+- Pome group is now fully audited: apple from S3.1, pear + quince from S3.2.
+- Findings format scales without modification.
+- All gaps are wording polish, source-check items, or S5 design decisions.
+- No targeted pome fix is required before S3.3.
+
+If the owner wants cumulative-copper guidance, regional-caveat copy, or fertilizer-category wording fixed immediately, a targeted S3.0C-equivalent polish pass is defensible, but not required.
+
+---
+
+## 14. What NOT to do next
+
+- Do not rewrite all templates broadly.
+- Do not rewrite pear or quince blocks.
+- Do not add `climateProfile`, `regionProfile`, `baseClimate`, `offsetDays`, or numeric regional offsets.
+- Do not add hardcoded commercial product brand names.
+- Do not add new pear or quince varieties.
+- Do not finalize `action_window_definition`, `monitoring_program`, `stage_vocabulary`, or `open_condition` records.
+- Do not turn fire-blight notes into curative or treatment claims.
+- Do not declare a formal symptom gate for quince post-bloom protection.
+- Do not declare a formal prior-activity gate for cumulative copper concerns.
+- Do not split pear monitoring unilaterally before S5.
+- Do not add quince codling-moth trap option without source check.
+- Do not modify `V2_PLANT_CATALOG.md` to fix Bosc display wording now.
+- Do not implement runtime code, gates, weather logic, or recommendation logic.
