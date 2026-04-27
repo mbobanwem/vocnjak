@@ -483,3 +483,300 @@ If the owner wants cumulative-copper guidance, regional-caveat copy, or fertiliz
 - Do not add quince codling-moth trap option without source check.
 - Do not modify `V2_PLANT_CATALOG.md` to fix Bosc display wording now.
 - Do not implement runtime code, gates, weather logic, or recommendation logic.
+
+---
+
+# S3.3 Stone Fruit Audit Batch 1 — Sweet Cherry + Sour Cherry + Plum
+
+## 1. Executive verdict
+
+Sweet cherry, sour cherry, and plum are ready for S3 scale-up as-is.
+
+All three species meet the current S3 quality bar. Sweet cherry contains the strongest bird-net entry in the file, including variety-specific install timing for Kordia and Burlat plus material detail such as `4×4 m` / `5×5 m` and side-zipper access. Sweet cherry also provides a clean non-pheromone monitoring pattern for cherry fruit fly using yellow sticky plates.
+
+Plum carries the existing self-flagged `2nd generation` source-check marker, and the current wording handles it correctly: conditional, non-automatic, and explicitly not preventive spraying.
+
+Sour cherry is appropriately lighter than sweet cherry, reflecting lower and more situational pressure, with optional netting and thinning.
+
+Recommendation:
+
+- Append S3.3 findings to `V2_S3_AUDIT_FINDINGS_DRAFT.md`.
+- Then proceed to S3.4 stone fruit batch 2: peach, nectarine, apricot, almond.
+- Do not run a targeted stone batch 1 wording fix before S3.4.
+
+---
+
+## 2. Stone batch 1 coverage summary
+
+| Area | Sweet cherry status | Sour cherry status | Plum status | Notes |
+|---|---|---|---|---|
+| Shared yearly work | OK | OK | OK | All three inherit all 10 shared entries; S3.1/S3.2 shared findings carry over. |
+| Species-specific work | OK | OK | OK | Sweet cherry: 4 entries. Sour cherry: 4 entries. Plum: 6 entries including 2nd-generation reaction entry. |
+| Harvest / variety linkage | OK | OK | Minor gap | Sweet cherry variety-specific install timing is strong. Plum agronomic-context examples list 4 of 6 catalog varieties; this is display polish. |
+| Monitoring | Excellent | Minor gap | OK | Sweet cherry has full yellow-plate guidance. Sour cherry monitoring install detail is lighter. Plum has pheromone trap guidance and S3 source-check marker for later-season relevance. |
+| Bird protection | Excellent | Minor gap | OK | Sweet cherry is gold-standard. Sour cherry lacks material spec. Plum has full material spec. |
+| Spray/protection safety | OK | n/a | OK | Plum post-bloom and 2nd-generation entries are conditional and non-automatic. |
+| Beginner clarity | OK | OK | Minor gap | Plum `2. generacija šljivinog savijača` is not decoded for beginners; S3 source check already applies. |
+| Regional caveat | Missing | Missing | Missing | Apple regional caveat pattern is absent from all three species. Queue for S5. |
+| Product/material category clarity | OK | Minor gap | OK | Sweet cherry and plum are strong. Sour cherry net spec is missing. |
+
+---
+
+## 3. Shared-block findings relevant to sweet cherry / sour cherry / plum
+
+The shared block applies to all three species. S3.1/S3.2 shared findings carry over unless a species-specific override changes them.
+
+Relevant shared findings that still apply:
+
+- `fenofaza` appears without full beginner translation in shared winter copper context.
+- `stručni/lokalni savjet` is not decoded into concrete resource types.
+- shared spring fertilization does not name a beginner-readable fertilizer category.
+- shared winter copper lacks the full label/regulation decoder line used elsewhere.
+- shared winter copper lacks a plain beginner plant-state cue such as dormant / buds still closed / before bloom.
+- apple's regional caveat pattern is not present in the shared block and is missing from these species.
+
+Stone-batch-1-specific note:
+
+- `Krečenje debla` is especially relevant for stone fruit and already states this: "Posebno važno za koštičave vrste i stabla s tankom korom."
+- Cumulative copper concern is lower here than in pear/quince because sweet cherry, sour cherry, and plum do not add a third species-specific pre-bloom copper entry. Shared winter copper + post-pruning copper still apply.
+
+---
+
+## 4. Sweet cherry entry-by-entry findings
+
+| Entry | Source section | Calendar planning window | Purpose clarity | Beginner cues | Product/material category | Skip/delay/avoid | Monitoring/treatment safety | Regional caveat | Status | Finding |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Praćenje trešnjine muhe – žute ljepljive ploče | SWEET CHERRY §1 | `4.25–6.20` | OK — `Rhagoletis cerasi` named as key EU cherry pest. | Excellent — 2–3 yellow sticky plates per tree, 1.5–2 m height, shaded canopy, weekly check. | OK — yellow sticky plates; registered product only if treatment is justified. | Excellent — low catch means continue monitoring; sudden increase means check need for reaction. | Excellent — monitoring evidence does not equal treatment; pre-harvest PHI/karenca caution present. | absent | OK | Cleanest non-pheromone monitoring-program candidate in the file. `Lokalni pragovi` remains a cross-cutting beginner decoder item. |
+| Prorjeđivanje trešnje (po potrebi) | SWEET CHERRY §2 | `5.15–6.1` | OK — reduces fallen/poor fruit and improves selected fruit. | Excellent — remove twins, leave 5–8 cm spacing, visible overload cues such as strongly hanging branches / small pale fruit. | n/a | Excellent — not mandatory; young/no-fruit skip; Gisela 5-specific note. | n/a | n/a | OK | Strong skip-default pattern. |
+| Mreža protiv ptica – trešnja | SWEET CHERRY §3 | `6.1–6.30` | OK — bird protection before ripening/harvest. | Excellent — Kordia and Burlat install timing examples. | Excellent — min. 4×4 m, recommended 5×5 m, side-zipper type. | OK — remove after harvest; young/no-fruit skip. | n/a | n/a | OK | Gold-standard bird-net entry. Rain-cover/cracking is correctly deferred as S3 audit item. |
+| Berba trešnje | SWEET CHERRY §4 | `6.1–7.25` | OK. | Excellent — pick with stem, dark red color, firmness with slight give, dry harvest, storage 0–4°C. | n/a | OK — dry weather/cooler part of day; do not leave overripe fruit. | n/a | n/a | OK | Strong harvest entry and hygiene loop. |
+
+Sweet cherry agronomic-context notes:
+
+- Variety examples match catalog harvest windows.
+- Gisela 5 rootstock note is useful but `podloga` is not decoded for absolute beginners.
+- Fruit cracking after rain is correctly deferred as a separate S3 audit item. No rain-cover guidance is added.
+
+---
+
+## 5. Sour cherry entry-by-entry findings
+
+| Entry | Source section | Calendar planning window | Purpose clarity | Beginner cues | Product/material category | Skip/delay/avoid | Monitoring/treatment safety | Regional caveat | Status | Finding |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Praćenje trešnjine muhe – višnja | SOUR CHERRY §1 | `4.25–7.10` | OK — same pest as sweet cherry. | Minor gap — says yellow sticky plates + weekly check but lacks count, height, position. | OK — registered product only if justified. | OK — pressure often lower than sweet cherry; depends on location/year/sort. | OK — local thresholds/expert advice before treatment. | absent | Minor gap | Install detail is lighter than sweet cherry. Queue S5: reuse/cross-reference sweet cherry spec if source-backed. |
+| Mreža protiv ptica – višnja (opcionalno) | SOUR CHERRY §2 | `6.15–7.20` | OK — optional bird pressure protection. | Partial — about 2 weeks before harvest. | Weak — no size/type/side-zipper detail. | OK — optional; not needed for young/no-crop trees. | n/a | n/a | Minor gap | Material spec absent; queue S5. |
+| Prorjeđivanje višnje (po potrebi) | SOUR CHERRY §3 | `5.15–6.1` | OK — for larger fruit/processing goals. | Minor gap — no quantitative spacing cue. | n/a | Excellent — sour cherry mostly self-regulates; optional. | n/a | n/a | OK | Lightness is appropriate; optional nature preserved. |
+| Berba višnje | SOUR CHERRY §4 | `6.20–7.31` | OK. | OK — processing may allow longer hang time; dry harvest. | n/a | OK — do not leave overripe fruit; wasp/hygiene note. | n/a | n/a | OK | Appropriate processing-oriented harvest entry. |
+
+Sour cherry agronomic-context notes:
+
+- Oblačinska, Marasca, and Montmorency examples are present.
+- Morello / Schattenmorelle exists in the catalog but is missing from template examples. This is a minor S5 display polish item.
+
+---
+
+## 6. Plum entry-by-entry findings
+
+| Entry | Source section | Calendar planning window | Purpose clarity | Beginner cues | Product/material category | Skip/delay/avoid | Monitoring/treatment safety | Regional caveat | Status | Finding |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Praćenje šljivinog savijača (feromonske klopke) | PLUM §1 | `4.25–7.15` | OK — `Cydia funebrana`; wormy fruit. | OK — pheromone trap at 1.5–2 m, weekly check. | OK — pheromone trap. | OK — sudden catch increase means check need for reaction; treatment only if local thresholds/expert advice justify. | OK — monitoring evidence does not equal treatment. | n/a | OK | Self-flags S3 audit item for later-season relevance and terminology. Correctly handled. |
+| Post-bloom zaštita – monilija i šljivin savijač | PLUM §2 | `5.5–5.25` | OK — monilia + plum moth. | Minor gap — `Nakon cvatnje` lacks apple-style `after petal fall` cue. | OK — registered fungicide for monilia/leaf spot; insecticide only if monitoring supports it. | OK — insecticide explicitly conditional. | OK — no bloom / no active bee flight; full decoder line. | n/a | OK | `Pjegavost lista` appears in product target text without being introduced in agronomic context. Queue source-backed wording polish. |
+| Reakcija po potrebi – 2. generacija šljivinog savijača | PLUM §3 | `6.15–7.10` | OK — conditional reaction to later plum-moth pressure. | Minor gap — `2. generacija` is not decoded for beginners. | OK — registered insecticide for crop and pest. | Excellent — not preventive spraying; only if traps show clear signal plus threshold/expert advice. | OK — not automatic; morning/evening timing. | n/a | OK | Existing S3 audit marker correctly flags timing/pest/disease claim for regional source validation. |
+| Prorjeđivanje plodova – šljiva | PLUM §4 | `5.20–6.15` | OK — plum overcropping, quality. | OK — 1 fruit per 8–10 cm branch; remove twins/damaged fruit. | n/a | OK — young/no-crop skip. | n/a | n/a | OK | Strong variety awareness for late varieties such as Stanley; could add fruitlet-size cue in S5. |
+| Mreža protiv ptica – šljiva | PLUM §5 | `8.8–8.22` | OK — blackbird/thrush pressure before harvest. | OK — when fruit begins softening. | Excellent — min. 4×4 m; side-zipper recommended. | OK — remove after harvest; young/no-crop skip. | n/a | n/a | OK | Strong material spec; reference-quality. |
+| Berba šljive | PLUM §6 | `7.20–9.20` | OK. | Excellent — multiple passes, full color, softened fruit, easy detachment, different timing for fresh vs drying/jam. | n/a | OK — do not leave overripe; wasp/monilia hygiene note. | n/a | n/a | OK | Strong harvest entry. |
+
+Plum agronomic-context notes:
+
+- Čačanska rana, Čačanska najbolja, Stanley, Président examples are present.
+- Čačanska lepotica and Bistrica / Požegača exist in the catalog but are missing from template examples. This is a minor S5 display polish item.
+- Template harvest window fully covers catalog fallback windows.
+
+---
+
+## 7. Candidate mapping notes
+
+Audit notes only. These are not final V2 records.
+
+| Source entry | Possible V2 concept | Confidence | Why | Do not finalize because |
+|---|---|---|---|---|
+| Praćenje trešnjine muhe – žute ljepljive ploče (sweet cherry) | setup action window + monitoring-program candidate | High | Install + recurring check + device + named target all present. | Final program/window split and note partitioning belong to S5. |
+| Prorjeđivanje trešnje | action-window candidate with default-skip notes | High | Bounded window and explicit optional/default-skip framing. | Whether skip-default becomes a model attribute is S5/owner territory. |
+| Mreža protiv ptica – trešnja | action-window candidate with variety-aware advisory timing | High | Bounded window and variety examples. | Variety-aware timing remains note/advisory content for now. |
+| Berba trešnje | harvest action linked to catalog variety/fallback timing | High | Template and catalog align. | Runtime variety pinning belongs later. |
+| Praćenje trešnjine muhe – višnja | monitoring-program candidate, yellow-plate method | Medium | Same target/device as sweet cherry but install detail is sparse. | Do not invent detail; resolve in S5/source check. |
+| Mreža protiv ptica – višnja | action-window candidate with optional skip condition | High | Bounded window and optional framing. | Material spec polish queued. |
+| Prorjeđivanje višnje | optional action-window candidate | High | Bounded window and `po potrebi` framing. | Final action/observation shape is S5. |
+| Berba višnje | harvest action linked to catalog variety/fallback timing | High | Template window covers catalog range. | Runtime variety pinning belongs later. |
+| Praćenje šljivinog savijača | setup action window + monitoring-program candidate | High | Pheromone trap + weekly check + named target + install height present. | Later-season relevance is S3 source-check item before finalization. |
+| Post-bloom zaštita – monilija i šljivin savijač | action-window candidate, after-bloom anchor | High | Calendar + post-bloom disease/pest context. | Stage vocabulary not locked. |
+| Reakcija po potrebi – 2. generacija šljivinog savijača | conditional action-window/advisory note candidate | Medium-low | Strong conditional wording, but source-check marker remains. | Do not formalize trap catch as gate; per current domain stance, notes territory unless S4/S5 decides otherwise. |
+| Prorjeđivanje plodova – šljiva | action-window candidate with fruit-spacing cue | High | Calendar + quantitative spacing. | Fruitlet stage vocabulary not locked. |
+| Mreža protiv ptica – šljiva | action-window candidate with material spec and skip notes | High | Bounded window and observed-pressure context. | Final shape S5. |
+| Berba šljive | harvest action linked to catalog variety/fallback timing | High | Template and catalog align. | Runtime variety pinning belongs later. |
+
+Explicit non-mapping:
+
+- Sweet cherry fruit cracking / rain-cover remains deferred as S3 source-check / owner decision. No rain-cover concept should be mapped now.
+
+---
+
+## 8. Beginner-clarity findings
+
+| ID | Finding | Where | Disposition |
+|---|---|---|---|
+| BC-SC1 | `Gisela 5 podloga` / rootstock term not decoded. | Sweet cherry agronomic context. | Queue for S4/S5 glossary. |
+| BC-SC2 | Side-zipper bird-net wording assumes user understands the product type. | Sweet cherry / plum net entries. | Nice-to-have; context mostly clear. |
+| BC-SC3 | `Lokalni pragovi` remains undefined for beginners. | Cherry fly + plum moth entries. | Queue for S4/S5 decoder. |
+| BC-SourC1 | Sour cherry yellow-plate install detail is lighter than sweet cherry. | Sour cherry monitoring. | Queue for S4/S5. |
+| BC-SourC2 | Sour cherry bird-net material spec is absent. | Sour cherry net. | Queue for S4/S5. |
+| BC-SourC3 | Sour cherry examples omit Morello / Schattenmorelle from catalog. | Sour cherry agronomic context. | Queue for S5 display polish. |
+| BC-Pl1 | Plum post-bloom uses `after bloom` without `after petal fall` cue. | Plum post-bloom. | Queue for S4/S5. |
+| BC-Pl2 | `2. generation plum moth` is not decoded for beginners. | Plum 2nd-generation entry. | S3 source check before wording change. |
+| BC-Pl3 | Plum 2nd-generation entry has partial label/PHI/bee/local-rule decoder. | Plum 2nd-generation entry. | Queue for S4/S5. |
+| BC-Pl4 | Plum thinning lacks apple-style fruitlet-size cue. | Plum thinning. | Queue for S4/S5. |
+| BC-Pl5 | Plum examples omit Čačanska lepotica and Bistrica / Požegača from catalog. | Plum agronomic context. | Queue for S5 display polish. |
+| BC-Pl6 | `Pjegavost lista` appears without context. | Plum post-bloom. | Queue source-backed wording polish. |
+
+No finding blocks S3.4.
+
+---
+
+## 9. Safety / no-auto-spray findings
+
+| Constraint | Sweet cherry | Sour cherry | Plum |
+|---|---|---|---|
+| No automatic spray calendar | Preserved. No spray entries; monitoring is evidence-only. | Preserved. No spray entries. | Preserved. Plum entries use conditional framing and `not preventive spraying`. |
+| Monitoring does not equal treatment | Preserved. | Preserved. | Preserved. |
+| No treatment during bloom / bee flight | n/a | n/a | Preserved in post-bloom entry. |
+| Weather constraints | Inherited from shared block. | Inherited from shared block. | Inherited from shared block; 2nd-gen entry adds morning/evening timing. |
+| Label / local regulation constraints | Preserved. | Preserved. | Mostly preserved; 2nd-gen entry decoder is partial. |
+| Trap catch is evidence only | Preserved. | Preserved. | Preserved. |
+| 2nd-generation wording does not become automatic treatment | n/a | n/a | Preserved. |
+| Rain-cover / fruit-cracking remains deferred | Preserved. | n/a | n/a |
+
+No safety blocker found.
+
+---
+
+## 10. Regional / climate findings
+
+Sweet cherry, sour cherry, and plum do not include the apple regional caveat in their agronomic-context blocks.
+
+All three reference Zagreb baseline without the reusable line that warmer regions may run earlier, colder regions later, and plant state/local conditions should guide execution.
+
+Recommendation:
+
+- Apply the apple regional caveat pattern across species in S5 after S3 confirms it scales.
+- Do not add numeric offsets.
+- Keep regional/climate differences as notes/deferred findings in current V2.
+
+---
+
+## 11. Catalog consistency check
+
+### Sweet cherry
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Burlat | early, Jun 1 – Jun 15 | Burlat, Jun 1–15 | Yes |
+| Kordia | mid, Jun 20 – Jul 5 | Kordia, Jun 20 – Jul 5 | Yes |
+| Lapins | mid, Jun 25 – Jul 10 | not example-cited | n/a |
+| Regina | late, Jul 5 – Jul 20 | Regina / Sweetheart, Jul 5–25 | Yes, combined display |
+| Sweetheart | late, Jul 10 – Jul 25 | Regina / Sweetheart, Jul 5–25 | Yes, combined display |
+| Fallback windows | Jun 1 – Jul 25 full range | template harvest `6.1–7.25` | Yes |
+| Bloom | late March to mid April by variety | late March – early April baseline | Consistent |
+
+No blocking inconsistency found.
+
+### Sour cherry
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Oblačinska | early, Jun 20 – Jul 5 | Oblačinska, Jun 20 – Jul 5 | Yes |
+| Marasca | mid, Jul 1 – Jul 15 | Marasca / Montmorency, July | Yes |
+| Montmorency | mid, Jul 5 – Jul 20 | Marasca / Montmorency, July | Yes |
+| Morello / Schattenmorelle | late, Jul 10 – Jul 31 | not example-cited | Minor gap |
+| Fallback windows | Jun 20 – Jul 31 full range | template harvest `6.20–7.31` | Yes |
+
+Minor display inconsistency: Morello / Schattenmorelle omitted from template examples. Queue S5 display polish.
+
+### Plum
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Čačanska rana | early, Jul 20 – Aug 10 | Čačanska rana, Jul–Aug | Yes |
+| Čačanska lepotica | early, Aug 1 – Aug 20 | not example-cited | Minor gap |
+| Čačanska najbolja | mid, Aug 10 – Aug 31 | Čačanska najbolja, Aug | Yes |
+| Stanley | late, Aug 20 – Sep 10 | Stanley / Président, Aug–Sep | Yes |
+| Bistrica / Požegača | late, Aug 25 – Sep 20 | not example-cited | Minor gap |
+| Président | late, Sep 1 – Sep 20 | Stanley / Président, Aug–Sep | Yes, combined display |
+| Fallback windows | Jul 20 – Sep 20 full range | template harvest `7.20–9.20` | Yes |
+
+Minor display inconsistency: plum agronomic context omits Čačanska lepotica and Bistrica / Požegača. Queue S5 display polish.
+
+---
+
+## 12. Owner decision items
+
+| Decision | Why owner decision is needed | Options | Recommended default |
+|---|---|---|---|
+| Sweet cherry rain-cover / fruit-cracking guidance | Template self-flags cracking after rain as S3 audit item; rain-cover is real but hobby relevance and scope are unclear. | A) Defer. B) Open targeted source-backed audit. C) Add light non-operational note. | A — defer unless owner explicitly opens rain-cover scope. |
+| Sour cherry monitoring install detail | Current detail is lighter than sweet cherry despite same pest/device. | A) Borrow sweet cherry spec in S5. B) Cross-reference sweet cherry. C) Keep light. | A — same target/device justifies parity if source-backed. |
+| Plum 2nd-generation timing/terminology | Existing entry is correctly conditional but beginner-opaque and source-check flagged. | A) Source-check during S3. B) Defer to S4. C) Replace wording only if source-backed. | A — source-check before wording change. |
+| Add beginner glossary? | S3.1–S3.3 repeatedly surface terminology issues: dormancy, fenofaza, podloga, karenca, local thresholds, 2nd generation. | A) Single glossary block in S5. B) Per-entry decoders. C) Defer. | A — single glossary is cheaper and more maintainable. |
+| Complete variety examples in sour cherry/plum contexts? | Template examples omit catalog-supported varieties. | A) Complete lists verbatim from catalog. B) Keep representative subset. C) Defer. | A — low-risk display polish. |
+
+No owner decision blocks S3.4.
+
+---
+
+## 13. Better-than-current opportunities
+
+| Opportunity | Why better | Risk | Recommendation |
+|---|---|---|---|
+| Promote sweet cherry net entry as cross-species bird-net pattern. | Best material/timing guidance in file. | Low. | Queue for S4/S5. |
+| Promote sweet cherry yellow-plate monitoring as non-pheromone monitoring pattern. | Strong install/cadence/evidence-vs-treatment wording. | Low. | Use as S5/S3.4 reference. |
+| Apply sweet cherry install spec to sour cherry monitoring. | Same pest/device, currently inconsistent. | Low if source-backed. | Queue for S5. |
+| Apply sweet cherry/plum net spec to sour cherry. | Same material category, missing detail. | Low. | Queue for S5. |
+| Borrow apple `after petal fall` cue for plum post-bloom. | More beginner-observable. | Low. | Queue for S5. |
+| Borrow apple fruitlet-size cue for plum thinning. | Stronger beginner timing cue. | Low. | Queue for S5. |
+| Decode `2nd generation` only after source check. | Removes opaque agronomic term safely. | Risk if invented. | S3 source check → S5 wording. |
+| Add shared beginner glossary. | Consolidates repeated terminology fixes. | Low. | Queue for S5. |
+| Apply apple regional caveat to all three species. | Product-vision consistency. | Low. | Queue for S5. |
+| Complete sour cherry/plum variety examples from catalog. | Better catalog/template alignment. | Low. | Queue for S5. |
+| Restate karenca/pčele/propisi decoder in plum 2nd-gen entry. | Consistency with other spray entries. | Low. | Queue for S5. |
+
+---
+
+## 14. Recommended next step
+
+Append S3.3 findings to `V2_S3_AUDIT_FINDINGS_DRAFT.md`, then proceed to S3.4 stone fruit batch 2:
+
+- peach
+- nectarine
+- apricot
+- almond
+
+Reasoning:
+
+- The findings format scales without modification.
+- Sweet cherry and plum introduce useful reference patterns for bird-net and non-pheromone monitoring.
+- All identified gaps are wording polish, display polish, source-check items, or owner decisions for S4/S5.
+- No targeted S3.3 fix is required before S3.4.
+
+---
+
+## 15. What NOT to do next
+
+- Do not rewrite all templates broadly.
+- Do not rewrite sweet cherry, sour cherry, or plum blocks.
+- Do not add `climateProfile`, `regionProfile`, `baseClimate`, `offsetDays`, or numeric regional offsets.
+- Do not add hardcoded commercial product brand names.
+- Do not add new sweet cherry, sour cherry, or plum varieties.
+- Do not finalize `action_window_definition`, `monitoring_program`, `stage_vocabulary`, or `open_condition` records.
+- Do not turn trap catches into automatic treatment rules.
+- Do not treat plum 2nd-generation as automatic spray trigger.
+- Do not add rain-cover guidance without source-backed audit and owner approval.
+- Do not invent a beginner decoder for `2nd generation` without source backing.
+- Do not implement runtime code, gates, weather logic, or recommendation logic.
