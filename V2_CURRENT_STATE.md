@@ -24,9 +24,9 @@ Finish documentation control so the project stops looping and can enter structur
 
 Current immediate next step:
 
-S3.3 — Stone fruit audit batch 1: sweet_cherry, sour_cherry, plum.
+S3.4 — Stone fruit audit batch 2: peach, nectarine, apricot, almond.
 
-S3.0B, S3.1, and S3.2 are complete; proceed to stone fruit audit batch 1.
+S3.0B, S3.1, S3.2, and S3.3 are complete; proceed to stone fruit audit batch 2.
 
 ---
 
@@ -378,19 +378,67 @@ Disposition:
 
 ### S3.3 — Stone fruit audit batch 1
 
-Status: NEXT
+Status: DONE — stone fruit batch 1 findings appended.
 
-Scope:
+Commit:
+
+- `b35bf5f Append S3 stone fruit batch 1 findings`
+
+Output:
+
+- `V2_S3_AUDIT_FINDINGS_DRAFT.md`
+
+Scope completed:
 
 - sweet_cherry
 - sour_cherry
 - plum
 
+Verdict:
+
+- Stone fruit batch 1 is ready for S3 scale-up as-is.
+- Sweet cherry and plum findings scale the established S3 format without modification.
+- Sweet cherry now provides two strong reference patterns:
+  - yellow sticky plate monitoring for cherry fruit fly
+  - bird-net material/timing guidance
+- No targeted stone batch 1 wording fix is required before S3.4.
+- Stone batch 1 findings should be resolved later through S4/S5 owner decisions and targeted fixes.
+
+Known stone batch 1 follow-up items preserved for S4/S5:
+
+- Sweet cherry yellow sticky plate monitoring should be treated as the reference pattern for non-pheromone monitoring.
+- Sweet cherry bird-net entry should be treated as the reference pattern for bird-net material/timing guidance.
+- Sour cherry monitoring install details are lighter than sweet cherry and should be considered for S5 polish.
+- Sour cherry bird-net material details are missing and should be considered for S5 polish.
+- Plum `2. generacija šljivinog savijača` requires source check before beginner-facing decoding or sharper timing wording.
+- Plum `2nd generation` wording must not become an automatic spray trigger.
+- Sweet cherry rain-cover / fruit-cracking guidance remains deferred and must not be added without source-backed audit and owner approval.
+- Sour cherry and plum variety example lists should be completed or deliberately kept representative in S5.
+- Glossary need is increasing: `fenofaza`, `dormancy`, `podloga`, `karenca`, `lokalni pragovi`, `stručni savjet`, `2. generacija`.
+
+Do not fix these now.
+
+Disposition:
+
+- Queue stone batch 1 wording, source-check, monitoring-shape, glossary, and mapping items for S4/S5 targeted resolution.
+- Proceed to S3.4 stone fruit batch 2.
+
+### S3.4 — Stone fruit audit batch 2
+
+Status: NEXT
+
+Scope:
+
+- peach
+- nectarine
+- apricot
+- almond
+
 Goal:
 
-Audit cherry-fly monitoring, bird protection, plum-moth monitoring, optional treatment wording, harvest cues, beginner clarity, product/material category clarity, and no-auto-spray behavior.
+Audit leaf-curl copper timing, pre-bloom copper, frost monitoring, post-bloom protection, fruit thinning, harvest cues, beginner clarity, product/material category clarity, monitoring vs treatment, no-auto-spray behavior, and source-check items for high-risk bloom/frost/leaf-curl wording.
 
-Do not audit peach, nectarine, apricot, or almond in S3.3; they belong to S3.4.
+Do not audit olive, fig, pomegranate, citrus, walnut, or hazelnut in S3.4.
 
 Expected S3 output:
 
