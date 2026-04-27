@@ -780,3 +780,358 @@ Reasoning:
 - Do not add rain-cover guidance without source-backed audit and owner approval.
 - Do not invent a beginner decoder for `2nd generation` without source backing.
 - Do not implement runtime code, gates, weather logic, or recommendation logic.
+
+---
+
+# S3.4 Stone Fruit Audit Batch 2 — Peach + Nectarine + Apricot + Almond
+
+## 1. Executive verdict
+
+Peach, nectarine, apricot, and almond are ready for S3 scale-up as-is.
+
+All four species correctly handle their species-specific failure modes.
+
+Peach and nectarine elevate leaf curl (`Taphrina deformans`) as a critical pre-bud-swell risk, name the disease, give the timing rule while buds are still closed or just beginning to swell, and preserve no-bloom-spraying safety.
+
+Apricot and almond correctly frame early bloom / frost as the primary crop-failure risk. Frost monitoring entries are information/advisory actions, not unsupported protection instructions. Apricot also has the strongest viral-disease wording in the file: Šarka / Plum pox virus is explicitly not treated as chemically curable.
+
+Almond is the lightest species in this batch and should receive source-backed S5 polish, especially around disease/pest monitoring and post-bloom target naming. This does not block S3 scale-up.
+
+Recommendation:
+
+- Append S3.4 findings to `V2_S3_AUDIT_FINDINGS_DRAFT.md`.
+- Then proceed to S3.5 Mediterranean audit: olive, fig, pomegranate.
+- Do not run a targeted stone batch 2 wording fix before S3.5.
+
+After this section is appended, all 10 standard fruit trees that use the shared block are audited. Remaining S3 sessions cover species that do not use the shared standard fruit tree block.
+
+---
+
+## 2. Stone batch 2 coverage summary
+
+| Area | Peach status | Nectarine status | Apricot status | Almond status | Notes |
+|---|---|---|---|---|---|
+| Shared yearly work | OK | OK | OK | OK | All inherit the 10 shared standard fruit tree entries; prior shared findings carry over. |
+| Species-specific work | OK | OK | OK | Minor gap | Peach: 6 entries. Nectarine: 6 entries. Apricot: 6 entries. Almond: 6 entries but lighter content. |
+| Harvest / variety linkage | OK | OK | OK | Minor gap | Peach, nectarine, and apricot examples match catalog except Mađarska najbolja missing from apricot examples. Almond examples match catalog but harvest cue depth is lighter. |
+| Monitoring | OK | OK | OK | Minor gap | Peach/nectarine have aphid + oriental fruit moth entries. Apricot has separate frost + šarka/aphid monitoring. Almond monitoring is too generic and needs source check. |
+| Frost / bloom risk | n/a | n/a | Excellent | Excellent | Apricot and almond correctly frame frost as primary risk and avoid unsupported protection automation. |
+| Leaf curl / disease pressure | Excellent | Excellent | n/a | OK | Peach/nectarine are strong. Almond references shared risk with peach/nectarine but is lighter. |
+| Spray/protection safety | OK | OK | OK | OK | No bloom/bee-flight violations found. Almond label/spacing wording is less explicit. |
+| Beginner clarity | Minor gap | Minor gap | Minor gap | Minor gap | Repeated terminology gaps continue: fenofaza, bud state, post-bloom, expert advice. Almond §4 and §5 are the thinnest. |
+| Regional caveat | Missing | Missing | Missing | Missing | Apple regional caveat pattern is absent from all four species. Queue for S5. |
+| Product/material category clarity | OK | OK | OK | Minor gap | Almond post-bloom says target disease without naming targets inline. |
+
+---
+
+## 3. Shared-block findings relevant to peach / nectarine / apricot / almond
+
+The shared block applies to all four species. Prior shared findings carry over:
+
+- `fenofaza` appears without full beginner translation in shared winter copper context.
+- `stručni/lokalni savjet` is not decoded into concrete resource types.
+- shared spring fertilization does not name a beginner-readable fertilizer category.
+- shared winter copper lacks the full label/regulation decoder line used elsewhere.
+- shared winter copper lacks a plain beginner plant-state cue such as dormant / buds still closed / before bloom.
+- apple's regional caveat pattern is not present in the shared block and is missing from these species.
+- `bujno stablo` remains undefined in shared fertilization context.
+
+Stone-batch-2-specific shared concerns:
+
+- `Krečenje debla` is especially relevant for stone fruit and is already correctly called out in the shared block.
+- Peach and nectarine can layer shared winter copper, leaf-curl copper, and post-pruning copper.
+- Apricot can layer shared winter copper, apricot pre-bloom copper, and post-pruning copper.
+- Almond can layer shared winter copper, pre-bloom almond copper, almond leaf-curl copper, and post-pruning copper.
+- Almond has the strongest anti-duplication copper wording in the file: "Ne duplicirati bakrene tretmane ako je isti fenološki prozor već pokriven." Queue this as the cross-species cumulative-copper pattern for S5 Spray Safety Notes.
+- Early-blooming species can create oil/copper sequencing confusion; S5 should clarify planning around oil and pre-bloom copper while preserving product-label authority.
+
+---
+
+## 4. Peach entry-by-entry findings
+
+| Entry | Source section | Calendar planning window | Purpose clarity | Beginner cues | Product/material category | Skip/delay/avoid | Monitoring/treatment safety | Regional caveat | Status | Finding |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Bakar – Kovrčavost lista (KRITIČNO – breskva) | PEACH §1 | `2.10–3.5` | Excellent — leaf curl / `Taphrina deformans` named as critical peach risk. | OK — while buds are closed or just beginning to swell. | OK — registered copper preparation. | OK — wet spring second treatment only if justified; oil/copper spacing stated. | OK | absent | OK | Strong leaf-curl entry. Minor decoder gaps: expert/local advice and full label/regulation wording. |
+| Praćenje lisnih uši i breskvinog savijača | PEACH §2 | `4.15–7.31` | OK — aphids + oriental fruit moth / `Grapholita molesta`. | OK — weekly underside/young-shoot inspection. | OK — registered product if treatment justified; pheromone trap named. | OK — treatment only with visible problem / threshold. | OK — monitoring does not equal treatment. | n/a | OK | Combined two-target entry; possible S5 split/design decision. |
+| Post-bloom zaštita – monilija i štetnici | PEACH §3 | `5.5–5.25` | OK — monilia + peach moth. | Minor gap — `after bloom` should be beginner-decoded as after petal fall. | OK — registered fungicide for monilia; insecticide conditional. | OK — only if monitoring / visible pests / expert advice justify. | OK — no bloom or bee flight; explicit bee-toxicity wording. | n/a | OK | Bee-protection wording is strong. Queue petal-fall cue polish. |
+| Prorjeđivanje plodova – breskva | PEACH §4 | `5.20–6.10` | OK — overcropping, fruit size/quality, branch breakage / alternate bearing. | OK — 1 fruit per 10–15 cm branch; remove twins/damaged fruit. | n/a | OK — young/no-crop skip. | n/a | n/a | OK | Could add apple-style fruitlet-size cue in S5. |
+| Mreža protiv ptica – breskva | PEACH §5 | `7.10–7.25` | OK — bird pressure before harvest. | OK — when fruit starts changing color. | Minor gap — 4×4 m given but side-zipper detail absent. | OK — remove after harvest; young/no-crop skip. | n/a | n/a | Minor gap | Borrow sweet cherry / plum net spec in S5. |
+| Berba breskve | PEACH §6 | `6.25–9.5` | OK. | Excellent — multiple passes, color, softness, room-temperature ripening, gentle handling. | n/a | OK — overripe fruit hygiene. | n/a | n/a | OK | Strong harvest entry. |
+
+---
+
+## 5. Nectarine entry-by-entry findings
+
+| Entry | Source section | Calendar planning window | Purpose clarity | Beginner cues | Product/material category | Skip/delay/avoid | Monitoring/treatment safety | Regional caveat | Status | Finding |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Bakar – kovrčavost lista (KRITIČNO – nektarina) | NECTARINE §1 | `2.10–3.5` | Excellent — nectarine sensitivity to leaf curl is clear. | OK — buds closed or just beginning to swell. | OK — registered copper preparation. | OK — wet spring second treatment only if justified; oil/copper spacing stated. | OK | absent | OK | Strong sensitivity framing. Minor decoder gaps carry over from peach. |
+| Praćenje lisnih uši i breskvinog savijača | NECTARINE §2 | `4.15–7.31` | OK — aphids + oriental fruit moth. | OK — weekly underside/young-shoot inspection. | OK — registered product if treatment justified; pheromone trap named. | OK — treatment only with visible problem / threshold. | OK | n/a | OK | Combined two-target entry; possible S5 split/design decision. |
+| Post-bloom zaštita – monilija i štetnici | NECTARINE §3 | `5.5–5.25` | OK. | Minor gap — `after bloom` should be beginner-decoded as after petal fall. | OK. | OK — conditional treatment only. | OK — no bloom / no bee flight; full decoder line. | n/a | OK | Mirrors peach. |
+| Prorjeđivanje plodova – nektarina | NECTARINE §4 | `5.20–6.10` | OK — overcropping / fruit quality. | OK — 1 fruit per 10–15 cm branch. | n/a | OK — strong consequences if skipped; young/no-crop skip. | n/a | n/a | OK | Could add fruitlet-size cue in S5. |
+| Mreža protiv ptica – nektarina | NECTARINE §5 | `7.20–8.5` | OK — bird pressure before harvest. | Excellent — color-change cue. | OK — 4×4 m and side-zipper detail present. | OK — remove after harvest; young/no-crop skip. | n/a | n/a | OK | Stronger than peach net entry. |
+| Berba nektarine | NECTARINE §6 | `7.1–9.10` | OK. | Excellent — multiple passes, color, firmness, avoid early harvest, thin skin handling, storage. | n/a | OK. | n/a | n/a | OK | Strong harvest entry. |
+
+---
+
+## 6. Apricot entry-by-entry findings
+
+| Entry | Source section | Calendar planning window | Purpose clarity | Beginner cues | Product/material category | Skip/delay/avoid | Monitoring/treatment safety | Regional caveat | Status | Finding |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Bakar – PRIJE cvatnje (KRITIČNO – marelica) | APRICOT §1 | `1.20–2.15` | Excellent — pre-bloom timing, preventive scope, and non-curative viral-disease boundary are clear. | OK — buds closed or just starting to swell. | OK — registered copper preparation. | OK — cannot fully recover if missed; oil/copper spacing stated. | OK | absent | OK | Self-flagged S3 source-check item remains. Strong wording. |
+| Praćenje mraza za cvatnje (marelica) | APRICOT §2 | `2.1–3.31` | Excellent — frost is primary crop-failure risk. | OK — daily forecast monitoring during bloom; approximate -1°C warning is hedged. | OK — possible small-tree protection materials named as examples. | n/a | OK — information action, user acts by local conditions. | n/a | OK | Gold-standard frost-as-information wording. |
+| Praćenje lisnih ušiju i šarke (marelica) | APRICOT §3 | `4.1–5.15` | Excellent — šarka / Plum pox virus has no curative treatment; aphids are vector context. | OK — yellow rings/spots as possible symptoms. | OK — registered insecticide only for visible aphid colony / vector pressure. | OK — expert confirmation and local phytosanitary recommendations. | Excellent — viral disease not treated as chemically curable. | n/a | OK | Gold-standard viral-disease wording. Expert resource decoder still needed cross-cuttingly. |
+| Post-bloom zaštita – monilija (marelica) | APRICOT §4 | `4.15–5.15` | OK — monilia named. | Minor gap — `after bloom / adapt to tree state` should specify petal fall / no open flowers. | OK — registered fungicide for monilia. | OK — only if monitoring / visible pests / expert advice justify. | OK — never spray open flowers; full decoder line. | n/a | OK | Queue petal-fall cue polish. |
+| Prorjeđivanje plodova – marelica | APRICOT §5 | `5.1–5.25` | OK — overcropping after successful bloom. | OK — 1 fruit per 8–10 cm branch. | n/a | Excellent — if frost destroyed flowers, thinning may be irrelevant; young/no-crop skip. | n/a | n/a | OK | Strong frost-conditional awareness. Could add fruitlet-size cue. |
+| Berba marelice | APRICOT §6 | `6.5–7.25` | OK. | Excellent — fast uneven ripening, 2–3 passes, color, softening, fragile fruit, storage. | n/a | OK. | n/a | n/a | OK | Strong closing loop: low crop is often frost-related. |
+
+Apricot agronomic-context notes:
+
+- Mađarska najbolja / Magyar kajszi exists in catalog but is missing from template examples. Queue S5 display polish.
+- Apricot special-case warning is strong and should inform almond wording.
+- Harcot is not in catalog and should not be added without variety workflow.
+
+---
+
+## 7. Almond entry-by-entry findings
+
+| Entry | Source section | Calendar planning window | Purpose clarity | Beginner cues | Product/material category | Skip/delay/avoid | Monitoring/treatment safety | Regional caveat | Status | Finding |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Bakar – PRIJE cvatnje badema (KRITIČNO) | ALMOND §1 | `1.25–2.20` | OK — early bloom and preventive copper timing. | Minor gap — `fenofaza` / `fenološki prozor` jargon. | OK — registered copper preparation implied. | OK — never on open bloom; do not duplicate copper if same phenological window already covered. | OK | absent | Minor gap | Best cumulative-copper wording in file; promote to S5 Spray Safety Notes. Restate 7–10 day oil/copper spacing more clearly. |
+| Praćenje mraza tijekom cvatnje | ALMOND §2 | `2.1–3.31` | OK — frost is primary crop-failure risk in continental climate. | Minor gap — lighter than apricot frost entry; lacks threshold/cue detail. | n/a | n/a | OK — app does not decide; user chooses protection. | n/a | Minor gap | Borrow apricot frost wording in S5. |
+| Bakar – kovrčavost lista (badem) | ALMOND §3 | `2.10–3.10` | OK — shares `Taphrina deformans` risk with peach/nectarine. | OK — buds still closed. | OK implied. | Minor gap — oil/copper spacing says see label rather than restating 7–10 days. | OK | n/a | Minor gap | Mirror peach/nectarine wording more closely in S5. |
+| Praćenje bolesti i štetnika – badem | ALMOND §4 | `4.15–8.15` | Minor gap — too generic. | Weak — no named targets, no cadence, no scouting cues. | n/a | Partial — user decides by observation. | OK, but weakly actionable. | n/a | S3 source check | Thinnest monitoring entry in the file. Do not finalize as monitoring-program record without source-backed target names. |
+| Post-cvatnja zaštita – badem (po potrebi) | ALMOND §5 | `4.10–5.10` | OK as conditional protection. | Minor gap — after bloom should be petal-fall decoded. | Weak — says target almond disease without naming targets inline. | OK — only if monitoring/symptoms/history/expert advice justify. | OK — no bloom / no bee flight; full decoder line. | n/a | Minor gap | Source-check target disease names before S5 wording. |
+| Berba badema | ALMOND §6 | `8.20–9.30` | OK. | OK — hull naturally cracks; shake tree or collect on tarp; dry in shell 1–2 weeks. | n/a | n/a | n/a | n/a | Minor gap | Functional but lighter than other harvest entries; optional S5 enrichment. |
+
+Almond agronomic-context notes:
+
+- Ferragnès, Ferraduel, and Supernova examples match catalog.
+- Texas, Tuono, Nonpareil are not in catalog and should not be added without variety workflow.
+- Almond pre-audit status correctly says full S3 review is required; S3.4 now records that almond is acceptable but needs source-backed S5 polish.
+
+---
+
+## 8. Candidate mapping notes
+
+Audit notes only. These are not final V2 records.
+
+| Source entry | Possible V2 concept | Confidence | Why | Do not finalize because |
+|---|---|---|---|---|
+| Peach leaf-curl copper | `action_window_definition` candidate, bud-closed cue + calendar fallback | High | Concrete phenology cue and calendar window. | Stage vocabulary not locked; copper spacing remains advisory notes. |
+| Peach aphid + moth monitoring | Two monitoring-program candidates or combined monitoring entry | Medium | Aphid scouting + pheromone trap signals present. | Split vs combined shape is S5 design decision. |
+| Peach post-bloom protection | `action_window_definition` candidate, after-bloom anchor | High | Named disease/pest targets and calendar window. | Petal-fall vocabulary not finalized. |
+| Peach thinning | `action_window_definition` candidate | High | Quantitative spacing and calendar window. | Fruitlet-stage vocabulary not finalized. |
+| Peach bird net | `action_window_definition` candidate | High | Bounded window and observed color/pressure cue. | Material spec polish queued. |
+| Peach harvest | harvest action linked to catalog window | High | Catalog and template align. | Runtime variety pinning belongs later. |
+| Nectarine entries | Parallel mappings to peach entries | High/Medium | Same structure and stronger sensitivity framing. | Same limitations as peach. |
+| Apricot pre-bloom copper | `action_window_definition` candidate with strong missed-window semantics | High | Explicit "cannot fully recover if missed" and bud-closed cue. | Self-flagged S3 source-check remains before promotion. |
+| Apricot frost monitoring | observation/advisory action window, not monitoring-program | Medium | Frost is not pest/disease target; information action wording present. | Do not map to monitoring-program; final observation/advisory shape is S5. |
+| Apricot aphid + šarka monitoring | scouting monitoring-program candidate | High | Named targets and visible symptoms. | Multi-target shape and virus/vector split are S5 decisions. |
+| Apricot post-bloom protection | `action_window_definition` candidate | High | Named monilia target and calendar. | Petal-fall cue polish queued. |
+| Apricot thinning | action-window candidate with frost-conditional skip note | High | Calendar and quantitative spacing present. | Do not formalize frost-event gate. |
+| Apricot harvest | harvest action linked to catalog window | High | Catalog and template align. | Runtime variety pinning later. |
+| Almond pre-bloom copper | `action_window_definition` candidate | High | Early bloom / pre-bloom copper context. | Source-check and cumulative-copper wording promotion are S5. |
+| Almond frost monitoring | observation/advisory action window, not monitoring-program | Medium | Frost is not pest/disease target. | Final observation/advisory shape is S5. |
+| Almond leaf-curl copper | `action_window_definition` candidate | High | Cross-references peach/nectarine risk and bud-closed cue. | Wording/source confidence polish queued. |
+| Almond disease/pest monitoring | monitoring-program candidate only after source check | Low | No target, no cadence, no scouting cue detail. | Per audit rules, do not finalize as monitoring-program without named targets. |
+| Almond post-bloom protection | conditional action-window candidate | Medium | Conditional post-bloom protection present. | Target diseases not named; source check needed. |
+| Almond harvest | harvest action linked to catalog window + hull-cracking cue | High | Catalog and template align. | Harvest cue enrichment optional. |
+
+---
+
+## 9. Beginner-clarity findings
+
+| ID | Finding | Where | Disposition |
+|---|---|---|---|
+| BC-Pe1 | `Stručni/lokalni savjet` undefined. | Peach entries. | Queue for S4/S5 glossary/decoder. |
+| BC-Pe2 | Combined aphid + moth monitoring could be split or clarified. | Peach monitoring. | Queue for S5 design decision. |
+| BC-Pe3 | `After bloom` lacks `after petal fall` cue. | Peach post-bloom. | Queue for S4/S5. |
+| BC-Pe4 | Fruitlet-size cue missing from thinning. | Peach thinning. | Queue for S4/S5. |
+| BC-Pe5 | Peach bird-net side-zipper detail absent. | Peach bird net. | Queue for S4/S5. |
+| BC-N1 | Same as peach for expert advice, combined monitoring, post-bloom, thinning. | Nectarine entries. | Queue for S4/S5. |
+| BC-Apr1 | Expert/local phytosanitary advice undefined, especially for šarka. | Apricot entries. | Queue for S4/S5. |
+| BC-Apr2 | `Adapt to tree state` lacks concrete petal-fall cue. | Apricot post-bloom. | Queue for S4/S5. |
+| BC-Apr3 | Fruitlet-size cue missing from thinning. | Apricot thinning. | Queue for S4/S5. |
+| BC-Apr4 | `Fenofaza` appears bare. | Apricot pre-bloom copper. | Queue for S4/S5. |
+| BC-Apr5 | Mađarska najbolja / Magyar kajszi missing from apricot examples. | Apricot agronomic context. | Queue for S5 display polish. |
+| BC-A1 | Almond frost monitoring lighter than apricot. | Almond frost monitoring. | Queue for S4/S5. |
+| BC-A2 | Almond oil/copper interval says see label instead of restating 7–10 days. | Almond copper entries. | Queue for S4/S5. |
+| BC-A3 | Almond disease/pest monitoring has no named targets, cadence, or cues. | Almond monitoring. | S3 source check before S5. |
+| BC-A4 | Almond post-bloom target diseases not named inline. | Almond post-bloom. | S3 source check + queue S5. |
+| BC-A5 | Almond harvest entry is functional but lighter than other harvest entries. | Almond harvest. | Nice-to-have / defer. |
+| BC-A6 | Almond cumulative-copper wording is strong but uses `fenološki prozor`. | Almond pre-bloom copper. | Queue for S4/S5; promote pattern with beginner wording. |
+
+No finding blocks S3.5.
+
+---
+
+## 10. Safety / no-auto-spray findings
+
+| Constraint | Peach | Nectarine | Apricot | Almond |
+|---|---|---|---|---|
+| No automatic spray calendar | Preserved. | Preserved. | Preserved. | Preserved. |
+| Monitoring does not equal treatment | Preserved. | Preserved. | Preserved, with strong šarka/vector limitation. | Preserved, but almond monitoring is weakly actionable. |
+| No treatment during bloom / bee flight | Preserved. | Preserved. | Preserved; "never spray open flowers" is explicit. | Preserved. |
+| Weather constraints | Inherited/shared. | Inherited/shared. | Frost is informationally framed. | Same. |
+| Label / local regulation constraints | Preserved; minor decoder gaps. | Preserved; minor decoder gaps. | Preserved. | Mostly preserved; spacing/decoder wording lighter. |
+| Leaf-curl copper remains pre-bud/pre-bloom | Preserved. | Preserved. | n/a. | Preserved. |
+| Frost monitoring does not become unsupported frost-protection instructions | n/a | n/a | Preserved. | Preserved, lighter than apricot. |
+| Viral disease / šarka not treated as chemically curable | n/a | n/a | Excellent. | n/a. |
+| Post-bloom protection remains conditional | Preserved. | Preserved. | Preserved. | Preserved. |
+| Trap/monitoring findings are evidence only | Preserved. | Preserved. | Preserved. | Preserved, but almond targets need source check. |
+
+No safety blocker found.
+
+Gold-standard patterns identified:
+
+- Apricot šarka wording is the reference pattern for viral disease handling.
+- Apricot frost-as-information wording is the reference pattern for non-pest monitoring/advisory actions.
+- Almond cumulative-copper anti-duplication wording is the reference pattern for S5 Spray Safety Notes.
+
+---
+
+## 11. Regional / climate findings
+
+Peach, nectarine, apricot, and almond do not include the apple regional caveat in their agronomic-context blocks.
+
+Stone-batch-2-specific regional issues:
+
+- Peach/nectarine leaf-curl timing is highly region-sensitive because bud break may occur earlier in warm coastal/Mediterranean climates and later in colder continental/alpine climates.
+- Apricot/almond early bloom and frost exposure differ strongly between Mediterranean and continental locations.
+- Current wording correctly avoids numeric offsets, but S5 should add qualitative caveats: warmer regions may reach bud/bloom stages earlier, colder regions later; plant state remains execution context.
+- Apricot/almond may need Mediterranean-vs-continental frost-risk wording, still without numeric formulas.
+
+Do not add regional offsets.
+
+---
+
+## 12. Catalog consistency check
+
+### Peach
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Springcrest | early, Jun 25 – Jul 15 | Springcrest / Redhaven, Jun–Jul | Yes |
+| Redhaven | early, Jul 1 – Jul 20 | Springcrest / Redhaven, Jun–Jul | Yes |
+| Royal Glory | mid, Jul 20 – Aug 5 | Royal Glory / Fayette, Jul–Aug | Yes |
+| Fayette | mid, Aug 1 – Aug 20 | Royal Glory / Fayette, Jul–Aug | Yes |
+| O'Henry | late, Aug 10 – Aug 31 | O'Henry, Aug | Yes |
+| Fallback windows | Jun 25 – Sep 5 full range | harvest `6.25–9.5` | Yes |
+
+Suncrest is not in catalog and not in template. Do not add without variety workflow.
+
+### Nectarine
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Caldesi 2000 | early, Jul 1 – Jul 20 | Caldesi 2000 / Big Top, Jul | Yes |
+| Big Top | early, Jul 10 – Jul 31 | Caldesi 2000 / Big Top, Jul | Yes |
+| Fantasia | mid, Aug 1 – Aug 20 | Fantasia / Stark Redgold, Aug | Yes |
+| Stark Redgold | mid, Aug 5 – Aug 25 | Fantasia / Stark Redgold, Aug | Yes |
+| Venus | late, Aug 15 – Sep 5 | Venus, Aug–Sep | Yes |
+| Fallback windows | Jul 1 – Sep 10 full range | harvest `7.1–9.10` | Yes |
+
+No inconsistency found.
+
+### Apricot
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Novosadska rodna | early, Jun 5 – Jun 25 | Novosadska rodna, Jun 5–25 | Yes |
+| Goldrich | mid, Jun 20 – Jul 10 | Goldrich / Kioto / Hargrand, Jun–Jul | Yes |
+| Kioto | mid, Jun 20 – Jul 10 | Goldrich / Kioto / Hargrand, Jun–Jul | Yes |
+| Hargrand | mid, Jun 25 – Jul 15 | Goldrich / Kioto / Hargrand, Jun–Jul | Yes |
+| Mađarska najbolja / Magyar kajszi | mid, Jun 25 – Jul 15 | not example-cited | Minor gap |
+| Bergeron | late, Jul 5 – Jul 25 | Bergeron, Jul 5–25 | Yes |
+| Fallback windows | Jun 5 – Jul 31 full range | harvest `6.5–7.25` | Yes, except late fallback extends to Jul 31 while template ends Jul 25 |
+
+Note:
+
+- Template examples match named examples.
+- Catalog late fallback extends to Jul 31, while template harvest window ends Jul 25. Bergeron example is Jul 5–25, but fallback late band is Jul 5–31.
+- This is a minor catalog/template alignment item for S5.
+- Harcot is not in catalog and not in template. Do not add without variety workflow.
+
+### Almond
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Supernova | mid, Aug 25 – Sep 15 | Supernova, Aug–Sep | Yes |
+| Ferragnès | late, Sep 5 – Sep 25 | Ferragnès / Ferraduel, Sep | Yes |
+| Ferraduel | late, Sep 10 – Sep 30 | Ferragnès / Ferraduel, Sep | Yes |
+| Fallback windows | Aug 20 – Sep 30 full range | harvest `8.20–9.30` | Yes |
+
+Texas, Tuono, and Nonpareil are not in catalog and not in template. Do not add without variety workflow.
+
+---
+
+## 13. Owner decision items
+
+| Decision | Why owner decision is needed | Options | Recommended default |
+|---|---|---|---|
+| Suncrest / Texas / Tuono / Nonpareil / Harcot variety candidates | Mentioned in S3.4 prompt but not present in catalog/template; variety additions require policy workflow. | A) Run variety-candidate workflow later. B) Defer. C) Reject. | B — defer to future variety additions. |
+| Almond monitoring target names | Almond monitoring is too generic for final monitoring-program mapping. | A) Source-check and add targets in S5. B) Keep generic. C) Drop entry. | A — source check first. |
+| Apricot frost-conditional thinning skip as gate? | `If frost destroyed bloom` is useful but not a final model gate. | A) Keep advisory note. B) Future model decision. C) Reject. | A — keep advisory in notes. |
+| Frost monitoring mapping | Frost is not pest/disease monitoring-program target. | A) Map as observation action window. B) Create new advisory category later. C) Strip. | A — observation action-window candidate. |
+| Promote almond cumulative-copper wording to Spray Safety Notes? | Best anti-duplication copper wording in file. | A) Promote in S5. B) Per-entry reminders. C) Defer. | A. |
+| Combined-display variety examples | Template groups varieties in examples; catalog has individual entries. | A) Normalize one per line. B) Keep combined for beginner grouping. C) Defer. | B unless owner prefers explicit list. |
+
+No owner decision blocks S3.5.
+
+---
+
+## 14. Better-than-current opportunities
+
+| Opportunity | Why better | Risk | Recommendation |
+|---|---|---|---|
+| Promote apricot viral-disease wording as reusable pattern. | Strongest no-curative-viral-disease wording. | Low. | Queue for S4/S5. |
+| Promote apricot frost-as-information wording. | Cleanly distinguishes observation from action. | Low. | Apply to almond in S5. |
+| Promote almond cumulative-copper wording. | Closes cross-cutting copper duplication risk. | Low. | Add to Spray Safety Notes in S5. |
+| Borrow apricot frost wording for almond. | Same risk class, almond currently lighter. | Low. | Queue for S5. |
+| Source-check and name almond monitoring targets. | Fixes thinnest monitoring entry. | Risk if invented. | S3 source check → S5. |
+| Apply apple regional caveat to all four species. | Product vision consistency. | Low. | Queue for S5. |
+| Add Mediterranean-vs-continental qualitative frost-risk hedge for apricot/almond. | Multi-country realism without offsets. | Low. | Queue for S5. |
+| Borrow petal-fall cue for post-bloom entries. | Beginner clarity. | Low. | Queue for S5. |
+| Borrow fruitlet-size cue for thinning entries. | Beginner clarity. | Low. | Queue for S5. |
+| Add side-zipper net detail to peach. | Consistency with nectarine/plum/sweet cherry. | Low. | Queue for S5. |
+| Complete apricot variety examples with Mađarska najbolja. | Catalog/template alignment. | Low. | Queue for S5 display polish. |
+| Consider almond harvest enrichment. | Better beginner guidance. | Low. | Nice-to-have / defer. |
+
+---
+
+## 15. Recommended next step
+
+Append S3.4 findings to `V2_S3_AUDIT_FINDINGS_DRAFT.md`, then proceed to S3.5 Mediterranean audit:
+
+- olive
+- fig
+- pomegranate
+
+Reasoning:
+
+- The findings format scales without modification.
+- All 10 standard fruit trees that use the shared block will be audited after S3.4 is appended.
+- Remaining sessions test non-shared-block species: Mediterranean, citrus, and nut.
+- All S3.4 gaps are wording polish, source-check items, display polish, or S5 owner decisions.
+- No targeted S3.4 fix is required before S3.5.
+
+---
+
+## 16. What NOT to do next
+
+- Do not rewrite all templates broadly.
+- Do not rewrite peach, nectarine, apricot, or almond blocks.
+- Do not add `climateProfile`, `regionProfile`, `baseClimate`, `offsetDays`, or numeric regional offsets.
+- Do not add hardcoded commercial product brand names.
+- Do not add Suncrest, Texas, Tuono, Nonpareil, Harcot, or any other variety without variety workflow.
+- Do not finalize `action_window_definition`, `monitoring_program`, `stage_vocabulary`, or `open_condition` records.
+- Do not turn trap monitoring into automatic treatment.
+- Do not add unsupported frost-protection instructions.
+- Do not treat šarka / Plum pox virus as chemically curable.
+- Do not move peach/nectarine/almond leaf-curl copper into bloom or post-bloom timing without source backing.
+- Do not create a frost-event gate for apricot thinning.
+- Do not finalize almond monitoring-program record without source-validating named targets.
+- Do not map apricot/almond frost monitoring as a pest/disease monitoring-program.
+- Do not invent almond/apricot regional timing rules.
+- Do not invent almond disease names without source backing.
+- Do not implement runtime code, gates, weather logic, or recommendation logic.
