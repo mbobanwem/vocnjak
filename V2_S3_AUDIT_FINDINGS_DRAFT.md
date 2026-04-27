@@ -1901,3 +1901,474 @@ After S3.7 is appended, all 18 supported species/subtypes will be audited and S3
 - Do not implement runtime code.
 - Do not finalize domain records.
 - Do not start S4 before S3.7 is appended and tracker is updated.
+
+---
+
+# S3.7 Nut Audit — Walnut + Hazelnut
+
+## 1. Executive verdict
+
+Walnut and hazelnut are ready for S3 scale-up as-is.
+
+Both nut species correctly handle their species-specific differences from standard pome/stone fruit templates.
+
+Walnut has the strongest non-standard pruning timing rationale in the file. It explains that walnut can bleed / release sap more strongly when pruned during dormancy, so summer pruning is the safer/preferred window for larger cuts.
+
+Hazelnut has the strongest bush-renewal pruning rule in the file. Its pruning entry gives concrete beginner-usable guidance: remove 1–2 oldest shoots yearly and keep 6–8 productive shoots.
+
+Both species are correctly placed in the nut special-template block and explicitly exclude the standard shared pome/stone spray block.
+
+The S3.0B-flagged fertilization/irrigation gap is confirmed, but it is not a blocker:
+
+- missing fertilization/irrigation is acceptable for established trees in the current V2 scope
+- young-tree watering is the only real practical gap
+- young-tree watering should be an S4/S5 owner decision, not a S3 blocker
+
+No blocker was found.
+
+After S3.7 is appended, all 18 supported species/subtypes have been audited.
+
+Recommendation:
+
+- Append S3.7 findings to `V2_S3_AUDIT_FINDINGS_DRAFT.md`.
+- Then update `V2_CURRENT_STATE.md` in a separate task to mark S3.7 done and S3 species/subtype audit complete.
+- Proceed next to S3.8 findings consolidation.
+- Do not run targeted nut fixes before S3.8.
+
+---
+
+## 2. Nut coverage summary
+
+| Area | Walnut status | Hazelnut status | Notes |
+|---|---|---|---|
+| Species-specific yearly work | OK | OK / minor gap | Walnut has 6 entries; hazelnut has 5 entries. Both are usable. |
+| Harvest / variety linkage | OK | OK | Template harvest windows cover catalog fallback windows. Both natural-drop harvest semantics are correctly self-flagged. |
+| Pest monitoring | OK | OK | Walnut has walnut fly and codling-moth trap monitoring. Hazelnut has weevil and bud-mite scouting. |
+| Optional treatment safety | OK | OK | Optional treatment remains conditional. Hazelnut is strongest on mechanical-first/IPM wording. |
+| Pruning clarity | Excellent | Excellent | Walnut explains bleeding-aware summer pruning. Hazelnut explains bush-renewal pruning quantitatively. |
+| Fertilization / watering | Missing but acceptable for established trees | Missing but acceptable for established trees | Young-tree watering is a real S5 owner-decision gap. |
+| Beginner clarity | OK | OK | Several terms need glossary support, but entries are generally understandable. |
+| Regional caveat | Missing | Missing | Standard apple-style warmer/cooler caveat should be added in S5. |
+| Product/material category clarity | OK | Minor gap | Walnut has strong trap/material wording. Hazelnut treatment material wording is lighter. |
+| Post-harvest drying/storage | OK | Partial | Both include drying guidance; mold/storage detail should be added in S5. |
+
+---
+
+## 3. Nut model / catalog findings
+
+Walnut and hazelnut are correctly modeled as distinct supported species.
+
+Current catalog structure:
+
+```text
+walnut
+hazelnut
+```
+
+Both are in group:
+
+```text
+nut
+```
+
+Both use timing-driving varieties with harvest windows.
+
+Current walnut varieties:
+
+- Chandler
+- Franquette
+- Šejnovo
+
+Current hazelnut varieties:
+
+- Istarski dugi
+- Tonda di Giffoni
+- Ennis
+
+No new varieties should be added in S3.7.
+
+Future walnut or hazelnut variety expansion requires the `V2_VARIETY_COVERAGE_POLICY.md` workflow and owner approval.
+
+Catalog/template consistency is good:
+
+- walnut template harvest window covers current catalog fallback windows
+- hazelnut template harvest window covers current catalog fallback windows
+- both catalog and template correctly flag natural-drop / gathering harvest semantics
+- no timing mismatch blocks S3 closure
+
+Nut group naming remains a future owner decision if ever needed. Do not rename the group now.
+
+---
+
+## 4. Walnut findings
+
+Walnut is structurally strong.
+
+Key strengths:
+
+- explains why walnut pruning timing differs from normal dormant pruning
+- gives beginner-readable reason: walnut can bleed / release sap when pruned in dormancy
+- summer pruning is clearly presented as safer/preferred for larger cuts
+- walnut copper entry is conditional and not annual by default
+- walnut fly monitoring is concrete and names yellow sticky trap with ammonium bait
+- walnut fly wording explains that hull discoloration does not always mean the kernel is unusable
+- codling-moth monitoring correctly notes that `Cydia pomonella` can also attack walnut
+- harvest guidance is clear: nuts naturally drop, hull cracks, collect daily, dry in shell in one layer for 2–3 weeks
+- winter check closes the hygiene loop by removing diseased hulls and checking trunk damage
+
+Key follow-up items for S4/S5:
+
+- add a short beginner decoder for walnut catkins / `resa`
+- add mold/storage-risk wording to harvest/drying guidance
+- consider wound-protection/material wording for large pruning cuts only if source-backed
+- borrow apple codling-trap install detail for walnut codling-moth monitoring
+- preserve the walnut bleeding-aware pruning pattern as a reference pattern
+
+Disposition:
+
+- Walnut is ready for S3 scale-up as-is.
+- Queue wording/source-check items for S4/S5.
+
+---
+
+## 5. Hazelnut findings
+
+Hazelnut is structurally usable and has one of the best pruning entries in the file.
+
+Key strengths:
+
+- bush-form growth is clearly recognized
+- pruning entry gives concrete renewal guidance:
+  - remove 1–2 oldest shoots yearly
+  - keep 6–8 productive shoots
+  - remove inner shoots for light
+- hazelnut weevil monitoring names `Curculio nucum`
+- weevil monitoring explains egg-laying into developing nuts
+- shake-test scouting over a white sheet is concrete and beginner-actionable
+- mechanical removal of attacked nuts is correctly prioritized for hobby growing
+- bud-mite monitoring names `Phytoptus avellanae`
+- swollen winter buds are a concrete visual cue
+- bud-mite response is mechanical-first and does not jump to chemical treatment
+- harvest guidance is clear: nuts naturally drop, collect daily, remove husk within a few days, dry 1–2 weeks, do not pick green-husk nuts from the tree
+
+Key follow-up items for S4/S5:
+
+- add mold/storage-risk wording to drying/storage guidance
+- decode `izbojnice`, `izdanci`, and `obnova grma` in glossary or inline where useful
+- source-check hazelnut pollination / cross-compatibility guidance
+- consider a light frost-during-bloom advisory because hazelnut blooms very early
+- tighten treatment material/product-category wording in bud-mite entry if source-backed
+- preserve mechanical-first IPM wording as a reference pattern
+
+Disposition:
+
+- Hazelnut is ready for S3 scale-up as-is.
+- Pollination compatibility is a real owner-decision/source-check item, but not a S3 blocker.
+
+---
+
+## 6. Fertilization / irrigation gap analysis
+
+The S3.0B readiness audit correctly flagged that walnut and hazelnut currently have no fertilization or irrigation entries.
+
+S3.7 classification:
+
+### Established trees
+
+For established walnut and hazelnut, the absence of scheduled fertilization and irrigation is acceptable in current V2.
+
+Reasoning:
+
+- mature walnut and hazelnut are not usually managed like peach/cherry/apricot
+- adding scheduled fertilization or irrigation for established trees risks fake precision
+- the current V2 product should not invent routine work just to fill a table
+- established-tree absence is defensible for hobby orchards
+
+Disposition:
+
+```text
+Accept current absence for established trees.
+Do not add scheduled fertilization/irrigation for mature walnut or hazelnut in S3.
+```
+
+### Young trees
+
+For young trees, the absence of watering guidance is a real practical gap.
+
+Reasoning:
+
+- young walnut and hazelnut trees need establishment support
+- dry continental summers can stress young trees
+- current templates give no guidance for a new owner
+- existing templates already have a pattern for young-tree watering in olive/fig/pomegranate
+
+Recommended S4/S5 owner decision:
+
+```text
+Add young-tree-only watering entries for walnut and hazelnut, probably mirroring the olive/fig/pomegranate pattern:
+young trees, years 1–3, 20–30 L weekly during dry periods.
+```
+
+Do not add this now.
+
+### Young-tree fertilization
+
+Young-tree fertilization is more source-sensitive than watering.
+
+Disposition:
+
+```text
+S3 source check / S4 owner decision before adding.
+Do not add unsourced fertilization guidance.
+```
+
+### Dry-summer advisory
+
+A single advisory note may be useful in S5:
+
+```text
+In very dry years or on shallow soil, young trees may need deep watering.
+```
+
+Do not add this now.
+
+### Container relevance
+
+Container/pot framing is not relevant for walnut or hazelnut.
+
+Disposition:
+
+```text
+No container guidance needed.
+```
+
+---
+
+## 7. Candidate mapping notes
+
+Audit notes only. These are not final V2 records.
+
+| Source entry | Possible V2 concept | Confidence | Why | Do not finalize because |
+|---|---|---|---|---|
+| Walnut summer pruning | action-window candidate, pruning | High | Bounded window and clear pruning purpose. | Exact timing and bleeding rationale remain source-check / S5 notes. |
+| Walnut optional spring copper | conditional action/advisory | Medium | Calendar window and target disease exist; entry is explicitly non-annual. | Do not create an automatic copper rule or formal gate. |
+| Walnut fly monitoring | setup action window + monitoring-program candidate | High | Target, device, attractant, cadence, and conditional response are present. | Final program/window split belongs to S5. |
+| Walnut codling-moth monitoring | setup action window + monitoring-program candidate | High | Target and pheromone trap are present. | Install detail should be polished; final shape belongs to S5. |
+| Walnut harvest | harvest action with natural-drop semantic | High | Catalog and template both describe natural drop / gathering period. | Do not create new harvest subtype now. |
+| Walnut winter check | observation action-window candidate | High | Bounded checklist-style observation window. | S5 finalization. |
+| Hazelnut pruning | action-window candidate, pruning | High | Bounded window and quantitative renewal rule. | Renewal cycle stays in notes. |
+| Hazelnut weevil monitoring | scouting monitoring-program candidate | Medium | Target, scouting method, and conditional response are present. | Shake-test method needs S5 mapping decision. |
+| Hazelnut bud-mite monitoring | scouting monitoring-program candidate | High | Target and visible swollen-bud cue are present. | S5 finalization. |
+| Hazelnut harvest | harvest action with natural-drop semantic | High | Catalog and template both describe natural drop / gathering period. | Do not create new harvest subtype now. |
+| Hazelnut winter check | observation action-window candidate | High | Bounded checklist-style observation window. | S5 finalization. |
+
+Recommended mapping stance for S5:
+
+- keep `harvest` as one action type
+- express natural-drop/gathering semantics in notes
+- do not create `harvest_natural_drop` unless owner explicitly decides otherwise
+
+---
+
+## 8. Beginner-clarity findings
+
+| ID | Finding | Where | Disposition |
+|---|---|---|---|
+| BC-W1 | Walnut bleeding / sap release is explained well and should be preserved. | Walnut pruning. | Reference pattern. |
+| BC-W2 | `Resa` / catkin is not beginner-decoded. | Walnut copper timing. | Queue for S5 glossary/inline decoder. |
+| BC-W3 | `Stručni savjet` / `lokalni pragovi` remain vague. | Walnut monitoring/treatment entries. | Queue for S5 decoder. |
+| BC-W4 | `Smanjenje inokuluma` is agronomic language. | Walnut winter check. | Queue for S5 glossary/inline decoder. |
+| BC-W5 | Walnut codling trap detail is lighter than apple codling entry. | Walnut codling monitoring. | Queue for S5. |
+| BC-W6 | Walnut drying lacks mold/storage-risk wording. | Walnut harvest. | Queue for S5. |
+| BC-H1 | Hazelnut pruning terms are mostly understandable through context but should be included in glossary. | Hazelnut pruning. | Queue for S5 glossary. |
+| BC-H2 | Big-bud mite is well decoded as swollen winter buds. | Hazelnut bud-mite monitoring. | Reference pattern. |
+| BC-H3 | `Bakterijsko propadanje` is not decoded. | Hazelnut winter check. | Queue for S5. |
+| BC-H4 | Hazelnut drying lacks mold/storage-risk wording. | Hazelnut harvest. | Queue for S5. |
+| BC-H5 | Hazelnut pollination/cross-compatibility is mentioned in context but not represented as guidance. | Hazelnut agronomic context. | S3 source check + S4/S5 owner decision. |
+| BC-N1 | Young-tree watering is missing for both nut species. | Walnut/hazelnut. | Owner decision for S5. |
+
+No beginner-clarity issue blocks S3 closure.
+
+---
+
+## 9. Safety / no-auto-spray findings
+
+Walnut and hazelnut preserve the no-auto-spray stance.
+
+Confirmed:
+
+- no automatic spray calendar
+- monitoring does not equal treatment
+- pest pressure is evidence only
+- optional copper/treatment wording remains conditional
+- walnut copper is explicitly not annual by default
+- hazelnut uses mechanical-first IPM wording
+- pome/stone shared spray block is not applied
+- no unsupported curative treatment claim is introduced
+- no formal runtime gate is created
+- no fake precision is introduced through routine fertilization/irrigation for established trees
+
+Hazelnut has the strongest mechanical-first pattern in the file:
+
+```text
+hobby growing → mechanical removal usually enough
+chemical treatment only if evidence/local advice justifies it
+```
+
+Walnut has the strongest hobby-context skip-by-default pattern:
+
+```text
+not needed every year
+dry previous season / low pressure → often no treatment
+```
+
+Both should be preserved as S5 reference patterns.
+
+---
+
+## 10. Regional / climate findings
+
+Walnut and hazelnut are primarily continental-EU species in the current V2 context.
+
+No Mediterranean-specific caveat is needed.
+
+However, the standard apple-style regional caveat should be applied in S5:
+
+```text
+warmer regions may move earlier
+colder regions may move later
+plant state and local conditions override the date
+```
+
+Nut-specific notes:
+
+- walnut late leafing and May bloom reduce frost-risk compared with apricot/almond
+- hazelnut blooms very early and may need a frost-during-bloom advisory
+- hazelnut pollination / compatibility is a real productivity factor and should be source-checked
+- drought/young-tree watering matters mainly during establishment years
+- no numeric regional offsets should be added
+
+Do not add:
+
+- `climateProfile`
+- `regionProfile`
+- `baseClimate`
+- `offsetDays`
+- formulas
+- hidden regional shifts
+
+---
+
+## 11. Catalog consistency check
+
+### Walnut
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Plant type key | `walnut` | walnut block | Yes |
+| Group | `nut` | nut special block | Yes |
+| Varieties | Chandler, Franquette, Šejnovo | no new varieties | Correct |
+| Harvest fallback | mid/late walnut windows | template `9.15–10.31` | Covered |
+| Bloom | May / late leafing | template says late leafing and May bloom | Consistent |
+| Harvest semantic | natural drop / gathering period | natural drop / hull cracks | Consistent |
+| Shared block | not applicable | not applied | Correct |
+
+### Hazelnut
+
+| Item | Catalog value | Template value | Match? |
+|---|---|---|---|
+| Plant type key | `hazelnut` | hazelnut block | Yes |
+| Group | `nut` | nut special block | Yes |
+| Varieties | Istarski dugi, Tonda di Giffoni, Ennis | no new varieties | Correct |
+| Harvest fallback | mid/late hazelnut windows | template `8.25–10.10` | Covered |
+| Bloom | very early / February-March | template says very early / February | Consistent |
+| Harvest semantic | natural drop / gathering period | natural drop / do not pick green husk | Consistent |
+| Shared block | not applicable | not applied | Correct |
+
+No catalog/template inconsistency blocks S3 closure.
+
+---
+
+## 12. Owner decision items
+
+| Decision | Why owner decision is needed | Options | Recommended default |
+|---|---|---|---|
+| Young-tree watering for walnut/hazelnut | Real establishment gap; current templates give no guidance for new trees. | A) Add young-tree-only watering entries. B) Add advisory line only. C) Defer. | A in S5. |
+| Young-tree fertilization | More source-sensitive than watering. | A) Source-check then add. B) Add generic light spring entry. C) Defer. | A or C; do not invent. |
+| Hazelnut pollination / compatibility | Hazelnut productivity often depends on compatible pollinators. | A) Source-check and add advisory. B) Keep only context note. C) Defer. | A. |
+| Hazelnut frost-during-bloom note | Hazelnut blooms very early. | A) Add short advisory. B) Add full frost-monitoring entry. C) Defer. | A after source check. |
+| Walnut pruning timing finalization | Summer pruning window is self-flagged for source validation. | A) Source-check before S5 finalization. B) Keep current note. C) Defer. | A. |
+| Natural-drop harvest semantic | Walnut/hazelnut harvest is gathering fallen ripe nuts, not active picking. | A) Keep one `harvest` action type with notes. B) Add subtype. C) Defer. | A. |
+| Nut group name | Current `nut` group is internally consistent. | A) Keep `nut`. B) Rename to `tree_nut`. C) Split. | A. |
+| Walnut/hazelnut variety expansion | Future market candidates exist but are out of scope. | A) Defer. B) Open variety workflow. C) Add now. | A. |
+
+No owner decision blocks S3 closure.
+
+---
+
+## 13. Better-than-current opportunities
+
+| Opportunity | Why better | Risk | Recommendation |
+|---|---|---|---|
+| Promote walnut bleeding-aware pruning as reference pattern. | Best example of explaining non-standard timing. | Low. | Queue for S5. |
+| Promote walnut skip-by-default copper wording. | Best hobby-context no-treatment wording. | Low. | Queue for S5. |
+| Promote walnut damage-vs-loss wording for walnut fly. | Helps users avoid panic when hull is affected but kernel may be usable. | Low. | Queue for S5. |
+| Promote hazelnut renewal-pruning numbers. | Best quantitative bush-renewal guidance in file. | Low. | Queue for S5. |
+| Promote hazelnut mechanical-first IPM wording. | Best practical non-chemical response pattern. | Low. | Queue for S5. |
+| Add young-tree watering entries for walnut/hazelnut. | Closes the only true S3.0B nut gap. | Low if owner-approved. | S4/S5 owner decision. |
+| Add hazelnut pollination advisory after source check. | Addresses a real productivity issue. | Medium if unsourced. | Source-check first. |
+| Add mold/storage warning for walnut/hazelnut drying. | Improves post-harvest usability. | Low. | Queue for S5. |
+| Add apple-style regional caveat to nut agronomic contexts. | Completes F3 cross-cutting consistency. | Low. | Queue for S5. |
+| Add glossary terms: `resa`, `izbojnica`, `smanjenje inokuluma`, `bakterijsko propadanje`. | Improves beginner clarity. | Low. | Queue for S5 glossary. |
+
+---
+
+## 14. Recommended next step
+
+Append S3.7 findings to `V2_S3_AUDIT_FINDINGS_DRAFT.md`.
+
+Then, in a separate tracker task, update `V2_CURRENT_STATE.md` to mark:
+
+```text
+S3.7 DONE
+S3 species/subtype audit complete
+18 of 18 species/subtypes audited
+next = S3.8 findings consolidation
+```
+
+After this append, S3.8 findings consolidation should begin.
+
+S3.8 should consolidate:
+
+- cross-cutting findings
+- reference/gold-standard wording patterns
+- owner decision queue
+- source-check queue
+- candidate mapping notes
+- S4/S5 follow-up work
+
+Do not start S4 before S3.8 is complete.
+
+---
+
+## 15. What NOT to do next
+
+- Do not rewrite all templates broadly.
+- Do not rewrite walnut or hazelnut blocks now.
+- Do not add walnut varieties.
+- Do not add hazelnut varieties.
+- Do not rename the nut group.
+- Do not add scheduled fertilization/irrigation for established walnut or hazelnut.
+- Do not add young-tree watering entries without owner decision.
+- Do not add hazelnut pollination guidance without source check.
+- Do not add hazelnut frost thresholds without source check.
+- Do not add climate offsets.
+- Do not add `climateProfile`, `regionProfile`, `baseClimate`, or `offsetDays`.
+- Do not add brand names.
+- Do not apply pome/stone shared spray program to walnut or hazelnut.
+- Do not create automatic spray rules.
+- Do not convert trap/scouting observations into formal gates.
+- Do not create `harvest_natural_drop` subtype now.
+- Do not finalize domain records.
+- Do not implement runtime code.
+- Do not start S4 before S3.8 consolidation.
