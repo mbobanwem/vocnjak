@@ -10,6 +10,7 @@
 - Detailed per-species evidence is archived at `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md`.
 - S4 owner decision recorded: citrus is removed from current V2 supported scope and deferred to future roadmap work.
 - S4 owner decision recorded: fig is removed from current V2 supported scope and deferred to future fig domain work.
+- S4 owner decision recorded: monitoring shape is defined by real-world inspection behavior, not pest count.
 
 ## 1. Scope
 
@@ -25,6 +26,7 @@ Cover:
 - no runtime changes were made
 - calendar-first, plant-state-aware stance preserved
 - no automatic spray calendar introduced
+- S4 monitoring design rule applies across all remaining supported fruit species
 
 ## 2. Executive verdict
 
@@ -73,6 +75,7 @@ No schema/runtime implementation should start before S4/S5 are complete.
 
 - No-auto-spray stance held across all batches.
 - Monitoring remains evidence, not automatic treatment.
+- Monitoring entries are shaped by real-world inspection behavior, not by pest count.
 - Pome/stone shared block is valid only for standard fruit trees.
 - Mediterranean/citrus/nut special blocks correctly exclude shared pome/stone block; S4 removes citrus from current V2 rather than polishing the weak subtype model.
 - Beginner glossary debt exists across all groups.
@@ -177,10 +180,10 @@ Use qualitative, plant-state/local-condition-aware caveats only.
 | Decision | Context | Recommended default | Next phase |
 |---|---|---|---|
 | Apple early fallback harvest window mismatch | Template starts later than early fallback, but no current early apple variety. | Defer until early apple variety is added. | S4 |
-| Pear monitoring split vs combined entry | Pear has multiple monitoring concerns. | Decide shape in S5 design. | S4/S5 |
+| Pear monitoring split vs combined entry | Pear has multiple monitoring concerns. | Apply the S4 monitoring design rule in S5: combine only if same inspection pass, same method, same practical window, and same decision context; otherwise split. | S5 |
 | Quince codling trap option vs scouting-only | Trap guidance is not fully source-backed in current text. | Source-check before adding trap guidance. | S4 |
 | Cumulative copper wording promotion | Multiple copper entries can stack in user perception. | Promote anti-duplication wording where approved. | S4/S5 |
-| Multi-target scouting program shape | Several entries scout multiple targets. | Prefer one program with multi-target list, confirm in S5. | S4/S5 |
+| Monitoring entry shape across supported species | Several entries include multiple possible targets. | Final S4 rule: monitoring entries are defined by real-world inspection behavior, not pest count. Combine targets only when the same real-world inspection pass uses the same method (`trap` vs `scouting`), same practical window/season, and same user decision context. If method, window, or decision context differs, split. | S5 |
 | Non-pest `praćenje` mapping | Fruit cracking, frost, winter checks are not pest monitoring. | Map to observation/advisory action windows. | S4/S5 |
 | Fig harvest/crop-type model | Universal two-window fig harvest is not approved. Fig behavior is type-dependent: one-crop vs two-crop, breba vs main crop, pruning on old wood vs new growth, and regional sensitivity. | Remove fig from current V2; defer to future fig domain definition. | S4 recorded; future roadmap |
 | Olive species-level harvest timing vs catalog silence | Template has species-level timing; catalog has no olive timing. | Keep template as timing reference for now. | S4/S5 |
@@ -213,7 +216,7 @@ Shared standard-fruit-tree block:
 Pome:
 
 - resolve apple early fallback mismatch
-- decide pear monitoring split vs combined shape
+- apply S4 monitoring design rule to pear: scouting-style pear psylla / aphids may combine only if same pass/window/decision context; pheromone-trap moth/codling monitoring should split if method or season logic differs
 - source-check quince codling trap option
 - tighten quince disease target wording if source-backed
 
@@ -279,13 +282,14 @@ Candidate-only notes:
 
 - monitoring_program candidates exist across apple, cherry, plum, olive, walnut, and hazelnut; citrus candidates are deferred with citrus removal.
 - observation/advisory action-window candidates include winter checks, frost checks, fruit cracking, and other non-pest observations.
-- multi-target scouting shape remains unresolved.
+- combined scouting entry when inspection conditions match (same pass, method, window, decision context); otherwise split.
 - non-pest monitoring should map to observation/advisory, not `monitoring_program`.
 - long irrigation/care windows need a design decision.
 - fig harvest windows are deferred; universal two-window harvest is not approved for current V2.
 - lemon full-year harvest window is deferred with citrus removal and must be revisited only during future full citrus reintroduction.
 - walnut/hazelnut natural-drop harvest stays notes/advisory unless owner decides otherwise.
 - trap/scouting observations must not become formal gates.
+- no checklist-like monitoring structures; notes should explain what to look for, where to look, and what the sign means.
 - no final records were created during S3.
 
 ## 12. Explicitly deferred / do-not-fix-now

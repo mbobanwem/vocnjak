@@ -131,6 +131,25 @@ Default shape for any monitoring source material is **setup + program together**
 
 When a source entry supports both "setup + program" and ambiguity, the curator chooses setup + program. Lazy audit (dropping to a weaker shape because cadence or thresholds are thin) is forbidden by §3 item 3. Missing cadence → `cadence` field absent; program still ships.
 
+### 2.3a S4 owner decision — monitoring shape by real-world inspection behavior
+
+Curators must not classify monitoring shape by pest count alone.
+
+Monitoring entries are defined by real-world inspection behavior:
+
+- same real-world inspection pass
+- same method (`trap` vs `scouting`)
+- same practical time window / season
+- same user decision context
+
+Targets may be combined only when all four are true. If method, window, or decision context differs, split into separate monitoring entries.
+
+Trap and scouting should not be merged merely because both are "monitoring". Trap-based monitoring is usually separate and target-specific. Visual scouting may include multiple visible signs when the grower realistically checks them together in one pass.
+
+Do not create checklist-like monitoring structures. Do not merge unrelated targets into generic "pest monitoring". Do not split every pest into its own program when the real-world inspection is one pass.
+
+Monitoring remains evidence collection, not task enforcement. Notes should explain what to look for, where to look, and what the sign means. Do not invent automatic treatment gates, trap/scouting thresholds, cadence/compliance language, new monitoring entity types, or `target_codes[]`.
+
 ### 2.4 What the signal table IS — restated positively
 
 The signal table documents how a human curator should think about an ambiguous source entry. It ensures two curators reading the same source would reach the same mapping decision (determinism by shared reading conventions). It does not replace the curator's reading; it structures it.

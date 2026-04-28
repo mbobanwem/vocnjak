@@ -795,6 +795,42 @@ Current documentation disposition:
 - `V2_FUTURE_ROADMAP.md` records fig reintroduction as future work.
 - `V2_PLANT_CATALOG.md` and `V2_ORCHARD_PLAN_TEMPLATES.md` are targeted-cleaned so fig is no longer current supported V2 scope.
 
+#### S4 owner decision — Monitoring design rule
+
+Status: RECORDED — monitoring shape is based on real-world inspection behavior.
+
+Decision:
+
+- Monitoring structure must be consistent across all supported fruit species, but content remains species-specific.
+- Monitoring entries are defined by real-world inspection behavior, not by pest count.
+- Combine targets only when the same real-world inspection pass uses the same method (`trap` vs `scouting`), same practical time window / season, and same user decision context.
+- If method, window, or decision context differs, split into separate monitoring entries.
+
+Application examples:
+
+- Pear psylla / aphids visual scouting may be one scouting-style inspection if same window and same pass.
+- Pear fruit moth / codling moth trap monitoring should be separate if it uses a pheromone trap or different season logic.
+- Trap-based monitoring is usually separate and target-specific.
+- Visual scouting may combine multiple visible signs only when the grower realistically checks them together.
+
+Constraints:
+
+- Do not create checklist-like monitoring structures.
+- Do not merge unrelated targets into generic "pest monitoring".
+- Do not split every pest into its own program if the real-world inspection is one pass.
+- Monitoring remains evidence collection, not task enforcement.
+- Notes should explain what to look for, where to look, and what the sign means.
+- No automatic treatment gates.
+- No trap/scouting thresholds invented in S4.
+- No cadence/compliance language.
+- No schema change and no `target_codes[]`.
+
+Disposition:
+
+- `V2_S3_AUDIT_CONSOLIDATION.md` records the S4 owner decision for S5 application.
+- `V2_CATALOG_AUDIT.md` records the curator guidance.
+- S5 must apply this rule consistently across supported species.
+
 Purpose:
 
 Resolve the decision queue produced by S3.
