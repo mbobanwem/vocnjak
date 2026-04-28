@@ -11,6 +11,7 @@
 - S4 owner decision recorded: citrus is removed from current V2 supported scope and deferred to future roadmap work.
 - S4 owner decision recorded: fig is removed from current V2 supported scope and deferred to future fig domain work.
 - S4 owner decision recorded: monitoring shape is defined by real-world inspection behavior, not pest count.
+- S4 owner decision recorded: non-pest awareness/risk monitoring is allowed and must be worded separately from pest/disease monitoring.
 
 ## 1. Scope
 
@@ -76,6 +77,8 @@ No schema/runtime implementation should start before S4/S5 are complete.
 - No-auto-spray stance held across all batches.
 - Monitoring remains evidence, not automatic treatment.
 - Monitoring entries are shaped by real-world inspection behavior, not by pest count.
+- Monitoring is not limited to pests; awareness/risk monitoring can cover environmental or physiological conditions such as frost, fruit cracking, drought stress, or heat stress.
+- Awareness/risk monitoring must not imply a pest-style "detect -> treat" pipeline.
 - Pome/stone shared block is valid only for standard fruit trees.
 - Mediterranean/citrus/nut special blocks correctly exclude shared pome/stone block; S4 removes citrus from current V2 rather than polishing the weak subtype model.
 - Beginner glossary debt exists across all groups.
@@ -184,7 +187,7 @@ Use qualitative, plant-state/local-condition-aware caveats only.
 | Quince codling trap option vs scouting-only | Trap guidance is not fully source-backed in current text. | Source-check before adding trap guidance. | S4 |
 | Cumulative copper wording promotion | Multiple copper entries can stack in user perception. | Promote anti-duplication wording where approved. | S4/S5 |
 | Monitoring entry shape across supported species | Several entries include multiple possible targets. | Final S4 rule: monitoring entries are defined by real-world inspection behavior, not pest count. Combine targets only when the same real-world inspection pass uses the same method (`trap` vs `scouting`), same practical window/season, and same user decision context. If method, window, or decision context differs, split. | S5 |
-| Non-pest `praćenje` mapping | Fruit cracking, frost, winter checks are not pest monitoring. | Map to observation/advisory action windows. | S4/S5 |
+| Non-pest `praćenje` / awareness monitoring | Frost, fruit cracking, drought stress, heat stress, and similar environmental/physiological conditions are not pest/disease pressure. | S4 decision: awareness/risk monitoring is allowed, but wording must separate it from pest/disease monitoring and avoid any detect -> treat pipeline. Possible actions may be mentioned only when real-world valid, not misleading, and source-backed or clearly conservative. | S5 |
 | Fig harvest/crop-type model | Universal two-window fig harvest is not approved. Fig behavior is type-dependent: one-crop vs two-crop, breba vs main crop, pruning on old wood vs new growth, and regional sensitivity. | Remove fig from current V2; defer to future fig domain definition. | S4 recorded; future roadmap |
 | Olive species-level harvest timing vs catalog silence | Template has species-level timing; catalog has no olive timing. | Keep template as timing reference for now. | S4/S5 |
 | Pomegranate spring/summer thinness | Light but defensible for current scope. | Accept unless owner expands Mediterranean-market depth. | S4 |
@@ -283,13 +286,15 @@ Candidate-only notes:
 - monitoring_program candidates exist across apple, cherry, plum, olive, walnut, and hazelnut; citrus candidates are deferred with citrus removal.
 - observation/advisory action-window candidates include winter checks, frost checks, fruit cracking, and other non-pest observations.
 - combined scouting entry when inspection conditions match (same pass, method, window, decision context); otherwise split.
-- non-pest monitoring should map to observation/advisory, not `monitoring_program`.
+- non-pest monitoring is allowed as awareness/risk monitoring, but must not be framed as pest/disease detection or automatic treatment logic.
+- awareness monitoring must explain what to observe, when/why it matters, and any possible user action only when real-world valid, not misleading, and source-backed or clearly conservative.
 - long irrigation/care windows need a design decision.
 - fig harvest windows are deferred; universal two-window harvest is not approved for current V2.
 - lemon full-year harvest window is deferred with citrus removal and must be revisited only during future full citrus reintroduction.
 - walnut/hazelnut natural-drop harvest stays notes/advisory unless owner decides otherwise.
 - trap/scouting observations must not become formal gates.
 - no checklist-like monitoring structures; notes should explain what to look for, where to look, and what the sign means.
+- no detection -> treatment pipeline for awareness/risk monitoring.
 - no final records were created during S3.
 
 ## 12. Explicitly deferred / do-not-fix-now

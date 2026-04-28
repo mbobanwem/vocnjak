@@ -150,6 +150,33 @@ Do not create checklist-like monitoring structures. Do not merge unrelated targe
 
 Monitoring remains evidence collection, not task enforcement. Notes should explain what to look for, where to look, and what the sign means. Do not invent automatic treatment gates, trap/scouting thresholds, cadence/compliance language, new monitoring entity types, or `target_codes[]`.
 
+### 2.3b S4 owner decision — awareness / risk monitoring
+
+Monitoring is not limited to pests.
+
+Curators must distinguish:
+
+- pest / disease monitoring — insects, fungi, visible pest/disease symptoms; may lead to action consideration, never automatic action
+- awareness / risk monitoring — frost, fruit cracking, drought stress, heat stress, and similar environmental or physiological conditions
+
+This distinction is terminology and curator guidance only. It does not add schema fields, enums, entity types, or runtime behavior.
+
+Curators must not classify everything under generic "monitoring." Awareness monitoring must not be framed as pest-style detection and must not imply a "detect -> treat" pipeline.
+
+For awareness monitoring, notes should explain:
+
+- what to observe
+- when and why it matters
+- possible user actions only when the action is real-world valid, not misleading, and source-backed or clearly conservative
+
+Examples:
+
+- Frost: observe risk and damage. Before an event, protection may be mentioned if feasible and source-backed. After an event, observe; do not assume immediate removal or pruning.
+- Fruit cracking: observe rain-related risk near harvest. Possible actions may include harvest timing or sanitation if source-backed. Do not invent treatment rules.
+- Drought: observe soil moisture or plant stress. Irrigation may be appropriate where the source supports it and the action is obvious.
+
+Do not invent thresholds, automatic actions, cadence/compliance language, or new treatment rules for awareness items.
+
 ### 2.4 What the signal table IS — restated positively
 
 The signal table documents how a human curator should think about an ambiguous source entry. It ensures two curators reading the same source would reach the same mapping decision (determinism by shared reading conventions). It does not replace the curator's reading; it structures it.

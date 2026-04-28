@@ -831,6 +831,39 @@ Disposition:
 - `V2_CATALOG_AUDIT.md` records the curator guidance.
 - S5 must apply this rule consistently across supported species.
 
+#### S4 owner decision — Awareness / risk monitoring
+
+Status: RECORDED — non-pest monitoring is allowed when clearly separated from pest/disease monitoring.
+
+Decision:
+
+- Monitoring is not limited to pests.
+- Awareness / risk monitoring is part of V2 for environmental or physiological conditions such as frost, fruit cracking, drought stress, heat stress, and similar phenomena.
+- Pest/disease monitoring and awareness/risk monitoring must be separated in meaning and wording.
+
+Rules:
+
+- Awareness monitoring must not be framed as pest-style detection.
+- Awareness monitoring must not imply a "detect -> treat" pipeline.
+- Monitoring remains evidence gathering, not task enforcement.
+- Do not invent thresholds.
+- Do not create automatic actions.
+- Do not introduce new entity types, enums, schema fields, or runtime behavior.
+
+Documentation guidance:
+
+- Notes should explain what to observe and when/why it matters.
+- Possible user actions may be mentioned only when real-world valid, not misleading, and source-backed or clearly conservative.
+- Frost examples: before event, protection may be mentioned if feasible; after event, observe and do not assume immediate removal or pruning.
+- Fruit cracking examples: observe rain-related risk near harvest; possible actions may include harvest timing or sanitation if source-backed; do not invent treatment rules.
+- Drought examples: observe soil moisture / plant stress; irrigation is acceptable when supported and obvious.
+
+Disposition:
+
+- `V2_S3_AUDIT_CONSOLIDATION.md` records the S4 owner decision for S5 application.
+- `V2_CATALOG_AUDIT.md` records curator guidance.
+- S5 must apply the pest/disease vs awareness/risk distinction consistently.
+
 Purpose:
 
 Resolve the decision queue produced by S3.
