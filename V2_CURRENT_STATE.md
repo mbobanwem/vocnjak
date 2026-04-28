@@ -82,7 +82,7 @@ Commit:
 
 Status:
 
-- `V2_ORCHARD_PLAN_TEMPLATES.md` contains template coverage for the 18 supported plant types / subtypes.
+- `V2_ORCHARD_PLAN_TEMPLATES.md` contained template coverage for the 18 pre-S4 candidate plant types / subtypes.
 - Shared block exists for standard fruit trees.
 - Mediterranean, citrus, and nut groups are handled separately.
 - Monitoring does not equal treatment.
@@ -154,7 +154,7 @@ Status: DONE — read-only analysis completed.
 Verdict:
 
 - `V2_ORCHARD_PLAN_TEMPLATES.md` is structurally ready for S3.
-- All 18 supported plant types / subtypes have template coverage.
+- All 18 pre-S4 candidate plant types / subtypes had template coverage.
 - No major blocker was found.
 - Proceed to `S3.1 — Apple-only S3 audit dry-run`.
 - Do not run a broad S3.0C rewrite before S3.1.
@@ -304,8 +304,11 @@ DONE — all 18 pre-S4 candidate species/subtypes have been audited.
 S4 owner decision after audit:
 
 - citrus is removed from current supported V2 scope
+- fig is removed from current supported V2 scope
 - lemon, orange, and mandarin are future roadmap candidates only
+- fig is a future roadmap/domain candidate only
 - future citrus reintroduction depends on regional timing / climate adaptation strategy and full species-level citrus support
+- future fig reintroduction depends on dedicated fig domain definition: one-crop vs two-crop behavior, pruning dependency, source-backed harvest timing, and regional interpretation
 
 Completed S3 audit batches:
 
@@ -544,24 +547,30 @@ Scope completed:
 
 Verdict:
 
-- Mediterranean species are ready for S3 scale-up as-is.
-- Olive, fig, and pomegranate findings scale the established S3 format without modification.
+- S3.5 recorded Mediterranean audit findings as evidence.
+- S4 owner decision supersedes the fig scale-up disposition for current V2.
+- Fig is removed from current supported V2 scope because type-dependent one-crop/two-crop behavior, pruning dependency, and regional sensitivity cannot be safely represented by the current simplified model.
+- Olive and pomegranate remain usable for S4/S5 continuation.
 - Olive correctly preserves user-facing-only variety handling: olive varieties are selectable/displayable but do not drive timing.
-- Fig correctly preserves early-crop / main-crop harvest split.
-- Pomegranate is lighter than olive/fig, but acceptable for current S3 because it is explicitly marginal in continental EU climate and self-flagged for source audit.
+- Universal two-window fig harvest is not approved.
+- Pomegranate is lighter than olive, but acceptable for current S3 because it is explicitly marginal in continental EU climate and self-flagged for source audit.
 - No targeted Mediterranean wording fix is required before S3.6.
-- After S3.5, 13 of 18 supported species/subtypes are audited.
+- After S3.5, 13 of 18 pre-S4 candidate species/subtypes were audited.
 
 Known Mediterranean follow-up items preserved for S4/S5:
 
 - Do not add olive variety timing, harvestWindow, or bloomWindow.
-- Do not apply the pome/stone shared spray program to olive, fig, or pomegranate.
+- Fig has been removed from active current support surfaces in the catalog/template inputs.
+- Do not add fig varieties in current V2.
+- Do not introduce a one-crop/two-crop fig model in current V2.
+- Do not keep fig with a single main-crop-only workaround or a universal two-window harvest model.
+- Do not apply the pome/stone shared spray program to olive or pomegranate.
 - Olive §6 monitoring → conditional treatment is the reference pattern for no-auto-spray monitoring/spray pairs.
 - Olive organic/barrier/repellent wording is the reference pattern for registered-method flexibility.
-- Fig milky-sap warning is a useful handler-safety pattern.
+- Fig milky-sap warning is preserved as future-reference evidence only.
 - Pomegranate fruit-cracking watch should map as observation/advisory, not pest/disease monitoring_program.
 - Mediterranean species need a Mediterranean-specific regional caveat, not a direct copy of the apple caveat.
-- Fig two-window harvest pattern needs S5 design confirmation.
+- Future fig reintroduction needs a dedicated domain definition for one-crop vs two-crop behavior, breba vs main crop, pruning dependency, source-backed timing, and Mediterranean/coastal vs continental interpretation.
 - Long irrigation/care windows remain an S5 mapping/design item.
 - Multi-target scouting program shape remains an S5 design item.
 - Non-pest `praćenje` entries should likely map to observation action windows.
@@ -572,6 +581,10 @@ Do not fix these now.
 
 Disposition:
 
+- Record S4 owner decision: fig removed from current supported V2 scope.
+- Current catalog/template inputs were targeted-cleaned so fig is no longer active current V2 support.
+- S5 must not re-add fig unless a future owner-approved fig domain session exists.
+- Queue future roadmap work for source-backed fig reintroduction after dedicated fig domain definition.
 - Queue Mediterranean wording, source-check, monitoring-shape, observation/advisory mapping, regional caveat, and glossary items for S4/S5 targeted resolution.
 - Proceed to S3.6 citrus audit.
 
@@ -654,7 +667,7 @@ Verdict:
 - Optional treatment wording remains conditional.
 - Monitoring remains evidence only.
 - No targeted nut wording fix is required before S3.8.
-- After S3.7, all 18 supported species/subtypes are audited.
+- After S3.7, all 18 pre-S4 candidate species/subtypes were audited.
 
 Known nut follow-up items preserved for S4/S5:
 
@@ -751,6 +764,36 @@ Current documentation disposition:
 - `V2_S3_AUDIT_CONSOLIDATION.md` records the active S4 owner decision.
 - `V2_FUTURE_ROADMAP.md` records citrus reintroduction as future work.
 - `V2_PLANT_CATALOG.md` and `V2_ORCHARD_PLAN_TEMPLATES.md` still contain pre-S4 citrus input content and must be cleaned up in S5, not in this S4 decision-record task.
+
+#### S4 owner decision — Fig support scope
+
+Status: RECORDED — fig removed from current supported V2 scope.
+
+Decision:
+
+- Fig must be removed from current V2 supported plants.
+- Fig must not ship with a simplified single-window harvest workaround or an assumed universal two-window model.
+- Fig may remain only as a future roadmap/domain candidate.
+
+Reason:
+
+- Fig behavior is not uniform enough for the current simplified model.
+- One-crop figs and two-crop figs have different harvest behavior.
+- Pruning logic depends on whether fruiting is on old wood, new growth, or both.
+- Regional differences between Mediterranean/coastal and continental contexts significantly affect behavior.
+- Partial support would risk incorrect guidance and reduce user trust.
+
+Future dependency:
+
+- Fig reintroduction is planned as a post-S11 candidate.
+- Future work requires a dedicated source-backed fig domain definition before implementation.
+- Future fig work must define one-crop vs two-crop behavior, breba vs main crop handling, crop-type-aligned pruning, optional variety/type layer where useful, and clear regional interpretation.
+
+Current documentation disposition:
+
+- `V2_S3_AUDIT_CONSOLIDATION.md` records the active S4 owner decision.
+- `V2_FUTURE_ROADMAP.md` records fig reintroduction as future work.
+- `V2_PLANT_CATALOG.md` and `V2_ORCHARD_PLAN_TEMPLATES.md` are targeted-cleaned so fig is no longer current supported V2 scope.
 
 Purpose:
 

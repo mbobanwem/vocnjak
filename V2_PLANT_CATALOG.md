@@ -104,7 +104,7 @@ A seasonProfile species may still expose user-facing-only varieties where useful
 
 Current seasonProfile handling:
 - olive may expose user-facing-only varieties
-- fig and pomegranate are species-level only
+- pomegranate is species-level only
 - citrus uses subtype-level `seasonProfile` via lemon / orange / mandarin
 
 ---
@@ -210,7 +210,6 @@ SeasonProfile species with user-facing-only varieties:
 
 SeasonProfile species without varieties in this phase:
 
-- fig
 - pomegranate
 
 Subtype model:
@@ -447,7 +446,7 @@ Months are 1-indexed (1 = January).
 ## 10. Mediterranean Plants
 
 Mediterranean is a UX/navigation grouping, not a weaker domain model.
-Olive, fig, and pomegranate are full fruit species.
+Olive and pomegranate are current full fruit species.
 Group membership does not determine whether a species can have varieties.
 
 Olive uses `seasonProfile: "mediterranean"` and supports user-facing-only varieties, Form B per Section 7.
@@ -480,10 +479,18 @@ Reason:
 - Lastovka, Levantinka, and Buža are valid future local/regional additions but not needed in the starter set.
 - Pendolino is deferred because pollination-role semantics must not become hidden runtime behavior.
 
-Fig remains species-level in this phase: no varieties; variety modeling deferred.
+Fig is deferred from current V2 support.
+
+Reason:
+
+- fig behavior is type-dependent: one-crop figs and two-crop figs do not share a universal harvest model.
+- pruning guidance depends on whether the crop is on old wood, new growth, or both.
+- regional interpretation differs significantly between Mediterranean/coastal and continental contexts.
+
+Future reintroduction requires a dedicated source-backed fig domain definition. Do not add fig varieties, one-crop/two-crop fields, or simplified single-window fig support in current V2.
 
 Pomegranate remains species-level in this phase: no varieties; variety modeling deferred.
-Pomegranate is classified under `mediterranean` for organizing purposes; its template in `V2_ORCHARD_PLAN_TEMPLATES.md` is structurally independent of olive and fig, and the species-specific template is authoritative.
+Pomegranate is classified under `mediterranean` for organizing purposes; its template in `V2_ORCHARD_PLAN_TEMPLATES.md` is structurally independent, and the species-specific template is authoritative.
 
 ---
 
@@ -491,7 +498,6 @@ Pomegranate is classified under `mediterranean` for organizing purposes; its tem
 
 Applies to:
 - Olive
-- Fig
 - Pomegranate
 
 Rules:
@@ -501,7 +507,7 @@ Rules:
 - detailed regional adaptation is deferred
 
 Interpretation:
-- olive, fig, and pomegranate are supported plant types
+- olive and pomegranate are supported plant types
 - they use a simplified season profile
 - exact phenology is not modeled in the current catalog
 
@@ -578,7 +584,7 @@ Rules:
 > - plum carries plum-specific pest and fruit handling;
 > - pear (within `pome`) carries fire-blight (vatrostuh) copper.
 >
-> Within `mediterranean`, olive, fig, and pomegranate each have a distinct Block 6 template. Pomegranate's template is structurally independent of olive and fig. The `mediterranean` label organizes the three species together for navigation; it does not generate template content for any of them.
+> Within `mediterranean`, olive and pomegranate each have a distinct Block 6 template. Fig is deferred from current V2 support. Pomegranate's template is structurally independent. The `mediterranean` label organizes current supported Mediterranean species together for navigation; it does not generate template content for any of them.
 >
 > **S3 items that remain open:**
 >
@@ -794,7 +800,6 @@ The JSON below is the machine-readable form of the species tables and prose abov
       "aglandau": {}
     }
   },
-  "fig":         { "group": "mediterranean", "seasonProfile": "mediterranean" },
   "pomegranate": { "group": "mediterranean", "seasonProfile": "mediterranean" },
 
 "citrus": {
@@ -848,4 +853,3 @@ Catalog must be:
 - simple enough for user
 - structured enough to be consumed deterministically
 - stable enough to avoid refactoring
-

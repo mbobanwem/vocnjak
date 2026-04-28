@@ -92,8 +92,9 @@ Deferred architecture decision — regional / climate timing:
 - Decision for current V2: do **not** introduce `climateProfile`, `regionProfile`, `baseClimate`, `offsetDays`, or numeric regional calendar shifts.
 - Reason: V2 is phenology-first. Calendar windows are baseline reminders, not universal truth. Observed plant state and user-recorded observations should remain the primary timing authority where available.
 - Numeric regional offsets such as “Dalmatia = 0 days, Istria = +X days, Zagreb = +Y days” are intentionally deferred because they risk unsourced false precision.
-- Mediterranean species, fig, and pomegranate should continue to use wide seasonal windows, species/subtype `seasonProfile`, and observation-oriented notes until a dedicated future session audits regional timing.
+- Mediterranean species and pomegranate should continue to use wide seasonal windows, species `seasonProfile`, and observation-oriented notes until a dedicated future session audits regional timing.
 - Citrus reintroduction is explicitly deferred until after a source-backed, owner-approved regional timing / climate adaptation strategy exists.
+- Fig reintroduction is deferred to a post-S11 domain-definition session because fig behavior is type-dependent and region-sensitive.
 - Future regional adaptation, if opened, should evaluate:
   - climate zone profiles
   - region-based timing offsets
@@ -120,6 +121,16 @@ Deferred citrus reintroduction:
 - Future citrus work should include curated top varieties/subtypes for target countries where useful.
 - Future citrus work requires full source-backed plan templates, not weak container-biased placeholders.
 - Mediterranean/coastal vs continental growing context must be handled through the future regional timing / climate adaptation strategy before citrus returns.
+
+Deferred fig reintroduction:
+
+- Fig is a planned post-S11 candidate, not current selectable plant support.
+- Fig must not return with partial or simplified one-size-fits-all harvest guidance.
+- Future fig work requires a dedicated domain definition for one-crop vs two-crop behavior.
+- Future fig work must distinguish breba and main crop handling where relevant.
+- Pruning guidance must align with crop type and fruiting wood behavior.
+- Source-backed harvest timing and clear Mediterranean/coastal vs continental interpretation are required before re-entry.
+- Optional variety/type coverage for target regions may be opened only inside the future fig domain session.
 
 ---
 

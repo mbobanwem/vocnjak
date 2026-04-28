@@ -37,7 +37,7 @@ Defined in V2_PLANT_CATALOG.md:
 
 **Stone:** sweet_cherry, sour_cherry, plum, peach, nectarine, apricot, almond
 
-**Mediterranean:** olive, fig, pomegranate (pomegranate's template is structurally independent of olive and fig — see Block 6)
+**Mediterranean:** olive, pomegranate (fig is deferred from current V2 support; pomegranate's template is structurally independent — see Block 6)
 
 **Citrus:** lemon, orange, mandarin (subtype handling inside Block 6)
 
@@ -98,7 +98,8 @@ Agronomic interpretation only. Not schema fields.
 # apple, pear, plum, sweet_cherry, sour_cherry, peach, nectarine, apricot, quince, almond
 #
 # Mediterranean plants, citrus, and nut trees are handled separately.
-# Do NOT apply this block to olive, fig, pomegranate, citrus, walnut, or hazelnut.
+# Do NOT apply this block to olive, pomegranate, citrus, walnut, or hazelnut.
+# Fig is deferred from current V2 support and has no active shared-block coverage.
 # ══════════════════════════════════════════════════════
 
 ## SHARED — STANDARD FRUIT TREES
@@ -1414,7 +1415,7 @@ Primjenjuje se shared block kao za ostale standardne voćke.
 > - plum carries plum-specific pest and fruit handling;
 > - pear (within `pome`) carries fire-blight / bakterijska palež copper.
 >
-> Within `mediterranean`, olive, fig, and pomegranate each have a distinct Block 6 template. Pomegranate's template is structurally independent of olive and fig. The `mediterranean` label organizes the three species together for navigation; it does not generate template content for any of them.
+> Within `mediterranean`, olive and pomegranate each have a distinct Block 6 template. Fig is deferred from current V2 support. Pomegranate's template is structurally independent. The `mediterranean` label organizes current supported Mediterranean species together for navigation; it does not generate template content for any of them.
 >
 > **S3 items that remain open:**
 >
@@ -1434,10 +1435,10 @@ Primjenjuje se shared block kao za ostale standardne voćke.
 # — early / mid / late timing groups
 # — shared block from above
 #
-# Mediterranean (olive, fig, pomegranate), citrus (lemon, orange, mandarin),
+# Mediterranean (olive, pomegranate), citrus (lemon, orange, mandarin),
 # and nut (walnut, hazelnut) each have their own species-specific template set
 # below. Pomegranate is grouped under mediterranean as an organizing label
-# but has its own template structurally independent of olive and fig.
+# but has its own template structurally independent of olive.
 # Citrus uses a subtype (lemon | orange | mandarin) inside the citrus template.
 # ══════════════════════════════════════════════════════
 
@@ -1629,7 +1630,22 @@ Shared block NE primjenjuje se.
 
 ---
 
-## 🌿 FIG (Ficus carica)
+## Deferred — Fig / Smokva (not current V2 support)
+
+This block is preserved as historical/input material only.
+
+It is not an active current V2 template and is not approved for implementation.
+Fig is removed from current supported V2 scope because its behavior is type-dependent:
+one-crop figs and two-crop figs require different harvest interpretation, pruning logic,
+and regional handling. Future reintroduction requires a dedicated source-backed fig
+domain session before any plan-template coverage is promoted.
+
+Do not use this block to generate current V2 plans.
+Do not add fig varieties or a one-crop/two-crop model here.
+
+### Archived input heading
+
+FIG (Ficus carica)
 
 ### Agronomic context
 Iznimno otporna biljka, malo zahtijeva.
@@ -1791,7 +1807,7 @@ Posebna napomena: smokva podnosi do -10°C kratkoročno, ali mlada stabla su osj
 
 Standardni spray program (bijelo ulje, zimski bakar, fungicidi i insekticidi uobičajeni za listopadne voćke) NE primjenjuje se.
 Shared block NE primjenjuje se.
-**Template-structure note:** Pomegranate is classified under `mediterranean` for organizing purposes. Its Block 6 template below is the full work plan for pomegranate and is structurally independent of olive and fig — the species-specific block is authoritative.
+**Template-structure note:** Pomegranate is classified under `mediterranean` for organizing purposes. Its Block 6 template below is the full work plan for pomegranate and is structurally independent of olive — the species-specific block is authoritative.
 
 ---
 
@@ -2404,7 +2420,7 @@ Groups used in this file are an organizing classification only:
 
 - `pome`          — apple, pear, quince
 - `stone`         — sweet_cherry, sour_cherry, plum, peach, nectarine, apricot, almond
-- `mediterranean` — olive, fig, pomegranate
+- `mediterranean` — olive, pomegranate
 - `citrus`        — lemon, orange, mandarin
 - `nut`           — walnut, hazelnut
 
@@ -2412,7 +2428,7 @@ Groups used in this file are an organizing classification only:
 
 - `stone` members share a real baseline (trunk care, dormant oil, winter copper, pruning, watering, shutdown, inspection), and each species carries specifics in its own block — leaf-curl copper (peach / nectarine), early-bloom + frost-risk handling (apricot, almond), cherry-fly monitoring + optional bird-net (sweet_cherry, sour_cherry), plum-specific pest / fruit handling.
 - `pome` members share the same baseline, with per-species specifics for pear (fire-blight copper) and quince (pome-specific copper timing).
-- `mediterranean`, `citrus`, and `nut` members do not share the baseline. Each species has its own Block 6 template. Pomegranate's template is structurally independent of olive and fig. Citrus uses a subtype (lemon | orange | mandarin) inside its Block 6 template.
+- `mediterranean`, `citrus`, and `nut` members do not share the baseline. Current supported Mediterranean species each have their own Block 6 template. Fig is deferred from current V2 support. Pomegranate's template is structurally independent. Citrus uses a subtype (lemon | orange | mandarin) inside its Block 6 template.
 
 ## Template composition
 
@@ -2458,7 +2474,6 @@ Harvest window for standard fruit trees is not encoded here. The catalog (`V2_PL
 | Apricot      | SHARED    |SHARED| SHARED    | ✓ pred cvatnj| SHARED   | ✓ mraz+šark| ✓     | ✓        | —    | SHARED    | SHARED | ✓       | SHARED    | SHARED  |
 | Almond       | SHARED    |SHARED| SHARED    | ✓ ×2 (pred+krč)| SHARED | ✓ mraz+bol | ✓     | —        | —    | SHARED    | SHARED | ✓       | SHARED    | SHARED  |
 | Olive        | —         | —    | —         | —            | ✓ ×2     | ✓ ×2       | ✓ opt | —        | —    | ✓         | ✓      | ✓       | —         | ✓       |
-| Fig          | —         | —    | —         | —            | ✓ ×2     | ✓          | —     | —        | —    | ✓         | ✓      | ✓ ×2    | ✓ (mlada) | ✓       |
 | Pomegranate  | —         | —    | —         | —            | ✓        | ✓ ×2       | —     | —        | —    | ✓         | ✓      | ✓       | ✓ (mlada) | —       |
 | Lemon        | —         | —    | —         | —            | ✓        | ✓          | ✓ opt | —        | —    | ✓         | ✓      | ✓       | ✓         | —       |
 | Orange       | —         | —    | —         | —            | ✓        | ✓          | ✓ opt | —        | —    | ✓         | ✓      | ✓       | ✓         | —       |
@@ -2468,13 +2483,16 @@ Harvest window for standard fruit trees is not encoded here. The catalog (`V2_PL
 
 Legend: SHARED = covered in shared block | ✓ = defined in species/block section | opt = notes indicate optional / condition-dependent relevance | — = not applicable
 
-## All 18 plant types confirmed present: ✓
+## Current V2 template coverage excludes deferred fig
 
 Pome + stone (standard — shared block + per-species block applies):
 Apple ✓ | Pear ✓ | Quince ✓ | Sweet cherry ✓ | Sour cherry ✓ | Plum ✓ | Peach ✓ | Nectarine ✓ | Apricot ✓ | Almond ✓
 
 Mediterranean (Block 6 — no shared block):
-Olive ✓ | Fig ✓ | Pomegranate ✓ (custom Block 6, structurally independent of olive/fig)
+Olive ✓ | Pomegranate ✓ (custom Block 6, structurally independent)
+
+Deferred Mediterranean:
+Fig deferred — not current V2 support
 
 Citrus (Block 6 — no shared block):
 Lemon ✓ | Orange ✓ | Mandarin ✓

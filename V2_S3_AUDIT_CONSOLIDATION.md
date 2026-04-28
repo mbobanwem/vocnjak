@@ -9,6 +9,7 @@
 - Not an implementation spec.
 - Detailed per-species evidence is archived at `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md`.
 - S4 owner decision recorded: citrus is removed from current V2 supported scope and deferred to future roadmap work.
+- S4 owner decision recorded: fig is removed from current V2 supported scope and deferred to future fig domain work.
 
 ## 1. Scope
 
@@ -16,6 +17,7 @@ Cover:
 
 - all 18 pre-S4 candidate species/subtypes audited
 - S4 owner decision removes citrus from current V2 supported scope
+- S4 owner decision removes fig from current V2 supported scope
 - input docs audited:
   - `V2_PLANT_CATALOG.md`
   - `V2_ORCHARD_PLAN_TEMPLATES.md`
@@ -31,6 +33,8 @@ S3.1-S3.7 species/subtype audit is complete.
 All remaining current-V2 supported audited species/subtypes are usable for S4/S5 continuation. No blocker was found for the remaining current V2 scope.
 
 S4 owner decision: lemon, orange, and mandarin must not ship in current V2. Citrus is deferred because the current subtype/container-biased model is not apple-level complete and risks wrong guidance.
+
+S4 owner decision: fig must not ship in current V2. Fig is deferred because type-dependent one-crop/two-crop behavior, pruning dependency, and regional sensitivity cannot be safely represented by the current simplified model.
 
 Most remaining work is:
 
@@ -57,7 +61,7 @@ No schema/runtime implementation should start before S4/S5 are complete.
 | apricot | S3.4 | Audited | Pre-bloom copper source check; frost advisory mapping; variety display polish. |
 | almond | S3.4 | Audited | Monitoring targets; post-bloom disease names; cumulative copper pattern. |
 | olive | S3.5 | Audited | Mediterranean caveat; no variety timing; monitoring-to-treatment pattern. |
-| fig | S3.5 | Audited | Two-window harvest design; Mediterranean caveat; glossary terms. |
+| fig | S3.5 | Audited; removed from current V2 | Future fig domain definition required: one-crop/two-crop behavior, pruning dependency, regional sensitivity. |
 | pomegranate | S3.5 | Audited | Light spring/summer guidance accepted; cracking observation mapping; source checks. |
 | lemon | S3.6 | Audited; removed from current V2 | Future species-level citrus support gated by regional/climate strategy. |
 | orange | S3.6 | Audited; removed from current V2 | Future species-level citrus support gated by regional/climate strategy. |
@@ -127,8 +131,9 @@ Standard apple-style caveat should be applied to pome, stone, and nut species wh
 Mediterranean-specific caveat needed for:
 
 - olive
-- fig
 - pomegranate
+
+Fig-specific regional interpretation is deferred with fig removal from current V2.
 
 Citrus-specific caveat is deferred to future reintroduction work for:
 
@@ -177,7 +182,7 @@ Use qualitative, plant-state/local-condition-aware caveats only.
 | Cumulative copper wording promotion | Multiple copper entries can stack in user perception. | Promote anti-duplication wording where approved. | S4/S5 |
 | Multi-target scouting program shape | Several entries scout multiple targets. | Prefer one program with multi-target list, confirm in S5. | S4/S5 |
 | Non-pest `praćenje` mapping | Fruit cracking, frost, winter checks are not pest monitoring. | Map to observation/advisory action windows. | S4/S5 |
-| Fig two-window harvest model | Early crop + main crop creates two harvest windows. | Keep two windows if S5 confirms. | S4/S5 |
+| Fig harvest/crop-type model | Universal two-window fig harvest is not approved. Fig behavior is type-dependent: one-crop vs two-crop, breba vs main crop, pruning on old wood vs new growth, and regional sensitivity. | Remove fig from current V2; defer to future fig domain definition. | S4 recorded; future roadmap |
 | Olive species-level harvest timing vs catalog silence | Template has species-level timing; catalog has no olive timing. | Keep template as timing reference for now. | S4/S5 |
 | Pomegranate spring/summer thinness | Light but defensible for current scope. | Accept unless owner expands Mediterranean-market depth. | S4 |
 | Citrus subtype model vs top-level species | Catalog uses `citrus` with weak lemon/orange/mandarin subtypes. | Current V2 decision: remove citrus from supported plants; future reintroduction requires regional timing / climate strategy and full citrus domain definition. | S4 recorded; S5 removal/future-roadmap handoff |
@@ -224,7 +229,9 @@ Mediterranean:
 
 - add Mediterranean-specific regional caveat
 - preserve olive no-variety-timing rule
-- confirm fig two-window harvest shape
+- keep fig removed from current supported V2 scope
+- preserve fig only as future roadmap/domain candidate
+- do not keep fig with a simplified single-window or universal two-window harvest model
 - map pomegranate fruit-cracking watch as observation/advisory
 - tighten fertilization/product wording where useful
 
@@ -254,7 +261,7 @@ Nut:
 - almond cumulative-copper anti-duplication wording
 - olive monitoring -> conditional treatment pair
 - olive registered organic/barrier/repellent method flexibility
-- fig milky-sap skin warning
+- fig milky-sap skin warning (future reference only)
 - pomegranate metallic-sound harvest cue
 - lemon container-aware watering + water-quality wording (future reference only)
 - lemon chlorosis / micronutrient cue (future reference only)
@@ -275,7 +282,7 @@ Candidate-only notes:
 - multi-target scouting shape remains unresolved.
 - non-pest monitoring should map to observation/advisory, not `monitoring_program`.
 - long irrigation/care windows need a design decision.
-- fig two harvest windows need design confirmation.
+- fig harvest windows are deferred; universal two-window harvest is not approved for current V2.
 - lemon full-year harvest window is deferred with citrus removal and must be revisited only during future full citrus reintroduction.
 - walnut/hazelnut natural-drop harvest stays notes/advisory unless owner decides otherwise.
 - trap/scouting observations must not become formal gates.
@@ -284,6 +291,9 @@ Candidate-only notes:
 ## 12. Explicitly deferred / do-not-fix-now
 
 - no new varieties
+- no fig support in current V2
+- no fig varieties
+- no one-crop/two-crop fig domain model in current V2
 - no citrus varieties
 - no citrus support in current V2
 - no olive timing-driving varieties
