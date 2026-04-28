@@ -288,7 +288,34 @@ S5 audit scope (per `V2_DOMAIN_MODEL.md §9`):
 
 ### 5.4 Deferred entries
 
-*Populated as entries are flagged. Each deferred entry per §4.2.*
+#### Almond — monitoring extension backlog (post-S5)
+
+Status: deferred future expansion candidate.
+
+Source reference:
+- Owner note, 2026-04-28.
+
+Curator's reading:
+- The following almond monitoring targets are intentionally NOT included in the current S5 core plan.
+- They are considered valid, source-backed, and relevant for broader EU markets, but are deferred to a future session focused on monitoring coverage expansion.
+
+Deferred targets:
+- Anthracnose (*Colletotrichum acutatum*)
+  - Reason: lower confidence in frequency and user recognizability in core markets.
+  - Exists in: continental Croatia (documented), Mediterranean regions.
+  - Future: may be introduced as separate late-season disease entry OR integrated into leaf-disease monitoring expansion.
+- Peach twig borer (*Anarsia lineatella*) — pheromone trap monitoring
+  - Reason: requires trap setup and interpretation; higher UX complexity.
+  - Exists in: Mediterranean EU markets and supported by commercial lures.
+  - Future: introduce as optional advanced monitoring entry when UX supports tool-based workflows.
+
+Rule for future expansion:
+- Deferred targets must be evaluated under frequency in EU markets, user recognizability, actionability (clear user decision), and UX complexity.
+- They must NOT be added blindly.
+- A dedicated session is required before promotion into core monitoring.
+
+Owner disposition:
+- Deferred. Do not promote into current S5 core monitoring.
 
 ### 5.5 Catalog v1.0 sign-off
 
