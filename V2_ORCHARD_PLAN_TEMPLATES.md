@@ -1346,10 +1346,12 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 3
   dayEnd: 31
   notes: >
-    Mraz je primarni uzrok gubitka roda badema u kontinentalnom podneblju, ne bolest.
-    Pratiti lokalnu prognozu.
-    Aplikacija ne donosi odluke — korisnik bira zaštitu (agrotekstil, itd.).
-    Loš rod badema je najčešće uzrokovan mrazom.
+    Cvatnja badema je osjetljiva na mraz.
+    Pratiti lokalnu prognozu dok su cvjetovi otvoreni.
+    Nakon hladne noći pregledati otvorene cvjetove.
+    Smeđi ili crni cvjetovi znače moguće oštećenje mrazom.
+    Ovo je praćenje rizika, ne tretman.
+    Korisnik odlučuje o zaštiti prema prognozi, stanju cvjetova i lokalnim uvjetima.
 
 ---
 
@@ -1378,8 +1380,27 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 8
   dayEnd: 15
   notes: >
-    Vizualni pregled listova i plodova.
-    Ako opažanje upućuje na problem, eventualni tretman bolesti razmotriti prema etiketi proizvoda i stručnom/lokalnom savjetu.
+    Pregledati cvjetove, vrhove mladih izboja, listove i plodove.
+    Monilija u cvatnji:
+    — cvjetovi naglo posmeđe i ostanu suhi na grančici
+    — vrhovi grančica se suše nakon cvatnje
+    — može se pojaviti smola
+    To znači da je zaraza već nastala.
+    Odrezati zahvaćene dijelove ispod oštećenja i iznijeti ih iz voćnjaka.
+    Šupljikavost lista:
+    — male smeđe ili ljubičaste pjege
+    — žuti rub oko pjege
+    — kasnije nastaju rupice u listu
+    Kovrčavost lista:
+    — zadebljani i deformirani listovi
+    — crvena ili žuta boja
+    — pojavljuje se rano u sezoni
+    Kad se vidi, list se više ne može popraviti; zabilježiti za bolji termin iduće godine.
+    Red Leaf Blotch / crvenilo lista (Polystigma):
+    — narančaste ili crvene pjege
+    — obično se vidi kasnije u sezoni
+    — list može prerano otpasti
+    Češća je u toplijim/mediteranskim područjima, a rjeđa u kontinentalnim uvjetima.
 
 - activityType: "monitoring"
   title: "Praćenje štetnika – badem"
@@ -1388,8 +1409,10 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 8
   dayEnd: 15
   notes: >
-    Vizualni pregled listova i plodova.
-    Ako opažanje upućuje na problem, eventualni tretman štetnika razmotriti prema etiketi proizvoda i stručnom/lokalnom savjetu.
+    Pregledati vrhove mladih izboja i naličje listova.
+    Tražiti male kukce na mladim izbojima.
+    Uvijeni mladi listovi, ljepljiva medna rosa ili mravi znače aktivnu koloniju lisnih uši.
+    Ako je kolonija vidljiva, razmotriti tretman prema etiketi proizvoda i stručnom/lokalnom savjetu.
 
 ---
 
