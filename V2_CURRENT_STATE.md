@@ -16,11 +16,11 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: Pre-S3 readiness / S3 preparation.
+Phase: S4 owner decision resolution.
 
 Current goal:
 
-Finish documentation control so the project stops looping and can enter structured S3–S5 catalog and plan-template audit/validation.
+Resolve S3 owner decisions into approved, deferred, rejected, or source-check-required items before S5 targeted documentation fixes.
 
 Current immediate next step:
 
@@ -112,7 +112,8 @@ Status:
 
 - approved validated varieties added.
 - olive user-facing-only variety model added.
-- citrus remains subtype-based.
+- citrus subtype model existed as pre-S4 input only.
+- S4 owner decision supersedes this for current V2: citrus is removed from current supported scope and deferred to future roadmap work.
 - no olive timing-driving model.
 
 ### DONE — Deferred regional timing decision
@@ -298,7 +299,13 @@ S3 starts small:
 
 S3 species/subtype audit status:
 
-DONE — all 18 supported species/subtypes have been audited.
+DONE — all 18 pre-S4 candidate species/subtypes have been audited.
+
+S4 owner decision after audit:
+
+- citrus is removed from current supported V2 scope
+- lemon, orange, and mandarin are future roadmap candidates only
+- future citrus reintroduction depends on regional timing / climate adaptation strategy and full species-level citrus support
 
 Completed S3 audit batches:
 
@@ -588,41 +595,34 @@ Scope completed:
 
 Verdict:
 
-- Citrus is ready for S3 scale-up as-is.
-- Lemon, orange, and mandarin findings scale the established S3 format without modification.
-- Citrus subtype model is internally consistent: `citrus → lemon / orange / mandarin`.
-- Lemon correctly uses `multi_cycle`.
-- Orange correctly uses `winter`.
-- Mandarin correctly uses `autumn`.
-- No citrus varieties were added or recommended for current S3.
+- S3.6 recorded the citrus audit findings as evidence.
+- S4 owner decision supersedes the S3.6 scale-up disposition for current V2.
+- Citrus is removed from current supported V2 scope because the subtype/container-biased model is not apple-level complete and risks wrong guidance.
+- Lemon, orange, and mandarin should return only as future proper supported fruit species with source-backed plan templates and appropriate regional/climate handling.
+- No citrus varieties were added.
 - No variety-specific citrus timing was introduced.
-- Optional spray wording remains conditional.
-- Monitoring remains evidence only.
-- No targeted citrus wording fix is required before S3.7.
-- After S3.6, 16 of 18 supported species/subtypes are audited.
+- Optional spray wording remained conditional in the archived audit evidence.
+- Monitoring remained evidence only in the archived audit evidence.
 
 Known citrus follow-up items preserved for S4/S5:
 
-- Do not restructure citrus without owner decision.
-- Do not add lemon, orange, or mandarin varieties in current S3.
+- Remove citrus from current supported scope during S5 catalog/template cleanup.
+- Do not add lemon, orange, or mandarin varieties in current V2.
 - Do not add variety-specific citrus timing.
-- `zaštićeni prostor` / protected winter location needs beginner-friendly explanation.
-- Container-vs-ground reality needs clearer citrus wording.
-- Lemon fertilization wording is the reference pattern for citrus micronutrients and yellow-leaf / iron-deficiency cue.
-- Lemon watering wording is the reference pattern for container-aware watering and low-lime-water guidance.
-- Mandarin cold-tolerance wording is the reference pattern for hedged multi-factor cold-sensitivity language.
-- Orange cold-tolerance damage threshold needs source check before adding any number.
-- Citrus needs a Mediterranean-vs-continental regional caveat.
-- Return-to-outdoor / spring acclimatization guidance needs source check before adding.
-- Citrus pest monitoring and optional treatment must remain advisory; scouting observations must not become formal gates.
-- Lemon full-year harvest window remains an S5 design/owner decision item, but is acceptable for current S3.
-- Beginner glossary should include citrus terms such as `zaštićeni prostor`, `lončani uzgoj`, `mikroelementi`, `kloroza`, `multi_cycle`, `kontinuirani rod`, `mikrolokacija`, and `podloga`.
+- Do not polish weak subtype/container guidance for current V2.
+- Preserve citrus only as a future roadmap/domain candidate.
+- Future citrus reintroduction depends on source-backed regional timing / climate adaptation strategy.
+- Future citrus reintroduction should likely include lemon, orange, and mandarin as proper species-level supported fruit types.
+- Future citrus work needs curated top varieties/subtypes for target countries where useful.
+- Future citrus work needs full source-backed plan templates and Mediterranean/coastal vs continental context handling.
 
 Do not fix these now.
 
 Disposition:
 
-- Queue citrus wording, source-check, regional caveat, container/protected-location clarity, observation/advisory mapping, and glossary items for S4/S5 targeted resolution.
+- Record S4 owner decision: citrus removed from current supported V2 scope.
+- Queue S5 cleanup to remove active citrus support from current catalog/template inputs.
+- Queue future roadmap work for source-backed citrus reintroduction after regional timing / climate adaptation strategy.
 - Proceed to S3.7 nut audit.
 
 ### S3.7 — Nut audit
@@ -724,6 +724,33 @@ Expected output:
 S3.8 is complete. Proceed to S4 owner decision resolution.
 
 ### S4 — Owner decision resolution and source-backed audit closure
+
+#### S4 owner decision — Citrus support scope
+
+Status: RECORDED — citrus removed from current supported V2 scope.
+
+Decision:
+
+- Citrus must be removed from current V2 supported plants.
+- Lemon, orange, and mandarin must not ship as weak subtypes with partial/container-biased guidance.
+- Citrus may remain only as a future roadmap/domain candidate.
+
+Reason:
+
+- Current citrus model is incomplete and risks wrong guidance.
+- A plant included in Vocnjak must have apple-level quality: proper species-level support, source-backed plan template, practical work calendar, and appropriate variety/subtype coverage where useful.
+
+Future dependency:
+
+- Citrus reintroduction is planned but depends on future regional timing / climate adaptation strategy.
+- Regional strategy must be source-backed and owner-approved before citrus returns.
+- Future citrus work should likely include lemon, orange, and mandarin as proper supported fruit species with curated top varieties/subtypes for target countries and full source-backed plan templates.
+
+Current documentation disposition:
+
+- `V2_S3_AUDIT_CONSOLIDATION.md` records the active S4 owner decision.
+- `V2_FUTURE_ROADMAP.md` records citrus reintroduction as future work.
+- `V2_PLANT_CATALOG.md` and `V2_ORCHARD_PLAN_TEMPLATES.md` still contain pre-S4 citrus input content and must be cleaned up in S5, not in this S4 decision-record task.
 
 Purpose:
 
