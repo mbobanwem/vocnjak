@@ -828,6 +828,7 @@ Cvatnja (Zagreb baseline): kraj ožujka – poč. travnja, nešto ranije od nekt
 Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Springcrest / Redhaven (jun–jul), Royal Glory / Fayette (jul–aug), O'Henry (aug).
 Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
+Kalendarski prozori su Zagreb / kontinentalni baseline. U toplijim krajevima razvoj može krenuti ranije, u hladnijima kasnije; stanje stabla i lokalni uvjeti imaju prednost pred datumom.
 
 ---
 
@@ -843,6 +844,7 @@ Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
     KRITIČNO ZA BRESKVU — identično kao kod nektarine, vrlo važan preventivni termin.
     Primijeniti dok su pupovi zatvoreni ili tek počinju bubriti.
     Taphrina deformans: nakon pojave simptoma mogućnosti su ograničene; naglasak je na prevenciji.
+    Ako se u proljeće već vide kovrčavi listovi, preventivni termin je propušten; zabilježiti problem za iduću sezonu umjesto kasnog pokušaja popravljanja tog lista.
     Registrirani bakreni pripravak prema etiketi proizvoda.
     U vlažnom proljeću drugi tretman razmotriti prema fenofazi, oborinama, etiketi proizvoda i stručnom/lokalnom savjetu.
     Ovo prskanje je DODATAK zimskom bakru iz shared bloka.
@@ -850,7 +852,7 @@ Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
 
 ---
 
-### 2. Praćenje štetnika
+### 2. Praćenje štetnika i simptoma
 
 - activityType: "monitoring"
   title: "Praćenje lisnih ušiju – breskva"
@@ -860,7 +862,12 @@ Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
   dayEnd: 31
   notes: >
     Tjedno pregledavati naličje listova i vršne izbojke.
-    Lisne uši: razmotriti registrirani insekticid za kulturu i štetnika prema etiketi proizvoda, pri vidljivoj koloniji.
+    Tražiti vidljive kolonije sitnih mekanih kukaca, uvijene ili izobličene mlade listove i ljepljivu mednu rosu.
+    Mravi koji se kreću po izbojima ili deblu mogu značiti da je kolonija lisnih ušiju aktivna.
+    Tretman razmatrati samo ako se vidi kolonija ili stvaran problem na mladom porastu.
+    Koristiti samo registrirani insekticid za breskvu i lisne uši prema etiketi proizvoda.
+    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
+    Za mlada stabla bez ploda: cilj je zaštititi zdrav novi porast, ne plod.
 
 - activityType: "monitoring"
   title: "Praćenje breskvinog savijača – breskva"
@@ -869,8 +876,33 @@ Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
   monthEnd: 7
   dayEnd: 31
   notes: >
-    Breskvin savijač (Grapholita molesta): feromonska klopka ako je dostupna.
-    Tretman samo pri vidljivom problemu.
+    Grapholita molesta / breskvin savijač može oštetiti mlade izboje i plodove.
+    Ako je dostupna, koristiti feromonsku klopku; ulov u klopci je dokaz aktivnosti, ali sam po sebi nije nalog za tretman.
+    Ako se klopka ne koristi, gledati vidljive znakove: venuće ili sušenje vrhova mladih izboja, male ulazne rupice na izbojima, mrvičastu piljevinu uz oštećen izboj ili plod i male ulazne rupice na plodu.
+    Eventualni tretman razmatrati samo ako ulov u klopci, svježa vidljiva šteta ili lokalni/stručni savjet opravdavaju reakciju.
+    Koristiti samo registrirani insekticid za breskvu i breskvinog savijača prema etiketi proizvoda.
+    Poštovati zaštitu pčela i karencu.
+    Za mlada stabla bez ploda: šteta na izbojima važnija je od štete na plodu.
+
+- activityType: "monitoring"
+  title: "Praćenje bolesti i simptoma – breskva"
+  monthStart: 5
+  dayStart: 1
+  monthEnd: 8
+  dayEnd: 31
+  notes: >
+    Ovo je vizualno praćenje i razumijevanje stanja, ne preporuka da se prska samo zato što je prozor otvoren.
+    Jednim pregledom pogledati cvjetove, vrhove mladih izboja, listove i plodove.
+    Monilija / smeđa trulež nakon cvatnje: cvjetovi naglo posmeđe i osuše se, suhi cvjetovi ostaju na grančici, vrhovi mladih izboja mogu se sušiti, a na zahvaćenim izbojima može se pojaviti smola.
+    Smeđa trulež ploda blizu dozrijevanja: mekane smeđe pjege na plodu, sivi ili bež jastučići spora ili krugovi i mumificirani suhi plodovi koji ostaju na stablu.
+    Kovrčavost lista: zadebljani, uvijeni i izobličeni mladi listovi, često s crvenom ili žutom bojom; kad se vidi, taj list se kasnim prskanjem ne može popraviti, nego problem treba zabilježiti za iduću godinu i bolje pogoditi preventivni termin prije otvaranja pupova.
+    Oštećenja ploda: kljucani plodovi, ose oko oštećenih plodova, ulazne rupice ili plodovi koji trunu.
+    Higijena: ukloniti jasno bolesne, trule ili mumificirane plodove sa stabla i tla.
+    Jače zahvaćene male izboje ukloniti samo ako su jasno bolesni ili suhi, čistim rezom.
+    Ne raditi jaču rezidbu zdravog porasta po vrućini.
+    Simptomi pomažu razumjeti rizik i odlučiti što ima smisla unutar već valjanih prozora.
+    Sami simptomi ne stvaraju novu preporuku za prskanje.
+    Registrirani fungicid ili insekticid koristiti samo kad prozor, etiketa proizvoda, stanje biljke, vrijeme i lokalni/stručni savjet opravdavaju reakciju.
 
 ---
 
