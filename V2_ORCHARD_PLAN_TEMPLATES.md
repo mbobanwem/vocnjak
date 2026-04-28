@@ -703,6 +703,7 @@ Harvest window examples: Caldesi 2000 / Big Top (jul), Fantasia / Stark Redgold 
 POSEBNA NAPOMENA: Nektarina je iznimno osjetljiva na kovrčavost lista (Taphrina deformans).
 Nakon pojave simptoma mogućnosti su ograničene — naglasak je na prevenciji bakrom dok su pupovi zatvoreni.
 Propušteno prskanje u veljači/ožujku = visok rizik zaraze, posebno u vlažnom proljeću.
+Kalendarski prozori su Zagreb / kontinentalni baseline. U toplijim krajevima razvoj može krenuti ranije, u hladnijima kasnije; stanje stabla i lokalni uvjeti imaju prednost pred datumom.
 
 ---
 
@@ -717,16 +718,21 @@ Propušteno prskanje u veljači/ožujku = visok rizik zaraze, posebno u vlažnom
   notes: >
     KRITIČNO ZA NEKTARINU — vrlo važan preventivni termin.
     Primijeniti dok su pupovi nektarine još zatvoreni ili tek počinju bubriti.
-    Taphrina deformans: nakon pojave simptoma mogućnosti su ograničene; naglasak je na prevenciji.
+    Svrha je spriječiti zarazu kovrčavosti lista unutar pupova prije nego se list otvori.
+    Djeluje samo prije otvaranja pupova; kad se list razvije, zaštita više ne može doprijeti do već zaraženog tkiva.
+    Ako se primijeni prerano i slijedi puno kiše, zaštita se može isprati pa drugi tretman može biti potreban samo prema stanju pupova/lista, oborinama, etiketi proizvoda i stručnom/lokalnom savjetu.
+    Prskanje nakon otvaranja pupova nema učinka na kovrčavost lista.
+    Prekasno prskanje može biti bez koristi i može oštetiti osjetljive pupove ili cvjetove.
+    Vidljiva kovrčavost lista znači da je preventivni termin propušten: ne prskati sada zbog tog lista, nego zabilježiti problem i bolje planirati tretman prije otvaranja pupova iduće godine.
     Registrirani bakreni pripravak prema etiketi proizvoda.
-    U vlažnom proljeću drugi tretman razmotriti prema fenofazi, oborinama, etiketi proizvoda i stručnom/lokalnom savjetu.
     Ovo prskanje je DODATAK zimskom bakru iz shared bloka — primijeniti specifično za nektarinu.
+    Ako je bakar već primijenjen u zimskom terminu, uzeti u obzir ukupnu sezonsku primjenu bakra i izbjeći nepotrebno ponavljanje.
     Razmak od bijelog ulja: min. 7–10 dana.
     Za mlada stabla: primijeniti — posebno važno u prvim godinama.
 
 ---
 
-### 2. Praćenje štetnika
+### 2. Praćenje štetnika i simptoma
 
 - activityType: "monitoring"
   title: "Praćenje lisnih ušiju – nektarina"
@@ -735,9 +741,13 @@ Propušteno prskanje u veljači/ožujku = visok rizik zaraze, posebno u vlažnom
   monthEnd: 7
   dayEnd: 31
   notes: >
-    Tjedno pregledavati naličje listova i mlade izbojke.
-    Lisne uši na nektarini mogu biti problem — razmotriti registrirani insekticid za kulturu i štetnika prema etiketi proizvoda, pri vidljivoj koloniji.
-    Za mlada stabla: fokus na lisne uši.
+    Pregledavati naličje mladih listova i vrhove izboja.
+    Tražiti vidljive kolonije sitnih mekanih kukaca, uvijene ili izobličene mlade listove i ljepljivu mednu rosu.
+    Mravi koji se kreću po izbojima ili deblu mogu značiti da je kolonija lisnih ušiju aktivna.
+    Tretman razmatrati samo ako se vidi kolonija ili stvaran problem na mladom porastu.
+    Koristiti samo registrirani insekticid za breskvu/nektarinu i lisne uši prema etiketi proizvoda.
+    Poštovati etiketu proizvoda i zaštitu pčela; ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
+    Za mlada stabla: fokus je zaštititi zdrav novi porast.
 
 - activityType: "monitoring"
   title: "Praćenje breskvinog savijača – nektarina"
@@ -746,8 +756,37 @@ Propušteno prskanje u veljači/ožujku = visok rizik zaraze, posebno u vlažnom
   monthEnd: 7
   dayEnd: 31
   notes: >
-    Breskvin savijač (Grapholita molesta): feromonska klopka ako je dostupna.
-    Tretman samo pri vidljivom problemu ili prijeđenom pragu.
+    Grapholita molesta / breskvin savijač može oštetiti mlade izboje i plodove nektarine.
+    Ako je dostupna, koristiti feromonsku klopku; ulov u klopci je dokaz aktivnosti, ali sam po sebi nije nalog za tretman.
+    Ako se klopka ne koristi, gledati vidljive znakove: venuće ili sušenje vrhova mladih izboja, male ulazne rupice na izbojima, mrvičastu piljevinu ili izmet nalik piljevini uz oštećen izboj ili plod i male ulazne rupice na plodu.
+    Eventualni tretman razmatrati samo ako ulov u klopci, svježa vidljiva šteta ili lokalni/stručni savjet opravdavaju reakciju.
+    Koristiti samo registrirani insekticid za breskvu/nektarinu i breskvinog savijača prema etiketi proizvoda.
+    Poštovati zaštitu pčela i karencu.
+    Za mlada stabla bez ploda: šteta na izbojima važnija je od štete na plodu.
+
+- activityType: "monitoring"
+  title: "Praćenje bolesti i simptoma – nektarina"
+  monthStart: 5
+  dayStart: 1
+  monthEnd: 8
+  dayEnd: 31
+  notes: >
+    Ovo je jedan vizualni pregled cvjetova, vrhova mladih izboja, listova i plodova; praćenje pomaže odluci, ali samo po sebi ne znači da treba prskati.
+    Monilija na cvatu i grančicama: nakon cvatnje cvjetovi posmeđe i osuše se, ostaju pričvršćeni na grančici, vrhovi izboja mogu se sušiti, a na zahvaćenim mjestima može se pojaviti smola.
+    Zahvaćene dijelove ukloniti čistim rezom ispod jasno bolesnog ili suhog dijela i iznijeti iz voćnjaka.
+    Monilija na plodu: mekane smeđe pjege, sivi ili bež jastučići spora i mumificirani plodovi.
+    Nektarina ima tanku kožicu pa se oštećenje i trulež mogu širiti brže; kljucani plodovi i oštećenja od osa često su ulazna mjesta za infekciju.
+    Zaražene i mumificirane plodove ukloniti sa stabla i tla; ne ostavljati ih u krošnji ni ispod stabla.
+    Kovrčavost lista: zadebljani, kovrčavi i izobličeni listovi, često crveni ili žuti; zaraza se dogodila ranije, dok je list bio unutar pupa.
+    Kad se simptomi vide, prskanje više NE može popraviti list.
+    Ne prskati sada zbog tog lista; zabilježiti problem za iduću godinu i poboljšati termin bakra prije otvaranja pupova.
+    Oštećenja ploda: kljucani plodovi, ose, pucanje nakon kiše i druga oštećenja mogu biti ulazna mjesta za trulež.
+    Za zaštitu od ptica koristiti postojeću stavku "Mreža protiv ptica – nektarina"; ovdje se samo bilježe oštećenja i rizik truleži.
+    Higijena: ukloniti bolesne plodove, mumificirane plodove i jasno mrtve izboje.
+    Izbjegavati jaču rezidbu po vrućini.
+    Simptomi informiraju korisnikovu odluku unutar postojećih prozora.
+    Simptomi ne otvaraju novi prozor i ne stvaraju obvezu tretmana.
+    Prskanje ima smisla samo ako je pravilan prozor otvoren, etiketa proizvoda to dopušta i stanje biljke je prikladno.
 
 ---
 
@@ -760,10 +799,15 @@ Propušteno prskanje u veljači/ožujku = visok rizik zaraze, posebno u vlažnom
   monthEnd: 5
   dayEnd: 25
   notes: >
-    Primijeniti nakon završetka cvatnje.
+    Primijeniti nakon opadanja latica, kada nema otvorenih cvjetova i aktivnog leta pčela.
+    Svrha je zaštita od monilije nakon faze zaraze cvijeta i mladih grančica te provjera potrebe za reakcijom na rane štetnike poput breskvinog savijača i lisnih ušiju.
+    Tretman ima najviše smisla dok je mlado tkivo još osjetljivo, a prozor je otvoren.
+    Prerano, dok još ima otvorenih cvjetova, tretman može ugroziti pčele i ometati zametanje plodova.
+    Prekasno, zaraza je mogla već nastati i učinak može biti slabiji.
     Koristiti registrirani fungicid za moniliju (Monilinia laxa) prema etiketi proizvoda.
-    Insekticid za breskvinog savijača razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
-    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela — insekticidi su toksični za pčele.
+    Insekticid za breskvinog savijača ili lisne uši razmatrati samo ako monitoring, vidljiva svježa šteta ili stručni/lokalni savjet opravdavaju reakciju.
+    Monitoring pomaže odluci unutar ovog prozora; ne otvara prozor i ne stvara obvezu tretmana.
+    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
     Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
     Za mlada stabla god. 1–2: nije obavezno, ali preporučeno u vlažnim sezonama.
 
