@@ -74,6 +74,20 @@ Regional adaptation is future work.
 
 ## Completed milestones
 
+### S5.2 — Monitoring split cleanup
+
+Status: DONE / pending review
+
+Owner-approved monitoring split rule applied to active monitoring entries where one entry mixed:
+- trap vs scouting
+- pest vs disease
+- treatable pest vs non-treatable disease/symptom
+
+No schema changes.
+No new monitoring model.
+No target_codes[].
+No thresholds.
+
 ### DONE — Pre-S3 orchard plan template closure
 
 Commit:

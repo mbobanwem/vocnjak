@@ -438,7 +438,7 @@ Preventiva bakrom oko cvatnje je ključna.
 ### 2. Praćenje štetnika
 
 - activityType: "monitoring"
-  title: "Praćenje kruškine buhe i savijača"
+  title: "Praćenje kruškine buhe"
   monthStart: 4
   dayStart: 20
   monthEnd: 8
@@ -448,9 +448,18 @@ Preventiva bakrom oko cvatnje je ključna.
     Kruškina buha se prati vizualnim pregledom mladih izbojaka i naličja listova, osobito u proljeće i rano ljeto.
     Ako nema vidljivih kolonija, medne rose, čađavice ili deformacija mladog rasta, tretman nije opravdan.
     Eventualni tretman razmatrati samo pri vidljivom problemu i koristiti samo sredstvo registrirano za krušku i ciljanu štetnu vrstu prema etiketi proizvoda.
+    Za mlada stabla: fokus na kruškinu buhu i zdrav rast.
+
+- activityType: "monitoring"
+  title: "Praćenje savijača ploda – kruška"
+  monthStart: 4
+  dayStart: 20
+  monthEnd: 8
+  dayEnd: 15
+  notes: >
     Savijač / moljac ploda: feromonska klopka ako je dostupna; klopka služi za procjenu pritiska, ne za automatsku odluku o tretmanu.
     Ako se ulov ponavlja ili se vide svježa oštećenja plodova, usporediti s lokalnim pragovima ili stručnim savjetom prije tretmana.
-    Za mlada stabla: fokus na lisne uši, kruškinu buhu i zdrav rast; zaštita ploda nije prioritet ako nema uroda.
+    Za mlada stabla: zaštita ploda nije prioritet ako nema uroda.
 
 ---
 
@@ -720,7 +729,7 @@ Propušteno prskanje u veljači/ožujku = visok rizik zaraze, posebno u vlažnom
 ### 2. Praćenje štetnika
 
 - activityType: "monitoring"
-  title: "Praćenje lisnih ušiju i breskvinog savijača"
+  title: "Praćenje lisnih ušiju – nektarina"
   monthStart: 4
   dayStart: 15
   monthEnd: 7
@@ -728,9 +737,17 @@ Propušteno prskanje u veljači/ožujku = visok rizik zaraze, posebno u vlažnom
   notes: >
     Tjedno pregledavati naličje listova i mlade izbojke.
     Lisne uši na nektarini mogu biti problem — razmotriti registrirani insekticid za kulturu i štetnika prema etiketi proizvoda, pri vidljivoj koloniji.
+    Za mlada stabla: fokus na lisne uši.
+
+- activityType: "monitoring"
+  title: "Praćenje breskvinog savijača – nektarina"
+  monthStart: 4
+  dayStart: 15
+  monthEnd: 7
+  dayEnd: 31
+  notes: >
     Breskvin savijač (Grapholita molesta): feromonska klopka ako je dostupna.
     Tretman samo pri vidljivom problemu ili prijeđenom pragu.
-    Za mlada stabla: fokus na lisne uši.
 
 ---
 
@@ -836,7 +853,7 @@ Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
 ### 2. Praćenje štetnika
 
 - activityType: "monitoring"
-  title: "Praćenje lisnih ušiju i breskvinog savijača"
+  title: "Praćenje lisnih ušiju – breskva"
   monthStart: 4
   dayStart: 15
   monthEnd: 7
@@ -844,6 +861,14 @@ Kovrčavost lista jednako kritična kao kod nektarine. Tretman identičan.
   notes: >
     Tjedno pregledavati naličje listova i vršne izbojke.
     Lisne uši: razmotriti registrirani insekticid za kulturu i štetnika prema etiketi proizvoda, pri vidljivoj koloniji.
+
+- activityType: "monitoring"
+  title: "Praćenje breskvinog savijača – breskva"
+  monthStart: 4
+  dayStart: 15
+  monthEnd: 7
+  dayEnd: 31
+  notes: >
     Breskvin savijač (Grapholita molesta): feromonska klopka ako je dostupna.
     Tretman samo pri vidljivom problemu.
 
@@ -973,21 +998,30 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
 
 ---
 
-### 3. Praćenje lisnih ušiju i šarke
+### 3. Praćenje marelice
 
 - activityType: "monitoring"
-  title: "Praćenje lisnih ušiju i šarke (marelica)"
+  title: "Praćenje lisnih ušiju – marelica"
   monthStart: 4
   dayStart: 1
   monthEnd: 5
   dayEnd: 15
   notes: >
-    Šarka (Plum pox virus) se prenosi lisnim ušima — pratiti kolonije na naličju listova.
+    Lisne uši mogu biti vektori šarke (Plum pox virus) — pratiti kolonije na naličju listova.
     Smanjenje lisnih uši ne jamči zaštitu od šarke.
-    Vizualni pregled: žuti prstenovi/mrlje na listovima = mogući simptom šarke.
-    Ako se sumnja na šarku, simptome treba potvrditi stručnjak, a postupanje uskladiti s lokalnim fitosanitarnim preporukama.
     Razmotriti registrirani insekticid za kulturu i štetnika prema etiketi proizvoda pri vidljivoj koloniji lisnih uši (preventivna kontrola vektora šarke).
     Za mlada stabla: posebno pratiti.
+
+- activityType: "monitoring"
+  title: "Praćenje simptoma šarke – marelica"
+  monthStart: 4
+  dayStart: 1
+  monthEnd: 5
+  dayEnd: 15
+  notes: >
+    Šarka (Plum pox virus) nema kurativni tretman.
+    Vizualni pregled: žuti prstenovi/mrlje na listovima = mogući simptom šarke.
+    Ako se sumnja na šarku, simptome treba potvrditi stručnjak, a postupanje uskladiti s lokalnim fitosanitarnim preporukama.
 
 ---
 
@@ -1187,10 +1221,10 @@ Primjenjuje se shared block kao za ostale standardne voćke.
 
 ---
 
-### 2. Praćenje bolesti lista, ploda i savijača
+### 2. Praćenje dunje
 
 - activityType: "monitoring"
-  title: "Praćenje bolesti lista, ploda i savijača – dunja"
+  title: "Praćenje bolesti lista i ploda – dunja"
   monthStart: 4
   dayStart: 25
   monthEnd: 8
@@ -1201,9 +1235,20 @@ Primjenjuje se shared block kao za ostale standardne voćke.
     — pjege na listovima
     — prerano žućenje ili otpadanje lista
     — pjege, deformacije ili trulež na plodu
+    Ako se simptomi pojačavaju, ako postoji povijest bolesti ili ako stručni/lokalni savjet opravdava reakciju, razmotriti registrirano sredstvo za dunju i ciljanu bolest prema etiketi proizvoda.
+    Poštovati etiketu proizvoda, karencu, zaštitu pčela i lokalne propise.
+
+- activityType: "monitoring"
+  title: "Praćenje savijača – dunja"
+  monthStart: 4
+  dayStart: 25
+  monthEnd: 8
+  dayEnd: 15
+  notes: >
+    Tjedno ili nakon duljeg kišnog razdoblja pregledati:
     — svježe ubode ili ulazne rupe na plodu
     Kruškin savijač (Cydia pyrivora) i povremeno jabučni savijač (C. pomonella) mogu biti relevantni, ali tretman se ne izvodi automatski.
-    Ako se simptomi pojačavaju, ako postoji povijest bolesti ili ako stručni savjet/lokalni pragovi opravdavaju reakciju, razmotriti registrirano sredstvo za dunju i ciljanu bolest/štetnika prema etiketi proizvoda.
+    Ako se vide svježi ubodi ili ulazne rupe, ili ako stručni savjet/lokalni pragovi opravdavaju reakciju, razmotriti registrirano sredstvo za dunju i ciljanu štetnu vrstu prema etiketi proizvoda.
     Poštovati etiketu proizvoda, karencu, zaštitu pčela i lokalne propise.
 
 ---
@@ -1324,17 +1369,27 @@ Primjenjuje se shared block kao za ostale standardne voćke.
 
 ---
 
-### 4. Praćenje bolesti i štetnika
+### 4. Praćenje badema
 
 - activityType: "monitoring"
-  title: "Praćenje bolesti i štetnika – badem"
+  title: "Praćenje bolesti – badem"
   monthStart: 4
   dayStart: 15
   monthEnd: 8
   dayEnd: 15
   notes: >
     Vizualni pregled listova i plodova.
-    Korisnik odlučuje o tretmanu na temelju opažanja.
+    Ako opažanje upućuje na problem, eventualni tretman bolesti razmotriti prema etiketi proizvoda i stručnom/lokalnom savjetu.
+
+- activityType: "monitoring"
+  title: "Praćenje štetnika – badem"
+  monthStart: 4
+  dayStart: 15
+  monthEnd: 8
+  dayEnd: 15
+  notes: >
+    Vizualni pregled listova i plodova.
+    Ako opažanje upućuje na problem, eventualni tretman štetnika razmotriti prema etiketi proizvoda i stručnom/lokalnom savjetu.
 
 ---
 
@@ -1502,16 +1557,26 @@ Shared block NE primjenjuje se.
 
 ---
 
-### 4. Vizualni pregled – paunovo oko i maslinin moljac
+### 4. Vizualni pregled – maslina
 
 - activityType: "monitoring"
-  title: "Praćenje paunovog oka i maslinovog moljca"
+  title: "Praćenje paunovog oka – maslina"
   monthStart: 4
   dayStart: 1
   monthEnd: 5
   dayEnd: 31
   notes: >
     Paunovo oko (Spilocaea oleagina): žute mrlje s tamnim rubom na listu.
+    Vizualni pregled — tretman razmatrati samo ako simptomi, lokalni uvjeti ili stručni savjet opravdavaju reakciju; koristiti samo registrirano sredstvo prema etiketi proizvoda i lokalnim propisima.
+    U kontinentalnoj klimi rijedak problem na otvorenom.
+
+- activityType: "monitoring"
+  title: "Praćenje maslinovog moljca – maslina"
+  monthStart: 4
+  dayStart: 1
+  monthEnd: 5
+  dayEnd: 31
+  notes: >
     Maslinin moljac (Prays oleae): napada cvjetove i plodove.
     Vizualni pregled — tretman razmatrati samo ako simptomi, lokalni uvjeti ili stručni savjet opravdavaju reakciju; koristiti samo registrirano sredstvo prema etiketi proizvoda i lokalnim propisima.
     U kontinentalnoj klimi rijedak problem na otvorenom.
