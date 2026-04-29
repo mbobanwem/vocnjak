@@ -1149,12 +1149,13 @@ Lokacija sadnje je kritična: izbjegavati udoline i sjeverne strane.
 Cvatnja (Zagreb baseline): VELJAČA – OŽUJAK (ovisno o sorti i godini).
 Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargrand (jun–jul), Bergeron (jul 5–25).
+Kalendarski prozori su Zagreb / kontinentalni baseline. U toplijim krajevima razvoj može krenuti ranije, u hladnijima kasnije; stanje stabla i lokalni uvjeti imaju prednost pred datumom.
 
 *S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
 
 ---
 
-### 1. Bakar – PRIJE cvatnje (KRITIČNO)
+### 1. Bakar – PRIJE cvatnje (KRITIČNO – marelica)
 
 - activityType: "spraying"
   title: "Bakar – zaštita PRIJE cvatnje (KRITIČNO – marelica)"
@@ -1163,18 +1164,19 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
   monthEnd: 2
   dayEnd: 15
   notes: >
-    KRITIČNO: marelica cvate u veljači/ožujku — bakar treba primijeniti PRIJE, ako je prikladno prema fenofazi i etiketi proizvoda.
-    Prskati dok su pupovi još zatvoreni ili tek počinju bubriti.
-    Registrirani bakreni pripravak prema etiketi proizvoda odnosi se na preventivnu zaštitu od relevantnih gljivičnih i bakterijskih bolesti, ne na liječenje virusnih bolesti.
-
-    Šarka (Plum pox virus) nema kurativni tretman; lisne uši su vektori. Simptome šarke treba potvrditi stručnjak, a postupanje uskladiti s lokalnim fitosanitarnim preporukama.
-    Ako se propusti ovaj termin, ne može se u potpunosti nadoknaditi; kasnije mjere ovise o stvarnom problemu, fenofazi i etiketi proizvoda.
+    Marelica cvate ranije od većine voćaka, zato je termin bakra raniji.
+    Bakar mora biti prije otvorene cvatnje, dok su pupovi zatvoreni ili tek počinju bubriti.
+    Svrha je preventivna zaštita prije cvatnje od relevantnih gljivičnih i bakterijskih problema prema etiketi proizvoda.
+    Bakar ne liječi šarku ni virusne bolesti.
+    Ako se propusti ovaj termin, ne može se u potpunosti nadoknaditi kasnije.
+    Nikad ne prskati otvorene cvjetove.
+    Ne duplicirati bakrene tretmane ako je isti fenološki prozor već pokriven; poštovati razmak, fenofazu i etiketu proizvoda.
     Razmak od bijelog ulja: min. 7–10 dana.
     Ovo je DODATAK zimskom bakru iz shared bloka — primijeniti ranije, prilagođeno marelici.
 
 ---
 
-### 2. Praćenje mraza za cvatnje
+### 2. Praćenje mraza za cvatnje marelice
 
 - activityType: "monitoring"
   title: "Praćenje mraza za cvatnje marelice"
@@ -1183,16 +1185,41 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
   monthEnd: 3
   dayEnd: 31
   notes: >
-    Marelica cvate u veljači/ožujku — mraz je najveći neprijatelj.
-    Pratiti vremensku prognozu svakodnevno za cvatnje.
-    Temperature ispod približno -1°C tijekom cvatnje mogu ozbiljno oštetiti ili uništiti rod, ovisno o fenofazi, trajanju zahlađenja i lokalnim uvjetima.
-    Moguće mjere zaštite za manja stabla: agrotekstil (navlaka), dimni lonci.
-    Ovo je informacijska radnja — korisnik mora reagirati prema lokalnim uvjetima.
-    Loš rod marelice je najčešće uzrokovan mrazom, ne bolešću ni štetnicima.
+    PRIJE RIZIKA:
+    za vrijeme cvatnje svakodnevno pratiti lokalnu prognozu.
+    hladne noći tijekom cvatnje mogu oštetiti rod.
+    temperature ispod približno -1°C tijekom cvatnje mogu ozbiljno oštetiti ili uništiti rod, ovisno o fenofazi, trajanju zahlađenja i lokalnim uvjetima.
+    mala stabla ponekad se mogu zaštititi agrotekstilom ili drugim lokalnim mjerama ako je praktično.
+
+    ŠTO GLEDATI NAKON HLADNE NOĆI:
+    smeđe ili crne cvjetove.
+    pocrnjelo središte cvijeta.
+    mladi plodići se smežuraju nakon nekoliko dana.
+    šteta se pojavi naglo.
+
+    MRAZ VS MONILIJA:
+
+    Više liči na MRAZ ako:
+    bila je jasna hladna noć tijekom cvatnje.
+    šteta se pojavila odjednom.
+    donji dio krošnje ili mrazišna mjesta više su zahvaćeni.
+    šteta se ne nastavlja širiti.
+
+    Više liči na MONILIJU ako:
+    bilo je vlažno / sparno vrijeme, bez jasne hladne noći.
+    cvjetovi se osuše i ostaju pričvršćeni.
+    vrhovi mladica se suše.
+    može se pojaviti smola.
+    šteta se širi kroz vrijeme.
+
+    VAŽNO:
+    šteta od mraza ne može se popraviti prskanjem nakon što se dogodi.
+    zabilježiti datum, temperaturu ako je poznata i vidljivu štetu.
+    ako je mraz uništio cvatnju, kasnije prorjeđivanje možda neće biti potrebno.
 
 ---
 
-### 3. Praćenje marelice
+### 3. Praćenje lisnih ušiju – marelica
 
 - activityType: "monitoring"
   title: "Praćenje lisnih ušiju – marelica"
@@ -1201,25 +1228,100 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
   monthEnd: 5
   dayEnd: 15
   notes: >
-    Lisne uši mogu biti vektori šarke (Plum pox virus) — pratiti kolonije na naličju listova.
-    Smanjenje lisnih uši ne jamči zaštitu od šarke.
-    Razmotriti registrirani insekticid za kulturu i štetnika prema etiketi proizvoda pri vidljivoj koloniji lisnih uši (preventivna kontrola vektora šarke).
-    Za mlada stabla: posebno pratiti.
+    Pregledati naličje mladih listova i vrhove mladica.
+    Gledati vide li se kolonije lisnih ušiju.
+    Gledati uvijene mlade listove.
+    Gledati ljepljivu mednu rosu.
+    Pratiti mrave.
+    Lisne uši mogu širiti šarku.
+    Smanjenje lisnih ušiju ne jamči zaštitu od šarke.
+    Tretman razmatrati samo ako postoji vidljiva kolonija ili stvaran problem.
+    Koristiti registrirano sredstvo za marelicu i ciljanu štetnu vrstu prema etiketi.
+    Poštovati zaštitu pčela i etiketu.
 
-- activityType: "monitoring"
-  title: "Praćenje simptoma šarke – marelica"
-  monthStart: 4
-  dayStart: 1
-  monthEnd: 5
-  dayEnd: 15
-  notes: >
-    Šarka (Plum pox virus) nema kurativni tretman.
-    Vizualni pregled: žuti prstenovi/mrlje na listovima = mogući simptom šarke.
-    Ako se sumnja na šarku, simptome treba potvrditi stručnjak, a postupanje uskladiti s lokalnim fitosanitarnim preporukama.
+    Za mlada stabla:
+    posebno pratiti zdrav novi rast.
 
 ---
 
-### 4. Post-bloom zaštita
+### 4. Praćenje šarke – marelica
+
+- activityType: "monitoring"
+  title: "Praćenje šarke – marelica"
+  monthStart: 4
+  dayStart: 1
+  monthEnd: 8
+  dayEnd: 31
+  notes: >
+    Šarka / Plum pox virus nema kurativno liječenje.
+    Ne prskati protiv šarke.
+    Simptome treba potvrditi stručnjak prije većih odluka.
+
+    ŠTO GLEDATI:
+    žute prstenove, lukove ili nepravilne šare na listovima.
+    šare se mogu pojaviti oko žila.
+    deformirane plodove.
+    ulegnute šare ili prstenove na plodu.
+    prijevremeno opadanje plodova može se pojaviti.
+    simptomi se često ponavljaju kroz više sezona.
+
+    S ČIM SE MOŽE ZAMIJENITI:
+    manjak hraniva obično je ujednačeniji i nije prstenast.
+    gljivične pjegavosti obično su pjege ili rupice, ne prstenaste šare.
+    šteta od lisnih ušiju uvija mladice/listove i obično se vide kukci ili medna rosa.
+
+    SIGURNI KORACI:
+    fotografirati i zabilježiti datum.
+    pratiti ponavljaju li se simptomi.
+    ne cijepiti i ne razmnožavati sa sumnjivog stabla.
+    kod sumnje konzultirati stručnjaka / lokalnu službu za zaštitu bilja.
+
+    POVEZNICA S LISNIM UŠIMA:
+    lisne uši mogu širiti virus.
+    smanjenje lisnih ušiju može smanjiti pritisak vektora, ali ne liječi šarku i ne jamči zaštitu.
+
+---
+
+### 5. Praćenje monilije / smeđe truleži – marelica
+
+- activityType: "monitoring"
+  title: "Praćenje monilije / smeđe truleži – marelica"
+  monthStart: 4
+  dayStart: 1
+  monthEnd: 7
+  dayEnd: 31
+  notes: >
+    Ovo je vizualni pregled i praćenje rizika, ne nalog za tretiranje.
+
+    CVAT / GRANČICE:
+    cvjetovi posmeđe i osuše se.
+    cvjetovi ostaju pričvršćeni.
+    vrhovi mladica se suše.
+    može se pojaviti smola.
+
+    PLOD:
+    mekane smeđe trule pjege.
+    sivi/bež jastučići spora.
+    mumificirani plodovi.
+
+    MRAZ VS MONILIJA:
+    mraz je obično nagao nakon hladne noći.
+    monilija je vjerojatnija nakon vlažnog / sparnog vremena i može se širiti kroz vrijeme.
+    ako nije jasno, zabilježiti stanje i konzultirati stručnjaka.
+
+    HIGIJENA:
+    ukloniti trule i mumificirane plodove sa stabla i tla.
+    jasno bolesne/suhe male mladice ukloniti čistim rezom.
+    ne rezati agresivno zdrav rast tijekom vrućine.
+
+    ZNAČENJE:
+    simptomi pomažu razumjeti rizik i povijest stabla.
+    sami simptomi ne stvaraju preporuku za prskanje.
+    ako dijagnoza ili zaštita nisu jasne, konzultirati stručnjaka / lokalni savjet.
+
+---
+
+### 6. Post-bloom zaštita – monilija (marelica)
 
 - activityType: "spraying"
   title: "Post-bloom zaštita – monilija (marelica)"
@@ -1228,17 +1330,18 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
   monthEnd: 5
   dayEnd: 15
   notes: >
-    Nakon cvatnje (marelica cvate ranije — prilagoditi termin prema stanju stabla).
+    Nakon cvatnje / nakon opadanja latica, nikad tijekom otvorene cvatnje.
+    Marelica cvate ranije — prilagoditi termin prema stanju stabla.
     Koristiti registrirani fungicid za moniliju (Monilinia laxa) prema etiketi proizvoda.
-    Insekticid razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
-    Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
-    Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
-    Nikad ne prskati otvorene cvjetove.
-    Za mlada stabla god. 1–2: nije obavezno.
+    Praćenje pomaže odluci unutar ovog prozora.
+    Praćenje ne otvara novi prozor i ne stvara obvezu tretmana.
+    Ne tretirati tijekom aktivnog leta pčela.
+    Poštovati etiketu proizvoda, zaštitu pčela, karencu, lokalna pravila i lokalni savjet.
+    Za mlada stabla god. 1–2: nije obavezno, ali može biti važno u vlažnim sezonama.
 
 ---
 
-### 5. Prorjeđivanje plodova
+### 7. Prorjeđivanje plodova – marelica
 
 - activityType: "observation"
   title: "Prorjeđivanje plodova – marelica"
@@ -1247,15 +1350,22 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
   monthEnd: 5
   dayEnd: 25
   notes: >
-    Marelica jako prorodi (ako nije bilo mraza koji je uništio cvjetove).
-    Ostaviti 1 plod na 8–10 cm grane.
-    Ukloniti blizance i oštećene plodove.
-    Bez prorjeđivanja: sitni plodovi, lom grana, iscrpljenost stabla.
+    AKO MRAZ NIJE SMANJIO ROD:
+    marelica može jako preroditi.
+    ostaviti oko 1 plod na 8–10 cm grane.
+    ukloniti blizance i oštećene plodove.
+    bez prorjeđivanja: sitni plodovi, lom grana, iscrpljenost stabla.
+
+    AKO JE MRAZ OŠTETIO CVATNJU I ZAMETANJE JE SLABO:
+    ne prorjeđivati.
+    ostaviti preostale plodove.
+    malo plodova nakon cvatnje često znači štetu od mraza, ne bolest ili štetnika.
+
     Za mlada stabla god. 1–2 bez uroda: nije potrebno.
 
 ---
 
-### 6. Berba
+### 8. Berba marelice
 
 - activityType: "harvest"
   title: "Berba marelice"
@@ -1270,7 +1380,11 @@ Harvest window examples: Novosadska rodna (jun 5–25), Goldrich / Kioto / Hargr
     Brati pažljivo — lako se oštećuje i brzo trune.
     Rok: 2–3 dana na sobnoj temperaturi, do 1 tjedan na 0–4°C.
     Ne ostavljati prezrele plodove — privlače ose, uzrokuju moniliju.
-    Ako je rod manji od očekivanog → uzrok je vrlo često mraz za cvatnje.
+
+    POST-MRAZNI ROD:
+    ako je berba mnogo manja od očekivane, mraz tijekom cvatnje često je razlog.
+    zabilježiti štetu od mraza u povijest.
+    povijest pomaže razlikovati godine s mrazom od godina s bolešću ili štetnicima.
 
 ---
 
