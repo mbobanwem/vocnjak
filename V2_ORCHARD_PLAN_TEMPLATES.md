@@ -1808,6 +1808,7 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
 Cvatnja (Zagreb baseline): kraj travnja – početak svibnja (kasnije od jabuke/kruške).
 Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Leskovačka / Vranjska (oct), Champion (oct – early nov).
+Kalendarski prozori za Zagreb / kontinentalne uvjete su baseline podsjetnici. U toplijim regijama radnje mogu krenuti ranije, u hladnijim kasnije. Fenološko stanje stabla i lokalni uvjeti imaju prednost pred datumom.
 Dunja pripada pome grupi; dijeli rizik bakterijske paleži (Erwinia amylovora) s kruškom.
 Primjenjuje se shared block kao za ostale standardne voćke.
 
@@ -1822,14 +1823,60 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 4
   dayEnd: 15
   notes: >
-    Preventivni bakar oko mirovanja pupa protiv bakterijske paleži (Erwinia amylovora).
-    Koristiti registrirani bakreni pripravak prema etiketi proizvoda.
+    Dunja ima specifičan rizik bakterijske paleži oko cvatnje, zato ova stavka nadopunjuje zajednički blok zimskog bakra i bakra nakon rezidbe.
+    Zajednički zimski bakar je opća kasnozimska preventiva i primjenjuje se samo ako fenofaza, vrijeme, razmak od ulja i etiketa proizvoda to dopuštaju.
+    Bakar na rane nakon rezidbe ima smisla samo ako je rezidba stvarno obavljena i ako svježe rane, povijest bolesti ili kišno vrijeme čine zaštitu opravdanom; nije automatski nakon svakog reza.
+    Ova dunjina stavka je preventivni podsjetnik prije cvatnje i oko rizika bakterijske paleži; nije automatski treći bakreni tretman.
+    Razmotriti je posebno kada je dunja oko bubrenja pupova ili ruba cvatnje, osobito uz vlažne uvjete, lokalni rizik ili povijest bakterijske paleži, ali samo ako etiketa, vrijeme, fenofaza i razmaci to dopuštaju.
+    Ako je dunja već nedavno tretirana bakrom dok su pupovi bubrili, otvarali se ili je cvatnja počinjala, primjerice kroz zimski bakar ili bakar nakon rezidbe, ne ponavljati bakar samo zato što postoji ova stavka.
+    Bakar je preventivan i ne liječi vidljive simptome bakterijske paleži.
     Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
-    Razmak od dormant ulja: vidi preporuku na etiketi proizvoda.
+    Poštovati razmak od bijelog/mineralnog ulja najmanje 7–10 dana ili dulje ako etiketa proizvoda tako traži.
+    Prskati samo kada fenofaza, vrijeme i etiketa proizvoda to dopuštaju.
+    Koristiti samo registrirani bakreni pripravak prema etiketi proizvoda.
+    Vidljive simptome bakterijske paleži ne pokušavati liječiti ovim prskanjem; za sumnjive simptome koristiti praćenje bakterijske paleži i lokalni/stručni savjet.
 
 ---
 
-### 2. Praćenje dunje
+### 2. Praćenje bakterijske paleži
+
+- activityType: "monitoring"
+  title: "Praćenje bakterijske paleži – dunja"
+  monthStart: 4
+  dayStart: 20
+  monthEnd: 7
+  dayEnd: 15
+  notes: >
+    ŠTO GLEDATI:
+    bakterijska palež je ozbiljna bolest; aplikacija ne dijagnosticira bolest.
+    ovo je prozor za prepoznavanje simptoma u glavnom riziku oko cvatnje, nekoliko tjedana nakon opadanja latica i tijekom ranog rasta mladih izboja; nije prozor za liječenje vidljivih simptoma.
+    pocrnjele ili uvenule cvjetove koji ostaju pričvršćeni.
+    vrh mladog izboja savijen poput kukice / ovčarskog štapa.
+    pocrnjele listove koji ostaju na izboju.
+    naglo venuće mladih izboja ili grančica.
+    moguće kapljice iscjetka u toplom i vlažnom vremenu.
+
+    S ČIM SE MOŽE ZAMIJENITI:
+    šteta od mraza nakon hladne noći.
+    monilija cvijeta/grančice nakon vlažnog vremena.
+    ožegotine od sunca, vrućina ili sušni stres.
+
+    SIGURNI KORACI:
+    fotografirati i zabilježiti datum.
+    ne tretirati vidljive simptome bakrom kao lijekom.
+    dezinficirati alat između rezova, npr. 70% alkoholom ili drugim prikladnim sredstvom za dezinfekciju alata.
+    ne cijepiti i ne razmnožavati sa sumnjivog stabla.
+    kod jake sumnje ne raditi veće rezove prije stručnog savjeta jer pogrešno rezanje ili alat mogu širiti problem.
+    ako je sumnja jaka, zatražiti lokalni stručni / fitosanitarni savjet.
+
+    VAŽNO:
+    bakar je preventivan i ne liječi vidljive simptome.
+    aplikacija ne potvrđuje bakterijsku palež i ne određuje tretman.
+    u nekim regijama bolest može biti prijavna; provjeriti lokalna pravila.
+
+---
+
+### 3. Praćenje dunje
 
 - activityType: "monitoring"
   title: "Praćenje bolesti lista i ploda – dunja"
@@ -1838,13 +1885,33 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 8
   dayEnd: 15
   notes: >
-    Dunja može imati probleme s pjegama na listu i plodu, preranim otpadanjem lista te truleži/plodnim infekcijama, osobito u vlažnim sezonama.
-    Tjedno ili nakon duljeg kišnog razdoblja pregledati:
-    — pjege na listovima
-    — prerano žućenje ili otpadanje lista
-    — pjege, deformacije ili trulež na plodu
-    Ako se simptomi pojačavaju, ako postoji povijest bolesti ili ako stručni/lokalni savjet opravdava reakciju, razmotriti registrirano sredstvo za dunju i ciljanu bolest prema etiketi proizvoda.
-    Poštovati etiketu proizvoda, karencu, zaštitu pčela i lokalne propise.
+    KADA:
+    tjedno ili nakon duljeg kišnog razdoblja, osobito u vlažnim sezonama.
+
+    ŠTO GLEDATI:
+    pjege na listovima.
+    prerano žućenje ili otpadanje lista.
+    pjege, deformacije ili trulež na plodu.
+    širenje simptoma nakon kišnog razdoblja.
+
+    S ČIM SE MOŽE ZAMIJENITI:
+    oštećenja od tuče, vjetra ili sunca.
+    stres od suše ili vrućine.
+    prirodno starenje starijih listova kasnije u sezoni.
+
+    ZNAČENJE:
+    simptomi pomažu razumjeti stanje stabla i povijest problema.
+    sami simptomi ne stvaraju novu preporuku za prskanje.
+    bakterijska palež prati se u odvojenoj stavci.
+
+    ODLUČIVANJE:
+    tretman razmatrati samo ako monitoring, povijest stabla, vidljiv problem ili lokalni/stručni savjet opravdavaju reakciju.
+    koristiti samo sredstvo registrirano za dunju i ciljani problem prema etiketi proizvoda.
+    poštovati etiketu proizvoda, karencu, zaštitu pčela i lokalne propise.
+    aplikacija informira; korisnik odlučuje.
+
+    Za mlada stabla god. 1–2:
+    zdrav list i rast su važniji od ploda; ako simptomi nisu jaki, praćenje može biti dovoljno.
 
 - activityType: "monitoring"
   title: "Praćenje savijača – dunja"
@@ -1853,15 +1920,39 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 8
   dayEnd: 15
   notes: >
-    Tjedno ili nakon duljeg kišnog razdoblja pregledati:
-    — svježe ubode ili ulazne rupe na plodu
-    Kruškin savijač (Cydia pyrivora) i povremeno jabučni savijač (C. pomonella) mogu biti relevantni, ali tretman se ne izvodi automatski.
-    Ako se vide svježi ubodi ili ulazne rupe, ili ako stručni savjet/lokalni pragovi opravdavaju reakciju, razmotriti registrirano sredstvo za dunju i ciljanu štetnu vrstu prema etiketi proizvoda.
-    Poštovati etiketu proizvoda, karencu, zaštitu pčela i lokalne propise.
+    KADA:
+    tjedno pregledavati plodove tijekom razdoblja razvoja ploda.
+    za dunju je u ovoj verziji naglasak na vizualnom pregledu ploda; feromonska klopka se ne opisuje dok se ne potvrdi izvorima.
+
+    ŠTO GLEDATI:
+    svježe ulazne rupice ili ubode na plodu.
+    piljevini slične mrvice / izmet blizu ulaza.
+    kapljice smole blizu oštećenja.
+    rano otpale plodove.
+    moguću ličinku u sumnjivom otpalom plodu.
+
+    S ČIM SE MOŽE ZAMIJENITI:
+    površinska oštećenja od tuče, vjetra ili trljanja grana.
+    sitne pukotine ili ozljede kože ploda bez svježeg ulaza.
+    trulež koja se razvila bez jasne ulazne rupice.
+
+    ODLUČIVANJE:
+    Kruškin savijač (Cydia pyrivora) i povremeno jabučni savijač (C. pomonella) mogu biti relevantni, ali aplikacija ne odlučuje o tretmanu.
+    ponavljana svježa oštećenja ploda razlog su za provjeru lokalnog/stručnog savjeta.
+    koristiti samo sredstvo registrirano za dunju i ciljanu štetnu vrstu prema etiketi proizvoda.
+    poštovati zaštitu pčela, etiketu proizvoda i lokalne propise.
+
+    KARENCA:
+    karenca je broj dana koji mora proći između prskanja i berbe.
+    što je berba bliže, to su mogućnosti tretmana ograničenije.
+    stvarna etiketa proizvoda odlučuje što je dopušteno.
+
+    Za mlada stabla bez ploda:
+    praćenje savijača nije prioritet.
 
 ---
 
-### 3. Fungicid/insekticid post-cvatnja (po potrebi)
+### 4. Fungicid/insekticid post-cvatnja (po potrebi)
 
 - activityType: "spraying"
   title: "Post-cvatnja zaštita – dunja (po potrebi)"
@@ -1878,7 +1969,7 @@ Primjenjuje se shared block kao za ostale standardne voćke.
 
 ---
 
-### 4. Provjera opterećenja plodovima – dunja
+### 5. Provjera opterećenja plodovima – dunja
 
 - activityType: "observation"
   title: "Provjera opterećenja plodovima – dunja"
@@ -1889,11 +1980,12 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   notes: >
     Dunja se ne prorjeđuje rutinski kao jabuka.
     Ako je stablo mlado, slabo ili se grane jako savijaju pod teretom plodova, ukloniti dio plodova radi sprječavanja loma grana i boljeg razvoja stabla.
+    Za mlada stabla god. 1–2: važniji je razvoj krošnje nego urod.
     Ako je urod normalan i grane nisu opterećene, preskočiti.
 
 ---
 
-### 5. Berba
+### 6. Berba
 
 - activityType: "harvest"
   title: "Berba dunje"
