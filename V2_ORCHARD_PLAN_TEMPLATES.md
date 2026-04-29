@@ -555,6 +555,7 @@ Gisela 5 podloga: slabobujnija, raniji prinos, lakša zaštita mrežom.
     KAKO POSTAVITI:
     2–3 žute ljepljive ploče po stablu, visina 1.5–2 m, u krošnji.
     Postaviti prije početka dozrijevanja plodova.
+    Ploče pregledavati najmanje jednom tjedno, a pred berbu i češće.
 
     KAKO ČITATI ULOVE:
 
