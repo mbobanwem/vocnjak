@@ -411,6 +411,7 @@ Kalendarski prozori su baseline podsjetnici. U toplijim regijama radnje mogu kre
 Cvatnja (Zagreb baseline): kraj ožujka – poč. travnja, nešto ranije od jabuke.
 Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Williams / Santa Maria (aug), Conference / Bosc (aug–sep), Abate Fetel (sep–oct).
+Kalendarski prozori za Zagreb / kontinentalne uvjete su baseline podsjetnici. U toplijim regijama radnje mogu krenuti ranije, u hladnijim kasnije. Fenološko stanje stabla i lokalni uvjeti imaju prednost pred datumom.
 Posebna napomena: bakterijska palež (Erwinia amylovora) je bakterijska bolest bez kemijskog lijeka.
 Preventiva bakrom oko cvatnje je ključna.
 
@@ -425,17 +426,60 @@ Preventiva bakrom oko cvatnje je ključna.
   monthEnd: 4
   dayEnd: 10
   notes: >
-    Kruška ima visok rizik od bakterijske paleži (Erwinia amylovora); dunja također zahtijeva S3 provjeru.
-    Primijeniti bakar preventivno oko cvatnje.
-    Cvatnja kruške je ranije od jabuke — pratiti stanje pupova i prilagoditi termin.
+    Kruška ima specifičan rizik od bakterijske paleži oko cvatnje, zato ova stavka nadopunjuje zajednički blok zimskog bakra i bakra nakon rezidbe.
+    Zajednički zimski bakar je opća kasnozimska preventiva i primjenjuje se samo ako fenofaza, vrijeme, razmak od bijelog ulja i etiketa proizvoda to dopuštaju.
+    Bakar na rane nakon rezidbe ima smisla samo ako je rezidba stvarno obavljena i ako svježe rane, povijest bolesti ili kišno vrijeme čine zaštitu opravdanom; nije automatski nakon svakog reza.
+    Ova kruškina stavka je preventivni podsjetnik za razdoblje oko cvatnje i rizik bakterijske paleži; nije automatski treći bakreni tretman.
+    Razmotriti je posebno kada je kruška oko bubrenja pupova ili ruba cvatnje, osobito uz vlažne uvjete, lokalni rizik ili povijest bakterijske paleži, ali samo ako etiketa, vrijeme, fenofaza i razmaci to dopuštaju.
+    Ako je kruška već nedavno tretirana bakrom dok su pupovi bubrili, otvarali se ili je cvatnja počinjala, primjerice kroz zimski bakar ili bakar nakon rezidbe, ne ponavljati bakar samo zato što postoji ova stavka.
+    Bakar je preventivan i ne liječi vidljive simptome bakterijske paleži.
     NE prskati direktno na otvorene cvjetove — oštećuje cvjetove i pčele.
-    Registrirani bakreni pripravak prema etiketi proizvoda.
-    Razmak od bijelog ulja: min. 7–10 dana.
-    Ako se pojave simptomi bakterijske paleži (tamnosmeđe uvenule grane): postupanje uskladiti sa stručnim savjetom i lokalnim fitosanitarnim preporukama.
+    Poštovati razmak od bijelog ulja: min. 7–10 dana.
+    Prskati samo kada fenofaza, vrijeme i etiketa proizvoda to dopuštaju.
+    Koristiti samo registrirani bakreni pripravak prema etiketi proizvoda.
+    Vidljive simptome ne pokušavati liječiti ovim prskanjem; za sumnjive simptome koristiti monitoring i lokalni/stručni savjet.
 
 ---
 
-### 2. Praćenje štetnika
+### 2. Praćenje bakterijske paleži
+
+- activityType: "monitoring"
+  title: "Praćenje bakterijske paleži – kruška"
+  monthStart: 3
+  dayStart: 20
+  monthEnd: 6
+  dayEnd: 30
+  notes: >
+    ŠTO GLEDATI:
+    bakterijska palež je ozbiljna bolest; aplikacija ne dijagnosticira bolest.
+    ovaj prozor je usmjeren na glavni rizik oko cvatnje i ranog rasta mladih izboja.
+    pocrnjele ili uvenule cvjetove koji ostaju pričvršćeni.
+    vrh mladog izboja savijen poput kukice / ovčarskog štapa.
+    pocrnjele listove koji ostaju na izboju.
+    naglo venuće mladih izboja ili grančica.
+    moguće kapljice iscjetka u toplom i vlažnom vremenu.
+
+    S ČIM SE MOŽE ZAMIJENITI:
+    šteta od mraza nakon hladne noći.
+    monilija cvijeta/grančice nakon vlažnog vremena.
+    ožegotine od sunca, vrućina ili sušni stres.
+
+    SIGURNI KORACI:
+    fotografirati i zabilježiti datum.
+    ne tretirati vidljive simptome bakrom kao lijekom.
+    dezinficirati alat između rezova, npr. 70% alkoholom ili drugim prikladnim sredstvom za dezinfekciju alata.
+    ne cijepiti i ne razmnožavati sa sumnjivog stabla.
+    kod jake sumnje ne raditi veće rezove prije stručnog savjeta jer pogrešno rezanje ili alat mogu širiti problem.
+    ako je sumnja jaka, zatražiti lokalni stručni / fitosanitarni savjet.
+
+    VAŽNO:
+    bakar je preventivan i ne liječi vidljive simptome.
+    aplikacija ne potvrđuje bakterijsku palež i ne određuje tretman.
+    u nekim regijama bolest može biti prijavna; provjeriti lokalna pravila.
+
+---
+
+### 3. Praćenje štetnika
 
 - activityType: "monitoring"
   title: "Praćenje kruškine buhe"
@@ -444,11 +488,30 @@ Preventiva bakrom oko cvatnje je ključna.
   monthEnd: 8
   dayEnd: 15
   notes: >
-    Kruškina buha (Cacopsylla pyri): ličinke/nimfe na mladim izbojima i naličju listova, medna rosa, čađavica.
-    Kruškina buha se prati vizualnim pregledom mladih izbojaka i naličja listova, osobito u proljeće i rano ljeto.
-    Ako nema vidljivih kolonija, medne rose, čađavice ili deformacija mladog rasta, tretman nije opravdan.
-    Eventualni tretman razmatrati samo pri vidljivom problemu i koristiti samo sredstvo registrirano za krušku i ciljanu štetnu vrstu prema etiketi proizvoda.
-    Za mlada stabla: fokus na kruškinu buhu i zdrav rast.
+    KADA:
+    osobito u proljeće i rano ljeto, dok se razvijaju mladi izboji i mladi listovi.
+
+    ŠTO GLEDATI:
+    vrhove mladih izboja.
+    naličje mladih listova.
+    male mekane kukce / nimfe.
+    mednu rosu ili ljepljive listove.
+    čađavicu.
+    mrave koji se kreću po izbojima ili deblu kao mogući znak medne rose.
+    uvijen ili deformiran mladi rast.
+
+    S ČIM SE MOŽE ZAMIJENITI:
+    lisne uši također mogu stvarati mednu rosu i uvijati mlade listove.
+    suša, vrućina ili oštećenje vjetrom mogu savijati mladi rast bez kolonija štetnika.
+
+    ODLUČIVANJE:
+    ako nema vidljivih kolonija, medne rose, čađavice ili deformacija mladog rasta, tretman nije opravdan.
+    eventualni tretman razmatrati samo ako postoji vidljiv stvarni problem.
+    koristiti samo sredstvo registrirano za krušku i ciljanu štetnu vrstu prema etiketi proizvoda.
+    aplikacija informira; korisnik odlučuje i nema automatske preporuke za tretman.
+
+    Za mlada stabla god. 1–2:
+    fokus je zdrav rast mladih izboja.
 
 - activityType: "monitoring"
   title: "Praćenje savijača ploda – kruška"
@@ -457,13 +520,56 @@ Preventiva bakrom oko cvatnje je ključna.
   monthEnd: 8
   dayEnd: 15
   notes: >
-    Savijač / moljac ploda: feromonska klopka ako je dostupna; klopka služi za procjenu pritiska, ne za automatsku odluku o tretmanu.
-    Ako se ulov ponavlja ili se vide svježa oštećenja plodova, usporediti s lokalnim pragovima ili stručnim savjetom prije tretmana.
-    Za mlada stabla: zaštita ploda nije prioritet ako nema uroda.
+    KAKO POSTAVITI / PRATITI:
+    savijač / moljac ploda prati se feromonskom klopkom ako je dostupna.
+    postaviti ili početi provjeravati oko opadanja latica / nakon cvatnje, prema lokalnoj sezoni.
+    pregledavati najmanje jednom tjedno; zapisati broj ulova i ukloniti ulov pri pregledu.
+    ulov u klopci je dokaz aktivnosti, ne nalog za tretiranje.
+
+    KAKO ČITATI ULOVE:
+
+    bez ulova:
+    nastaviti redovno praćenje.
+
+    oko 1–4 leptira po klopci tjedno u ranijem letu:
+    niska ili početna aktivnost; nastaviti pratiti i povremeno pregledati plodove.
+
+    oko 5+ leptira po klopci tjedno u svibnju–lipnju / ranijem letu:
+    povećana aktivnost; pažljivije pregledati plodove i provjeriti lokalni ili stručni savjet.
+
+    oko 3+ leptira po klopci tjedno kasnije u sezoni ili blizu berbe:
+    povećana zabrinutost jer su plodovi veći i karenca postaje važnija.
+
+    nagli skok ulova, brzo punjenje klopke ili vrlo visok ulov, npr. oko 30+:
+    moguć jak pritisak; aktivno provjeriti plodove, karencu, etiketu proizvoda i lokalni/stručni savjet.
+
+    Ovi brojevi su informativni primjeri iz profesionalnih i savjetodavnih smjernica za orijentaciju, ne pravila aplikacije.
+    Stvarni pragovi ovise o sorti, godini i lokalnim preporukama.
+
+    SIGNAL NA PLODU:
+    male ulazne rupice na plodu.
+    piljevini sličan izmet / mrvice kod oštećenja.
+    kapljice smole blizu oštećenja.
+    rano otpali plodovi s mogućom ličinkom unutra.
+    ulov u klopci zajedno sa svježim oštećenjem ploda jači je dokaz nego ulov sam.
+
+    KARENCA:
+    karenca je broj dana koji mora proći između prskanja i berbe.
+    što je berba bliže, to su mogućnosti tretmana ograničenije.
+    stvarna etiketa proizvoda odlučuje što je dopušteno.
+
+    ODLUČIVANJE:
+    aplikacija ne određuje tretman umjesto korisnika.
+    ako se pritisak čini visok ili se vide svježa oštećenja, provjeriti lokalni/stručni savjet prije bilo kakvog tretiranja.
+    koristiti samo sredstvo registrirano za krušku i ciljanu štetnu vrstu prema etiketi proizvoda.
+    poštovati zaštitu pčela, karencu, etiketu proizvoda i lokalna pravila.
+
+    Za mlada stabla bez ploda:
+    zaštita ploda nije prioritet.
 
 ---
 
-### 3. Post-bloom zaštita
+### 4. Post-bloom zaštita
 
 - activityType: "spraying"
   title: "Post-bloom zaštita – krastavost kruške"
@@ -482,7 +588,7 @@ Preventiva bakrom oko cvatnje je ključna.
 
 ---
 
-### 4. Prorjeđivanje plodova
+### 5. Prorjeđivanje plodova
 
 - activityType: "observation"
   title: "Prorjeđivanje plodova – kruška"
@@ -498,7 +604,7 @@ Preventiva bakrom oko cvatnje je ključna.
 
 ---
 
-### 5. Mreža protiv ptica
+### 6. Mreža protiv ptica
 
 - activityType: "observation"
   title: "Mreža protiv ptica – kruška"
@@ -509,11 +615,11 @@ Preventiva bakrom oko cvatnje je ključna.
   notes: >
     Kruška može biti napadnuta pticama pred samu berbu.
     Pratiti vizualno — mreža po potrebi kada plodovi počnu sazrijevati.
-    Za mlada stabla bez uroda: nije potrebno.
+    Za mlada stabla bez ploda: nije potrebno.
 
 ---
 
-### 6. Berba
+### 7. Berba
 
 - activityType: "harvest"
   title: "Berba kruške"
