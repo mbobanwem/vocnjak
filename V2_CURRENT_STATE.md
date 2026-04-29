@@ -809,6 +809,16 @@ Current documentation disposition:
 - `V2_FUTURE_ROADMAP.md` records fig reintroduction as future work.
 - `V2_PLANT_CATALOG.md` and `V2_ORCHARD_PLAN_TEMPLATES.md` are targeted-cleaned so fig is no longer current supported V2 scope.
 
+### S5 citrus / fig current-support cleanup
+
+Status: DONE — active current-support leakage removed from catalog/template surfaces.
+
+- Citrus / agrumi removed from current supported V2 catalog/template surfaces.
+- Lemon, orange, and mandarin preserved only as deferred/archive future input.
+- Fig removed from remaining current supported catalog list leakage.
+- Fig archive/deferred template material remains future input only.
+- No runtime, schema, regional engine, or new calendar-window support added.
+
 #### S4 owner decision — Monitoring design rule
 
 Status: RECORDED — monitoring shape is based on real-world inspection behavior.

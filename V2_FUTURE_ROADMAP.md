@@ -121,6 +121,7 @@ Deferred citrus reintroduction:
 - Future citrus work should include curated top varieties/subtypes for target countries where useful.
 - Future citrus work requires full source-backed plan templates, not weak container-biased placeholders.
 - Mediterranean/coastal vs continental growing context must be handled through the future regional timing / climate adaptation strategy before citrus returns.
+- Archived citrus catalog/template input may remain in V2 docs only under deferred/archive headings; it is not current support or implementation scope.
 
 Deferred fig reintroduction:
 
@@ -130,6 +131,7 @@ Deferred fig reintroduction:
 - Future fig work must distinguish breba and main crop handling where relevant.
 - Pruning guidance must align with crop type and fruiting wood behavior.
 - Source-backed harvest timing and clear Mediterranean/coastal vs continental interpretation are required before re-entry.
+- Archived fig input may remain in V2 docs only under deferred/archive headings; it is not current support or implementation scope.
 - Optional variety/type coverage for target regions may be opened only inside the future fig domain session.
 
 ---

@@ -1,7 +1,7 @@
 # V2 PLANT CATALOG — DOMAIN INPUT (pre-S3)
 
 ## Status
-Input-only material for S3 audit. NOT authoritative V2 truth. Domain content (species, varieties, harvest windows, mediterranean / citrus / nut handling) is preserved as-is; V1 runtime / storage / generation framing has been removed. Promotion to V2 spec requires S3–S5 audit and owner sign-off.
+Input-only material for S3 audit. NOT authoritative V2 truth. Domain content (species, varieties, harvest windows, mediterranean / nut handling, and deferred citrus / fig reference material) is preserved; V1 runtime / storage / generation framing has been removed. Promotion to V2 spec requires S3–S5 audit and owner sign-off.
 
 ---
 
@@ -24,7 +24,7 @@ Catalog provides structured input for:
 
 ## Plant identity (domain note)
 
-The catalog identifies each plant by its species key (apple, pear, quince, …) plus an optional variety. Section 12 is the structured reference for species keys, groups, varieties, harvest windows, and mediterranean / citrus / nut handling. Persistence and runtime routing decisions are out of scope for this input file.
+The catalog identifies each plant by its species key (apple, pear, quince, …) plus an optional variety. Section 12 is the structured reference for current species keys, groups, varieties, harvest windows, and mediterranean / nut handling. Deferred citrus and fig reference material is explicitly non-current. Persistence and runtime routing decisions are out of scope for this input file.
 
 ---
 
@@ -58,7 +58,6 @@ The catalog identifies each plant by its species key (apple, pear, quince, …) 
 ### Mediterranean / warm climate
 
 - Olive
-- Fig
 - Pomegranate
 
 ---
@@ -69,13 +68,10 @@ Walnut, hazelnut (classified under `nut` for user selection, organization, and s
 
 ---
 
-### Citrus (grouped)
+Deferred / future warm-climate candidates:
 
-Citrus is one category with subtype:
-
-- Lemon
-- Orange
-- Mandarin
+- Fig is deferred from current V2 support.
+- Citrus / agrumi (lemon, orange, mandarin) are deferred from current V2 support.
 
 ---
 
@@ -105,7 +101,6 @@ A seasonProfile species may still expose user-facing-only varieties where useful
 Current seasonProfile handling:
 - olive may expose user-facing-only varieties
 - pomegranate is species-level only
-- citrus uses subtype-level `seasonProfile` via lemon / orange / mandarin
 
 ---
 
@@ -115,7 +110,6 @@ Each plant resolves to a timing source deterministically from its catalog shape:
 
 - timing-driving species: variety harvestWindow → fallback harvestWindow → default Mid fallback
 - seasonProfile species: species seasonProfile
-- citrus: subtype seasonProfile
 
 No other timing sources are defined in this input file. Region offsets, fine tuning, and rootstock influence are out of scope.
 
@@ -211,12 +205,6 @@ SeasonProfile species with user-facing-only varieties:
 SeasonProfile species without varieties in this phase:
 
 - pomegranate
-
-Subtype model:
-
-- citrus
-
----
 
 ## 8. Timing Constraint
 
@@ -513,12 +501,18 @@ Interpretation:
 
 ---
 
-## 11. Citrus Special Handling
+## 11. Deferred Citrus Reference (not current V2 support)
 
-Citrus uses a seasonProfile model — no timing groups, no variety timing. The structured form (group, subtypes, seasonProfile values) lives in Section 12.
-Citrus uses a subtype model (lemon | orange | mandarin), each subtype carrying its own seasonProfile. Subtypes do not carry varieties in this pass; citrus identity remains an S3 / owner decision.
+Citrus is not current V2 support.
+This section is preserved as future/deferred input only.
+Do not use it for current catalog selection, active timing resolution, or plan generation.
 
-### Citrus Season Profiles
+Citrus was deferred because Zagreb / continental baseline windows are not reliable for lemon, orange, and mandarin.
+Future reintroduction requires a climate/location/regional timing strategy or equivalent owner-approved mechanism.
+
+Archived pre-S4 citrus shape used a subtype model (lemon | orange | mandarin), each subtype carrying a seasonProfile. This is future reference only.
+
+### Archived citrus season profiles
 
 `multi_cycle`
 - multiple flowering cycles per year
@@ -533,11 +527,10 @@ Citrus uses a subtype model (lemon | orange | mandarin), each subtype carrying i
 - main harvest season is autumn
 - typical for mandarin
 
-Rules:
-- citrus selection requires a subtype (lemon / orange / mandarin)
-- citrus does NOT use Early/Mid/Late
-- citrus does NOT use variety selection
-- uses seasonProfile instead
+Archived notes:
+- future citrus support may need lemon / orange / mandarin as proper supported fruit species or an owner-approved equivalent model.
+- citrus must not return as partial current support.
+- citrus must not use current Zagreb / continental calendar windows without future climate/location/regional timing support.
 
 ---
 
@@ -559,7 +552,7 @@ Rules:
 >
 > **Group definition and species-specific override rule**
 >
-> Group (`pome`, `stone`, `mediterranean`, `citrus`, `nut`) is an **organizing classification**. It is used for:
+> Group (`pome`, `stone`, `mediterranean`, `nut`) is an **organizing classification**. It is used for:
 >
 > - **user selection** — a user picking a plant can filter by agronomic family;
 > - **organization** — species sharing a broad agronomic profile are grouped together for navigation and display;
@@ -571,8 +564,7 @@ Rules:
 > Each species' actual work plan is built up from, in order:
 >
 > 1. the **shared block**, where it is explicitly applicable to the species (per the block's own scope statement);
-> 2. the **species-specific template block** in `V2_ORCHARD_PLAN_TEMPLATES.md`;
-> 3. **subtype-specific handling** where defined (currently: `citrus` species carry a `lemon` | `orange` | `mandarin` subtype used inside the Block 6 citrus template).
+> 2. the **species-specific template block** in `V2_ORCHARD_PLAN_TEMPLATES.md`.
 >
 > **Species-specific override rule — species-specific template wins.** Where a species' per-species block introduces, modifies, or contradicts the shared baseline, the per-species block is authoritative for that species. Group membership never forces a species to follow a plan that does not match its own template. See `V2_ORCHARD_PLAN_TEMPLATES.md` for the full Species-specific override rule paragraph and the concrete divergence examples.
 >
@@ -800,20 +792,11 @@ The JSON below is the machine-readable form of the species tables and prose abov
       "aglandau": {}
     }
   },
-  "pomegranate": { "group": "mediterranean", "seasonProfile": "mediterranean" },
-
-"citrus": {
-  "group": "citrus",
-  "subtypes": {
-      "lemon":    { "seasonProfile": "multi_cycle" },
-      "orange":   { "seasonProfile": "winter" },
-      "mandarin": { "seasonProfile": "autumn" }
-    }
-  }
+  "pomegranate": { "group": "mediterranean", "seasonProfile": "mediterranean" }
 }
 ```
 
-**S3 audit item:** decide whether citrus remains one catalog entry with lemon/orange/mandarin subtypes, or whether lemon, orange, and mandarin become top-level supported plant identities.
+**Deferred citrus note:** citrus is excluded from the current structured reference. Lemon, orange, and mandarin may return only through future owner-approved citrus/domain work with climate/location/regional timing support.
 
 ---
 
@@ -821,6 +804,8 @@ The JSON below is the machine-readable form of the species tables and prose abov
 
 - Berries (strawberry, blueberry, etc.)
 - Exotic plants
+- Current citrus support
+- Current fig support
 - Detailed phenology stages
 - Disease-specific mapping
 - Yield prediction

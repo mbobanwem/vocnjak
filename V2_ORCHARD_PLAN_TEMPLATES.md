@@ -39,9 +39,9 @@ Defined in V2_PLANT_CATALOG.md:
 
 **Mediterranean:** olive, pomegranate (fig is deferred from current V2 support; pomegranate's template is structurally independent — see Block 6)
 
-**Citrus:** lemon, orange, mandarin (subtype handling inside Block 6)
-
 **Nut:** walnut, hazelnut
+
+**Deferred / future:** fig; citrus / agrumi (lemon, orange, mandarin)
 
 Group is an organizing classification used for user selection, organization, shared-template discovery, and identifying baseline actions where genuinely applicable. Group membership does not determine a species' full work plan — the species-specific template block is authoritative where it diverges.
 
@@ -86,7 +86,6 @@ Agronomic interpretation only. Not schema fields.
 - Fungicide + insecticide tank-mix is not universally safe — follow each product label and local guidance; apply only post-bloom and outside active bee flight
 - Apricot copper must be applied BEFORE bloom (January–February window)
 - Nectarine and Peach copper for leaf curl must be applied while buds are still closed
-- Citrus: standard EU fruit tree spray rules do not apply
 
 ---
 
@@ -97,9 +96,9 @@ Agronomic interpretation only. Not schema fields.
 # Common baseline for all standard fruit trees:
 # apple, pear, plum, sweet_cherry, sour_cherry, peach, nectarine, apricot, quince, almond
 #
-# Mediterranean plants, citrus, and nut trees are handled separately.
-# Do NOT apply this block to olive, pomegranate, citrus, walnut, or hazelnut.
-# Fig is deferred from current V2 support and has no active shared-block coverage.
+# Mediterranean plants and nut trees are handled separately.
+# Do NOT apply this block to olive, pomegranate, walnut, or hazelnut.
+# Fig and citrus are deferred from current V2 support and have no active shared-block coverage.
 # ══════════════════════════════════════════════════════
 
 ## SHARED — STANDARD FRUIT TREES
@@ -2313,7 +2312,7 @@ Primjenjuje se shared block kao za ostale standardne voćke.
 >
 > **Group definition and species-specific override rule**
 >
-> Group (`pome`, `stone`, `mediterranean`, `citrus`, `nut`) is an **organizing classification**. It is used for:
+> Group (`pome`, `stone`, `mediterranean`, `nut`) is an **organizing classification**. It is used for:
 >
 > - **user selection** — a user picking a plant can filter by agronomic family;
 > - **organization** — species sharing a broad agronomic profile are grouped together for navigation and display;
@@ -2325,8 +2324,7 @@ Primjenjuje se shared block kao za ostale standardne voćke.
 > Each species' actual work plan is built up from, in order:
 >
 > 1. the **shared block**, where it is explicitly applicable to the species (per the block's own scope statement);
-> 2. the **species-specific template block** in this file;
-> 3. **subtype-specific handling** where defined (currently: `citrus` species carry a `lemon` | `orange` | `mandarin` subtype used inside the Block 6 citrus template).
+> 2. the **species-specific template block** in this file.
 >
 > **Species-specific override rule — species-specific template wins.** Where a species' per-species block introduces, modifies, or contradicts the shared baseline, the per-species block is authoritative for that species. Group membership never forces a species to follow a plan that does not match its own template.
 >
@@ -2351,18 +2349,18 @@ Primjenjuje se shared block kao za ostale standardne voćke.
 ---
 
 # ══════════════════════════════════════════════════════
-# BLOCK 6 — MEDITERRANEAN, NUT & CITRUS (Special Templates)
+# BLOCK 6 — MEDITERRANEAN & NUT (Special Templates)
 #
 # These plants DO NOT use:
 # — standard orchard cycle
 # — early / mid / late timing groups
 # — shared block from above
 #
-# Mediterranean (olive, pomegranate), citrus (lemon, orange, mandarin),
-# and nut (walnut, hazelnut) each have their own species-specific template set
+# Mediterranean (olive, pomegranate) and nut (walnut, hazelnut)
+# each have their own species-specific template set
 # below. Pomegranate is grouped under mediterranean as an organizing label
 # but has its own template structurally independent of olive.
-# Citrus uses a subtype (lemon | orange | mandarin) inside the citrus template.
+# Citrus is deferred from current V2 support; archived citrus input is preserved later as future-only material.
 # ══════════════════════════════════════════════════════
 
 ---
@@ -3253,16 +3251,21 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
 ---
 
 # ══════════════════════════════════════════════════════
-# CITRUS — SPECIAL MODEL
-# Citrus uses subtype seasonProfile — NOT standard timing groups.
-# Subtype required: lemon | orange | mandarin.
-# Shared block does NOT apply. Each subtype has its own entries below.
-# ══════════════════════════════════════════════════════
+## Deferred — Citrus / Agrumi (not current V2 support)
 
-## CITRUS model note
+Ovaj blok je sačuvan samo kao budući input.
 
-Citrus plan templates koriste poseban model (seasonProfile) iz V2_PLANT_CATALOG.md.
-U ovom PRE-S3 inputu ne koriste standardni shared ciklus.
+Ne koristiti ovaj blok za trenutni V2.
+Citrus je odgođen jer Zagreb / kontinentalni baseline prozori nisu pouzdani za limun, naranču i mandarinu.
+Buduće vraćanje citrusa zahtijeva climate/location/regional timing strategiju ili drugi owner-approved mehanizam prije nego ovi prozori mogu postati aktivni templatei.
+
+Sljedeće stavke za limun, naranču i mandarinu nisu current V2 support.
+Ne koristiti ih za current catalog selection, plan generation, coverage checks ili runtime ponašanje.
+
+### Archived citrus model note
+
+Archived citrus input koristio je poseban model (seasonProfile) iz V2_PLANT_CATALOG.md.
+U ovom arhivskom inputu citrus nije koristio standardni shared ciklus.
 
 ```
 citrus subtypes:
@@ -3273,7 +3276,7 @@ citrus subtypes:
 
 ---
 
-### 🍋 LEMON (Citrus limon) — seasonProfile: multi_cycle
+### Archived input — Lemon (Citrus limon) — seasonProfile: multi_cycle
 
 U povoljnim ili zaštićenim uvjetima limun može imati više ciklusa cvatnje i plodonošenja tijekom godine.
 Nema jednog berbenog prozora — plodovi mogu biti prisutni kroz veći dio godine.
@@ -3360,7 +3363,7 @@ Nema jednog berbenog prozora — plodovi mogu biti prisutni kroz veći dio godin
 
 ---
 
-### 🍊 ORANGE (Citrus sinensis) — seasonProfile: winter
+### Archived input — Orange (Citrus sinensis) — seasonProfile: winter
 
 Naranča cvate u proljeće, plodovi dozrijevaju zimi.
 
@@ -3442,7 +3445,7 @@ Naranča cvate u proljeće, plodovi dozrijevaju zimi.
 
 ---
 
-### 🍊 MANDARIN (Citrus reticulata) — seasonProfile: autumn
+### Archived input — Mandarin (Citrus reticulata) — seasonProfile: autumn
 
 Mandarina dozrijeva u jesen. Među ovdje navedenim citrusima relativno najotpornija na hladnoću (do oko -7°C kratkotrajno, ovisno o sorti, podlozi, starosti biljke, vlazi tla i mikrolokaciji).
 
@@ -3536,22 +3539,20 @@ Groups used in this file are an organizing classification only:
 - `pome`          — apple, pear, quince
 - `stone`         — sweet_cherry, sour_cherry, plum, peach, nectarine, apricot, almond
 - `mediterranean` — olive, pomegranate
-- `citrus`        — lemon, orange, mandarin
 - `nut`           — walnut, hazelnut
 
 **Species-specific override rule.** Where a species' per-species block introduces, modifies, or contradicts the shared baseline, the per-species block is authoritative for that species. Group membership never overrides the species-specific block.
 
 - `stone` members share a real baseline (trunk care, dormant oil, winter copper, pruning, watering, shutdown, inspection), and each species carries specifics in its own block — leaf-curl copper (peach / nectarine), early-bloom + frost-risk handling (apricot, almond), cherry-fly monitoring + optional bird-net (sweet_cherry, sour_cherry), plum-specific pest / fruit handling.
 - `pome` members share the same baseline, with per-species specifics for pear (fire-blight copper) and quince (pome-specific copper timing).
-- `mediterranean`, `citrus`, and `nut` members do not share the baseline. Current supported Mediterranean species each have their own Block 6 template. Fig is deferred from current V2 support. Pomegranate's template is structurally independent. Citrus uses a subtype (lemon | orange | mandarin) inside its Block 6 template.
+- `mediterranean` and `nut` members do not share the baseline. Current supported Mediterranean species each have their own Block 6 template. Fig is deferred from current V2 support. Pomegranate's template is structurally independent. Citrus is deferred from current V2 support.
 
 ## Template composition
 
 A species' work plan is composed from, in order:
 
 1. the **shared block**, where the block's scope explicitly applies to the species (pome + stone);
-2. the **species-specific template block** in this file;
-3. **subtype-specific handling** where defined (currently: citrus species carry a `lemon` | `orange` | `mandarin` subtype inside the Block 6 citrus template).
+2. the **species-specific template block** in this file.
 
 Young-tree relevance and condition-based execution are described in `notes` per entry and are not encoded as custom fields. How and when they are surfaced to the grower is out of scope for this input file.
 
@@ -3562,7 +3563,6 @@ Young-tree relevance and condition-based execution are described in `notes` per 
 - Fungicide + insecticide tank-mix: not universally safe — follow each product label and local guidance; apply only post-bloom and outside active bee flight
 - Apricot copper: must come BEFORE bloom (January–February)
 - Nectarine / Peach copper (leaf curl): must come while buds still closed
-- Citrus: standard EU fruit tree spray rules do NOT apply
 
 ## Harvest timing
 
@@ -3590,15 +3590,12 @@ Harvest window for standard fruit trees is not encoded here. The catalog (`V2_PL
 | Almond       | SHARED    |SHARED| SHARED    | ✓ ×2 (pred+krč)| SHARED | ✓ mraz+bol | ✓     | —        | —    | SHARED    | SHARED | ✓       | SHARED    | SHARED  |
 | Olive        | —         | —    | —         | —            | ✓ ×2     | ✓ ×2       | ✓ opt | —        | —    | ✓         | ✓      | ✓       | —         | ✓       |
 | Pomegranate  | —         | —    | —         | —            | ✓        | ✓ ×2       | —     | —        | —    | ✓         | ✓      | ✓       | ✓ (mlada) | —       |
-| Lemon        | —         | —    | —         | —            | ✓        | ✓          | ✓ opt | —        | —    | ✓         | ✓      | ✓       | ✓         | —       |
-| Orange       | —         | —    | —         | —            | ✓        | ✓          | ✓ opt | —        | —    | ✓         | ✓      | ✓       | ✓         | —       |
-| Mandarin     | —         | —    | —         | —            | ✓        | ✓          | ✓ opt | —        | —    | ✓         | ✓      | ✓       | ✓         | —       |
 | Walnut       | —         | —    | —         | ✓ rano prolj | ✓ ljetna | ✓ ×2       | —     | —        | —    | —         | —      | ✓       | —         | ✓ zima  |
 | Hazelnut     | —         | —    | —         | —            | ✓ zimska | ✓ ×2       | —     | —        | —    | —         | —      | ✓       | —         | ✓ zima  |
 
 Legend: SHARED = covered in shared block | ✓ = defined in species/block section | opt = notes indicate optional / condition-dependent relevance | — = not applicable
 
-## Current V2 template coverage excludes deferred fig
+## Current V2 template coverage excludes deferred fig and citrus
 
 Pome + stone (standard — shared block + per-species block applies):
 Apple ✓ | Pear ✓ | Quince ✓ | Sweet cherry ✓ | Sour cherry ✓ | Plum ✓ | Peach ✓ | Nectarine ✓ | Apricot ✓ | Almond ✓
@@ -3609,8 +3606,8 @@ Olive ✓ | Pomegranate ✓ (custom Block 6, structurally independent)
 Deferred Mediterranean:
 Fig deferred — not current V2 support
 
-Citrus (Block 6 — no shared block):
-Lemon ✓ | Orange ✓ | Mandarin ✓
+Deferred citrus:
+Lemon deferred | Orange deferred | Mandarin deferred — not current V2 support
 
 Nut (Block 6 — no shared block; each species has its own custom template):
 Walnut ✓ | Hazelnut ✓
