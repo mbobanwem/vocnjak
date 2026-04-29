@@ -850,6 +850,7 @@ Gisela 5 podloga: slabobujnija, raniji prinos, lakša zaštita mrežom.
 Cvatnja (Zagreb baseline): kraj ožujka – poč. travnja (uglavnom nekoliko dana iza slatke trešnje).
 Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Oblačinska (jun 20 – jul 5), Marasca / Montmorency (jul).
+Kalendarski prozori za Zagreb / kontinentalne uvjete su baseline podsjetnici. U toplijim regijama radnje mogu krenuti ranije, u hladnijim kasnije. Fenološko stanje stabla i lokalni uvjeti imaju prednost pred datumom.
 Primjenjuje se shared block kao za ostale standardne voćke.
 
 ---
@@ -865,13 +866,95 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   notes: >
     Ista vrsta kao kod slatke trešnje (Rhagoletis cerasi).
     Tlak kod višnje često je niži nego kod trešnje, ali ovisi o lokaciji, sorti i godini.
-    Žute ljepljive ploče, tjedni pregled.
-    Eventualni tretman razmatrati samo ako lokalni pragovi, etiketa proizvoda ili stručni savjet opravdavaju reakciju.
-    Koristiti samo sredstvo registrirano za kulturu i štetnika prema etiketi proizvoda; poštovati karencu, zaštitu pčela i lokalne propise.
+
+    KAKO POSTAVITI:
+    2–3 žute ljepljive ploče po stablu gdje ima smisla pratiti, visina oko 1.5–2 m, u krošnji.
+    Postaviti prije početka dozrijevanja plodova.
+    Ploče pregledavati najmanje jednom tjedno, a pred berbu i češće ako se ulov mijenja ili je berba blizu.
+
+    KAKO ČITATI ULOVE:
+
+    Bez ulova:
+    nastaviti redovni pregled.
+
+    Nizak ulov:
+    obično nekoliko muha po ploči (npr. oko 1–5 u razdoblju pregleda).
+    tipična početna aktivnost — nastaviti pratiti.
+
+    Povećana aktivnost:
+    ulov je veći nego prethodni pregled ili se ponavlja u više pregleda
+    (npr. više muha po ploči, često oko 5–15).
+    pojačati praćenje i provjeriti lokalne preporuke.
+
+    Jak pritisak:
+    nagli skok ulova (npr. desetci muha po ploči, oko 20–30+ ili brzo punjenje ploče).
+    moguć ozbiljan napad — odmah provjeriti lokalni savjet / poljoprivrednu apoteku.
+
+    VAŽNO:
+    Ovo su informativni primjeri, ne pravila aplikacije.
+    Stvarni pragovi ovise o sorti, godini i lokalnim preporukama.
+    Ulov je dokaz aktivnosti, ne nalog za tretiranje.
+
+    PRIJE BILO KAKVOG TRETIRANJA:
+
+    Karenca:
+    karenca je broj dana koji mora proći od prskanja do berbe.
+    uvijek provjeriti etiketu sredstva za višnju / trešnju i ciljanu štetnu vrstu.
+
+    Pčele:
+    ne tretirati tijekom cvatnje.
+    ne tretirati tijekom aktivnog leta pčela.
+    poštovati etiketu proizvoda i lokalni/stručni savjet.
+
+    Aplikacija ne određuje tretman umjesto korisnika.
+
+    Za mlada stabla bez ploda:
+    praćenje nije prioritet.
 
 ---
 
-### 2. Mreža protiv ptica (opcionalno)
+### 2. Praćenje monilije / smeđe truleži
+
+- activityType: "monitoring"
+  title: "Praćenje monilije / smeđe truleži – višnja"
+  monthStart: 3
+  dayStart: 28
+  monthEnd: 7
+  dayEnd: 15
+  notes: >
+    KADA:
+    ovo je prozor za prepoznavanje monilije u najrizičnijim razdobljima: cvatnja, rano sušenje izboja nakon cvatnje i kratko razdoblje pred berbu.
+    nije prozor za automatski tretman i nije preporuka za reaktivno prskanje.
+
+    ŠTO GLEDATI:
+    monilija / smeđa trulež je gljivična bolest koštičavog voća; aplikacija ne dijagnosticira bolest.
+    cvjetovi posmeđe i ostaju suhi na grančici.
+    vrhovi izboja ili grančica se suše.
+    može se pojaviti smola.
+    u vlažnom vremenu može se pojaviti sivkasta praškasta prevlaka.
+    pred berbu se na plodu mogu pojaviti smeđe trule pjege.
+
+    RAZLIKOVANJE MRAZA I MONILIJE:
+    više liči na mraz ako je tijekom cvatnje bila hladna noć, šteta se pojavila naglo, donji dio krošnje je jače pogođen i oštećenje se ne širi dalje.
+    više liči na moniliju ako je bilo vlažno ili sparno vrijeme, cvjetovi ostaju suhi na grančici, vrhovi grančica se suše, javlja se smola ili plijesan i šteta se širi tijekom vremena.
+
+    ŠTO UČINITI:
+    fotografirati i zabilježiti datum.
+    ako je jasno što je zahvaćeno, po suhom vremenu ukloniti jasno bolesne / suhe dijelove grančica ispod vidljivog oštećenja i iznijeti ih iz voćnjaka.
+    ako nije jasno radi li se o mrazu ili bolesti, prvo fotografirati i pitati lokalni/stručni savjet.
+    dezinficirati alat između rezova, npr. 70% alkoholom ili drugim prikladnim sredstvom za dezinfekciju alata.
+
+    VAŽNO:
+    ovo je promatranje, ne preporuka za prskanje.
+    vidljivi simptomi ne znače automatski da treba prskati.
+    za točnu dijagnozu i zaštitu konzultirati stručnjaka.
+
+    Za mlada stabla bez ploda:
+    pratiti zdravlje cvijeta i mladih izboja, ali zaštita uroda nije prioritet.
+
+---
+
+### 3. Mreža protiv ptica (opcionalno)
 
 - activityType: "observation"
   title: "Mreža protiv ptica – višnja (opcionalno)"
@@ -880,14 +963,19 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 7
   dayEnd: 20
   notes: >
-    Tlak ptica kod višnje manji nego kod slatke trešnje.
-    Mreža i dalje korisna za koncentrirane hobi-sadnje.
-    Postaviti oko 2 tjedna prije berbe.
-    Za mlada stabla bez uroda: nije potrebno.
+    Tlak ptica kod višnje često je manji nego kod slatke trešnje, pa mreža nije obavezna za svaku višnju.
+    Mreža i dalje može biti korisna za koncentrirane hobi-sadnje ili mjesta gdje ptice redovito skidaju plod.
+    Postaviti oko 2 tjedna prije berbe ako postoji pritisak ptica.
+    Za rane sorte poput Oblačinske, s berbom oko 20.6.–5.7., postaviti početkom lipnja ako pritisak ptica postoji.
+    Veličina: najmanje 4×4 m, a za malo stablo preporučeno 5×5 m ako se pokriva cijela krošnja.
+    Tip s bočnim zipperom koristan je za pristup berbi bez skidanja mreže.
+    Rubove učvrstiti tako da ptice ne mogu dohvatiti plod kroz praznine.
+    Skinuti odmah nakon berbe.
+    Za mlada stabla bez ploda: nije potrebno.
 
 ---
 
-### 3. Prorjeđivanje (po potrebi)
+### 4. Prorjeđivanje (po potrebi)
 
 - activityType: "observation"
   title: "Prorjeđivanje višnje (po potrebi)"
@@ -898,11 +986,11 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   notes: >
     Višnja se uglavnom samoregulira.
     Zabilježeno za korisnike koji žele krupniji plod za preradu.
-    Za mlada stabla bez uroda: nije potrebno.
+    Za mlada stabla bez ploda: nije potrebno.
 
 ---
 
-### 4. Berba
+### 5. Berba
 
 - activityType: "harvest"
   title: "Berba višnje"
