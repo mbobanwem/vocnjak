@@ -1170,9 +1170,9 @@ Kalendarski prozori su Zagreb / kontinentalni baseline. U toplijim krajevima raz
     Bakar ne liječi šarku ni virusne bolesti.
     Ako se propusti ovaj termin, ne može se u potpunosti nadoknaditi kasnije.
     Nikad ne prskati otvorene cvjetove.
-    Ne duplicirati bakrene tretmane ako je isti fenološki prozor već pokriven; poštovati razmak, fenofazu i etiketu proizvoda.
+    Ovo je mareličin rani fenološki prozor za bakar.
+    Ako je isti fenološki prozor već pokriven zimskim bakrom, ne duplicirati tretman; poštovati razmak, fenofazu i etiketu proizvoda.
     Razmak od bijelog ulja: min. 7–10 dana.
-    Ovo je DODATAK zimskom bakru iz shared bloka — primijeniti ranije, prilagođeno marelici.
 
 ---
 
