@@ -1283,25 +1283,202 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
 
 ---
 
-### 1. Praćenje šljivinog savijača
+### 1. Praćenje šljivinog savijača – proljetni let
 
 - activityType: "monitoring"
-  title: "Praćenje šljivinog savijača (feromonske klopke)"
+  title: "Praćenje šljivinog savijača – proljetni let"
   monthStart: 4
   dayStart: 25
-  monthEnd: 7
+  monthEnd: 6
   dayEnd: 15
   notes: >
-    Šljivin savijač (Cydia funebrana) — crvi u plodovima šljive.
-    Postaviti feromonsku klopku na 1.5–2 m visine.
-    Tjedno pregledavati ulov.
-    Nagli porast ulova može značiti da treba provjeriti potrebu za reakcijom; eventualni tretman razmatrati samo ako lokalni pragovi, etiketa proizvoda ili stručni savjet opravdavaju reakciju.
-    Praćenje može biti relevantno i kasnije u sezoni, posebno ako se ulov nastavlja ili se pojavljuju svježa oštećenja plodova. Točan period i terminologiju provjeriti u S3 auditiranju.
-    Za mlada stabla god. 1–2 bez ploda: nije prioritet.
+    Šljivin savijač / Cydia funebrana uzrokuje crvljive šljive i rano opadanje plodova.
+    Koristiti feromonsku klopku ako je dostupna.
+    Postaviti ili početi provjeravati oko opadanja latica / nakon cvatnje, ovisno o lokalnoj sezoni.
+    Ista klopka nastavlja se koristiti u ljeto; tumačenje se mijenja u kasnijoj stavci.
+    Pregledavati najmanje jednom tjedno.
+    Ulov u klopci je dokaz aktivnosti, ne nalog za tretiranje.
+
+    KAKO ČITATI ULOVE:
+
+    0–3 leptira tjedno po klopci:
+    nizak/pozadinski ulov; nastaviti tjedni pregled.
+
+    oko 5–10 leptira tjedno, posebno ako se ponavlja:
+    pojačana aktivnost; pažljivije pregledati plodove.
+
+    30+ leptira u tjednu ili nagli skok s niske razine:
+    moguć jak pritisak; zatražiti lokalni stručni savjet / savjet poljoprivredne apoteke.
+
+    Ovi brojevi su informativni primjeri za orijentaciju, ne pravila aplikacije.
+
+    SIGNAL NA PLODU:
+    pregledati nekoliko mladih plodova.
+    gledati male kapljice smole.
+    gledati male ulazne rupice.
+    provjeriti rano otpale plodove s ličinkom unutra.
+    ulov u klopci zajedno sa znakovima na plodu jači je dokaz nego ulov sam.
+
+    ODLUČIVANJE:
+    nema samostalne preporuke za tretiranje iz aplikacije.
+    Ako se pritisak čini visok, pitati lokalnog stručnjaka / poljoprivrednu apoteku što je dopušteno za šljivu, sortu, termin i etiketu.
+    Ne koristiti insekticid tijekom aktivnog leta pčela.
+    Poštovati etiketu i lokalna pravila.
+
+    Za mlada stabla bez ploda:
+    praćenje je niži prioritet.
 
 ---
 
-### 2. Post-bloom zaštita
+### 2. Praćenje šljivinog savijača – ljetni let i predberba
+
+- activityType: "monitoring"
+  title: "Praćenje šljivinog savijača – ljetni let i predberba"
+  monthStart: 6
+  dayStart: 15
+  monthEnd: 8
+  dayEnd: 31
+  notes: >
+    Isti štetnik i ista klopka kao u proljeće; tumačenje se mijenja jer su plodovi veći i berba je bliže.
+    Moguć je drugi let / kasniji pritisak.
+    Nastaviti tjedno pregledavati klopku; pred berbu ili ako ulov raste, pregledavati češće.
+    Ulov u klopci je dokaz aktivnosti, ne nalog za tretiranje.
+
+    KAKO ČITATI ULOVE:
+
+    0–3 leptira tjedno po klopci:
+    nizak/pozadinski ulov; nastaviti tjedni pregled.
+
+    oko 5–10 leptira tjedno, posebno ako se ponavlja:
+    pojačana aktivnost; pažljivije pregledati plodove.
+
+    30+ leptira u tjednu ili nagli skok s niske razine:
+    moguć jak pritisak; zatražiti lokalni stručni savjet / savjet poljoprivredne apoteke.
+
+    Ovi brojevi su informativni primjeri za orijentaciju, ne pravila aplikacije.
+
+    SIGNAL NA PLODU:
+    pregledati plodove i tražiti kapljice smole.
+    tražiti ulazne ili izlazne rupice.
+    provjeriti oštećene ili rano otpale plodove.
+    otvoriti sumnjiv plod i provjeriti ima li ličinke.
+    ulov u klopci zajedno sa znakovima na plodu jači je dokaz nego ulov sam.
+
+    KARENCA:
+    karenca je broj dana koji mora proći od prskanja do berbe.
+    što je berba bliže, to manje sredstava može biti dopušteno.
+    aplikacija ne može odrediti karencu.
+    korisnik mora provjeriti stvarnu etiketu sredstva i lokalni savjet.
+
+    SORTA I TERMIN:
+    kod ranih sorti kasni signal može biti preblizu berbi.
+    kod kasnijih sorti poput Stanley / Bistrica / Président može biti više vremena, ali etiketa i stručni savjet odlučuju.
+
+    ODLUČIVANJE:
+    nema samostalne preporuke za prskanje.
+    jak signal znači: zatražiti lokalni stručni savjet / savjet poljoprivredne apoteke.
+    zabilježiti opažanje i svaki stručni savjet u povijest.
+
+---
+
+### 3. Praćenje šarke
+
+- activityType: "monitoring"
+  title: "Praćenje šarke – šljiva"
+  monthStart: 4
+  dayStart: 1
+  monthEnd: 8
+  dayEnd: 31
+  notes: >
+    Šarka / Plum pox virus nema kurativno liječenje.
+    Ne prskati protiv šarke.
+    Simptome treba potvrditi stručnjak prije većih odluka.
+
+    ŠTO GLEDATI:
+    žute prstenove, lukove ili nepravilne šare na listovima.
+    šare se mogu pojaviti oko žila.
+    deformirane plodove.
+    ulegnute šare ili prstenove na plodu.
+    prijevremeno opadanje plodova može se pojaviti.
+    simptomi se često ponavljaju kroz više sezona.
+
+    S ČIM SE MOŽE ZAMIJENITI:
+    manjak hraniva obično je ujednačeniji i nije prstenast.
+    gljivične pjegavosti obično su pjege ili rupice, ne prstenaste šare.
+    šteta od lisnih ušiju uvija mladice/listove i obično se vide kukci ili medna rosa.
+
+    SIGURNI KORACI:
+    fotografirati i zabilježiti datum.
+    pratiti ponavljaju li se simptomi.
+    ne cijepiti i ne razmnožavati sa sumnjivog stabla.
+    kod sumnje konzultirati stručnjaka / lokalnu službu za zaštitu bilja.
+
+    POVEZNICA S LISNIM UŠIMA:
+    lisne uši mogu širiti virus.
+    smanjenje lisnih ušiju može smanjiti pritisak vektora, ali ne liječi šarku i ne jamči zaštitu.
+
+---
+
+### 4. Praćenje lisnih ušiju
+
+- activityType: "monitoring"
+  title: "Praćenje lisnih ušiju – šljiva"
+  monthStart: 4
+  dayStart: 1
+  monthEnd: 6
+  dayEnd: 15
+  notes: >
+    Pregledati naličje mladih listova i vrhove mladica.
+    Gledati uvijene mlade listove.
+    Gledati ljepljivu mednu rosu.
+    Pratiti mrave.
+    Provjeriti vide li se kolonije lisnih ušiju.
+    Lisne uši su važne i zato što mogu širiti šarku.
+    Smanjenje lisnih ušiju ne jamči zaštitu od šarke.
+    Tretman razmatrati samo ako postoji vidljiva kolonija ili stvaran problem.
+    Koristiti registrirano sredstvo za šljivu i ciljanu štetnu vrstu prema etiketi.
+    Poštovati zaštitu pčela i etiketu.
+
+    Za mlada stabla:
+    fokus je zaštita zdravog novog rasta.
+
+---
+
+### 5. Praćenje monilije / smeđe truleži
+
+- activityType: "monitoring"
+  title: "Praćenje monilije / smeđe truleži – šljiva"
+  monthStart: 4
+  dayStart: 1
+  monthEnd: 9
+  dayEnd: 15
+  notes: >
+    Ovo je vizualni pregled i praćenje rizika, ne nalog za tretiranje.
+
+    CVAT / GRANČICE:
+    cvjetovi posmeđe i osuše se.
+    cvjetovi ostaju pričvršćeni.
+    vrhovi mladica se suše.
+    može se pojaviti smola.
+
+    PLOD:
+    mekane smeđe trule pjege.
+    sivi/bež jastučići spora.
+    mumificirani plodovi.
+
+    HIGIJENA VOĆNJAKA:
+    ukloniti trule i mumificirane plodove sa stabla i tla.
+    jasno bolesne/suhe male mladice ukloniti čistim rezom.
+    ne rezati agresivno zdrav rast tijekom vrućine.
+
+    ZNAČENJE:
+    simptomi pomažu razumjeti rizik i povijest stabla.
+    sami simptomi ne stvaraju preporuku za prskanje.
+    ako dijagnoza ili zaštita nisu jasne, konzultirati stručnjaka / lokalni savjet.
+
+---
+
+### 6. Post-bloom zaštita
 
 - activityType: "spraying"
   title: "Post-bloom zaštita – monilija i šljivin savijač"
@@ -1319,25 +1496,42 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
 
 ---
 
-### 3. Reakcija po potrebi – 2. generacija savijača
+### 7. Praćenje opadanja plodova
 
-*S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
-
-- activityType: "spraying"
-  title: "Reakcija po potrebi – 2. generacija šljivinog savijača"
-  monthStart: 6
-  dayStart: 15
-  monthEnd: 7
-  dayEnd: 10
+- activityType: "monitoring"
+  title: "Praćenje opadanja plodova – šljiva"
+  monthStart: 5
+  dayStart: 20
+  monthEnd: 9
+  dayEnd: 15
   notes: >
-    Registrirani insekticid za kulturu i štetnika prema etiketi proizvoda — razmatrati samo ako klopke pokažu jasan signal koji, u kombinaciji s lokalnim pragovima ili stručnim savjetom, opravdava reakciju.
-    Nije preventivno prskanje.
-    Primijeniti ujutro ili navečer.
-    Za mlada stabla god. 1–2 bez ploda: nije potrebno.
+    Ova stavka pomaže razumjeti što se događa s plodovima.
+    Nije nalog za prskanje.
+    Zabilježiti što se vidi i povezati s odgovarajućim praćenjem ili higijenom voćnjaka.
+
+    NORMALNO LIPANJSKO OPADANJE:
+    mnogo malih plodova otpadne u kratkom razdoblju.
+    plod je malen i uglavnom čist.
+    nema crva, truleži ni ulazne rupice.
+    obično je riječ o normalnom samoprorjeđivanju.
+
+    VIŠE LIČI NA SAVIJAČA:
+    plodovi opadaju ponavljano.
+    vidi se mala kapljica smole, ulazna rupica ili ličinka unutra.
+    povezati s praćenjem šljivinog savijača.
+
+    VIŠE LIČI NA MONILIJU:
+    plod je smeđ, mekan i trune.
+    vide se sivi/bež jastučići spora ili mumificirani plodovi.
+    ukloniti iz voćnjaka.
+
+    VIŠE LIČI NA SUŠU / STRES:
+    plod se može smežurati ili otpadati tijekom suhog/vrućeg razdoblja.
+    provjeriti vlagu tla i zalijevanje.
 
 ---
 
-### 4. Prorjeđivanje plodova
+### 8. Prorjeđivanje plodova
 
 - activityType: "observation"
   title: "Prorjeđivanje plodova – šljiva"
@@ -1354,7 +1548,7 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
 
 ---
 
-### 5. Mreža protiv ptica
+### 9. Mreža protiv ptica
 
 - activityType: "observation"
   title: "Mreža protiv ptica – šljiva"
@@ -1371,7 +1565,7 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
 
 ---
 
-### 6. Berba
+### 10. Berba
 
 - activityType: "harvest"
   title: "Berba šljive"
