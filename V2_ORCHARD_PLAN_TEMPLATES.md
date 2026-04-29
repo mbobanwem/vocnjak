@@ -2097,11 +2097,13 @@ Primjenjuje se shared block kao za ostale standardne voćke.
 Badem cvate izrazito rano (veljača – ožujak, moguća slična dinamika kao marelica).
 Mraz za cvatnje je primarni uzrok gubitka roda, ne bolest.
 Lokacija sadnje je kritična: izbjegavati udoline.
+U kontinentalnoj klimi hobi uzgoj badema je rizičan zbog vrlo rane cvatnje i čestog mraza u cvatnji; pouzdaniji je u toplijim, primorskim ili zaštićenim mikro-lokacijama.
 
 ### Agronomic context
 Cvatnja (Zagreb baseline): VELJAČA – OŽUJAK (ovisno o sorti i godini).
 Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Supernova (aug–sep), Ferragnès / Ferraduel (sep).
+Kalendarski prozori za Zagreb / kontinentalne uvjete su baseline podsjetnici. U toplijim regijama radnje mogu krenuti ranije, u hladnijim kasnije. Fenološko stanje stabla i lokalni uvjeti imaju prednost pred datumom.
 Badem dijeli rizik Taphrina deformans (kovrčavost lista) s breskvom/nektarinom.
 Primjenjuje se shared block kao za ostale standardne voćke.
 
@@ -2134,12 +2136,24 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 3
   dayEnd: 31
   notes: >
-    Cvatnja badema je osjetljiva na mraz.
-    Pratiti lokalnu prognozu dok su cvjetovi otvoreni.
-    Nakon hladne noći pregledati otvorene cvjetove.
-    Smeđi ili crni cvjetovi znače moguće oštećenje mrazom.
-    Ovo je praćenje rizika, ne tretman.
-    Korisnik odlučuje o zaštiti prema prognozi, stanju cvjetova i lokalnim uvjetima.
+    PRIJE RIZIKA:
+    cvatnja badema vrlo je osjetljiva na mraz.
+    pratiti lokalnu prognozu dok su pupovi pred otvaranjem i dok su cvjetovi otvoreni.
+    hladne noći u cvatnji mogu oštetiti rod, ovisno o stadiju cvijeta, trajanju hladnoće i lokalnim uvjetima.
+
+    ŠTO GLEDATI NAKON HLADNE NOĆI:
+    pregledati otvorene cvjetove i prve zametnute plodiće.
+    smeđi ili crni cvjetovi znače moguće oštećenje mrazom.
+    oštećenje od mraza obično se vidi naglo nakon hladne noći.
+
+    MRAZ ILI MONILIJA:
+    više liči na mraz ako se šteta pojavila odmah nakon hladne noći i ne širi se dalje.
+    monilija je vjerojatnija nakon vlažnog ili sparnog vremena i može se širiti tijekom vremena.
+
+    VAŽNO:
+    ovo je praćenje rizika i stanja, ne tretman.
+    korisnik odlučuje o zaštitnim radnjama prema prognozi, stadiju cvijeta, lokalnim uvjetima i praktičnim mogućnostima.
+    aplikacija ne određuje zaštitnu radnju umjesto korisnika.
 
 ---
 
@@ -2152,10 +2166,14 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 3
   dayEnd: 10
   notes: >
-    Badem dijeli rizik Taphrina deformans s breskvom/nektarinom.
-    Bakar dok su pupovi još zatvoreni.
-    Nakon pojave simptoma mogućnosti su ograničene; naglasak je na prevenciji.
-    Razmak od bijelog ulja: vidi etiketu.
+    Badem dijeli rizik Taphrina deformans s breskvom/nektarinom; ova stavka je bademov preventivni kontekst za kovrčavost lista.
+    Povezana je sa zajedničkim zimskim bakrom i bademovim bakrom prije cvatnje, ali nije automatski dodatni bakreni tretman.
+    Ako je isti razvojni period pupova ili ruba cvatnje već pokriven bademovim bakrom prije cvatnje ili zajedničkim zimskim bakrom, ne duplicirati bakar samo zato što postoji ova stavka.
+    Bakar je preventivan i ima smisla dok su pupovi još zatvoreni ili prije osjetljivog otvaranja, samo ako etiketa, vrijeme i fenofaza to dopuštaju.
+    Vidljiva kovrčavost lista znači da je preventivni termin propušten; već vidljive simptome ne pokušavati "popraviti" bakrom.
+    Ne prskati otvorene cvjetove.
+    Poštovati razmak od bijelog/mineralnog ulja najmanje 7–10 dana ili dulje ako etiketa proizvoda tako traži.
+    Koristiti samo registrirani bakreni pripravak prema etiketi proizvoda.
 
 ---
 
@@ -2168,27 +2186,43 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 8
   dayEnd: 15
   notes: >
-    Pregledati cvjetove, vrhove mladih izboja, listove i plodove.
+    KADA:
+    pregledati cvjetove, vrhove mladih izboja, listove i plodove tijekom sezone, osobito nakon vlažnog razdoblja ili ako je stablo imalo problema ranijih godina.
+
+    ŠTO GLEDATI:
     Monilija u cvatnji:
-    — cvjetovi naglo posmeđe i ostanu suhi na grančici
-    — vrhovi grančica se suše nakon cvatnje
-    — može se pojaviti smola
-    To znači da je zaraza već nastala.
-    Odrezati zahvaćene dijelove ispod oštećenja i iznijeti ih iz voćnjaka.
+    cvjetovi naglo posmeđe i ostanu suhi na grančici.
+    vrhovi grančica se suše nakon cvatnje.
+    može se pojaviti smola.
+    to znači da je zaraza već nastala.
+    ako je jasno što je zahvaćeno, po suhom vremenu ukloniti zahvaćene dijelove ispod oštećenja i iznijeti ih iz voćnjaka.
+
     Šupljikavost lista:
-    — male smeđe ili ljubičaste pjege
-    — žuti rub oko pjege
-    — kasnije nastaju rupice u listu
+    male smeđe ili ljubičaste pjege.
+    žuti rub oko pjege.
+    kasnije nastaju rupice u listu.
+
     Kovrčavost lista:
-    — zadebljani i deformirani listovi
-    — crvena ili žuta boja
-    — pojavljuje se rano u sezoni
-    Kad se vidi, list se više ne može popraviti; zabilježiti za bolji termin iduće godine.
+    zadebljani i deformirani listovi.
+    crvena ili žuta boja.
+    pojavljuje se rano u sezoni.
+    kad se vidi, list se više ne može popraviti; zabilježiti za bolji preventivni termin iduće godine.
+
     Red Leaf Blotch / crvenilo lista (Polystigma):
-    — narančaste ili crvene pjege
-    — obično se vidi kasnije u sezoni
-    — list može prerano otpasti
-    Češća je u toplijim/mediteranskim područjima, a rjeđa u kontinentalnim uvjetima.
+    narančaste ili crvene pjege.
+    obično se vidi kasnije u sezoni.
+    list može prerano otpasti.
+    češća je u toplijim/mediteranskim područjima, a rjeđa u kontinentalnim uvjetima.
+
+    ODLUČIVANJE:
+    simptomi pomažu razumjeti stanje stabla i povijest problema.
+    sami simptomi ne stvaraju novu preporuku za prskanje.
+    tretman razmatrati samo ako monitoring, povijest stabla, vrijeme, vidljiv problem ili lokalni/stručni savjet opravdavaju reakciju.
+    koristiti samo sredstvo registrirano za badem i ciljani problem prema etiketi proizvoda.
+    aplikacija informira; korisnik odlučuje.
+
+    Za mlada stabla god. 1–2:
+    zdrav list i umjeren rast važniji su od uroda.
 
 - activityType: "monitoring"
   title: "Praćenje štetnika – badem"
@@ -2197,10 +2231,30 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 8
   dayEnd: 15
   notes: >
-    Pregledati vrhove mladih izboja i naličje listova.
-    Tražiti male kukce na mladim izbojima.
-    Uvijeni mladi listovi, ljepljiva medna rosa ili mravi znače aktivnu koloniju lisnih uši.
-    Ako je kolonija vidljiva, razmotriti tretman prema etiketi proizvoda i stručnom/lokalnom savjetu.
+    KADA:
+    osobito u proljeće i rano ljeto, dok se razvijaju mladi izboji i mladi listovi.
+
+    ŠTO GLEDATI:
+    vrhove mladih izboja.
+    naličje mladih listova.
+    kolonije lisnih ušiju.
+    uvijen ili deformiran mladi rast.
+    mednu rosu ili ljepljive listove.
+    mrave koji se kreću po izbojima ili deblu kao mogući znak medne rose.
+
+    S ČIM SE MOŽE ZAMIJENITI:
+    suša, vrućina ili oštećenje vjetrom mogu savijati mladi rast bez kolonija štetnika.
+    pojedinačni kukci bez kolonije i bez simptoma obično nisu dovoljan razlog za reakciju.
+
+    ODLUČIVANJE:
+    ako nema vidljivih kolonija, medne rose, ljepljivih listova ili deformacija mladog rasta, tretman nije opravdan.
+    eventualni tretman razmatrati samo ako postoji vidljiv stvarni problem.
+    koristiti samo sredstvo registrirano za badem i ciljanu štetnu vrstu prema etiketi proizvoda.
+    poštovati zaštitu pčela, karencu, etiketu proizvoda i lokalne propise.
+    aplikacija informira; korisnik odlučuje i nema automatske preporuke za tretman.
+
+    Za mlada stabla god. 1–2:
+    čuvati zdrav rast mladih izboja; plod nije prioritet.
 
 ---
 
@@ -2213,7 +2267,10 @@ Primjenjuje se shared block kao za ostale standardne voćke.
   monthEnd: 5
   dayEnd: 10
   notes: >
-    Nakon cvatnje, po potrebi, ako praćenje, vidljivi simptomi, povijest bolesti ili stručni savjet opravdavaju reakciju.
+    Nakon cvatnje, po potrebi.
+    Sami simptomi ne stvaraju novu preporuku za prskanje.
+    Tretman razmatrati samo ako monitoring, vidljiv problem, povijest stabla, vrijeme ili lokalni/stručni savjet opravdavaju reakciju.
+    Aplikacija ne odlučuje o tretmanu umjesto korisnika.
     Koristiti registrirani fungicid za ciljanu bolest badema prema etiketi proizvoda.
     Insekticid razmatrati samo ako monitoring, vidljivi štetnici badema ili stručni savjet opravdavaju reakciju.
     Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
