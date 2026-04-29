@@ -803,11 +803,11 @@ Each program's occurrence is evaluated independently. Observations for one progr
 
 ## 9. Launch species list
 
-**Status:** content block, S2 owner decision — not a model rule. This section will enumerate the species that ship with catalog v1.0 (the S3–S5 audit operates on this list). The model rules for catalog template, action-window definition, monitoring program, stage vocabulary, and Observation payload are version-independent and do not depend on the specific species named here.
+**Status:** content block, S2 owner decision with S4/S5 closure clarification — not a model rule. The model rules for catalog template, action-window definition, monitoring program, stage vocabulary, and Observation payload are version-independent and do not depend on the specific species named here.
 
-The S3 audit operates on the owner-approved list below. No agent may populate this section with content from `V2_PLANT_CATALOG.md` or `V2_ORCHARD_PLAN_TEMPLATES.md` without explicit owner instruction, per CLAUDE.md's input-files rule.
+The S3–S5 audit historically operated on 18 owner-approved species/subtypes. After S4/S5 owner decisions, current catalog v1.0 support excludes fig and citrus. Fig, lemon, orange, and mandarin are preserved only as historical audit / deferred future context.
 
-This section enumerates the species shipping with catalog v1.0. It is the S3–S5 audit scope.
+Current catalog v1.0 support after S4/S5 closure:
 
 - *Malus domestica* (Apple)
 - *Pyrus communis* (Pear)
@@ -818,12 +818,17 @@ This section enumerates the species shipping with catalog v1.0. It is the S3–S
 - *Prunus domestica* (Plum)
 - *Prunus armeniaca* (Apricot)
 - *Olea europaea* (Olive)
-- *Ficus carica* (Fig)
-- *Citrus limon* (Lemon)
-- *Citrus sinensis* (Orange)
-- *Citrus reticulata* (Mandarin)
 - *Juglans regia* (Walnut)
 - *Corylus avellana* (Hazelnut)
 - *Cydonia oblonga* (Quince)
 - *Punica granatum* (Pomegranate)
 - *Prunus dulcis* (Almond)
+
+Historical S3–S5 audit scope also included these deferred species/subtypes:
+
+- *Ficus carica* (Fig)
+- *Citrus limon* (Lemon)
+- *Citrus sinensis* (Orange)
+- *Citrus reticulata* (Mandarin)
+
+Do not treat the historical audit-scope entries as current catalog v1.0 support. Future reintroduction requires owner-approved future work.

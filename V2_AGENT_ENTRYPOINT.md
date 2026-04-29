@@ -14,7 +14,7 @@ Its purpose is to tell agents which documents to read for the current phase and 
 
 ## Mandatory first read for V2 catalog-domain work
 
-For any V2 catalog, domain, catalog-audit, S4, or S5 work, read in this order:
+For any V2 catalog, domain, catalog-audit, or pre-S6 documentation cleanup work, read in this order:
 
 1. `CLAUDE.md`
 2. `V2_AGENT_ENTRYPOINT.md`
@@ -40,21 +40,25 @@ Historical / supporting reading only:
 
 ## Current phase
 
-Current phase: S4 owner decision resolution.
+Current phase: S5 closed — pre-S6 documentation inventory / simplification patch.
 
-Current next step: Resolve S3 owner decisions from `V2_S3_AUDIT_CONSOLIDATION.md`.
+Current next step: apply the minimal routing/governance cleanup approved by the pre-S6 inventory review.
 
-Allowed next output:
+After this cleanup, the next owner-approved phase is S6 UX core surfaces in `V2_UX_MODEL.md`.
 
-- S4 owner decision resolution output, using `V2_S3_AUDIT_CONSOLIDATION.md` as the active S3 input
+Allowed current output:
 
-Do not edit during the next step:
+- documentation alignment only
+- no catalog/template content changes
+- no runtime, schema, regional engine, or implementation changes
+
+Do not edit during this cleanup:
 
 - `V2_PLANT_CATALOG.md`
 - `V2_ORCHARD_PLAN_TEMPLATES.md`
-- `V2_DOMAIN_MODEL.md`
-- `PRODUCT_VISION.md`
-- `V2_PRINCIPLES.md`
+- `V2_CATALOG_AUDIT.md`
+- `V2_CURRENT_STATE.md`
+- code/runtime files
 
 ---
 
@@ -111,9 +115,9 @@ S3 implication:
 
 ---
 
-## Current S3 output and S4 boundary
+## Completed S3/S4/S5 context
 
-Active S3 output:
+Completed S3 output:
 
 - `V2_S3_AUDIT_CONSOLIDATION.md`
 
@@ -123,14 +127,14 @@ Archived detailed evidence:
 
 S3.1–S3.8 are complete.
 
-S4 is:
+S4 was:
 
 - owner decision resolution
 - source-check disposition
 - approved/deferred/rejected fix selection
 - handoff preparation for targeted S5 documentation fixes
 
-S4 is not:
+S4 was not:
 
 - final schema authoring
 - runtime behavior
@@ -139,7 +143,7 @@ S4 is not:
 - UI localization
 - recommendation engine
 
-Use `V2_S3_AUDIT_CONSOLIDATION.md` as the active action-ready input. Read archived detail only when evidence behind a consolidation item must be inspected.
+S5 applied owner-approved targeted catalog/template cleanup and is closed. Use `V2_S3_AUDIT_CONSOLIDATION.md` as historical S3/S4/S5 context. Read archived detail only when evidence behind a consolidation item must be inspected.
 
 ---
 

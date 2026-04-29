@@ -18,7 +18,9 @@ This file is a routing document only. It does not override locked source-of-trut
 
 - `PRODUCT_VISION.md`
 - `V2_PRINCIPLES.md`
-- later: `V2_DOMAIN_MODEL.md`, `V2_UX_MODEL.md`, and `V2_ARCHITECTURE.md` only after sign-off
+- `V2_DOMAIN_MODEL.md` — locked sections per its own status
+- `V2_UX_MODEL.md` §0 — monitoring UX hard constraints
+- later: remaining `V2_UX_MODEL.md` sections and `V2_ARCHITECTURE.md` only after sign-off
 
 Rules:
 - LOCKED CORE is binding
@@ -57,8 +59,8 @@ Rules:
 - not binding until sign-off
 
 Current:
-- `V2_DOMAIN_MODEL.md`
-- becomes locked only after S2 sign-off
+- none for S6 content yet
+- `V2_UX_MODEL.md` is the next S6/S7 target; only §0 monitoring constraints are authoritative before S6/S7 sign-off
 
 ### INPUT FILES (NOT YET VALIDATED V2 TRUTH)
 
@@ -72,16 +74,25 @@ Rules:
 - may NOT define final V2 truth
 - require audit in S3-S5 before promotion
 
+### CATALOG AUDIT COMPANION
+
+- `V2_CATALOG_AUDIT.md`
+
+Rules:
+- permanent canonical audit companion
+- process-binding for catalog audit and curation
+- not runtime behavior or schema
+
 ### PLACEHOLDERS
 
 - `V2_UX_MODEL.md`
 - `V2_ARCHITECTURE.md`
 - `V2_EXECUTION_ROADMAP.md`
-- `V2_CATALOG_AUDIT.md`
 
 Rules:
 - scaffold only
 - not authoritative until owning session completes and signs off
+- exception: `V2_UX_MODEL.md` §0 monitoring constraints are already authoritative
 
 ### FUTURE / NON-BINDING
 
