@@ -3045,6 +3045,8 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
 
 ### Agronomic context
 Lijeska se uzgaja kao grm s više produktivnih izbojnica.
+Kalendarski prozori za Zagreb / kontinentalne uvjete su baseline podsjetnici. U toplijim regijama radnje mogu krenuti ranije, u hladnijim kasnije. Stanje biljke i lokalni uvjeti imaju prednost pred datumom.
+Neke sorte lijeske bolje odgovaraju kontinentalnim uvjetima, a neke toplijim ili primorskim položajima; izbor sorte potvrditi lokalno s rasadnikom, stručnim savjetom ili pouzdanim lokalnim uzgajivačem.
 
 *S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
 
@@ -3055,7 +3057,60 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
 
 ---
 
-### 1. Zimska rezidba lijeske
+### 1. Provjera oprašivanja i kompatibilnosti sorti
+
+- activityType: "observation"
+  title: "Provjera oprašivanja i kompatibilnosti sorti – lijeska"
+  monthStart: 1
+  dayStart: 1
+  monthEnd: 4
+  dayEnd: 30
+  notes: >
+    ŠTO ZNATI:
+    lijeska se oprašuje vjetrom. Na istom grmu postoje odvojeni muški i ženski cvjetovi. Muški cvjetovi su žute viseće rese, a ženski cvjetovi su vrlo sitni i često se vide samo kao male crvene njuške ili vrhovi tučka iz pupa.
+
+    ŠTO GLEDATI:
+    bilježiti kada se rese otvaraju, kada se vide ženski cvjetovi i je li cvatnja mogućih oprašivačkih sorti u blizini vremenski usklađena. U toplijim godinama ili položajima rese mogu krenuti već krajem prosinca; ovaj podsjetnik pokriva glavni zimsko-proljetni period za provjeru cvatnje, oprašivanja i zametanja.
+
+    ZAŠTO JE VAŽNO:
+    mnoge sorte lijeske ne rode pouzdano same. Za pouzdaniji rod obično je potrebno više od jedne međusobno kompatibilne sorte u istom voćnjaku ili u blizini.
+
+    ODLUČIVANJE:
+    točnu kompatibilnost sorti treba potvrditi s lokalnim rasadnikom, stručnim savjetom ili pouzdanim lokalnim uzgajivačkim izvorom. Preklapanje cvatnje može varirati prema godini i vremenu.
+
+    VAŽNO:
+    slab zamet ili slab rod može nastati zbog izostanka kompatibilnog oprašivača, nepoklapanja cvatnje, mraza, lošeg vremena tijekom oprašivanja ili mlade dobi grma. Aplikacija ne dijagnosticira uzrok slabog roda. Jedna slabija sezona ne dokazuje uzrok; korisnik treba bilježiti opažanja kroz više sezona.
+
+    Za mlade lijeske god. 1–3: slab ili izostao rod prvih godina može biti normalan jer grm još ulazi u rodnost; ne zaključivati prerano da je problem oprašivanje.
+
+---
+
+### 2. Praćenje mraza tijekom cvatnje
+
+- activityType: "observation"
+  title: "Praćenje mraza tijekom cvatnje – lijeska"
+  monthStart: 1
+  dayStart: 1
+  monthEnd: 3
+  dayEnd: 31
+  notes: >
+    KADA:
+    lijeska cvate vrlo rano u usporedbi s mnogim voćkama. Ako cvatnja krene već krajem prosinca, primijeniti isto promatranje i prije formalnog prozora.
+
+    ŠTO GLEDATI:
+    pratiti muške rese, sitne ženske cvjetove i vremenske uvjete tijekom cvatnje i oprašivanja.
+
+    ŠTO ZNAČI:
+    mraz ili hladno i nepovoljno vrijeme tijekom cvatnje ili oprašivanja može smanjiti rod. Slab rod nije automatski znak bolesti.
+
+    VAŽNO:
+    oštećenje od vremena jedan je od mogućih razloga slabog roda. Aplikacija ne dijagnosticira uzrok i ne odlučuje o zaštitnoj radnji. Korisnik treba zabilježiti opažanje, datum i usporediti ga s oprašivanjem, sortama i lokalnim uvjetima.
+
+    Za mlade lijeske god. 1–3: slab ili izostao rod prvih godina može biti normalan jer grm još ulazi u rodnost; vremenska opažanja bilježiti bez brzog zaključivanja.
+
+---
+
+### 3. Zimska rezidba lijeske
 
 - activityType: "pruning"
   title: "Zimska rezidba lijeske"
@@ -3068,10 +3123,40 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
     Ukloniti 1–2 najstarije izbojnice godišnje, zadržati 6–8 produktivnih.
     Prorijediti unutarnje izbojke za svjetlo.
     Izdanci: ukloniti osim kod obnove grma.
+    Za mlade lijeske god. 1–3: fokus je na oblikovanju grma; puna obnova najstarijih izbojnica primjenjuje se tek kada grm razvije stabilnu strukturu.
 
 ---
 
-### 2. Praćenje ljeskove pipe
+### 4. Zalijevanje mlade lijeske
+
+- activityType: "watering"
+  title: "Zalijevanje – mlada lijeska (god. 1–3)"
+  monthStart: 5
+  dayStart: 15
+  monthEnd: 9
+  dayEnd: 15
+  notes: >
+    KADA:
+    za mlade grmove lijeske u god. 1–3 nakon sadnje, osobito tijekom sušnih razdoblja.
+
+    ZAŠTO:
+    mlada lijeska uspostavlja korijenov sustav i može patiti u suši. Lijeska se ponaša kao relativno plitko ukorijenjena kultura, pa dugotrajna suša može biti važna.
+
+    KAKO:
+    cilj je dubinski navlažiti zonu korijena, ne često površinski orošavati. Zalijevanje ujutro ili navečer je povoljnije.
+
+    KADA ZALITI:
+    tijekom sušnog razdoblja provjeriti vlagu tla nekoliko centimetara ispod površine. Ako je tlo suho i nije bilo značajnije kiše, zaliti dubinski.
+
+    KADA PRESTATI:
+    ako ima redovite kiše, preskočiti zalijevanje. Kasno ljeto i početkom jeseni postupno smanjivati zalijevanje prije mirovanja.
+
+    VAŽNO:
+    aplikacija ne postavlja točan raspored zalijevanja; korisnik odlučuje prema vlazi tla, kiši i stanju biljke.
+
+---
+
+### 5. Praćenje ljeskove pipe
 
 - activityType: "monitoring"
   title: "Praćenje ljeskove pipe"
@@ -3080,14 +3165,26 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   monthEnd: 7
   dayEnd: 15
   notes: >
-    Curculio nucum — odrasla ženka polaže jaja u razvijajuće plodove.
-    Kuckanje grana preko bijele plahte za prebrojavanje odraslih.
-    Hobi uzgoj: mehaničko uklanjanje napadnutih plodova obično dovoljno;
-    Eventualni tretman razmatrati samo ako lokalni pragovi, vidljiva šteta ili stručni savjet opravdavaju reakciju; koristiti samo registrirano sredstvo za kulturu i štetnika prema etiketi proizvoda, uz poštovanje karence, zaštite pčela i lokalnih propisa.
+    KADA:
+    tijekom ovog prozora pratiti ljeskovu pipu (Curculio nucum) na grmovima koji nose plod.
+
+    KAKO PROVJERITI:
+    otresati ili kuckati grane iznad bijele plahte radi pregleda odraslih oblika.
+
+    ŠTO GLEDATI:
+    prisutnost odraslih pipa i napadnute ili oštećene plodove.
+
+    ZNAČENJE:
+    odrasla ženka polaže jaja u razvijajuće plodove. U hobi uzgoju mehaničko uklanjanje napadnutih plodova obično je dovoljno i ostaje primarni pristup.
+
+    ODLUČIVANJE:
+    aplikacija ne odlučuje o tretmanu i ne daje automatsku preporuku za prskanje. Tretman razmatrati samo ako monitoring, vidljiv stvarni problem, lokalni/stručni savjet, etiketa proizvoda i stvarni kontekst opravdavaju reakciju. Koristiti samo registrirano sredstvo za kulturu i štetnika prema etiketi proizvoda, uz poštovanje karence, zaštite pčela i lokalnih propisa.
+
+    Za mlade lijeske god. 1–3 bez ploda: praćenje pipe nije prioritet.
 
 ---
 
-### 3. Praćenje pupoljkove grinje
+### 6. Praćenje pupoljkove grinje
 
 - activityType: "monitoring"
   title: "Praćenje pupoljkove grinje – lijeska"
@@ -3096,13 +3193,23 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   monthEnd: 4
   dayEnd: 30
   notes: >
-    Phytoptus avellanae — nabrekli zimski pupovi vidljivi kasnom zimom.
-    Primarni hobi pristup: mehaničko uklanjanje i zbrinjavanje napadnutih pupova prema lokalnim propisima.
-    Kod teže potvrđene zaraze eventualni tretman razmatrati samo prema etiketi proizvoda, lokalnim propisima i stručnom savjetu.
+    KADA:
+    kasnom zimom i u rano proljeće pregledati pupove lijeske.
+
+    ŠTO GLEDATI:
+    Phytoptus avellanae — nabrekli zimski pupovi vidljivi su kao sumnjivo povećani ili deformirani pupovi.
+
+    ŠTO UČINITI:
+    primarni hobi pristup je mehaničko uklanjanje i zbrinjavanje napadnutih pupova ili zahvaćenih dijelova prema lokalnim propisima.
+
+    ODLUČIVANJE:
+    aplikacija ne odlučuje o tretmanu. Mehaničko uklanjanje ostaje osnovni hobi pristup. Kod teže potvrđene zaraze eventualni tretman razmatrati samo ako monitoring, lokalni/stručni savjet, etiketa proizvoda i stvarni kontekst opravdavaju reakciju.
+
+    Za mlade lijeske god. 1–3: pregled pupova može biti koristan za učenje izgleda grma, ali tretman ne zaključivati bez stvarnog problema i lokalnog savjeta.
 
 ---
 
-### 4. Berba lješnjaka
+### 7. Berba lješnjaka
 
 - activityType: "harvest"
   title: "Berba lješnjaka"
@@ -3112,13 +3219,23 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   dayEnd: 10
   notes: >
     Termin ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
-    Plodovi padaju prirodno kad su zreli; skupljati dnevno u vrhuncu.
-    Oljuštiti kožuh unutar nekoliko dana, sušiti 1–2 tjedna.
-    NE brati sa stabla dok je kožuh zelen — nezreli.
+    Plodovi padaju prirodno kad su zreli ili se lako odvajaju.
+    Ne brati zelene lješnjake s grma; čekati prirodno otpadanje ili lako otpuštanje.
+    U vrhuncu otpadanja skupljati često, po mogućnosti svaki dan.
+    Dugo stajanje na mokrom tlu povećava rizik od plijesni i privlači životinje.
+    Pocrnjele ili plijesnive kožuhe ukloniti; plijesniv materijal ne miješati sa zdravim lješnjacima.
+    Oljuštiti kožuh unutar nekoliko dana.
+    Sušiti lješnjake u ljusci u jednom sloju, na suhom i prozračnom mjestu; osnovno sušenje obično traje 1–2 tjedna.
+    Izbjegavati velike hrpe jer zadržavaju vlagu.
+    Ne stavljati lješnjake u zatvorene vreće ili nepropusne posude prije nego što su potpuno suhi.
+    Ljuska i jezgra trebaju biti potpuno suhe prije zatvorenog skladištenja.
+    Ako je jezgra mekana, gumasta ili vlažna, nastaviti sušenje.
+    Skladištiti na hladnom, suhom i tamnom mjestu.
+    Povremeno provjeriti uskladištene lješnjake zbog vlage ili plijesni.
 
 ---
 
-### 5. Pregled lijeske za zimu
+### 8. Pregled lijeske za zimu
 
 - activityType: "observation"
   title: "Pregled lijeske za zimu"
@@ -3129,7 +3246,7 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   notes: >
     Ukloniti pale bolesne plodove (prezimljenje pipe).
     Pregledati izbojnice na znakove bakterijskog propadanja.
-    Malčirati bazu mladih grmova.
+    Za mlade lijeske god. 1–3: malčirati bazu grma protiv glodavaca i provjeriti opću zaštitu baze i donjih izbojnica od glodavaca te sunčanih i zimskih oštećenja kore.
 
 ---
 
