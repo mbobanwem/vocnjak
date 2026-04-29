@@ -538,7 +538,7 @@ Cvatnja (Zagreb baseline): kraj ožujka – poč. travnja.
 Berba: ovisno o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md.
 Harvest window examples: Burlat (jun 1–15), Kordia (jun 20 – jul 5), Regina / Sweetheart (jul 5–25).
 Trešnjina muha (Rhagoletis cerasi): jedan od glavnih insektnih štetnika trešnje u EU klimi.
-Trešnja je sklona pucanju plodova nakon kiše pred berbu; to ostaje S3 audit item odvojeno od mreže protiv ptica.
+Trešnja je sklona pucanju plodova nakon kiše pred berbu; to se prati odvojeno od mreže protiv ptica.
 Gisela 5 podloga: slabobujnija, raniji prinos, lakša zaštita mrežom.
 
 ---
@@ -552,13 +552,47 @@ Gisela 5 podloga: slabobujnija, raniji prinos, lakša zaštita mrežom.
   monthEnd: 6
   dayEnd: 20
   notes: >
-    Trešnjina muha (Rhagoletis cerasi) — jedan od najvažnijih štetnika trešnje u EU uvjetima.
-    Postaviti 2–3 žute ljepljive ploče po stablu na visinu 1.5–2 m, u sjenu krošnje.
-    Tjedno pregledavati:
-    — nizak ulov → uobičajeno nastaviti praćenje, osim ako lokalni pragovi ili stručni savjet upućuju drukčije
-    — nagli porast ulova može značiti da treba provjeriti potrebu za reakcijom; eventualni tretman razmatrati samo ako lokalni pragovi, etiketa proizvoda ili stručni savjet opravdavaju reakciju.
-    Koristiti samo sredstvo registrirano za kulturu i štetnika prema etiketi proizvoda; poštovati karencu do berbe (ne tretirati ako je berba preblizu propisane karence), zaštitu pčela i lokalne propise.
-    Za mlada stabla god. 1–2 bez ploda: nije prioritet.
+    KAKO POSTAVITI:
+    2–3 žute ljepljive ploče po stablu, visina 1.5–2 m, u krošnji.
+    Postaviti prije početka dozrijevanja plodova.
+
+    KAKO ČITATI ULOVE:
+
+    Bez ulova:
+    nastaviti redovni pregled.
+
+    Nizak ulov:
+    obično nekoliko muha po ploči (npr. oko 1–5 u razdoblju pregleda).
+    tipična početna aktivnost — nastaviti pratiti.
+
+    Povećana aktivnost:
+    ulov je veći nego prethodni pregled ili se ponavlja u više pregleda
+    (npr. više muha po ploči, često oko 5–15).
+    pojačati praćenje i provjeriti lokalne preporuke.
+
+    Jak pritisak:
+    nagli skok ulova (npr. desetci muha po ploči, oko 20–30+ ili brzo punjenje ploče).
+    moguć ozbiljan napad — odmah provjeriti lokalni savjet / poljoprivrednu apoteku.
+
+    VAŽNO:
+    Ovo su informativni primjeri, ne pravila aplikacije.
+    Stvarni pragovi ovise o sorti, godini i lokalnim preporukama.
+
+    PRIJE BILO KAKVOG TRETIRANJA:
+
+    Karenca:
+    karenca je broj dana koji mora proći od prskanja do berbe.
+    uvijek provjeriti etiketu sredstva za trešnju.
+
+    Pčele:
+    ne tretirati tijekom cvatnje.
+    ne tretirati tijekom aktivnog leta pčela.
+    poštovati etiketu proizvoda.
+
+    Aplikacija ne određuje tretman umjesto korisnika.
+
+    Za mlada stabla (bez ploda):
+    praćenje nije prioritet.
 
 ---
 
@@ -595,13 +629,96 @@ Gisela 5 podloga: slabobujnija, raniji prinos, lakša zaštita mrežom.
     Za ranije sorte (Burlat, berba od 1.6.): postaviti već kraj svibnja.
     Veličina: min. 4×4 m, preporučeno 5×5 m.
     Tip: s bočnim zipperom za pristup pri berbi bez skidanja mreže.
-    Mreža je primarno zaštita od ptica; zaštita od pucanja plodova zbog kiše zahtijeva posebnu provjeru/rain-cover pristup i ostaje S3 audit item.
+    Mreža je primarno zaštita od ptica; pucanje plodova zbog kiše prati se kao zaseban predberbeni problem.
     Skinuti odmah nakon berbe.
     Za mlada stabla god. 1–2 bez uroda: nije potrebno.
 
 ---
 
-### 4. Berba
+### 4. Praćenje monilije / smeđe truleži
+
+- activityType: "monitoring"
+  title: "Praćenje monilije / smeđe truleži (cvatnja → predberba)"
+  monthStart: 3
+  dayStart: 25
+  monthEnd: 7
+  dayEnd: 10
+  notes: >
+    KADA:
+    tijekom i nakon cvatnje, pa sve do berbe
+
+    ŠTO GLEDATI:
+
+    cvjetovi naglo posmeđe i ostaju suhi na grančici
+    vrhovi grančica se suše
+    može se pojaviti smola
+    u vlažnom vremenu vidi se siva praškasta prevlaka
+    pred berbu: smeđa trule mjesta na plodu
+
+    RAZLIKOVANJE MRAZA I MONILIJE:
+
+    Više liči na MRAZ ako:
+    — bila je hladna noć tijekom cvatnje
+    — oštećenje se pojavilo odjednom
+    — više zahvaćeni donji dijelovi krošnje
+    — središte cvijeta pocrni
+    — oštećenje se ne širi
+
+    Više liči na MONILIJU ako:
+    — nije bilo hladne noći, ali je bilo vlažno vrijeme
+    — cvjetovi ostaju suhi na grančici
+    — grančice se suše
+    — pojavljuje se smola ili plijesan
+    — oštećenje se širi kroz vrijeme
+
+    ŠTO UČINITI:
+
+    zabilježiti stanje i fotografirati
+    odrezati zaražene grančice ispod oštećenja
+    ukloniti iz voćnjaka
+
+    VAŽNO:
+
+    ovo je promatranje, ne automatski tretman
+    za točnu dijagnozu i zaštitu konzultirati stručnjaka
+
+---
+
+### 5. Praćenje pucanja plodova nakon kiše
+
+- activityType: "monitoring"
+  title: "Praćenje pucanja plodova nakon kiše (predberba)"
+  monthStart: 6
+  dayStart: 1
+  monthEnd: 7
+  dayEnd: 25
+  notes: >
+    KADA:
+    pred berbu, posebno nakon obilne kiše
+
+    ŠTO GLEDATI:
+
+    pukotine na plodovima
+    često blizu peteljke ili na vrhu
+    popucali plodovi brzo trunu
+    pojavljuje se plijesan
+    privlače ose
+
+    ŠTO UČINITI:
+
+    nakon kiše pregledati plodove
+    ukloniti popucale plodove
+    ako su plodovi zreli i dolazi nova kiša, razmotriti raniju berbu
+    održavati ujednačeno zalijevanje kroz sezonu
+
+    VAŽNO:
+
+    pucanje plodova se ne rješava prskanjem
+    neki uzgajivači koriste zaštitu od kiše, ali to nije standardna praksa u hobi uzgoju
+
+---
+
+### 6. Berba
 
 - activityType: "harvest"
   title: "Berba trešnje"
