@@ -2870,6 +2870,7 @@ Shared block NE primjenjuje se.
 
 ### Agronomic context
 Orah raste kao veliko stablo s kasnim listanjem i cvatnjom (svibanj).
+Kalendarski prozori za Zagreb / kontinentalne uvjete su baseline podsjetnici. U toplijim regijama radnje mogu krenuti ranije, u hladnijim kasnije. Fenološko stanje stabla i lokalni uvjeti imaju prednost pred datumom.
 
 *S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
 
@@ -2890,13 +2891,13 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   dayEnd: 15
   notes: >
     Orah može jače ispuštati sok/krvariti kod rezidbe u mirovanju.
-    Ljetni termin je sigurniji/preporučeni prozor za veće rezove; točan termin ostaje S3 audit item.
+    Izbjegavati velike rezove u mirovanju; ljetni termin je sigurniji/preporučeni prozor za smanjenje rizika krvarenja, ali točan termin ostaje S3 audit item.
     Ukloniti križajuće i suhe grane.
-    Mlada stabla: formirati niski stablašić prvih 3–5 godina.
+    Za mlada stabla god. 1–3: formirati niski stablašić postupno; manji korektivni rezovi su sigurniji od velikih rezova.
 
 ---
 
-### 2. Bakar – rano u proljeće (po potrebi)
+### 2. Bakar – rano u proljeće (orah, po potrebi)
 
 - activityType: "spraying"
   title: "Bakar – rano u proljeće (orah, po potrebi)"
@@ -2906,14 +2907,45 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   dayEnd: 20
   notes: >
     Preventivni bakar protiv bakterijske pjegavosti oraha (Xanthomonas arboricola).
-    Aplikacija kod bubrenja pupa i cvatnje resa.
-    NIJE potrebno svake godine — ako je prethodna sezona bila suha, pritisak nizak.
+    Rani proljetni prozor vezan je uz bubrenje pupa i razvoj resa; ne prskati otvorene rese.
+    Bakar nije automatski godišnji tretman i nije potreban svake godine.
+    Hobi uzgoj oraha često prolazi bez tretmana; primjenu razmotriti samo ako prethodna povijest bolesti, lokalni/stručni savjet ili stvaran rizik to opravdavaju.
+    Aplikacija ne odlučuje o tretmanu.
+    Za mlada stabla: redovna preventivna primjena bakra obično nije potrebna, osim ako lokalni/stručni savjet ili stvarni rizik ne kažu drukčije.
     Koristiti registrirani pripravak prema etiketi proizvoda; poštovati doziranje, karencu, zaštitu pčela i lokalne propise.
-    Hobi uzgoj: često bez tretmana.
 
 ---
 
-### 3. Praćenje orahove muhe
+### 3. Zalijevanje mladog oraha
+
+- activityType: "watering"
+  title: "Zalijevanje – mlado orahovo stablo (god. 1–3)"
+  monthStart: 5
+  dayStart: 15
+  monthEnd: 9
+  dayEnd: 15
+  notes: >
+    KADA:
+    za mlada orahova stabla u god. 1–3 nakon sadnje, osobito tijekom sušnih razdoblja.
+
+    ZAŠTO:
+    mladi orah ima korijen koji se još razvija i često je plitak, pa može patiti u suši. Odrasli orah razvija dublji korijenov sustav i obično ne treba rutinsko zalijevanje.
+
+    KAKO:
+    cilj je dubinski navlažiti zonu korijena, ne često površinski orošavati. Zalijevanje ujutro ili navečer je povoljnije.
+
+    KADA ZALITI:
+    tijekom sušnog razdoblja provjeriti vlagu tla nekoliko centimetara ispod površine. Ako je tlo suho i nije bilo značajnije kiše, zaliti dubinski.
+
+    KADA PRESTATI:
+    ako ima redovite kiše, preskočiti zalijevanje. Kasno ljeto i početkom jeseni postupno smanjivati zalijevanje prije mirovanja.
+
+    VAŽNO:
+    aplikacija ne postavlja točan raspored zalijevanja; korisnik odlučuje prema vlazi tla, kiši i stanju stabla.
+
+---
+
+### 4. Praćenje orahove muhe
 
 - activityType: "monitoring"
   title: "Praćenje orahove muhe"
@@ -2922,14 +2954,26 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   monthEnd: 9
   dayEnd: 15
   notes: >
-    Rhagoletis completa — žuta ljepljiva klopka s amonijevim mamcem.
-    Tjedni pregled.
-    Muha obezbojuje kožuh, ali jezgra često ostaje jestiva.
-    Eventualni tretman razmatrati samo ako lokalni pragovi ili stručni savjet opravdavaju reakciju; koristiti samo registrirano sredstvo za kulturu i štetnika prema etiketi proizvoda, uz poštovanje karence, zaštite pčela i lokalnih propisa.
+    KADA:
+    tijekom ovog prozora pratiti aktivnost orahove muhe (Rhagoletis completa).
+
+    KAKO POSTAVITI:
+    koristiti žutu ljepljivu klopku s amonijevim mamcem. Postaviti u krošnju prema uputama proizvođača klopke/mamca. Mamac ili ljepljivi umetak zamijeniti prema uputama proizvođača. Provjeravati tjedno tijekom ovog prozora.
+
+    ŠTO GLEDATI:
+    ulov u klopci i opće stanje zelenog kožuha, bez automatskog zaključka o tretmanu.
+
+    ZNAČENJE:
+    orahova muha najčešće obezbojuje ili oštećuje zeleni kožuh, ali jezgra često ostaje jestiva. Šteta nije uvijek potpun gubitak uroda.
+
+    ODLUČIVANJE:
+    ulov u klopci je dokaz aktivnosti, ne naredba za tretiranje. Aplikacija ne odlučuje o tretmanu. Tretman razmatrati samo ako monitoring, lokalni/stručni savjet, etiketa proizvoda i stvarni kontekst opravdavaju reakciju. Koristiti samo sredstvo registrirano za orah i ciljnu štetnicu prema etiketi proizvoda; poštovati karencu, zaštitu pčela i lokalna pravila.
+
+    Za mlada stabla god. 1–3 bez ploda: praćenje nije prioritet.
 
 ---
 
-### 4. Praćenje jabučnog savijača na orahu
+### 5. Praćenje jabučnog savijača na orahu
 
 - activityType: "monitoring"
   title: "Praćenje jabučnog savijača – orah"
@@ -2938,14 +2982,26 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   monthEnd: 8
   dayEnd: 15
   notes: >
-    Cydia pomonella napada i orah.
-    Feromonska klopka.
-    Hobi uzgoj: tretman rijetko nužan.
-    Eventualni tretman razmatrati samo ako monitoring, lokalni pragovi ili stručni savjet opravdavaju reakciju; koristiti samo registrirano sredstvo za kulturu i štetnika prema etiketi proizvoda, uz poštovanje karence, zaštite pčela i lokalnih propisa.
+    KADA:
+    tijekom ovog prozora pratiti jabučnog savijača na orahu (Cydia pomonella).
+
+    KAKO POSTAVITI:
+    koristiti feromonsku klopku za Cydia pomonella. Postaviti u krošnju prema uputama proizvođača klopke/mamca. Mamac zamijeniti prema uputama proizvođača. Provjeravati tjedno tijekom ovog prozora.
+
+    ŠTO GLEDATI:
+    ulov u klopci i ponavljanje aktivnosti kroz sezonu.
+
+    VAŽNO:
+    feromonske klopke za jabučnog savijača mogu privući leptire iz šire okolice, ne samo s oraha. Ulov je dokaz prisutnosti/aktivnosti, ne precizna mjera pritiska na konkretno stablo.
+
+    ODLUČIVANJE:
+    u hobi uzgoju oraha tretman je rijetko nužan. Aplikacija ne odlučuje o tretmanu. Tretman razmatrati samo ako monitoring, lokalni/stručni savjet, etiketa proizvoda i stvarni kontekst opravdavaju reakciju.
+
+    Za mlada stabla god. 1–3 bez ploda: praćenje nije prioritet.
 
 ---
 
-### 5. Berba oraha
+### 6. Berba oraha
 
 - activityType: "harvest"
   title: "Berba oraha"
@@ -2956,12 +3012,21 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   notes: >
     Termin ovisi o sorti ili fallback grupi — vidi V2_PLANT_CATALOG.md za harvestWindow.
     Orasi prirodno padaju kad su zreli; kožuh puca.
-    Skupljati dnevno u vrhuncu otpadanja.
-    Sušiti u ljusci u jednom sloju 2–3 tjedna prije skladištenja.
+    Ne brati zelene orahe sa stabla; čekati prirodno otpadanje.
+    U vrhuncu otpadanja skupljati često, po mogućnosti svaki dan.
+    Dugo stajanje na mokrom tlu povećava rizik od plijesni i privlači životinje.
+    Pocrnjele ili pljesnive kožuhe ukloniti odmah; pljesniv materijal ne miješati sa zdravim orasima.
+    Sušiti orahe u ljusci u jednom sloju, na suhom i prozračnom mjestu.
+    Izbjegavati velike hrpe jer zadržavaju vlagu.
+    Ne stavljati orahe u zatvorene vreće ili nepropusne posude prije nego što su potpuno suhi.
+    Ljuska i jezgra trebaju biti potpuno suhe prije zatvorenog skladištenja.
+    Ako je jezgra mekana, gumasta ili vlažna, nastaviti sušenje.
+    Skladištiti na hladnom, suhom i tamnom mjestu.
+    Povremeno provjeriti uskladištene orahe zbog vlage ili plijesni.
 
 ---
 
-### 6. Pregled oraha za zimu
+### 7. Pregled oraha za zimu
 
 - activityType: "observation"
   title: "Pregled oraha za zimu"
@@ -2971,8 +3036,8 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   dayEnd: 30
   notes: >
     Pregledati deblo na znakove dosadnika.
-    Ukloniti bolesne kožuhe (smanjenje inokuluma za sljedeću sezonu).
-    Malčirati bazu mladih stabala protiv glodavaca.
+    Ukloniti zaražene ili mumificirane kožuhe (smanjenje inokuluma za sljedeću sezonu).
+    Za mlada stabla god. 1–3: malčirati bazu protiv glodavaca i provjeriti opću zaštitu debla od glodavaca te sunčanih i zimskih oštećenja kore.
 
 ---
 
