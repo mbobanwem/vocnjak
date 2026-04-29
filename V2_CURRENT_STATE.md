@@ -16,17 +16,28 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: S4 owner decision resolution.
+Phase: S5 closed — pre-S6 documentation inventory / simplification next.
 
 Current goal:
 
-Resolve S3 owner decisions into approved, deferred, rejected, or source-check-required items before S5 targeted documentation fixes.
+Prepare the documentation set for S6 by confirming that S5 catalog/template cleanup is closed and reducing stale tracking ambiguity before system-definition work begins.
 
 Current immediate next step:
 
-S4 — Owner decision resolution and source-backed audit closure.
+Pre-S6 documentation inventory / simplification pass.
 
-S3.0B, S3.1, S3.2, S3.3, S3.4, S3.5, S3.6, S3.7, and S3.8 are complete; proceed to S4 owner decision resolution.
+S5 status:
+
+S5 catalog/template cleanup is closed.
+
+Completed in S5:
+- pear, quince, sour cherry, almond, walnut, and hazelnut targeted plan-template refinements
+- citrus / fig current-support cleanup
+- active V2 catalog/template support now excludes fig and citrus
+- lemon, orange, mandarin, and fig are preserved only as deferred/archive/future input
+- no runtime, schema, regional engine, or implementation work was added
+
+Remaining deferred/source-check/future items are explicitly tracked and are not S5 closure blockers. No implementation starts yet.
 
 ---
 

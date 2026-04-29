@@ -317,9 +317,22 @@ Rule for future expansion:
 Owner disposition:
 - Deferred. Do not promote into current S5 core monitoring.
 
-### 5.5 Catalog v1.0 sign-off
+### 5.5 S5 closure status
 
-*To be filled at completion of S5.*
+Status: CLOSED for current pre-implementation catalog/template readiness.
+
+S5 completed:
+- targeted per-species plan-template refinements for pear, quince, sour cherry, almond, walnut, and hazelnut
+- citrus / fig current-support cleanup
+- active current V2 support excludes fig and citrus
+- citrus / fig material is preserved only as deferred/archive/future input
+- no runtime, schema, regional engine, or implementation changes were made
+
+Closure interpretation:
+- remaining source-check, deferred, and future items stay tracked for later phases
+- historical S3 audit scope may still mention fig/citrus as audit-scope material, but current V2 support excludes them
+- S5 closure does not authorize implementation
+- next step is pre-S6 documentation inventory / simplification, then S6 system-definition work
 
 ---
 
