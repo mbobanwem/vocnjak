@@ -216,6 +216,14 @@ Shared standard-fruit-tree block:
 - clarify post-bloom `opadanje latica`
 - propagate fruitlet `veličine klikera` cue where source-backed
 
+Cross-species trap + fruit-signal follow-up:
+
+- Record S5 follow-up pattern before changing plum: trap + fruit signal + bands + orientation ranges + karenca decode.
+- Canonical rule: apply only to trap-based fruit-pest monitoring entries where all conditions hold: trap is primary signal; pest damages fruit directly or fruit-relevant shoots; visible fruit/shoot symptoms are beginner-recognizable; symptoms appear early enough to influence decisions; inspection requires no expert tools; fruit signal changes interpretation of trap reading; karenca / harvest timing matters.
+- Follow-up species: sweet cherry already has bands; later add fruit-signal cues + orientation ranges. Sour cherry should align with sweet cherry later. Peach Grapholita and nectarine Grapholita entries later get the full pattern. Apple codling moth later gets the full pattern. Pear applies when pear monitoring split is handled. Quince applies only if trap source-check resolves. Walnut applies only after walnut source-check.
+- Do not reopen peach, nectarine, or sweet cherry now; plum proceeds first.
+- Pattern does not apply to disease scouting, aphids, frost, fruit cracking, bird netting, or šarka.
+
 Pome:
 
 - resolve apple early fallback mismatch
