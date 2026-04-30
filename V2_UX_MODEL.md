@@ -1020,30 +1020,475 @@ Kalendar must not:
 
 *To be filled in S6. Subject to §0 hard constraints.*
 
-## 5. Window state → section mapping
+## 5. Detalj sezonske radnje
+
+Detalj sezonske radnje is the drill-in destination for `Pregled` and `Kalendar` cards that represent seasonal actions whose outcome can be captured as Activity evidence.
+
+This surface covers:
+
+- one-time / short seasonal actions: copper, white oil, pruning, bird net, fertilization, harvest, thinning, winter inspection
+- long-running seasonal care: irrigation / watering, with a special non-prescriptive block
+
+This surface does not cover:
+
+- monitoring program detail
+- awareness/risk detail
+- `Dnevnik` / multi-year history
+- Plant detail
+- S7 capture flow
+
+This section only defines Seasonal action detail. Monitoring program detail and Monitoring / Awareness detail remain separate future S6 surfaces and must not be inferred from this section.
+
+Risk-awareness cards such as:
+
+```text
+Rizik od mraza
+Rizik od pucanja plodova
+Rizik od suše
+Rizik od vrućine
+```
+
+belong to a separate Monitoring / Awareness detail surface, not Seasonal action detail.
+
+### 5.1 Product role
+
+Detalj sezonske radnje is:
+
+- orchard-level by default
+- seasonal-action-level
+- current-cycle occurrence detail
+- evidence-aware, not checklist-driven
+- beginner-readable
+- iPhone-first
+- a detail surface for understanding before deciding
+
+It is not:
+
+- a daily task list
+- a per-plant checklist
+- a monitoring nag screen
+- a weather decision engine
+- a multi-year report
+- an AI recommendation surface
+- an S7 capture form
+
+### 5.2 Layered hybrid model
+
+Use Model F — layered hybrid.
+
+Above the fold:
+
+- action title
+- date/relevance copy
+- plant scope
+- orchard-level evidence summary
+- optional uniform gate chip
+- optional near-term weather hint
+
+Below the fold:
+
+- purpose / beginner explanation
+- conditions and cautions
+- young-tree caveat, if authored in catalog/template content
+- product/material category, if authored in catalog/template content
+- irrigation special block, only for irrigation/watering
+- expandable or secondary per-plant evidence
+- single screen-level capture entry placeholder
+- `Dnevnik voćnjaka` footer link
+
+### 5.3 Identity
+
+The detail is bound to one catalog-backed seasonal-action occurrence, equivalent to:
+
+```text
+(window_def_id, catalog_version, cycle_year, scoped plant set)
+```
+
+Never aggregate by visible label alone.
+
+Examples:
+
+- `Bakar – zimska zaštita`
+- `Bakar nakon rezidbe`
+- species-specific copper actions
+
+must remain distinct when their catalog identity, timing, purpose, or scoped plants differ.
+
+### 5.4 User-facing terminology
+
+Use committed terminology:
+
+```text
+Primjenjuje se na
+evidencija
+evidentirano
+Dnevnik
+Dnevnik voćnjaka
+Pri kraju
+```
+
+Avoid user-facing:
+
+```text
+prozor
+zadatak
+trebaš
+moraš
+kasniš
+hitno
+overdue
+mješovito
+još 4 voćke
+sve je odrađeno
+bravo
+```
+
+`Bez zapisa` is reserved for monitoring per locked §0 and must not be used on Seasonal action detail.
+
+### 5.5 Date / relevance copy
+
+Use natural Croatian date copy:
+
+```text
+Aktualno od 15.2. do 28.2.
+Aktualno do 28.2. — pri kraju.
+Počinje 12.4.
+Bilo je aktualno od 1.2. do 15.2.
+```
+
+Consume the domain-derived `closing-soon` state and render it as:
+
+```text
+Pri kraju
+```
+
+S6 must not restate or redefine the `closing-soon` threshold.
+
+### 5.6 Plant scope
+
+Use:
+
+```text
+Primjenjuje se na 8 voćki.
+Primjenjuje se na trešnju Kordia.
+```
+
+Do not use:
+
+```text
+Vrijedi za
+Odnosi se na
+```
+
+Do not list every plant in the top summary.
+
+Per-plant breakdown belongs in the secondary per-plant evidence block.
+
+### 5.7 Orchard-level evidence summary
+
+Allowed summary copy:
+
+```text
+Evidentirano za 4/8 voćki.
+Odrađeno za 4/8 voćki.
+Preskočeno za 4/8 voćki.
+Nema evidencije za 8 voćki.
+Odrađeno za sve voćke.
+Preskočeno za sve voćke.
+Evidentirano za sve voćke.
+```
+
+Rules:
+
+- `Odrađeno` only when counted records are done.
+- `Preskočeno` only when counted records are skipped.
+- `Evidentirano` for mixed done/skipped or generic evidence.
+- `Nema evidencije` only for past/closed seasonal action contexts with no done/skipped evidence.
+- Do not show evidence copy for future actions with no records unless there is meaningful pre-existing evidence.
+
+Forbidden:
+
+- progress bars
+- percentages
+- scores
+- achievement framing
+- guilt copy
+- pressure copy
+- per-plant fan-out in the top summary
+
+### 5.8 Per-plant evidence
+
+Per-plant evidence is secondary.
+
+It must not dominate the screen.
+
+It must not precede the orchard-level summary.
+
+It may be inline for small scope, but should be summary-first / collapsible / secondary for larger scope.
+
+S6 defines the principle, not exact threshold or component behavior.
+
+Row-state mapping:
+
+| Context | Row copy |
+|---|---|
+| done | `Evidentirano 18.2.` |
+| done_late | `Evidentirano 5.3. nakon razdoblja.` |
+| skipped | `Preskočeno 22.2.` |
+| current/open with no record | `Nije evidentirano` |
+| past closed with no record | `Nema evidencije` |
+| upcoming | `Još nije aktualno` |
+
+Per-plant rows must not show:
+
+- checkboxes
+- per-plant capture buttons
+- countdowns like `još 4 voćke`
+- progress bars
+- urgency colors
+- guilt copy
+
+Tap on a plant row may later route to Plant detail, but must not invoke capture directly in S6.
+
+### 5.9 Gate-state
+
+Gate-state chips use only the locked enum:
+
+```text
+čeka
+otvoreno
+propušteno
+ne primjenjuje se
+```
+
+Do not introduce:
+
+```text
+mješovito
+```
+
+Rules:
+
+- Show a top-level gate chip only when `open_condition` exists and gate-state is uniform across all scoped plants.
+- If gate-state differs across plants, do not show a mixed top chip.
+- Per-plant rows may show per-plant gate chips only where meaningful.
+- If no `open_condition` exists, omit gate-state UI entirely.
+- Bare `čeka` must have beginner context, for example `Otvara se nakon zimske rezidbe.`
+
+### 5.10 Purpose / beginner explanation
+
+This detail surface is the canonical place for full beginner explanation.
+
+It may explain:
+
+- what the action is
+- why it matters
+- what plant state / timing matters
+- when to skip/delay/avoid
+- product/material category
+- young-tree caveats, if authored in catalog/template content
+
+Use plain Croatian.
+
+Avoid unexplained agronomic terms.
+
+Do not use AI-authored recommendations.
+
+### 5.11 Authored catalog/template content boundary
+
+Detail may surface authored catalog/template explanatory content where available, such as young-tree caveats, product/material category, spacing notes, plant-state cues, and skip/delay notes.
+
+S6 does not require these to exist as separate structured fields.
+
+### 5.12 Product / material category
+
+Use category labels only.
+
+No commercial brand names.
+
+Prefer crop/use-specific label-based wording:
+
+```text
+registrirani bakreni pripravak za konkretnu voćku i namjenu prema etiketi proizvoda
+bijelo / mineralno / parafinsko ulje registrirano za konkretnu voćku i namjenu prema etiketi proizvoda
+mreža protiv ptica odgovarajuće veličine
+agrotekstil ili pokrov za zaštitu od mraza
+sredstvo za zaštitu rana
+kap na kap
+kanta
+crijevo
+prskalica
+kontroler navodnjavanja
+bez infrastrukture
+```
+
+### 5.13 Young-tree caveats
+
+Surface young-tree caveats only when authored catalog/template content provides them.
+
+Do not structurally hide actions based on young-tree assumptions.
+
+Examples:
+
+```text
+Za mlada stabla god. 1–2 bez uroda: obično nije potrebno.
+Za mlada stabla: primjenjuje se samo ako postoji stvaran razlog ili lokalni savjet.
+Za mlada stabla god. 1–2: fokus na formiranje uzgojnog oblika.
+```
+
+These must be factual and non-guilt-inducing.
+
+### 5.14 Irrigation / watering
+
+Irrigation/watering stays inside Seasonal action detail as long-running seasonal care, not a separate surface.
+
+Kalendar stays short.
+
+Detail may include educational orientation.
+
+Allowed direction:
+
+- in dry periods young fruit trees may often need roughly `20–30 L` per week
+- deeper watering `1–2 times weekly` is usually preferable to frequent shallow watering
+- adjust for rainfall, soil, mulch, plant age, heat, irrigation method, actual soil moisture
+- drip systems: emitter flow × number of emitters × runtime
+- users may use `kap na kap`, `kanta`, `crijevo`, `prskalica`, `kontroler navodnjavanja`, or `bez infrastrukture`
+
+Frame as orientation, not a command.
+
+Example:
+
+```text
+Orijentacija, ne uputa:
+Mlade voćke u sušnim razdobljima često trebaju otprilike 20–30 L vode tjedno.
+Bolje je zaliti rjeđe i dublje, npr. 1–2 puta tjedno, nego često plitko.
+Prilagodi količinu kiši, tlu, malču, dobi voćke, vrućini, načinu zalijevanja i stvarnoj vlazi tla.
+Za kap na kap: protok kapaljke × broj kapaljki × trajanje = približna količina vode.
+```
+
+Must not show:
+
+```text
+Zalij danas.
+Uključi zonu 2 sata.
+Daj 60 L vode.
+Obavezno zalij 3 puta tjedno.
+```
+
+### 5.15 Bird net / variety timing
+
+Do not hardcode variety-specific dates in UX model.
+
+Detail may say:
+
+```text
+Točno vrijeme ovisi o sorti, očekivanoj berbi, promjeni boje plodova i pritisku ptica.
+Kao orijentacija: postaviti prije sazrijevanja, kada plodovi počinju mijenjati boju i prije jačeg pritiska ptica.
+Ako nema vidljivog pritiska ptica ili nema uroda, postavljanje se može preskočiti.
+```
+
+Catalog/template data owns specific timing.
+
+### 5.16 Weather / local conditions
+
+Weather is advisory only.
+
+Allowed examples:
+
+```text
+Upozorenje: moguća kiša za oko 36 sati.
+Za prskanje je važno suho i mirno vrijeme prije i nakon primjene.
+Provjeri lokalnu prognozu i stvarne uvjete u vrtu prije odluke.
+```
+
+Weather must not:
+
+- command action
+- block action
+- hide action
+- auto-shift action
+- score action
+- rank cards by weather
+
+Weather/local-condition copy may remind users that forecast data does not know the exact micro-location.
+
+### 5.17 Dnevnik relationship
+
+No prior-year excerpt in Seasonal action detail.
+
+Only link:
+
+```text
+Otvori u Dnevniku voćnjaka
+```
+
+`Dnevnik` owns multi-year proof/history.
+
+### 5.18 Capture entry
+
+S6 may name a single screen-level placeholder:
+
+```text
+Dodaj evidenciju
+```
+
+Rules:
+
+- one screen-level entry
+- not duplicated per plant row
+- final label and flow are owned by S7
+
+S7 owns:
+
+- form fields
+- validation
+- multi-plant selection
+- skip flow
+- confirmation copy
+- error states
+- whether it is a button/sheet/full-screen flow
+
+### 5.19 Seasonal action detail must not do
+
+Detalj sezonske radnje must not:
+
+- behave like a task detail
+- use `prozor`, `zadatak`, `trebaš`, `moraš`, `kasniš`, `hitno`, or `overdue`
+- display per-plant checklist controls
+- duplicate capture actions per plant
+- show progress bars, percentages, scores, or achievement framing
+- use `Bez zapisa`
+- render monitoring or risk-awareness detail
+- show prior-year excerpts or analytics
+- use branded product names
+- prescribe irrigation as a command
+- command, block, hide, or reschedule based on weather
+- define S7 capture flows
+
+## 6. Window state → section mapping
 
 *To be filled in S6.*
 
-## 6. End-of-season summary sheet
+## 7. End-of-season summary sheet
 
 *To be filled in S6. Subject to §0 hard constraints — no "missed monitoring" roll-up, no compliance scorecard.*
 
-## 7. Weather 24–72h and >72h states
+## 8. Weather 24–72h and >72h states
 
 *To be filled in S6.*
 
-## 8. Plan upgrade review flow
+## 9. Plan upgrade review flow
 
 *To be filled in S7.*
 
-## 9. Monitoring capture flow
+## 10. Monitoring capture flow
 
 *To be filled in S7. Subject to §0 hard constraints. MUST include out-of-season disclosure per §0.2.*
 
-## 10. Stage confirmation flow
+## 11. Stage confirmation flow
 
 *To be filled in S7.*
 
-## 11. "Za pregledati" resolution flow
+## 12. "Za pregledati" resolution flow
 
 *To be filled in S7.*
