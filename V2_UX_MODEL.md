@@ -113,15 +113,360 @@ Violations caught after implementation are corrected at the earliest opportunity
 
 ## 1. Pregled (home)
 
-*To be filled in S6. Subject to §0 hard constraints.*
+Pregled is the orchard summary surface.
+
+It answers, in 0 taps, what is currently seasonally relevant in the orchard.
+
+Pregled is:
+
+- orchard-level
+- seasonal-action-level
+- calendar-first
+- beginner-readable
+- iPhone-first
+- not plant-first
+- not a daily task list
+- not a generic dashboard
+- not a compliance screen
+- not a monitoring nag screen
+
+### 1.1 Always-visible status sentence
+
+Pregled must always start with a short, neutral orchard status sentence.
+
+Allowed examples:
+
+```text
+Trenutno su aktualne 2 sezonske radnje.
+Trenutno su aktualne 3 sezonske radnje. Jedna je pri kraju.
+Trenutno nema aktualnih sezonskih radnji. Sljedeća počinje 12.4.
+```
+
+The status sentence must not use:
+
+- scores
+- praise
+- guilt
+- achievement framing
+- task framing
+- "sve je odrađeno"
+- "nema zadataka danas"
+- "bravo"
+- "kasniš"
+
+### 1.2 User-facing terminology
+
+User-facing Home copy must avoid the literal term `prozor` for domain windows.
+
+Use natural Croatian wording such as:
+
+```text
+Sada aktualno
+Ova radnja je aktualna od 15.2. do 28.2.
+Ova radnja je aktualna do 28.2.
+Počinje 12.4.
+Bilo je aktualno od 1.2. do 15.2.
+Sezonska radnja
+Razdoblje za radnju
+Primjenjuje se na 8 voćki.
+```
+
+Technical documentation may still use `window` when referring to the domain model.
+
+Use `Primjenjuje se na`, not `Vrijedi za` or `Odnosi se na`.
+
+For seasonal action outcome copy on Home, prefer `evidencija` / `evidentirano` over `zapis`.
+
+Examples:
+
+```text
+Za provjeru: nema evidencije
+Nema evidencije za 8 voćki.
+Evidentirano za 4/8 voćki.
+```
+
+`Zapis` may remain a technical/documentation term for Activity and Observation records. Monitoring copy remains governed by §0.
+
+### 1.3 Home structure
+
+Pregled uses conditional sections only.
+
+Empty sections and filler cards must not render.
+
+Top-to-bottom order:
+
+1. status sentence
+2. `Sada aktualno`
+3. orchard-relevant weather advisory/warning, preferably inline on relevant cards; global only when one advisory applies to multiple visible cards
+4. `Za provjeru: nema evidencije`
+5. `Uskoro`
+6. `Praćenje`
+7. quiet state when no meaningful content exists beyond the status sentence
+
+### 1.4 Sada aktualno
+
+`Sada aktualno` contains seasonal actions that are currently active or closing soon.
+
+Open and closing-soon actions are not split into separate top-level sections.
+
+A card may show:
+
+- action name
+- status such as `Aktualno` or `Pri kraju`
+- date copy, for example `Ova radnja je aktualna od 15.2. do 28.2.`
+- plant scope, for example `Primjenjuje se na 8 voćki.`
+- short purpose cue when the title alone is not beginner-clear, for example `Za prezimljujuće štetnike.`
+- record status copy where relevant, for example `Evidentirano za 4/8 voćki.`
+- gate chip only when gate-state is identical for all plants represented by the card
+- short weather hint when relevant
+
+Pregled consumes the domain-derived `closing-soon` state from `V2_DOMAIN_MODEL.md` and renders it as `Pri kraju`.
+
+S6 must not restate or redefine the `closing-soon` threshold.
+
+Closing-soon actions may receive stronger visual hierarchy if later design confirms it. Closing-soon styling must not use error/destructive semantics.
+
+Home cards are grouped by seasonal action. A seasonal action applying to multiple plants remains one Home card.
+
+Pregled must not show per-plant checklist fan-out.
+
+Default partial-record copy:
+
+```text
+Evidentirano za 4/8 voćki.
+```
+
+Specific record copy is allowed only when true:
+
+```text
+Odrađeno za 4/8 voćki.
+```
+
+only when the counted records are `done`.
+
+```text
+Preskočeno za 4/8 voćki.
+```
+
+only when the counted records are `skipped`.
+
+Forbidden partial-record patterns:
+
+- progress bars
+- percentages
+- completion scores
+- achievement framing
+- guilt or pressure copy
+- per-plant checklist fan-out
+
+If gate-state differs across plants, Pregled does not show a gate chip.
+
+Per-plant gate-state belongs in seasonal action detail.
+
+Do not introduce a new `mješovito` gate-state.
+
+### 1.5 Aggregation rule
+
+Pregled must not aggregate cards by visible title alone.
+
+Cards may be aggregated only when the card-level date copy, status, purpose/context, catalog-backed identity, and user-facing meaning are compatible for every plant represented by the card.
+
+If plants have different catalog versions or different effective dates/status/purpose such that one card would not be true for all plants, Pregled must split the cards or defer detail to a lower-level surface rather than presenting misleading merged copy.
+
+### 1.6 Za provjeru: nema evidencije
+
+This section corresponds to domain windows in terminal `missed` state, but user-facing copy must not use missed / overdue / needs-attention framing.
+
+User-facing section title:
+
+```text
+Za provjeru: nema evidencije
+```
+
+This means the relevant period has ended and no `done` or `skipped` record exists.
+
+This section must not become a generic attention queue.
+
+This section appears only when it has at least one item.
+
+Example:
+
+```text
+Bijelo mineralno ulje
+Bilo je aktualno od 1.2. do 15.2.
+Nema evidencije za 8 voćki.
+```
+
+After a user records `skipped`, the item no longer belongs in this section.
+
+This section must not use alarm, guilt, failure, or urgency copy.
+
+### 1.7 Uskoro
+
+`Uskoro` gives a limited lookahead.
+
+It shows:
+
+- up to 3 nearest upcoming seasonal actions in the next 30 days
+- if no upcoming seasonal action exists in the next 30 days, the first next upcoming seasonal action regardless of date
+
+Full season context belongs in Calendar / season timeline, not on Pregled.
+
+Example:
+
+```text
+Postavljanje mreže protiv ptica
+Počinje 12.4.
+Primjenjuje se na trešnju Kordia.
+```
+
+### 1.8 Praćenje
+
+`Praćenje` is a glance surface only and is governed by locked §0.
+
+Home monitoring cards may be aggregated by monitoring program declaration / cycle where appropriate and may show plant scope count.
+
+They must not fan out per plant.
+
+Example:
+
+```text
+Praćenje jabučnog savijača
+Aktivno praćenje za 6 voćki.
+Bez zapisa.
+```
+
+The phrase `Bez zapisa` remains allowed for monitoring because §0 explicitly permits it as neutral monitoring copy.
+
+Beginner explanation of the monitored target belongs in Monitoring program detail, not on Home.
+
+Home monitoring must not show:
+
+- time since last observation
+- compliance or cadence drift
+- `još nema zapisa`
+- "start checking" prompts
+- alarm styling for absence of observations
+- monitoring coverage / engagement / completion metrics
+- free-standing observations inside monitoring cards
+
+### 1.9 Weather advisory / warning
+
+Weather is not decorative.
+
+Weather appears on Home only when orchard-relevant.
+
+Prefer weather hints inline on relevant seasonal action cards.
+
+A global weather block is allowed only when one advisory affects multiple visible cards or the orchard context broadly.
+
+Weather may reference:
+
+- rain
+- wind
+- frost
+- heat
+- useful dry/calm forecast context
+
+Weather copy may remind the user to check local forecast, actual orchard conditions, and product label where relevant, because the weather source does not know the exact micro-location.
+
+Allowed examples:
+
+```text
+Upozorenje: moguća kiša za oko 36 sati.
+Za prskanje je važno suho i mirno vrijeme prije i nakon primjene.
+Provjeri lokalnu prognozu i stvarne uvjete u vrtu prije odluke.
+```
+
+```text
+Prognoza pokazuje moguć suhi period za nekoliko dana.
+Provjeri lokalnu prognozu i etiketu proizvoda prije odluke.
+```
+
+Weather must not:
+
+- command orchard action
+- block actions
+- hide actions
+- auto-schedule actions
+- auto-shift seasonal action dates
+- score actions
+- rank Home cards by weather
+
+If there is a weather warning but no visible current/upcoming seasonal action or active awareness/monitoring context, Home does not become a generic weather dashboard.
+
+### 1.10 Quiet state
+
+Pregled must not show empty sections or filler cards.
+
+If no current, completed-without-record, upcoming, monitoring, or orchard-relevant weather content exists, the orchard may be quiet.
+
+Allowed examples:
+
+```text
+Trenutno nema aktualnih sezonskih radnji.
+```
+
+```text
+Trenutno nema aktualnih sezonskih radnji. Sljedeća počinje 12.4.
+```
+
+Forbidden quiet-state examples:
+
+```text
+Sve je odrađeno.
+Nema zadataka danas.
+Bravo, sve je pod kontrolom.
+```
+
+### 1.11 Pregled must not do
+
+Pregled must not:
+
+- behave like a daily task list
+- use `zadatak`, `to-do`, `trebaš`, `moraš`, `kasniš`, `hitno`, or equivalent pressure copy
+- use `prozor` as user-facing window copy
+- fan out one seasonal action into per-plant task cards
+- aggregate cards by visible label alone
+- show progress bars, percentages, completion scores, or achievement framing
+- derive urgency from missing monitoring observations
+- show monitoring compliance, engagement, coverage, or cadence-drift metrics
+- command action based on weather
+- hide, block, reschedule, or reorder seasonal actions based on weather
+- generate AI-authored action recommendations
+
+### 1.12 S6 / S7 boundary
+
+Pregled defines what is shown and where the user can drill in.
+
+Capture flows belong to S7.
+
+S7 owns:
+
+- logging an Activity
+- multi-plant capture
+- recording a skip
+- recording an Observation
+- monitoring capture
+- stage confirmation
+
+### 1.13 Cross-surface terminology note — Dnevnik / History
+
+The chronological history surface for Activities and Observations uses the bottom navigation label `Dnevnik`.
+
+Where space allows, the full surface title is `Dnevnik voćnjaka`.
+
+Do not use `Zapisi` as the main user-facing surface label.
+
+`Dnevnik` is proof of what happened in the orchard. It is not analytics, scoring, compliance, or reporting.
 
 ## 2. Kalendar
 
 *To be filled in S6. Subject to §0 hard constraints.*
 
-## 3. Zapisi
+## 3. Dnevnik
 
-*To be filled in S6. Subject to §0 hard constraints.*
+*To be filled in S6. Subject to §0 hard constraints. User-facing label: `Dnevnik`; full title where space allows: `Dnevnik voćnjaka`.*
 
 ## 4. Biljke
 
