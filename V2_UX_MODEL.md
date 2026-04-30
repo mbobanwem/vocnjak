@@ -1016,9 +1016,572 @@ Kalendar must not:
 
 *To be filled in S6. Subject to §0 hard constraints. User-facing label: `Dnevnik`; full title where space allows: `Dnevnik voćnjaka`.*
 
+S6 Biljke dependency:
+
+`Dnevnik` must resolve the plant-filtered route from Plant detail:
+
+- plant filter
+- year/month navigation
+- current-year summary vs full-history scope
+- archived plant history access
+- record grouping / categories for Activities and Observations
+- route target for `Otvori dnevnik ove voćke`
+
+Do not define full Dnevnik behavior here.
+
 ## 4. Biljke
 
-*To be filled in S6. Subject to §0 hard constraints.*
+Biljke is the plant profile and plant-specific lens surface.
+
+Use Model G+:
+
+```text
+Karton voćke profile model with bounded plant-specific lens
+```
+
+Biljke combines:
+
+```text
+Karton voćke + plant-specific seasonal context + Dnevnik entry point + lifecycle / plan-management entry points
+```
+
+It exists so the grower can answer:
+
+- what exactly this plant is
+- how to distinguish it from similar plants in the orchard
+- what stable species/variety context matters
+- what current plant-specific seasonal context is relevant
+- what has happened to this plant over time
+- where to manage the plant's lifecycle later without losing history
+
+Real anchor case:
+
+A cherry is not fruiting. The grower goes to an agronomist or agro-pharmacy and needs to answer:
+
+- which variety?
+- which rootstock?
+- when planted?
+- when purchased?
+- source/nursery?
+- where is it in the orchard?
+- did it flower?
+- was it pruned?
+- was it sprayed?
+- did it have harvest?
+- what observations exist?
+
+Biljke must support that conversation without becoming a per-plant task list.
+
+### 4.1 Product role
+
+Biljke is:
+
+- plant-level
+- profile-first
+- history-aware
+- seasonally contextual
+- beginner-readable
+- iPhone-first
+- a route into `Dnevnik` for one plant
+- a future entry point for plant lifecycle and plan-management flows
+
+Biljke is not:
+
+- a second `Pregled`
+- a replacement for `Kalendar`
+- a full `Dnevnik`
+- a per-plant checklist
+- a capture form
+- an edit/archive implementation spec
+- a schema/model patch
+
+### 4.2 Biljke list
+
+Biljke list stays scannable.
+
+Default sort:
+
+```text
+stable app/orchard order
+```
+
+Do not sort dynamically by urgency, seasonal state, monitoring state, or `planted_at` descending.
+
+Each row may show:
+
+- line 1: display label if available; otherwise species + variety
+- line 2: optional short disambiguator when useful, such as position/rootstock
+- optional one light seasonal cue
+
+Allowed row example:
+
+```text
+Trešnja — Kordia
+Položaj: donji vrt · Podloga: Gisela 5
+Aktualno: Postavljanje mreže protiv ptica
+```
+
+If this is too much for a compact row, exact visual grouping, truncation, and component behavior are later design decisions. S6 defines the allowed content and forbidden content.
+
+Rows must not show:
+
+- evidence counts
+- monitoring absence
+- `Bez zapisa`
+- compliance/cadence state
+- progress bars
+- percentages
+- task framing
+- per-plant checklist controls
+- alarm styling from missing data
+
+### 4.3 Add plant entry point
+
+Biljke list must reserve a prominent add-plant entry point:
+
+```text
+Dodaj voćku
+```
+
+Rules:
+
+- visible and easy to tap on iPhone
+- not a tiny `+`
+- belongs to Biljke
+- S6 defines placement/label/boundary only
+- full add flow belongs to S7/S8 plant profile management
+
+### 4.4 Plant detail structure
+
+Plant detail is the profile surface for one real plant.
+
+Recommended top-to-bottom structure:
+
+1. plant title / display identity
+2. archived-state marker only when the plant is archived
+3. `Karton voćke`
+4. current seasonal actions for this plant
+5. `Na što obratiti pažnju`
+6. `Sezonski rizici`
+7. monitoring for this plant
+8. `Dnevnik ove voćke`
+9. future plan/lifecycle entry points
+
+Above the fold should prioritize:
+
+- plant identity
+- `Karton voćke`
+- current seasonal context, when present
+- `Dnevnik ove voćke` entry point
+
+Plant detail may omit empty seasonal sections. Do not render filler blocks just to make the screen look complete.
+
+### 4.5 Karton voćke
+
+Plant detail must include:
+
+```text
+Karton voćke
+```
+
+Karton voćke is the canonical plant profile block.
+
+Fields that S6 UX requires:
+
+```text
+Vrsta
+Sorta
+Podloga
+Posađeno
+Kupljeno
+Izvor / rasadnik
+Položaj / oznaka
+Bilješka
+Korisnička oznaka / ime
+```
+
+Example:
+
+```text
+Trešnja — Kordia
+Podloga: Gisela 5
+Posađeno: 15.3.2026.
+Kupljeno: 14.3.2026.
+Izvor: Agrocar
+Položaj: donji vrt
+Bilješka: jednogodišnja sadnica
+```
+
+Rules:
+
+- Use the user's display label when available.
+- If no display label exists, fall back to species + variety where known.
+- If variety is unknown or absent, use a clear species-level label.
+- `Položaj / oznaka` exists to disambiguate duplicate or similar plants, not to define weather location or GPS behavior.
+- Do not infer rootstock, source, purchase date, or location.
+- Do not hide missing profile fields silently on Plant detail when they are product-important.
+
+Current locked domain may not contain all Karton voćke fields. S6 records the UX requirement and future dependency; it does not add fields to `V2_DOMAIN_MODEL.md`.
+
+### 4.6 Missing / unknown data
+
+Plant detail must distinguish:
+
+```text
+nije upisano
+ne znam
+```
+
+Semantics:
+
+- `nije upisano` = no value provided
+- `ne znam` = user explicitly chose unknown
+
+Examples:
+
+```text
+Podloga: nije upisano
+Podloga: ne znam
+Položaj: nije upisano
+Položaj: ne znam
+```
+
+Rules:
+
+- Missing and explicitly unknown are neutral states.
+- Do not use warning/error styling.
+- Do not treat `ne znam` as a value the app should keep asking for.
+- Do not derive seasonal behavior from missing or unknown profile data unless a future locked model explicitly defines that behavior.
+- Storage, validation, and edit controls for these states belong to future plant profile management, not S6.
+
+### 4.7 Current seasonal actions for this plant
+
+Plant detail may show current plant-specific seasonal actions.
+
+This section is a bounded lens, not a task list and not a second Home.
+
+Allowed content:
+
+- action label
+- natural date/relevance copy
+- status such as `Aktualno` or `Pri kraju`
+- short purpose cue when the title alone is not beginner-clear
+- optional neutral reference to existing plant evidence only when it helps identify recent context; full evidence state belongs in `Detalj sezonske radnje` and `Dnevnik ove voćke`
+- route to Seasonal action detail
+
+Allowed examples:
+
+```text
+Aktualno
+Postavljanje mreže protiv ptica
+Aktualno od 1.6. do 30.6.
+```
+
+```text
+Bakar – kovrčavost lista
+Bilo je aktualno od 10.2. do 5.3.
+```
+
+Rules:
+
+- Use the same `Pri kraju` rendering for domain-derived `closing-soon`; do not restate or redefine the threshold.
+- Do not show per-plant capture controls here.
+- Do not show checkboxes.
+- Do not show progress bars or percentages.
+- Do not duplicate `Pregled` section structure.
+- Do not sort the whole plant list by this section.
+- If no seasonal action is current for the plant, omit the section or show a compact neutral empty line; do not invent filler tasks.
+
+### 4.8 Na što obratiti pažnju
+
+Plant detail may show stable species/variety sensitivities:
+
+```text
+Na što obratiti pažnju
+```
+
+Do not use:
+
+```text
+Slabosti sorte
+```
+
+Allowed cherry examples:
+
+```text
+Pucanje plodova nakon kiše prije berbe.
+Ptice prije berbe.
+Trešnjina muha tijekom dozrijevanja plodova.
+Mraz tijekom cvatnje i ranog razvoja plodova.
+```
+
+Rules:
+
+- Use authored catalog/template content only.
+- Do not invent AI diagnosis.
+- Do not imply a treatment pipeline.
+- Do not imply the plant currently has the issue.
+- Keep copy educational and calm.
+- Full monitoring/risk detail belongs in Monitoring / Awareness detail, not this block.
+
+### 4.9 Sezonski rizici
+
+Plant detail may show time-bound active risk-awareness items:
+
+```text
+Sezonski rizici
+```
+
+Do not use:
+
+```text
+svijest
+```
+
+Rules:
+
+- `Sezonski rizici` is separate from `Na što obratiti pažnju`.
+- Show only time-bound active or near-term risk-awareness context relevant to this plant.
+- Risk-awareness detail remains separate from Seasonal action detail.
+- Do not imply automatic treatment.
+- Do not use alarm styling by default.
+- Do not create a detect -> treat pipeline.
+- Tap destination is future Monitoring / Awareness detail.
+
+Allowed examples:
+
+```text
+Rizik od pucanja plodova
+Aktualno pred berbu, posebno nakon obilne kiše.
+```
+
+```text
+Rizik od mraza
+Posebno važno tijekom cvatnje i ranog razvoja plodova.
+```
+
+### 4.10 Monitoring
+
+Monitoring may appear on Plant detail, but locked §0 governs it completely.
+
+Plant detail monitoring may show:
+
+- monitoring program label
+- program state (`pre_season`, `active`, `ended`) in neutral user-facing copy
+- factual date range
+- factual last observation date
+- factual observation count, only as history context
+- `cadence` only as static interval declaration, if declared
+- `Bez zapisa` only in monitoring context and only as neutral copy
+- route to Monitoring / Awareness detail or Monitoring capture flow when those are defined
+
+Plant detail monitoring must not show:
+
+- time since last observation
+- cadence drift
+- compliance metrics
+- coverage metrics
+- engagement metrics
+- "start checking" prompts
+- "trebaš provjeriti"
+- "vrijeme za provjeru"
+- alarm styling for absence of observations
+- free-standing observations inside monitoring cards
+
+Free-standing observations belong in `Dnevnik ove voćke` / Dnevnik context, not monitoring cards.
+
+### 4.11 Dnevnik ove voćke
+
+Plant detail must include:
+
+```text
+Dnevnik ove voćke
+```
+
+This block supports quick real-world recall, including the agronomist/agro-pharmacy conversation.
+
+It should show:
+
+- current-year factual summary
+- 5–7 recent Activities + Observations
+- link to Dnevnik filtered by this plant
+
+Preferred copy:
+
+```text
+Dnevnik ove voćke
+U 2026.: 3 prskanja, 1 rezidba, 0 berbi, 2 opažanja.
+
+Otvori dnevnik ove voćke
+```
+
+Rules:
+
+- Prefer `opažanja` over `zapisa praćenja` in general history copy.
+- Current-year summary must be factual, not scoring.
+- Recent records are a preview only.
+- Full year/month navigation belongs in `Dnevnik`, not Plant detail.
+- Full multi-year history belongs in `Dnevnik`, not Plant detail.
+- Free-standing observations appear here as normal plant-history records, not inside monitoring cards.
+
+### 4.12 Add / edit / archive entry points
+
+Plant detail and Biljke list reserve future lifecycle/profile entry points.
+
+Add plant:
+
+```text
+Dodaj voćku
+```
+
+Edit plant card:
+
+```text
+Uredi karton voćke
+```
+
+Archive plant:
+
+```text
+Arhiviraj voćku
+```
+
+Do not use:
+
+```text
+Obriši biljku
+```
+
+Rules:
+
+- S6 defines labels, placement expectations, and boundaries only.
+- Full add/edit/archive flows belong to future S7/S8 sections.
+- `Dodaj voćku` must be visible and easy to tap on iPhone.
+- `Uredi karton voćke` belongs on Plant detail.
+- `Arhiviraj voćku` preserves history and Dnevnik.
+- Optional explanatory copy for future archive confirmation may use `Ukloni iz aktivnog voćnjaka`, but the primary action label is `Arhiviraj voćku`.
+
+### 4.13 Plan/template update signal
+
+Plant detail is the future place for a per-plant plan/template update signal:
+
+```text
+Ažuriranje plana dostupno
+Pregledaj promjene prije primjene.
+```
+
+Rules:
+
+- No silent update.
+- No destructive regenerate button.
+- Do not render dead UI before the review flow exists.
+- Behavior belongs to `## 9. Plan upgrade review flow`.
+- The future flow must preserve overlays/history and avoid silent regeneration.
+
+### 4.14 Active vs archived plant visibility
+
+Archive removes a plant from the active orchard without deleting history.
+
+Rules:
+
+- Archived plants should not appear in the default active Biljke list.
+- Archived plants should remain reachable through Dnevnik/history/archive access.
+- Archived plants should not generate future/current seasonal actions after archive date.
+- Historical records before archive date remain preserved and visible.
+- Past records must retain plant identity labels, including display label and disambiguators where available.
+- Archive must not rewrite or delete Activity or Observation records.
+- Restore/replacement behavior is future flow scope.
+
+S6 does not define storage fields, archive confirmation, restore mechanics, or migration behavior.
+
+### 4.15 Future dependency table
+
+S6 Biljke records UX requirements that current locked domain may not yet support.
+
+Do not implement these as schema changes in S6.
+
+| S6 UX requirement | Future owner | Must resolve later | Recommended target |
+|---|---|---|---|
+| `display_label` / `Korisnička oznaka / ime` | S7/S8 | stored shape, fallback display, duplicate handling | `## 13. Plant profile management flow` + S8 data/storage |
+| `rootstock` / `Podloga` | S7/S8 | value entry, `nije upisano`, `ne znam`, import/export | `## 13. Plant profile management flow` + S8 data/storage |
+| `purchased_at` / `Kupljeno` | S7/S8 | date entry, missing/unknown semantics, import/export | `## 13. Plant profile management flow` + S8 data/storage |
+| `source_label` / `Izvor / rasadnik` | S7/S8 | free text vs controlled value, import/export | `## 13. Plant profile management flow` + S8 data/storage |
+| `position_label` / `Položaj / oznaka` | S7/S8 | duplicate disambiguation, copy, import/export | `## 13. Plant profile management flow` + S8 data/storage |
+| `profile_note` / `Bilješka` | S7/S8 | edit behavior, import/export | `## 13. Plant profile management flow` + S8 data/storage |
+| per-field unknown state | S7/S8 | `nije upisano` vs `ne znam` representation | `## 13. Plant profile management flow` + S8 data/storage |
+| `archived_at` / archive state | S7/S8/S9 | active vs archived scope, archive date, generated action exclusion | `## 14. Plant lifecycle / archive flow` + S8/S9 |
+| archive reason, if used | S7/S8 | whether it exists, copy, import/export | `## 14. Plant lifecycle / archive flow` |
+| stable app/orchard order source | S7/S8 | initial order, reorder policy, import/export | `## 13. Plant profile management flow` + S8 data/storage |
+| `Dodaj voćku` | S7/S8 | add flow, initial plan generation, validation | `## 13. Plant profile management flow` |
+| `Uredi karton voćke` | S7/S8 | edit flow, validation, data preservation | `## 13. Plant profile management flow` |
+| `Arhiviraj voćku` | S7/S8/S9 | archive flow, history preservation, restore/replacement | `## 14. Plant lifecycle / archive flow` |
+| `Dnevnik ove voćke` | S6/S7 | plant filter, year/month navigation, archived access | `## 3. Dnevnik` |
+| `Ažuriranje plana dostupno` | S7/S9 | review-before-apply, overlay preservation, no regeneration | `## 9. Plan upgrade review flow` |
+| `Sezonski rizici` tap destination | S6/S7 | risk-awareness detail, no treatment pipeline | `## 15. Monitoring / Awareness detail` |
+| Monitoring on Plant detail | S6/S7 | detail/capture routing while preserving §0 | `## 10. Monitoring capture flow` + `## 15. Monitoring / Awareness detail` |
+| Stable species/variety sensitivities source | future catalog/content session | authored source/structure; no AI diagnosis | future catalog/content owner, referenced by `## 15. Monitoring / Awareness detail` |
+
+### 4.16 S6 / S7 / S8 / S9 boundary
+
+S6 owns:
+
+- Biljke list content rules
+- Plant detail structure
+- `Karton voćke` UX requirement
+- copy labels for add/edit/archive entry points
+- plant-specific seasonal lens boundaries
+- Dnevnik preview and route requirement
+- future dependency map
+
+S7 owns:
+
+- add plant flow
+- edit plant card flow
+- archive confirmation flow
+- Dnevnik plant-filter interactions
+- monitoring capture route behavior
+- capture labels, forms, validation, and error states
+
+S8 owns:
+
+- stored plant profile shape
+- missing/unknown representation
+- archive state storage
+- import/export implications
+- stable order storage
+- migration/storage architecture
+
+S9 owns:
+
+- derived active vs archived seasonal scope
+- plan/template update diff
+- review-before-apply behavior
+- overlay reconciliation
+- weather/advisory derived layers where relevant
+
+### 4.17 Biljke must not do
+
+Biljke must not:
+
+- behave like a daily task list
+- become a second `Pregled`
+- replace `Kalendar`
+- replace full `Dnevnik`
+- show per-plant checklist controls
+- duplicate capture actions per seasonal row
+- sort plants dynamically by urgency
+- infer facts from missing profile data
+- treat missing rootstock/location/source as an error
+- derive urgency from missing monitoring observations
+- show monitoring compliance, coverage, engagement, or cadence-drift metrics
+- show free-standing observations inside monitoring cards
+- use `Slabosti sorte`
+- use `svijest`
+- use `Obriši biljku`
+- silently update plan/template versions
+- offer destructive plan regeneration
+- hide archived plant history
+- define S7/S8/S9 implementation details
 
 ## 5. Detalj sezonske radnje
 
@@ -1481,9 +2044,30 @@ Detalj sezonske radnje must not:
 
 *To be filled in S7.*
 
+S6 Biljke dependency:
+
+Plan upgrade review must resolve the Plant detail signal:
+
+```text
+Ažuriranje plana dostupno
+Pregledaj promjene prije primjene.
+```
+
+The future flow must define review-before-apply behavior for a plant, preserve overlays/history, avoid silent updates, and avoid any destructive "regenerate plan" action.
+
 ## 10. Monitoring capture flow
 
 *To be filled in S7. Subject to §0 hard constraints. MUST include out-of-season disclosure per §0.2.*
+
+S6 Biljke dependency:
+
+Monitoring capture flow must support Plant detail monitoring routes while preserving locked §0:
+
+- no time-since-last nudges
+- no cadence compliance
+- no "start checking" prompts
+- no alarm styling for absence
+- free-standing observations remain Dnevnik/history records, not monitoring-card evidence
 
 ## 11. Stage confirmation flow
 
@@ -1492,3 +2076,15 @@ Detalj sezonske radnje must not:
 ## 12. "Za pregledati" resolution flow
 
 *To be filled in S7.*
+
+## 13. Plant profile management flow
+
+*To be filled in S7/S8. Must resolve the S6 Biljke dependencies for `Dodaj voćku`, `Uredi karton voćke`, plant profile fields, `nije upisano` vs `ne znam`, add/edit validation, import/export implications, initial plan generation for a new plant, stable app/orchard order source, and duplicate plant disambiguation.*
+
+## 14. Plant lifecycle / archive flow
+
+*To be filled in S7/S8/S9. Must resolve the S6 Biljke dependencies for `Arhiviraj voćku`, active vs archived plant state, archive date, archive reason if used, archived plant visibility, Dnevnik/history preservation, restore/replacement behavior if applicable, whether archived plants remain visible through filtered Biljke / Dnevnik, how archived plants are excluded from future/current seasonal actions after archive date, and how historical actions before archive date remain visible.*
+
+## 15. Monitoring / Awareness detail
+
+*To be filled in S6/S7. Must resolve the S6 Biljke dependencies for risk-awareness detail, monitoring detail, `Sezonski rizici` tap destination, `Na što obratiti pažnju` vs time-bound risk copy boundary, no treatment pipeline, and no §0 violations.*
