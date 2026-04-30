@@ -31,6 +31,48 @@ If an item affects data model, execution logic, validation, or plan matching →
 - Minor spacing inconsistencies
 - Copy tweaks (HR text improvements)
 
+## Sync / Settings / Data Utility redesign
+
+Current `Sync / Sinkroniziraj` is a temporary mixed utility/data-management screen, not a long-term core orchard surface. It currently mixes Claude export/import, legacy JSON backup/download/import, v4 JSON export/import, iCal/GitHub reminder sync, Supabase cloud backup/restore, GitHub token/repo setup, Supabase URL / anon key / SQL setup / user key, and usage instructions.
+
+Long-term direction: move `Sync` out of primary bottom navigation. Recommended future core nav:
+
+```text
+Pregled | Kalendar | Dodaj | Dnevnik | Biljke
+```
+
+Settings/data utilities should move under future `Postavke` or an equivalent secondary settings entry:
+
+```text
+Postavke
+├─ Moj profil
+├─ Voćnjak
+├─ Podaci i sigurnost
+├─ Podaci za Claude
+├─ Integracije
+└─ Napredno
+```
+
+Current function mapping:
+
+- `Izvezi dnevnik` / `Kopiraj dnevnik u clipboard` → `Podaci za Claude`
+- `Uvezi dnevnik` / Claude JSON import → `Podaci za Claude` or possible retirement
+- legacy `Preuzmi backup` → `Podaci i sigurnost`
+- `Sigurnosna kopija (v4)` export/import → `Podaci i sigurnost`
+- `Cloud backup (Supabase)` backup/restore actions → `Podaci i sigurnost`
+- Supabase URL / anon key / SQL / user key → `Napredno`
+- `iCal sync` → `Integracije`
+- GitHub repo/token setup → `Integracije` / `Napredno`
+- `Kako koristiti` Claude instructions → `Podaci za Claude`, not generic help
+
+Terminology conflicts: `Izvezi dnevnik`, `Kopiraj dnevnik u clipboard`, `Uvezi dnevnik`, and export heading `DNEVNIK VOCNJAKA` conflict with S6 terminology because `Dnevnik` is reserved for the chronological history surface for Activities and Observations. Preferred replacements: `Izvezi podatke za Claude`, `Kopiraj podatke za Claude`, `Uvezi podatke iz JSON-a`, `Uvezi podatke od Claudea`, `PODACI VOĆNJAKA`.
+
+Future profile/settings fields are data-model decisions, not current implementation: user first name, user last name, email, app language, orchard name, editable city/region, editable weather location, preferred language/locale.
+
+Security/privacy notes for future session: GitHub PAT should not be a normal visible UI field; Supabase URL/anon key/SQL setup belongs under advanced/admin setup; user key should not be shown in normal UI; clipboard export copies full app/orchard data and needs explicit disclosure; import/restore workflows need strong safety copy and backup behavior.
+
+Out of scope now: no runtime change, no schema change, no Settings implementation, no bottom-nav runtime change. Revisit during a future Settings / Navigation / Polish session.
+
 # 🟡 V2 Monitoring & UX Polish
 
 ## Monitoring / Plant detail
