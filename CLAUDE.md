@@ -59,8 +59,11 @@ Rules:
 - not binding until sign-off
 
 Current:
-- none for S6 content yet
-- `V2_UX_MODEL.md` is the next S6/S7 target; only §0 monitoring constraints are authoritative before S6/S7 sign-off
+- S6 core UX surfaces are now written in `V2_UX_MODEL.md`
+- `V2_UX_MODEL.md` remains the active S6/S7 target
+- §0 monitoring constraints remain locked and authoritative
+- S7 owns interactive/capture flows next
+- implementation before S11 remains forbidden
 
 ### INPUT FILES (NOT YET VALIDATED V2 TRUTH)
 

@@ -1,6 +1,6 @@
 # V2_UX_MODEL
 
-**Status:** placeholder — to be filled in S6 (core surfaces) and S7 (interactive flows). §0 Monitoring UX hard constraints are authoritative and seeded by S2.8; they override any UX proposal that conflicts with them.
+**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain S6-seeded S7/future flow contracts and placeholders. S7 will fill interactive/capture flows. This document defines UX guidance only; no runtime/schema implementation is defined here.
 
 ---
 

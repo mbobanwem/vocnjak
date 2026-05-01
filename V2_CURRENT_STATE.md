@@ -16,28 +16,34 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: S5 closed — pre-S6 documentation inventory / simplification next.
+Phase: S6 core UX surfaces written in `V2_UX_MODEL.md`; S7 UX flow definition next.
 
 Current goal:
 
-Prepare the documentation set for S6 by confirming that S5 catalog/template cleanup is closed and reducing stale tracking ambiguity before system-definition work begins.
+Move from S6 core surface definition into S7 interactive/capture flow definition while preserving the owner-approved S6 UX surfaces and S5 catalog/template closure.
 
 Current immediate next step:
 
-Pre-S6 documentation inventory / simplification pass.
+Define S7 UX flows, with recommended first target:
 
-S5 status:
+```text
+V2_UX_MODEL.md ## 16. Evidence capture flow
+```
 
-S5 catalog/template cleanup is closed.
+S6 status:
 
-Completed in S5:
-- pear, quince, sour cherry, almond, walnut, and hazelnut targeted plan-template refinements
-- citrus / fig current-support cleanup
-- active V2 catalog/template support now excludes fig and citrus
-- lemon, orange, mandarin, and fig are preserved only as deferred/archive/future input
-- no runtime, schema, regional engine, or implementation work was added
+S6 core UX surfaces are written / materially complete in `V2_UX_MODEL.md`.
 
-Remaining deferred/source-check/future items are explicitly tracked and are not S5 closure blockers. No implementation starts yet.
+Completed S6 core surfaces:
+- Pregled
+- Kalendar
+- Dnevnik
+- Biljke
+- Detalj sezonske radnje
+
+S6 also seeded S7 flow contracts / placeholders in `V2_UX_MODEL.md` for plan upgrade review, monitoring capture, stage confirmation, "Za pregledati" resolution, plant profile management, plant lifecycle/archive, monitoring/awareness detail, evidence capture, and record correction.
+
+No implementation starts yet. No domain, schema, or runtime work starts yet.
 
 ---
 
