@@ -1014,20 +1014,483 @@ Kalendar must not:
 
 ## 3. Dnevnik
 
-*To be filled in S6. Subject to §0 hard constraints. User-facing label: `Dnevnik`; full title where space allows: `Dnevnik voćnjaka`.*
+Use Model E+:
 
-S6 Biljke dependency:
+```text
+Event-date chronological Dnevnik with year/month groups, lightweight filters, grouped multi-plant rows, contextual scoped add, two-axis date honesty, and future correction/search dependencies.
+```
 
-`Dnevnik` must resolve the plant-filtered route from Plant detail:
+User-facing label:
 
-- plant filter
-- year/month navigation
-- current-year summary vs full-history scope
-- archived plant history access
-- record grouping / categories for Activities and Observations
-- route target for `Otvori dnevnik ove voćke`
+```text
+Dnevnik
+```
 
-Do not define full Dnevnik behavior here.
+Full title where space allows:
+
+```text
+Dnevnik voćnjaka
+```
+
+### 3.1 Product role
+
+Dnevnik is the chronological proof/history surface for Activities and Observations.
+
+It answers:
+
+- what happened in the orchard
+- when it happened
+- which plant or plants it applied to
+- whether evidence was added later
+- whether a seasonal action happened after its relevant period
+- what happened to one plant over time, especially for agronomist or agro-pharmacy conversations
+
+Dnevnik is:
+
+- chronological proof/history
+- orchard-wide by default
+- year/month grouped
+- filterable
+- history-preserving
+- simple on iPhone
+- useful for agronomist/agro-pharmacy conversations through plant-filtered routes
+
+Dnevnik is not:
+
+- a daily task list
+- a capture-first surface
+- a compliance surface
+- a scoreboard
+- a backup/export/import screen
+- a monitoring nag screen
+- a replacement for `Pregled`, `Kalendar`, `Biljke`, or `Detalj sezonske radnje`
+
+### 3.2 Model
+
+Dnevnik uses:
+
+```text
+Model E+ — Event-date chronological Dnevnik with year/month groups, lightweight filters, grouped multi-plant rows, contextual scoped add, two-axis date honesty, and future correction/search dependencies.
+```
+
+The core rule is:
+
+```text
+history follows the event date, not the date evidence was added to the app
+```
+
+### 3.3 Default Dnevnik
+
+Default title:
+
+```text
+Dnevnik voćnjaka
+```
+
+Default structure:
+
+```text
+Dnevnik voćnjaka
+
+[Voćka] [Tip evidencije] [Sezona / godina]
+
+Sezona 2026.
+Ožujak 2026.
+
+22.3.2026. · Bakar — zimska zaštita
+Odrađeno · 8 voćki
+```
+
+Rules:
+
+- no add button in default Dnevnik
+- no export/import/backup controls
+- no score
+- no compliance
+- no `sve je odrađeno`
+- no `nema zadataka danas`
+- no weather block
+- no status sentence from Pregled
+
+### 3.4 Plant-filtered Dnevnik
+
+Route:
+
+```text
+Biljke → Plant detail → Otvori dnevnik ove voćke
+```
+
+Title:
+
+```text
+Dnevnik ove voćke
+Trešnja — Kordia · donji vrt
+```
+
+Contextual entry:
+
+```text
+Dodaj evidenciju za ovu voćku
+```
+
+Rules:
+
+- S6 defines label and placement only
+- S7 owns full capture flow
+- plant is prefilled in capture flow
+- default row grouping still uses event date
+- archived plant route must still work
+
+### 3.5 Seasonal-action-filtered Dnevnik
+
+Route:
+
+```text
+Detalj sezonske radnje → Otvori u Dnevniku voćnjaka
+```
+
+Title example:
+
+```text
+Dnevnik voćnjaka — Bakar, zimska zaštita
+```
+
+Contextual entry:
+
+```text
+Dodaj evidenciju za ovu radnju
+```
+
+Rules:
+
+- S6 defines label and placement only
+- S7 owns full capture flow
+- seasonal action is prefilled in capture flow
+- default scope is all years, newest first
+- no score/streak/compliance
+
+### 3.6 Year/month grouping
+
+Rows are grouped by event date:
+
+- Activity `occurred_on`
+- Observation `observed_on`
+
+Rules:
+
+- do not group by `recorded_at`
+- years newest first
+- months newest first
+- rows newest first inside month
+- empty years and months do not render
+- lifecycle dates (`planted_at`, future `purchased_at`, future `archived_at`) are not synthetic Dnevnik rows in S6
+
+### 3.7 Filters
+
+Filters:
+
+```text
+Voćka
+Tip evidencije
+Sezona / godina
+```
+
+`Tip evidencije` buckets:
+
+```text
+Sezonske radnje
+Praćenje
+Opažanja
+```
+
+Mapping:
+
+```text
+Sezonske radnje → Activity records
+Praćenje → program-attached monitoring observations
+Opažanja → free-standing observations, symptoms, phenology/stage observations
+```
+
+Rules:
+
+- filters are single-select in S6
+- filters compose with AND semantics
+- no search in S6
+- second-level filters are future dependency
+- do not create monitoring coverage / compliance views
+
+Future search and second-level filters should support common recall needs such as:
+
+- prskanja
+- rezidba
+- berba
+- kupnja/sadnja if future lifecycle events are modeled
+- cvatnja/fenofaza
+- trešnjina muha
+- free-standing notes and observations
+
+### 3.8 Row anatomy
+
+Default row:
+
+```text
+<date>. · <event label>
+<status / scope / markers>
+```
+
+Example:
+
+```text
+22.3.2026. · Bakar — zimska zaštita
+Odrađeno · 8 voćki
+```
+
+Expansion may show:
+
+```text
+Radnja: 22.3.2026.
+Evidencija dodana: 10.4.2026.
+```
+
+Multi-plant rows expand to show plant scope.
+
+Expansion may also show:
+
+- plant names included in the grouped row
+- notes, when present
+- catalog/version-resolved label context, when needed to keep historical meaning clear
+- free-standing observation marker, when applicable
+- correction status in the future, after a correction flow exists
+
+### 3.9 Marker semantics
+
+There are two independent marker axes.
+
+#### Late execution / outside period
+
+Marker:
+
+```text
+nakon razdoblja
+```
+
+Meaning:
+
+- the event happened after the relevant seasonal action period
+- derived from seasonal-action/window context
+- not a stored Activity status
+- should show in default Dnevnik when reliably computable
+- otherwise omit rather than guess
+
+#### Late logging / retroactive entry
+
+Marker:
+
+```text
+evidentirano naknadno
+```
+
+Meaning:
+
+- the event happened earlier
+- the evidence was added to the app later
+- based on `recorded_at - occurred_on/observed_on`
+- inline marker threshold: `≥ 7 days`
+- expanded row shows exact event date and evidence-added date
+
+If both apply, order:
+
+```text
+nakon razdoblja · evidentirano naknadno
+```
+
+### 3.10 Row examples
+
+Normal done:
+
+```text
+10.2.2026. · Bakar — zimska zaštita
+Odrađeno · Trešnja Kordia
+```
+
+Skipped:
+
+```text
+22.2.2026. · Bijelo mineralno ulje
+Preskočeno · Trešnja Kordia
+```
+
+Performed in period, entered late:
+
+```text
+10.2.2026. · Bakar — zimska zaštita
+Odrađeno · Trešnja Kordia · evidentirano naknadno
+```
+
+Performed after period:
+
+```text
+20.2.2026. · Bakar — zimska zaštita
+Odrađeno · Trešnja Kordia · nakon razdoblja
+```
+
+Performed after period and entered late:
+
+```text
+20.2.2026. · Bakar — zimska zaštita
+Odrađeno · Trešnja Kordia · nakon razdoblja · evidentirano naknadno
+```
+
+Free-standing observation:
+
+```text
+3.6.2026. · Opažanje
+Trešnja Kordia — slabo zametanje plodova
+```
+
+Expanded free-standing observation may show:
+
+```text
+nije vezano uz program praćenja
+```
+
+Monitoring observation:
+
+```text
+12.5.2026. · Praćenje jabučnog savijača — provjera klopke
+2 ulova · Jabuka Fuji
+```
+
+Multi-plant grouped activity:
+
+```text
+22.3.2026. · Bakar — zimska zaštita
+Odrađeno · 8 voćki
+```
+
+Archived plant record:
+
+```text
+22.3.2026. · Bakar — zimska zaštita
+Odrađeno · Šljiva Stanley (arhivirana)
+```
+
+### 3.11 Multi-plant grouping
+
+Rules:
+
+- one real-world grouped Activity/Observation renders as one row
+- do not fan out one grouped action into per-plant rows by default
+- row expansion may show plant scope
+- plant-filtered Dnevnik may still show grouped rows that include the filtered plant
+- no progress bars or percentages
+
+Grouping is display/query behavior only.
+
+It must not change immutable record identity, window-state derivation, monitoring program derivation, or correction behavior.
+
+### 3.12 Archived plants
+
+Rules:
+
+- archived plant history remains visible
+- archived plants may appear in plant filter with `(arhivirana)` suffix
+- archived plant rows may show `(arhivirana)` suffix
+- no fading
+- no strikethrough
+- no warning/error styling
+- archive flow belongs to `## 14. Plant lifecycle / archive flow`
+
+### 3.13 Free-standing observations
+
+Rules:
+
+- free-standing observations are first-class history records
+- they appear under `Opažanja`, not `Praćenje`
+- do not downgrade or alarm-style them
+- marker `nije vezano uz program praćenja` appears in expansion by default; inline only when needed to avoid confusion
+- free-standing observations must not be shown as missing monitoring evidence
+- no attach-to-program flow
+
+### 3.14 Monitoring rows
+
+Locked §0 applies.
+
+Program-attached monitoring observations appear under:
+
+```text
+Praćenje
+```
+
+Rules:
+
+- no time-since-last
+- no cadence drift
+- no compliance/coverage/engagement metrics
+- no `start checking`
+- no `vrijeme za provjeru`
+- no alarm styling for absence
+- absence of monitoring observations is not a Dnevnik row
+
+### 3.15 Empty states
+
+Use:
+
+```text
+Još nema evidencije.
+Još nema evidencije za ovu voćku.
+Još nema evidencije za ovu sezonsku radnju.
+U sezoni 2024. nema evidencije.
+```
+
+Do not use:
+
+```text
+Sve je odrađeno.
+Bravo.
+Nema zadataka danas.
+Bez zapisa.
+```
+
+`Bez zapisa` remains monitoring-specific per locked §0.
+
+### 3.16 Export/import prohibition
+
+Dnevnik must not host:
+
+```text
+Izvezi dnevnik
+Uvezi dnevnik
+Kopiraj dnevnik
+DNEVNIK VOCNJAKA export heading
+```
+
+Backup/export/import belongs to future Settings / data safety, not Dnevnik.
+
+### 3.17 Correction boundary
+
+Rules:
+
+- Dnevnik does not edit or delete records in S6
+- records are immutable
+- wrong date / wrong plant / wrong action / wrong status / wrong note requires future correction flow
+- future correction must annotate or supersede, not mutate existing records
+- Dnevnik may later render correction status neutrally
+- no destructive delete
+
+### 3.18 Dnevnik must not do
+
+Dnevnik must not:
+
+- behave like a task list
+- use `zadatak`, `trebaš`, `moraš`, `kasniš`, `hitno`, or `overdue`
+- show progress bars, percentages, or completion score
+- show monitoring compliance, coverage, or cadence drift
+- show weather blocks
+- host backup/export/import
+- edit/delete immutable records
+- turn free-standing observations into monitoring evidence
+- generate AI recommendations
 
 ## 4. Biljke
 
@@ -2055,6 +2518,12 @@ Pregledaj promjene prije primjene.
 
 The future flow must define review-before-apply behavior for a plant, preserve overlays/history, avoid silent updates, and avoid any destructive "regenerate plan" action.
 
+S6 Dnevnik dependency:
+
+- Dnevnik seasonal-action filters and historical labels depend on stable historical catalog/version resolution.
+- Plan upgrade review must not rewrite historical Dnevnik rows.
+- Historical Activity and Observation rows must remain understandable after catalog labels, timing, or explanatory text evolve.
+
 ## 10. Monitoring capture flow
 
 *To be filled in S7. Subject to §0 hard constraints. MUST include out-of-season disclosure per §0.2.*
@@ -2068,6 +2537,12 @@ Monitoring capture flow must support Plant detail monitoring routes while preser
 - no "start checking" prompts
 - no alarm styling for absence
 - free-standing observations remain Dnevnik/history records, not monitoring-card evidence
+
+S6 Dnevnik dependency:
+
+- Program-attached and free-standing observations must remain distinct at capture.
+- Free-standing observations render in Dnevnik under `Opažanja`, not as monitoring evidence.
+- The capture flow must preserve locked §0 and the free-standing invariant.
 
 ## 11. Stage confirmation flow
 
@@ -2085,6 +2560,112 @@ Monitoring capture flow must support Plant detail monitoring routes while preser
 
 *To be filled in S7/S8/S9. Must resolve the S6 Biljke dependencies for `Arhiviraj voćku`, active vs archived plant state, archive date, archive reason if used, archived plant visibility, Dnevnik/history preservation, restore/replacement behavior if applicable, whether archived plants remain visible through filtered Biljke / Dnevnik, how archived plants are excluded from future/current seasonal actions after archive date, and how historical actions before archive date remain visible.*
 
+S6 Dnevnik dependency:
+
+- Archived plant records remain visible in Dnevnik.
+- Archive must not delete or rewrite Activities or Observations.
+- Archived plants may appear in Dnevnik filters and rows with a neutral `(arhivirana)` suffix.
+
 ## 15. Monitoring / Awareness detail
 
 *To be filled in S6/S7. Must resolve the S6 Biljke dependencies for risk-awareness detail, monitoring detail, `Sezonski rizici` tap destination, `Na što obratiti pažnju` vs time-bound risk copy boundary, no treatment pipeline, and no §0 violations.*
+
+S6 Dnevnik dependency:
+
+- Dnevnik may route program-attached monitoring rows to Monitoring / Awareness detail.
+- Risk/awareness rows must not imply a treatment pipeline.
+- Monitoring / Awareness detail must preserve locked §0 and must not reinterpret free-standing observations as program evidence.
+
+## 16. Evidence capture flow
+
+Owner: S7.
+
+Evidence capture is the shared capture flow required by:
+
+- `Detalj sezonske radnje`
+- `Dnevnik ove voćke`
+- `Dnevnik` filtered by seasonal action
+- future global add entry, if added
+
+Required labels / entry points:
+
+```text
+Dodaj evidenciju
+Dodaj evidenciju za ovu voćku
+Dodaj evidenciju za ovu radnju
+```
+
+Rules:
+
+- S6 defines entry labels and route context only
+- S7 owns form fields, validation, multi-plant selection, confirmation, error states, and save behavior
+- the flow supports Activity evidence
+- the flow may route to Observation capture when the entry context is observational
+- monitoring-specific capture remains governed by `## 10. Monitoring capture flow` and locked §0
+- plant-filtered entry preselects the plant
+- seasonal-action-filtered entry preselects the seasonal action
+- event date maps to `occurred_on` for Activity and `observed_on` for Observation
+- evidence-added date maps to `recorded_at`
+- future dates must be rejected
+- Activity status supports `done` / `skipped`
+- multi-plant scope must support one real-world action covering multiple plants
+- notes are supported where the underlying record type permits them
+- wording is neutral and evidence-oriented
+- no task framing
+- no `kasniš`, `trebaš`, `moraš`, or `hitno`
+- no destructive edit/delete
+
+Retroactive event dates are legal when they describe real past events.
+
+Example:
+
+```text
+Radnja: 10.2.2026.
+Evidencija dodana: 20.2.2026.
+```
+
+This produces history under the event date and may render `evidentirano naknadno` in Dnevnik when the inline threshold is met.
+
+Outside-period activity capture must be allowed when the event really happened after the relevant period. Dnevnik may later render:
+
+```text
+nakon razdoblja
+```
+
+The capture flow must not block real orchard behavior merely because execution timing was imperfect.
+
+## 17. Record correction flow
+
+Owner: S7/S8.
+
+Records are immutable.
+
+Correction flow must not:
+
+- edit Activity or Observation records in place
+- use delete as the primary correction path
+- rewrite historical evidence destructively
+- mutate original event date, plant, seasonal action, status, note, group id, or monitoring attachment
+
+Future correction must handle:
+
+- wrong event date
+- wrong plant
+- wrong seasonal action
+- wrong status
+- wrong note
+
+Correction must preserve history by one of these owner-approved future approaches:
+
+- annotation
+- superseding correction record
+- equivalent future model approved by the owner
+
+Rules:
+
+- original Activity and Observation records remain intact
+- Dnevnik may later show correction status neutrally
+- correction must not turn free-standing observations into monitoring evidence
+- correction must not retroactively assemble or modify multi-plant groups
+- full storage model belongs to S8 or to a future owner-approved domain session if a domain amendment is needed
+- no runtime implementation now
