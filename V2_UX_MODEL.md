@@ -2554,7 +2554,359 @@ S6 Dnevnik dependency:
 
 ## 13. Plant profile management flow
 
-*To be filled in S7/S8. Must resolve the S6 Biljke dependencies for `Dodaj voćku`, `Uredi karton voćke`, plant profile fields, `nije upisano` vs `ne znam`, add/edit validation, import/export implications, initial plan generation for a new plant, stable app/orchard order source, and duplicate plant disambiguation.*
+Owner: S7.
+
+Plant profile management defines the UX flow for adding a new plant and editing the `Karton voćke` for an existing plant.
+
+This is UX flow documentation only. It does not define runtime implementation, storage mechanics, catalog pinning, id generation, migration, derived-state algorithms, plan recalculation, or regional timing logic.
+
+### 13.1 Purpose and boundary
+
+§13 owns:
+
+- `Dodaj voćku`
+- `Uredi karton voćke`
+- plant profile form UX
+- missing vs unknown UX
+- validation copy
+- save and cancel behavior
+- routing after save
+
+§13 does not own:
+
+- storage schema
+- migration
+- plan generation
+- catalog pinning
+- catalog content
+- regional timing
+- plan recalculation
+- archive or delete flow
+- import/export behavior
+
+### 13.2 Entry points
+
+`Dodaj voćku` appears as a large primary action at the top of `Biljke`.
+
+In an empty Biljke state, `Dodaj voćku` is also the primary call to action.
+
+Rules:
+
+- `Dodaj voćku` must be visible and easy to tap on iPhone.
+- It must not be hidden in Settings.
+- It must not be reduced to a tiny `+` icon.
+- It belongs to `Biljke`.
+- `Uredi karton voćke` starts from Plant detail / `Karton voćke`.
+
+### 13.3 Add plant flow
+
+Add flow steps:
+
+1. Screen title:
+
+```text
+Dodaj voćku
+```
+
+2. The first field is:
+
+```text
+Vrsta
+```
+
+3. `Vrsta` is required.
+4. Save is disabled until `Vrsta` is selected.
+5. After `Vrsta` is selected, show the relevant profile fields for that species.
+6. The user may save with only `Vrsta` selected.
+7. After save, route to the new Plant detail with `Karton voćke` visible.
+8. Success copy:
+
+```text
+Voćka spremljena.
+```
+
+Save with species only is allowed because real growers often know only what the plant is. The flow may gently invite better timing detail, but it must not block the user or turn profile entry into clerical work.
+
+### 13.4 Species / Vrsta picker
+
+`Vrsta` is a controlled picker.
+
+Rules:
+
+- Show only current supported species.
+- Use user-facing species names, not species codes.
+- Do not allow free-text species entry.
+- Do not show future or deferred species as selectable.
+- Citrus and fig are not selectable current species.
+- `Trešnja` and `Višnja` remain distinct user-facing choices.
+- Do not add regional selection, climate selection, or timing adjustment in this picker.
+
+If search or filtering is available and the user searches for an unsupported species, use neutral copy:
+
+```text
+Ta vrsta još nije podržana za sezonski plan u ovoj verziji.
+```
+
+Do not name specific deferred species in the normal picker UI.
+
+### 13.5 Variety / Sorta behavior
+
+For timing-driving species:
+
+- `Sorta` uses catalog-defined values for the selected species.
+- Do not allow free-text `Sorta`.
+- Include:
+
+```text
+ne znam
+```
+
+- If `Sorta = ne znam`, show `Vrijeme dozrijevanja`.
+
+For seasonProfile species:
+
+- If the catalog exposes user-facing-only varieties, show catalog-defined display varieties plus `ne znam`.
+- Do not show `Vrijeme dozrijevanja`.
+- If the catalog has no varieties for that species, omit the `Sorta` row.
+
+§13 must not hardcode concrete variety lists, expand variety lists, remove varieties, rename varieties, or define catalog content. The exact variety values belong to the catalog.
+
+### 13.6 Unknown variety / timing flow
+
+For a timing-driving species, if the user does not know the variety, the flow asks one beginner-readable timing question:
+
+```text
+Vrijeme dozrijevanja
+```
+
+Options:
+
+```text
+rana
+srednja
+kasna
+ne znam
+```
+
+Rules:
+
+- Show `Vrijeme dozrijevanja` only after `Sorta = ne znam`.
+- Use beginner wording.
+- Do not expose technical model language.
+- Save remains allowed even if the user does not answer `Vrijeme dozrijevanja`.
+- If the user only selects `Vrsta`, show an optional neutral hint:
+
+```text
+Ako znaš sortu ili otprilike kada dozrijeva, sezonski periodi mogu biti precizniji.
+```
+
+This hint is not a warning, not a blocker, and not a completeness nag.
+
+### 13.7 Profile fields
+
+`Podloga`:
+
+- free text
+- optional
+- `ne znam` allowed
+- profile-only
+- does not drive current plan behavior
+- no rootstock catalog in §13
+
+`Posađeno`:
+
+- date picker
+- optional
+- `ne znam` allowed
+- future dates rejected
+
+`Kupljeno`:
+
+- date picker
+- optional
+- `ne znam` allowed
+- future dates rejected
+
+`Izvor / rasadnik`:
+
+- free text
+- optional
+- `ne znam` allowed
+
+`Položaj / oznaka`:
+
+- free text
+- optional
+- `ne znam` allowed
+- disambiguation only
+- not GPS, weather location, or regional timing input
+
+`Bilješka`:
+
+- free text
+- optional
+- no `ne znam`
+
+`Korisnička oznaka / ime`:
+
+- free text
+- optional
+- no `ne znam`
+- display label only
+- not a technical id
+
+### 13.8 `nije upisano` vs `ne znam`
+
+Plant profile UX must distinguish:
+
+```text
+nije upisano
+ne znam
+```
+
+Semantics:
+
+- `nije upisano` = no value entered.
+- `ne znam` = user explicitly does not know.
+
+Rules:
+
+- Do not collapse these states.
+- Do not use alarm or warning styling for either state.
+- Do not treat either state as a profile error.
+- Do not keep nagging the user to complete fields.
+- Do not infer facts from either state.
+
+### 13.9 Date validation
+
+Future dates are rejected for:
+
+- `Posađeno`
+- `Kupljeno`
+
+Validation copy:
+
+```text
+Datum ne može biti u budućnosti.
+```
+
+§13 does not add validation between `Kupljeno` and `Posađeno`.
+
+### 13.10 Edit plant flow
+
+Edit starts from:
+
+```text
+Uredi karton voćke
+```
+
+Edit flow rules:
+
+- Reuse the Add layout with existing values prefilled.
+- The user may edit profile fields.
+- Save action copy:
+
+```text
+Spremi promjene
+```
+
+- Success copy:
+
+```text
+Promjene spremljene.
+```
+
+If the user changes `Vrsta`, `Sorta`, or `Vrijeme dozrijevanja`, show neutral inline copy:
+
+```text
+Promjena vrste, sorte ili vremena dozrijevanja može utjecati na buduće sezonske radnje za ovu voćku. Postojeći zapisi u Dnevniku ostaju nepromijenjeni.
+```
+
+Rules:
+
+- Do not block the edit solely because identity or timing fields changed.
+- Do not edit, delete, or rewrite historical Activity or Observation records.
+- Do not define plan recalculation logic in §13.
+- Do not offer a destructive regenerate action.
+- Archive and delete behavior remain outside §13.
+
+### 13.11 Regional boundary
+
+§13 does not introduce regional timing.
+
+Forbidden in §13:
+
+- `climateProfile`
+- `regionProfile`
+- `offsetDays`
+- hidden regional shifts
+- hardcoded regional formulas
+- local precision promises
+- Zagreb-only copy
+
+The species picker follows current supported catalog scope. Future regional adaptation belongs outside §13.
+
+### 13.12 S8/S9 dependency notes
+
+S8 owns:
+
+- stored plant profile shape
+- missing/unknown representation
+- import/export implications
+- migration/storage architecture
+
+S8/S9 own:
+
+- initial plan creation for a newly added plant
+
+S9 owns:
+
+- plan generation semantics
+- plan review/update semantics
+- any derived effect of changing `Vrsta`, `Sorta`, or `Vrijeme dozrijevanja`
+- overlay reconciliation
+
+§13 defines user-facing flow, labels, validation copy, and routing only. It does not define implementation.
+
+### 13.13 Forbidden §13 copy / behavior
+
+§13 must not allow:
+
+- free-text `Vrsta`
+- free-text timing-driving `Sorta`
+- adding deferred species through Add plant
+- `Obriši biljku`
+- destructive edit/delete of history
+- plan regeneration or recalculation language
+
+§13 user-facing copy must not expose:
+
+```text
+species code
+catalog version
+plan instance
+overlay
+Tier
+fallback
+Mid default
+timing band
+climateProfile
+regionProfile
+offsetDays
+```
+
+§13 user-facing copy must not use task/completeness pressure:
+
+```text
+missing information
+complete your profile
+nedostaju podaci
+dovrši profil
+moraš
+trebaš
+hitno
+kasniš
+```
 
 ## 14. Plant lifecycle / archive flow
 
