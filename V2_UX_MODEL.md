@@ -3785,36 +3785,373 @@ Do not globally change or ban existing uses of `propušteno` outside §16.
 
 ## 17. Record correction flow
 
-Owner: S7/S8.
+Owner: S7.
 
-Records are immutable.
+Record correction defines the non-destructive UX for correcting Activity and Observation records while preserving trust in Dnevnik history.
 
-Correction flow must not:
+This is UX flow documentation only. It does not define runtime implementation, storage mechanics, id generation, correction persistence, migration, import/export behavior, or derived-state algorithms.
 
-- edit Activity or Observation records in place
-- use delete as the primary correction path
-- rewrite historical evidence destructively
-- mutate original event date, plant, seasonal action, status, note, group id, or monitoring attachment
+Records are immutable. Correction is additive.
 
-Future correction must handle:
+### 17.1 Purpose and boundary
 
-- wrong event date
-- wrong plant
-- wrong seasonal action
-- wrong status
-- wrong note
+§17 owns UX documentation for:
 
-Correction must preserve history by one of these owner-approved future approaches:
+- correction entry point
+- correction UX for Activity records
+- correction UX for Observation records
+- user-facing correction labels
+- correction save/cancel behavior
+- non-destructive correction copy
+- forbidden destructive edit/delete behavior
+- dependency notes for S8/S9
 
-- annotation
-- superseding correction record
-- equivalent future model approved by the owner
+§17 does not own:
+
+- destructive delete
+- in-place record edit
+- Dnevnik row rendering algorithm
+- correction storage schema
+- derived-state recalculation
+- duplicate suppression / merge / ignore behavior
+- plant profile edits
+- plant archive correction
+- plan upgrade correction
+- stage-code correction
+- migration/import/export behavior
+
+### 17.2 Entry point
+
+Correction starts from:
+
+- record detail
+- expanded Dnevnik row detail
+
+Single entry label:
+
+```text
+Ispravi zapis
+```
 
 Rules:
 
-- original Activity and Observation records remain intact
-- Dnevnik may later show correction status neutrally
-- correction must not turn free-standing observations into monitoring evidence
-- correction must not retroactively assemble or modify multi-plant groups
-- full storage model belongs to S8 or to a future owner-approved domain session if a domain amendment is needed
-- no runtime implementation now
+- no global correction screen
+- no long-press-only entry
+- no hidden admin entry
+- no destructive edit/delete entry
+
+### 17.3 Core correction behavior
+
+Original Activity and Observation records remain visible.
+
+Correction is saved as additive correction. The original record is not edited in place, deleted, hidden, or rewritten.
+
+Use copy:
+
+```text
+Ispravak se sprema kao novi zapis. Originalni zapis ostaje vidljiv u Dnevniku.
+```
+
+Rules:
+
+- Dnevnik remains the source of history
+- §3 owns Dnevnik row rendering and correction markers
+- S8/S9 own storage and derived-state consequences
+- no hidden Dnevnik rewrite
+- no destructive delete
+
+### 17.4 Correction screen
+
+Use one correction screen for all correction types.
+
+Screen title:
+
+```text
+Ispravi zapis
+```
+
+The screen shows the original record summary at the top.
+
+Correction chips depend on record type.
+
+Always include:
+
+```text
+Bilješka ispravka — neobavezno
+```
+
+Helper:
+
+```text
+Što si točno ispravio/la i zašto?
+```
+
+Save:
+
+```text
+Spremi ispravak
+```
+
+Cancel:
+
+```text
+Odustani
+```
+
+After save:
+
+```text
+Ispravak spremljen.
+```
+
+Cancel guard:
+
+```text
+Odustati? Ispravak neće biti spremljen.
+```
+
+### 17.5 Activity correction chips
+
+For Activity records, use:
+
+```text
+Krivi datum
+Kriva voćka
+Kriva radnja
+Krivi status
+Bilješka
+```
+
+Rules:
+
+- `Krivi datum` shows corrected event date field
+- `Kriva voćka` shows single-plant picker
+- `Kriva radnja` shows corrected seasonal action/action context picker
+- `Krivi status` shows `Odrađeno / Preskočeno`
+- `Bilješka` allows correction/explanation of note
+- multi-select chips are allowed
+- no `Nešto drugo`
+
+### 17.6 Observation correction chips
+
+For generic Observation records, use:
+
+```text
+Krivi datum
+Kriva voćka
+Bilješka
+```
+
+For trap Observation records, additionally allow:
+
+```text
+Krivi broj ulova
+```
+
+For scouting Observation records, additionally allow:
+
+```text
+Krivi nalaz
+```
+
+Rules:
+
+- `Krivi broj ulova` uses the same user-facing concept as §10:
+  - `Broj ulova`
+- `Krivi nalaz` uses the same user-facing choices as §10:
+  - `Primijećeno`
+  - `Nije primijećeno`
+- no treatment advice
+- no threshold interpretation
+- no pressure/severity score
+- no `Nešto drugo`
+
+### 17.7 Date correction
+
+The corrected date field appears only when `Krivi datum` is selected.
+
+Rules:
+
+- past dates are allowed
+- future dates are rejected
+
+Future-date error:
+
+```text
+Datum ne može biti u budućnosti. Ispravak opisuje stvarni događaj koji se već dogodio.
+```
+
+### 17.8 Wrong plant / multi-plant boundary
+
+Wrong plant correction targets one immutable per-plant record.
+
+Rules:
+
+- original record remains visible
+- correction must not silently move history
+- correction must not reshape multi-plant groups
+- correction must not change `activity_group_id`
+- correction must not add/remove group members
+- grouped Dnevnik rendering remains §3 responsibility
+- S8/S9 own correction linkage/storage
+
+### 17.9 Monitoring/free-standing boundary
+
+Correction must not change monitoring attachment context.
+
+Rules:
+
+- correction must not attach free-standing observations to monitoring programs
+- correction must not detach program-context observations from programs
+- correction must not mutate `program_id`
+- no retroactive program attachment
+- if the user needs a correct program-context observation, they create a new observation via §10
+- if the user needs to explain that the original was entered wrong, they use `Ispravi zapis` with `Bilješka`
+
+### 17.10 Active-plan disclosure
+
+Show this disclosure on Activity correction screens:
+
+```text
+Ispravak može utjecati na prikaz ove sezonske radnje u aktivnom planu. Izvorni zapis ostaje sačuvan u Dnevniku.
+```
+
+Rules:
+
+- Activity correction uses the disclosure
+- note-only Observation correction does not use the disclosure
+- §17 does not define the active-plan algorithm
+- S9 owns derived-state behavior
+
+### 17.11 Duplicate boundary
+
+Current §17 does not include duplicate marking.
+
+Current §17 must not include:
+
+```text
+Označi kao duplikat
+```
+
+Current §17 also does not define:
+
+- a `(duplikat)` Dnevnik marker
+- duplicate suppression
+- duplicate merge
+- duplicate ignore behavior
+- hidden duplicate hiding
+
+Duplicate handling is a future owner-approved correction/admin flow.
+
+If a user accidentally duplicates a record now, they may add an explanatory correction note. §17 does not promise suppression, hiding, merging, or ignoring.
+
+### 17.12 Correction-of-correction boundary
+
+Current §17 does not support correcting a correction record.
+
+If a correction was wrong, the user creates another correction against the same original record.
+
+Rules:
+
+- no recursive correction trees
+- no correction-detail branching model in current §17
+
+### 17.13 Stage observation boundary
+
+Current §17 may correct date, plant, and note for stage observations if those records exist.
+
+Stage value/code correction belongs to §11 Stage confirmation or to a future owner-approved amendment.
+
+§17 does not define stage-code correction.
+
+### 17.14 Delete boundary
+
+Destructive delete is forbidden.
+
+Do not allow or use:
+
+```text
+Obriši zapis
+Izbriši zapis
+Trajno obriši
+Ukloni iz povijesti
+Ukloni iz Dnevnika
+```
+
+Correction must never delete:
+
+- Activity records
+- Observation records
+- original evidence
+- Dnevnik history
+
+### 17.15 Relationship to other sections
+
+Concise boundaries:
+
+- §16 = creates Activity evidence
+- §10 = creates Observation evidence
+- §13 = edits Plant profile, not records
+- §14 = archives Plant, not records
+- §3 = Dnevnik/history rendering
+- §11 = Stage confirmation; stage-code correction not defined in §17
+- §9 = Plan upgrade review
+- S8/S9 = correction storage and derived-state effects
+
+### 17.16 S8/S9 dependency notes
+
+Dependency notes for S8/S9 or later:
+
+- correction storage shape is S8/S9
+- correction linkage to original is S8/S9
+- Dnevnik correction marker rendering is §3/S8/S9
+- derived active-plan effects are S9
+- duplicate semantics are future owner-approved correction/admin flow
+- import/export/migration impact is S8/S9
+
+### 17.17 Forbidden §17 copy / behavior
+
+§17 must not introduce:
+
+- destructive delete
+- in-place edit
+- hidden rewrite
+- duplicate marker in current §17
+- `Nešto drugo`
+- `Drugo`
+- program attachment mutation
+- free-standing → program conversion
+- group reshaping
+- correction-of-correction
+- active-plan algorithm promises
+- technical schema copy
+- treatment advice
+
+Forbidden examples:
+
+```text
+Obriši zapis
+Izbriši zapis
+Trajno obriši
+Ukloni iz povijesti
+Ukloni iz Dnevnika
+Uredi zapis
+Prepiši zapis
+Označi kao duplikat
+duplikat
+Nešto drugo
+Drugo
+Poveži s programom praćenja
+Premjesti u program praćenja
+Promijeni program praćenja
+Regeneriraj plan
+Plan se ponovno generira
+program_id
+activity_group_id
+record entity
+supersede / superseding (forbidden in user-facing copy; internal dependency notes may use non-user-facing terminology if needed)
+mutate
+void
+override
+v1
+```
