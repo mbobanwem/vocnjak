@@ -16,32 +16,40 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: S6 core UX surfaces written in `V2_UX_MODEL.md`; S7 UX flow definition next.
+Phase: S7 UX flow definition is active in `V2_UX_MODEL.md`.
 
 Current goal:
 
-Move from S6 core surface definition into S7 interactive/capture flow definition while preserving the owner-approved S6 UX surfaces and S5 catalog/template closure.
+Continue S7 interactive/capture flow definition while preserving the owner-approved S6 UX surfaces and completed S7 UX flow definitions.
 
 Current immediate next step:
 
-Define S7 UX flows, with recommended first target:
-
 ```text
-V2_UX_MODEL.md ## 16. Evidence capture flow
+V2_UX_MODEL.md ## 9. Plan upgrade review flow
 ```
+
+Completed S7 flows:
+- `## 16. Evidence capture flow`
+- `## 13. Plant profile management flow`
+- `## 10. Monitoring capture flow`
+- `## 14. Plant lifecycle / archive flow`
+- `## 17. Record correction flow`
+
+Remaining S7 flow targets after §9:
+- `## 15. Monitoring / Awareness detail`
+- `## 11. Stage confirmation flow`
+- `## 12. "Za pregledati" resolution flow`
 
 S6 status:
 
 S6 core UX surfaces are written / materially complete in `V2_UX_MODEL.md`.
 
 Completed S6 core surfaces:
-- Pregled
-- Kalendar
-- Dnevnik
-- Biljke
-- Detalj sezonske radnje
-
-S6 also seeded S7 flow contracts / placeholders in `V2_UX_MODEL.md` for plan upgrade review, monitoring capture, stage confirmation, "Za pregledati" resolution, plant profile management, plant lifecycle/archive, monitoring/awareness detail, evidence capture, and record correction.
+- `## 1. Pregled (home)`
+- `## 2. Kalendar`
+- `## 3. Dnevnik`
+- `## 4. Biljke`
+- `## 5. Detalj sezonske radnje`
 
 No implementation starts yet. No domain, schema, or runtime work starts yet.
 

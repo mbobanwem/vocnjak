@@ -59,10 +59,12 @@ Rules:
 - not binding until sign-off
 
 Current:
-- S6 core UX surfaces are now written in `V2_UX_MODEL.md`
-- `V2_UX_MODEL.md` remains the active S6/S7 target
+- S6 core UX surfaces are written in `V2_UX_MODEL.md`
+- S7 UX flow definition is active in `V2_UX_MODEL.md`
+- completed S7 flows: §16 Evidence capture, §13 Plant profile management, §10 Monitoring capture, §14 Plant lifecycle/archive, §17 Record correction
+- next S7 target: §9 Plan upgrade review flow
+- remaining S7 targets after §9: §15 Monitoring / Awareness detail, §11 Stage confirmation, §12 "Za pregledati" resolution
 - §0 monitoring constraints remain locked and authoritative
-- S7 owns interactive/capture flows next
 - implementation before S11 remains forbidden
 
 ### INPUT FILES (NOT YET VALIDATED V2 TRUTH)
