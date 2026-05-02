@@ -3240,13 +3240,299 @@ kasniš
 
 ## 14. Plant lifecycle / archive flow
 
-*To be filled in S7/S8/S9. Must resolve the S6 Biljke dependencies for `Arhiviraj voćku`, active vs archived plant state, archive date, archive reason if used, archived plant visibility, Dnevnik/history preservation, restore/replacement behavior if applicable, whether archived plants remain visible through filtered Biljke / Dnevnik, how archived plants are excluded from future/current seasonal actions after archive date, and how historical actions before archive date remain visible.*
+S7 Plant lifecycle / archive flow defines the non-destructive UX for removing a plant from the active orchard while preserving its history.
 
-S6 Dnevnik dependency:
+Archive means:
 
-- Archived plant records remain visible in Dnevnik.
-- Archive must not delete or rewrite Activities or Observations.
-- Archived plants may appear in Dnevnik filters and rows with a neutral `(arhivirana)` suffix.
+```text
+the plant is no longer in the active orchard
+```
+
+Archive is not delete.
+
+### 14.1 Purpose and boundary
+
+§14 owns UX documentation for:
+
+- archive entry point
+- archive confirmation UX
+- archive date UX
+- optional archive reason/note UX
+- post-archive UX
+- non-destructive archive copy
+- replacement pointer, if shown
+- dependency notes for S8/S9
+
+§14 does not own:
+
+- destructive delete
+- restore / unarchive in current patch
+- record correction
+- Dnevnik row rendering
+- plan generation
+- plan recalculation
+- active-scope derivation algorithm
+- storage schema
+- migration/import/export
+- replacement plant linking
+- catalog/template behavior
+
+### 14.2 Entry point
+
+Archive starts from Plant detail / `Karton voćke`.
+
+Primary user-facing action:
+
+```text
+Arhiviraj voćku
+```
+
+Place the action lower on Plant detail in a lifecycle section.
+
+Recommended lifecycle section label:
+
+```text
+Životni vijek voćke
+```
+
+Rules:
+
+- do not show `Arhiviraj voćku` on Biljke list rows
+- do not hide archive in Settings
+- do not use long-press as the entry
+- do not use destructive or danger-style language
+- do not present archive as delete
+
+### 14.3 Archive confirmation screen
+
+Screen title:
+
+```text
+Arhiviraj voćku
+```
+
+Confirmation body:
+
+```text
+Ovo je za voćku koja više nije u aktivnom voćnjaku.
+Povijest i Dnevnik ostaju sačuvani.
+Buduće sezonske radnje i praćenje za ovu voćku više se neće prikazivati u aktivnom planu.
+```
+
+Rules:
+
+- use one confirmation screen
+- do not use a double modal
+- save button is explicit
+- cancel is available
+- no destructive delete copy
+- no plan regeneration copy
+
+Primary action:
+
+```text
+Arhiviraj voćku
+```
+
+Secondary action:
+
+```text
+Odustani
+```
+
+After save, show:
+
+```text
+Voćka arhivirana.
+```
+
+### 14.4 Archive date
+
+Use:
+
+```text
+Datum arhiviranja
+```
+
+Rules:
+
+- date is visible
+- date defaults to today
+- date is editable
+- past dates are allowed
+- future dates are rejected
+- date describes the real date when the plant left the active orchard
+
+Future-date validation copy:
+
+```text
+Datum ne može biti u budućnosti. Arhiviranje opisuje stvarni događaj.
+```
+
+S8/S9 own storage and active-scope derivation.
+
+### 14.5 Reason / note
+
+Archive reason is optional.
+
+Use chips:
+
+```text
+Osušila se
+Izvađena
+Zamijenjena
+```
+
+Do not include:
+
+```text
+Drugo
+```
+
+Use optional note:
+
+```text
+Bilješka — neobavezno
+```
+
+Notes cover all other cases.
+
+### 14.6 Post-archive state
+
+After save:
+
+- user stays on Plant detail in archived state
+- archived state uses neutral copy
+- history remains visible
+- `Dnevnik ove voćke` remains accessible
+- archived plant does not appear as an active work target
+- future seasonal actions and monitoring no longer show in the active plan for this plant
+- §14 does not define the active-scope algorithm
+
+Dnevnik rendering remains governed by §3:
+
+- archived plant records remain visible in Dnevnik
+- archive must not delete or rewrite Activities or Observations
+- archived plants may appear in Dnevnik filters and rows with a neutral `(arhivirana)` suffix
+
+### 14.7 Replacement pointer
+
+If the user archived because a new plant was planted, archived Plant detail may show neutral pointer copy:
+
+```text
+Ako je posađena nova voćka, dodaj je kao novu voćku.
+```
+
+CTA:
+
+```text
+Dodaj novu voćku
+```
+
+Rules:
+
+- routes to §13 Add plant flow
+- no prefilled fields
+- no auto-copy of position/label
+- no old/new identity link
+- no history merge
+- replacement linking is out of current §14
+
+### 14.8 Restore / mistaken archive boundary
+
+Current §14 does not include:
+
+```text
+Vrati u aktivne
+```
+
+Rules:
+
+- no restore flow in current §14
+- no unarchive flow in current §14
+- if archive was a mistake, correction/admin recovery is a future owner-approved flow
+- §17 is adjacent for correction principles, but §14 does not define mistaken archive correction
+- do not imply destructive deletion; archive remains non-destructive
+
+### 14.9 Delete boundary
+
+Destructive delete is forbidden.
+
+Do not allow or use:
+
+```text
+Obriši voćku
+Izbriši voćku
+Ukloni iz povijesti
+Trajno ukloni
+Obriši sve zapise
+```
+
+Archive must never delete:
+
+- Plant identity/history
+- Activity records
+- Observation records
+- Dnevnik records
+
+### 14.10 Relationship to other sections
+
+Concise boundaries:
+
+- §13 = add/edit plant profile
+- §16 = Activity evidence capture
+- §10 = Monitoring capture
+- §17 = correction principles, but not archive restore in current §14
+- §3 = Dnevnik/history rendering
+- S8/S9 = storage, active-scope derivation, future plan behavior
+
+### 14.11 S8/S9 dependency notes
+
+Dependency notes for S8/S9 or later:
+
+- archive state storage is S8/S9
+- archive date storage is S8/S9
+- archive reason/note storage is S8/S9
+- active vs archived scope derivation is S9
+- exclusion from future/current active plan surfaces after archive date is S9
+- migration/import/export impact is S8/S9
+- future restore/admin recovery semantics are future owner-approved flow
+- replacement linking, if ever added, is future owner-approved flow
+
+### 14.12 Forbidden §14 copy / behavior
+
+§14 must not introduce:
+
+- destructive delete
+- restore/unarchive in current §14
+- plan regeneration / recalculation language
+- archive as task/compliance action
+- coverage/progress metrics
+- technical schema copy
+- automatic replacement linking
+- automatic field copy to new plant
+- Dnevnik row-format redefinition
+
+Forbidden examples:
+
+```text
+Obriši voćku
+Izbriši voćku
+Ukloni iz povijesti
+Trajno ukloni
+Obriši sve zapise
+Regeneriraj plan
+Plan se ponovno generira
+Vrati u aktivne (forbidden in current §14 only; future owner-approved restore/admin recovery flow may define this later)
+restore / unarchive (forbidden in current §14 only; future owner-approved restore/admin recovery flow may define this later)
+archived_at
+active scope
+entity state
+plan instance
+overlay
+coverage
+progress
+```
 
 ## 15. Monitoring / Awareness detail
 
