@@ -2526,23 +2526,353 @@ S6 Dnevnik dependency:
 
 ## 10. Monitoring capture flow
 
-*To be filled in S7. Subject to §0 hard constraints. MUST include out-of-season disclosure per §0.2.*
+S7 Monitoring capture flow defines how the user records:
 
-S6 Biljke dependency:
+```text
+Što sam vidio / provjerio?
+```
 
-Monitoring capture flow must support Plant detail monitoring routes while preserving locked §0:
+This is distinct from §16 Activity evidence capture, which records:
 
-- no time-since-last nudges
-- no cadence compliance
-- no "start checking" prompts
-- no alarm styling for absence
-- free-standing observations remain Dnevnik/history records, not monitoring-card evidence
+```text
+Što sam napravio?
+```
 
-S6 Dnevnik dependency:
+§10 is the capture surface. §15 Monitoring / Awareness detail is the read/detail surface.
 
-- Program-attached and free-standing observations must remain distinct at capture.
-- Free-standing observations render in Dnevnik under `Opažanja`, not as monitoring evidence.
-- The capture flow must preserve locked §0 and the free-standing invariant.
+§10 must obey locked §0 Monitoring UX constraints.
+
+### 10.1 Purpose and boundary
+
+§10 owns UX documentation for:
+
+- program-context monitoring capture
+- free-standing observation capture from Plant detail
+- observation date UX
+- method-specific capture UX
+- save/cancel behavior
+- neutral out-of-season handling by reference to locked §0.2
+- post-save UX
+
+§10 does not own:
+
+- Activity capture
+- stage confirmation
+- record correction
+- Monitoring / Awareness detail content
+- treatment recommendations
+- diagnosis
+- thresholds
+- weather blocking
+- reminders, nudges, or compliance behavior
+- media/photo storage
+- schema/runtime implementation
+
+Cancel behavior:
+
+- cancel/close exits capture without saving
+- no observation or monitoring record is created on cancel
+
+### 10.2 Entry points
+
+Program-context capture may be entered from existing monitoring surfaces:
+
+- Pregled monitoring card
+- Kalendar monitoring item
+- Plant detail monitoring section
+- §15 Monitoring / Awareness detail when §15 is defined
+
+Free-standing observation capture is entered from Plant detail / `Karton voćke`:
+
+```text
+Dodaj opažanje
+```
+
+Do not add in the first §10 patch:
+
+- global Home/Pregled `Dodaj opažanje`
+- global Dnevnik entry
+- `Dnevnik ove voćke` entry
+
+### 10.3 Program-context capture
+
+Program-context capture is attached to a known monitoring program/context.
+
+UX rules:
+
+- program label/context is preselected
+- plant is preselected where known
+- plant must be selected or confirmed when program context covers multiple plants
+- method context is shown read-only where known
+- observation date defaults to today
+- observation date is editable
+- future dates are rejected
+- notes are optional
+
+Primary save copy:
+
+```text
+Spremi zapis
+```
+
+After save, show only:
+
+```text
+Zapis spremljen.
+```
+
+### 10.4 Free-standing observation capture
+
+Free-standing observation capture is available from Plant detail / `Karton voćke`.
+
+Title:
+
+```text
+Dodaj opažanje
+```
+
+UX rules:
+
+- plant is preselected from Plant detail
+- the record is not attached to a monitoring program
+- the user records a notable plant observation, not a daily "nothing unusual" habit
+
+User-facing helper:
+
+```text
+Slobodno opažanje. Neće biti vezano uz program praćenja.
+```
+
+Use these capture choices:
+
+```text
+Vidim simptom / promjenu
+Bilješka
+```
+
+Do not use:
+
+- `Drugo`
+- free-standing `Ne vidim ništa neuobičajeno` in current §10
+
+Primary save copy:
+
+```text
+Spremi opažanje
+```
+
+After save, show only:
+
+```text
+Opažanje spremljeno.
+```
+
+### 10.5 Trap check UX
+
+When the program method is trap-based, the UI must be fast and touch-friendly.
+
+The capture UI offers two obvious quick paths:
+
+```text
+Bez ulova
+Broj ulova
+```
+
+Rules:
+
+- if there is no catch, the user taps `Bez ulova`
+- if catch exists, the user enters the count in `Broj ulova`
+- save remains disabled until one of these paths is set
+- the user does not need to understand form payloads or hidden structure
+
+Helper copy:
+
+```text
+Broj ulova spremamo u povijest. Aplikacija ga ne tumači.
+```
+
+Trap capture must not include:
+
+- threshold interpretation
+- treatment recommendation
+- pressure score
+- severity score
+
+### 10.6 Visual scouting UX
+
+For visual scouting, use:
+
+```text
+Primijećeno
+Nije primijećeno
+```
+
+Helper copy:
+
+```text
+Bilježi samo ono što si vidio/la — ne procjenu stanja voćke.
+```
+
+Rules:
+
+- save remains disabled until one option is selected
+- notes are optional
+- `Nije primijećeno` means only that the user did not notice the target during this check
+- `Nije primijećeno` must not imply that the plant is safe, clean, resolved, or problem-free
+
+### 10.7 Date behavior
+
+Observation date behavior:
+
+- observation date is visible
+- observation date defaults to today
+- observation date is editable
+- past dates are allowed
+- future dates are rejected
+- recorded date is system-managed
+
+Future-date error copy:
+
+```text
+Datum ne može biti u budućnosti. Opažanje opisuje stvarno opaženo stanje.
+```
+
+### 10.8 Out-of-season behavior
+
+Out-of-season program-context capture is allowed.
+
+UX rules:
+
+- save remains enabled
+- do not use late, wrong, or blocking language
+- show the locked disclosure defined in `V2_UX_MODEL.md §0.2`
+- do not duplicate, paraphrase, or translate the §0.2 disclosure copy inside §10
+
+Storage behavior is governed by `V2_DOMAIN_MODEL.md §1.7.3 L5b`.
+
+§10 cites that rule; it does not redefine it.
+
+### 10.9 Multi-plant monitoring boundary
+
+Current §10 does not support multi-plant monitoring capture.
+
+One monitoring observation means:
+
+```text
+one plant + one program/context
+```
+
+Current §10 must not include:
+
+- bulk capture
+- copy/duplicate same observation to another plant
+- coverage language
+- progress language
+- checklist language
+
+Future multi-plant monitoring requires a future owner-approved UX session. It is not merely an S8/S9 implementation detail.
+
+### 10.10 Treatment-advice boundary
+
+§10 contains no treatment advice.
+
+§10 must not include:
+
+- spray recommendation
+- product advice
+- diagnosis
+- threshold interpretation
+- routing to seasonal action detail
+
+After save, show only one of:
+
+```text
+Zapis spremljen.
+Opažanje spremljeno.
+```
+
+When §15 is defined, it must resolve post-capture read/detail behavior and program-note access without treatment recommendations.
+
+§15 must resolve:
+
+- how the user reads program context after saving an observation
+- how existing program notes are surfaced
+- how the app helps the user understand monitoring evidence without recommending treatment
+- how to avoid a detect → treat pipeline
+- whether any neutral route from §10 to §15 exists
+- how `what now?` is handled without becoming advice
+
+### 10.11 Relationship to other sections
+
+Concise boundaries:
+
+- §16 = Activity evidence capture
+- §15 = Monitoring / Awareness read/detail surface
+- §11 = Stage confirmation
+- §17 = Record correction
+- Dnevnik row rendering belongs to §3
+- locked monitoring constraints belong to §0
+
+Stage confirmation belongs to §11. §10 must not define stage fields.
+
+### 10.12 S8/S9 / future dependency notes
+
+Dependency notes for S8/S9 or later:
+
+- observation persistence shape
+- payload per method
+- program/cycle write resolution, governed by domain and implemented later
+- overlap prompt mechanics
+- symptom registry/target resolution
+
+Future topic outside current §10:
+
+- photos/media as a future AI/media/storage topic
+- multi-plant monitoring as a future owner-approved UX session
+
+### 10.13 Forbidden §10 copy / behavior
+
+§10 must not introduce:
+
+- task/compliance language
+- reminders or nudges
+- time-since-last phrasing
+- overdue/missed monitoring
+- "check now" prompts
+- coverage/progress metrics
+- treatment recommendations
+- spray/product advice
+- severity/pressure scores
+- "safe/clean/problem solved" wording
+- `Drugo`
+- photos/media field
+- global observation FAB
+- multi-plant monitoring capture
+- destructive edit/delete
+
+Forbidden examples:
+
+```text
+zadatak
+provjeri sada
+vrijeme za provjeru
+nisi provjerio
+monitoring nije odrađen
+kasniš
+overdue
+coverage
+engagement
+pregledao 8/10
+treba prskati
+preporučeno tretiranje
+tretiraj sada
+što da prskam
+sigurno
+čisto
+bez problema
+OK
+all clear
+```
 
 ## 11. Stage confirmation flow
 
