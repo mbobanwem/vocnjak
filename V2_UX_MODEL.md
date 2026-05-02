@@ -2580,14 +2580,45 @@ S6 Dnevnik dependency:
 
 Owner: S7.
 
-Evidence capture is the shared capture flow required by:
+Evidence capture defines the S7 UX flow for recording Activity evidence.
+
+This is UX flow documentation only. It does not define runtime implementation, storage mechanics, id generation, schema, or derived-state algorithms.
+
+Evidence capture is required by:
 
 - `Detalj sezonske radnje`
 - `Dnevnik ove voćke`
 - `Dnevnik` filtered by seasonal action
 - future global add entry, if added
 
-Required labels / entry points:
+### 16.1 Scope and boundaries
+
+§16 owns Activity evidence capture:
+
+- form fields
+- validation copy
+- multi-plant selection UX
+- save-review surface
+- neutral outside-period disclosure
+- post-save UX
+
+§16 may route to adjacent flows when the entry context is not Activity evidence, but it must not absorb them:
+
+- monitoring-specific capture remains governed by `## 10. Monitoring capture flow` and locked §0
+- stage confirmation remains governed by `## 11. Stage confirmation flow`
+- correction remains governed by `## 17. Record correction flow`
+- observational contexts may route to the appropriate Observation capture flow
+
+§16 must not:
+
+- define monitoring capture fields or monitoring cadence behavior
+- define stage confirmation behavior
+- define record correction behavior
+- define Dnevnik row format or marker semantics
+- define storage, schema, id generation, or write mechanics
+- introduce task-list framing
+
+### 16.2 Entry labels
 
 ```text
 Dodaj evidenciju
@@ -2595,44 +2626,194 @@ Dodaj evidenciju za ovu voćku
 Dodaj evidenciju za ovu radnju
 ```
 
+### 16.3 Entry contexts
+
+From Seasonal action detail:
+
+- the seasonal action is preselected
+- all relevant plants are shown
+- all relevant plants are preselected by default
+- selected scope is visible before save
+- the user can quickly deselect plants that were not part of the real-world action
+
+From plant context / `Dnevnik ove voćke` / `Dodaj evidenciju za ovu voćku`:
+
+- the plant is preselected
+- the flow makes no broad multi-plant assumption
+- multi-plant selector may be hidden or reduced to the selected plant
+- broader plant scope may appear only if the user explicitly expands scope
+
+From action-filtered Dnevnik / `Dodaj evidenciju za ovu radnju`:
+
+- the seasonal action is preselected
+- relevant plants are shown
+- plant scope must be reviewed before save
+
+### 16.4 Plant selector
+
+The plant selector must be optimized for one-handed, outdoor use:
+
+- large tappable rows or cards
+- whole row/card selectable
+- clear selected and unselected visual state
+- no tiny checkbox UI
+- no dense desktop table
+- selected count remains visible through the save action
+
+Helper copy:
+
+```text
+Označi voćke za koje želiš spremiti evidenciju.
+```
+
+Save button includes selected count:
+
+```text
+Spremi evidenciju za 3 voćke
+```
+
+If zero plants are selected:
+
+- save is disabled
+- show:
+
+```text
+Odaberi barem jednu voćku.
+```
+
+### 16.5 Fields and labels
+
+Use:
+
+```text
+Dodaj evidenciju
+Datum radnje
+Odrađeno
+Preskočeno
+Bilješka (neobavezno)
+Odustani
+Evidencija spremljena.
+```
+
+Status behavior:
+
+- default status is `Odrađeno`
+- alternative status is `Preskočeno`
+- `Preskočeno` is the only skipped Activity status copy in this flow
+- `Propušteno` must not be offered as a user-selectable Activity evidence status in §16 because it can sound like blame/guilt while the user is recording evidence
+- this restriction does not change existing domain/display concepts or existing uses of `propušteno` outside §16
+
+### 16.6 Date behavior
+
+`Datum radnje` is always visible.
+
 Rules:
 
-- S6 defines entry labels and route context only
-- S7 owns form fields, validation, multi-plant selection, confirmation, error states, and save behavior
-- the flow supports Activity evidence
-- the flow may route to Observation capture when the entry context is observational
-- monitoring-specific capture remains governed by `## 10. Monitoring capture flow` and locked §0
-- plant-filtered entry preselects the plant
-- seasonal-action-filtered entry preselects the seasonal action
-- event date maps to `occurred_on` for Activity and `observed_on` for Observation
-- evidence-added date maps to `recorded_at`
-- future dates must be rejected
-- Activity status supports `done` / `skipped`
-- multi-plant scope must support one real-world action covering multiple plants
-- notes are supported where the underlying record type permits them
-- wording is neutral and evidence-oriented
-- no task framing
-- no `kasniš`, `trebaš`, `moraš`, or `hitno`
-- no destructive edit/delete
-
-Retroactive event dates are legal when they describe real past events.
-
-Example:
+- default is today
+- directly editable
+- past dates are allowed
+- future dates are rejected
+- `recorded_at` is the system date and is not user-editable
+- show helper copy only when the event date differs from today:
 
 ```text
-Radnja: 10.2.2026.
-Evidencija dodana: 20.2.2026.
+Evidencija se dodaje danas.
 ```
 
-This produces history under the event date and may render `evidentirano naknadno` in Dnevnik when the inline threshold is met.
-
-Outside-period activity capture must be allowed when the event really happened after the relevant period. Dnevnik may later render:
+Future-date error:
 
 ```text
-nakon razdoblja
+Datum ne može biti u budućnosti. Evidencija opisuje stvarnu radnju koja se već dogodila.
 ```
 
-The capture flow must not block real orchard behavior merely because execution timing was imperfect.
+Retroactive event dates are legal when they describe real past events. Dnevnik renders date honesty per §3.
+
+### 16.7 Outside-period capture
+
+Capture outside the relevant period is allowed when it describes real orchard work.
+
+Rules:
+
+- save remains enabled
+- use neutral disclosure only
+- no guilt copy
+- no late-task language
+- §16 does not define Dnevnik markers
+- Dnevnik renders per §3
+- after-period capture may later render `nakon razdoblja` per §3 when existing marker rules apply
+- pre-open capture must not invent a new Dnevnik marker
+
+Disclosure after period:
+
+```text
+Ova radnja je bila aktualna do <date>. Evidencija će se spremiti u Dnevnik pod stvarnim datumom radnje.
+```
+
+Disclosure before period:
+
+```text
+Ova radnja postaje aktualna <date>. Evidencija će se spremiti u Dnevnik pod stvarnim datumom radnje.
+```
+
+### 16.8 Save behavior
+
+No extra confirmation step is required for normal cases.
+
+The capture screen itself is the review surface. Before save, the screen must make these visible:
+
+- selected plant count
+- selected plants or current plant scope
+- `Datum radnje`
+- status
+- outside-period disclosure, when applicable
+
+Save behavior:
+
+- save creates evidence only for selected plants
+- unselected plants get no record
+- after save, return to the entry surface or relevant detail surface
+- show:
+
+```text
+Evidencija spremljena.
+```
+
+Dnevnik display follows §3 row, group, and marker rules.
+
+### 16.9 Multi-plant grouping dependency
+
+One multi-plant capture represents one real-world pass.
+
+Selected plants are shown as one grouped event in Dnevnik where §3 grouping rules apply.
+
+Domain grouping semantics are governed by `V2_DOMAIN_MODEL.md §0.11`.
+
+Storage, id generation, atomic write behavior, persistence, and derived-state implementation are S8/S9 concerns and are not defined here.
+
+### 16.10 Forbidden §16 capture copy
+
+Do not use as §16 capture/status/validation copy:
+
+```text
+Odgođeno
+Kasni
+Kasniš
+zadatak
+trebaš
+moraš
+hitno
+overdue
+zakasnio
+Ne možeš više evidentirati
+```
+
+Also do not use as a user-selectable Activity evidence status in §16:
+
+```text
+Propušteno
+```
+
+Do not globally change or ban existing uses of `propušteno` outside §16.
 
 ## 17. Record correction flow
 
