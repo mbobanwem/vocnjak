@@ -3866,13 +3866,404 @@ progress
 
 ## 15. Monitoring / Awareness detail
 
-*To be filled in S6/S7. Must resolve the S6 Biljke dependencies for risk-awareness detail, monitoring detail, `Sezonski rizici` tap destination, `Na što obratiti pažnju` vs time-bound risk copy boundary, no treatment pipeline, and no §0 violations.*
+Owner: S7.
 
-S6 Dnevnik dependency:
+Monitoring / Awareness detail defines how the grower reads monitoring and awareness context after seeing a monitoring card, risk row, or related plant-context surface.
 
-- Dnevnik may route program-attached monitoring rows to Monitoring / Awareness detail.
-- Risk/awareness rows must not imply a treatment pipeline.
-- Monitoring / Awareness detail must preserve locked §0 and must not reinterpret free-standing observations as program evidence.
+This is a read/detail surface. It is not a capture form, diagnosis engine, treatment recommender, threshold engine, compliance tracker, "check now" system, or detect-to-treat pipeline.
+
+§15 must obey locked §0 Monitoring UX constraints.
+
+### 15.1 Purpose and boundary
+
+§15 owns UX documentation for:
+
+- monitoring program detail
+- awareness / risk detail
+- content slots for reading context
+- factual monitoring-record display for program-attached observations
+- neutral routes to §10 capture
+- safe next-step copy that preserves user agency without recommending treatment
+- Dnevnik and plan-update boundaries
+
+§15 does not own:
+
+- §10 monitoring/free-standing observation capture form fields
+- §10 validation, save behavior, out-of-season disclosure, or storage behavior
+- Activity evidence capture
+- Dnevnik row rendering
+- record correction
+- diagnosis
+- treatment recommendation
+- threshold interpretation
+- trap/scouting pressure or severity scoring
+- weather gating
+- runtime implementation
+- storage schema
+- catalog/content authoring
+- source/citation UI
+- plan diff or catalog-version explanation
+
+Safe next-step rule:
+
+- §15 may tell the user to record what they see.
+- §15 may tell the user the record remains part of history.
+- §15 may tell the user to consult a poljoapoteka, agronomist, or qualified expert when unsure.
+- This is allowed safe guidance and is not a treatment recommendation.
+
+§15 must not:
+
+- confirm diagnosis
+- say the plant definitely has a disease or pest
+- recommend a product
+- recommend dosage
+- recommend spraying now
+- interpret trap count thresholds
+- infer severity or pressure
+- route directly to seasonal action detail as treatment advice
+
+### 15.2 Variant model
+
+Monitoring / Awareness detail has two configurations of one read/detail surface:
+
+1. Monitoring program detail
+2. Awareness / risk detail
+
+Both variants are plant-context detail surfaces. Both use authored content slots. Neither variant authors agronomic content in §15.
+
+### 15.3 Variant A — Monitoring program detail
+
+Purpose:
+
+- read/detail surface for one declared monitoring program in plant context
+- explain the program context
+- show factual attached monitoring records
+- route to §10 monitoring capture
+- give a safe next step without interpreting records
+
+Entry points:
+
+- Pregled monitoring card
+- Kalendar monitoring item
+- Plant detail monitoring section
+- future §15-compatible route from Monitoring / Awareness surfaces if defined
+
+Dnevnik boundary:
+
+- Dnevnik monitoring rows are not primary §15 entry points in current §15.
+- A Dnevnik row opens record detail / expanded row first.
+- A record detail may later expose a secondary link:
+
+```text
+Otvori program praćenja
+```
+
+- §15 must not redefine Dnevnik row behavior.
+
+Screen sections:
+
+```text
+<program label>
+<plant identity>
+
+Što je ovo
+Kada je važno
+Kako se prati
+Zabilježeni zapisi
+<safe next-step note>
+Dodaj zapis o praćenju
+Otvori dnevnik ove voćke
+```
+
+Record display:
+
+- Show only program-attached observations for this program/context.
+- Show up to 5 recent factual records.
+- Records may show factual date, method result, and note when present.
+- Trap examples may show `Bez ulova` or `Broj ulova: 3`.
+- Scouting examples may show `Primijećeno` or `Nije primijećeno`.
+- Do not show free-standing observations.
+- Do not infer related observations.
+- Do not show trends.
+- Do not interpret thresholds.
+- Do not infer pressure or severity.
+- Do not recommend treatment.
+- Do not show compliance, progress, or cadence completion.
+
+No-records state:
+
+```text
+Bez zapisa.
+```
+
+Rules:
+
+- Use only inside Variant A `Zabilježeni zapisi`.
+- Use neutral styling only.
+- Do not pair with a prompt to start logging.
+- Do not use `još nema zapisa`.
+
+CTA:
+
+```text
+Dodaj zapis o praćenju
+```
+
+CTA rules:
+
+- In `active` state, the CTA may be primary.
+- In `pre_season`, `ended`, or out-of-season context, the CTA may appear as a quiet secondary action.
+- No check-now framing.
+- No out-of-season nudging.
+- Do not block real capture.
+- §10 owns out-of-season disclosure and capture storage behavior.
+- §15 must not duplicate §10 form fields or disclosure copy.
+
+Safe next-step copy:
+
+```text
+Broj ulova i zapisi praćenja spremaju se kao povijest. Aplikacija ih ne tumači kao prag za tretiranje.
+Ako nisi siguran/na što zapis znači, pokaži zapis u poljoapoteci ili stručnoj osobi.
+```
+
+Rules:
+
+- This copy may be shown when records exist, especially trap/scouting evidence.
+- It may also be shown as a generic footer note if useful.
+- It must not become threshold advice.
+- It must not recommend treatment.
+
+### 15.4 Variant B — Awareness / risk detail
+
+Purpose:
+
+- read/detail surface for awareness-only content or seasonal risk
+- explain what to watch for
+- not behave like a monitoring program
+- not show records in current §15
+- give a safe next step if the grower sees described symptoms or concerning signs
+
+Entry points:
+
+- `§4.9 Sezonski rizici` rows route to Variant B.
+- `§4.8 Na što obratiti pažnju` stable-awareness routing is supported by §15 only when a route exists.
+- Current §15 patch does not activate §4.8 tappable routing.
+- If §4.8 becomes tappable later, it may use Variant B.
+
+Screen sections:
+
+```text
+<awareness/risk label>
+<plant identity>
+
+Što je ovo
+Kada je važno
+Na što obratiti pažnju
+<safe next-step note>
+Zabilježi što vidiš
+Otvori dnevnik ove voćke
+```
+
+CTA:
+
+```text
+Zabilježi što vidiš
+```
+
+CTA rules:
+
+- Routes to existing §10 free-standing observation capture (`Dodaj opažanje`).
+- Plant context is preselected.
+- Observation remains free-standing.
+- No attach-to-program behavior.
+- No diagnosis confirmation.
+- No treatment route.
+- No seasonal-action detail route as advice.
+
+Records:
+
+- Variant B does not show related observations in current §15.
+- Do not automatically match free-standing observations to risks.
+- Do not infer a relationship between an observation and a disease/risk.
+- Do not show program observations inside awareness detail.
+- Full history access is via:
+
+```text
+Otvori dnevnik ove voćke
+```
+
+Safe next-step copy:
+
+```text
+Ako vidiš ovakve simptome, zabilježi što vidiš i provjeri s poljoapotekom ili stručnom osobom.
+Aplikacija ne potvrđuje dijagnozu i ne odabire tretiranje.
+```
+
+Rules:
+
+- This is allowed safe guidance.
+- It must not say the plant definitely has the disease/pest.
+- It must not recommend a product or spraying.
+- It must not route directly to Seasonal action detail as treatment advice.
+
+### 15.5 Content slots
+
+§15 declares content slots only.
+
+Content authoring is outside §15.
+
+Slots:
+
+```text
+Što je ovo
+Kada je važno
+Kako se prati
+Na što obratiti pažnju
+```
+
+Slot rules:
+
+- Use beginner-readable Croatian.
+- Use authored catalog/template/content source only.
+- Do not create a final agronomic or citation database in §15.
+- Do not invent AI-authored diagnosis.
+- Do not include treatment recommendations.
+- Do not interpret thresholds.
+- Content/source ownership belongs to catalog/content/S8/S9/future owner responsibility.
+
+Variant slot use:
+
+- Variant A uses `Što je ovo`, `Kada je važno`, and `Kako se prati`.
+- Variant B uses `Što je ovo`, `Kada je važno`, and `Na što obratiti pažnju`.
+- Exact content text is not defined in §15.
+
+### 15.6 Relationship to §9
+
+§9 owns plan-change review.
+
+§15 displays current monitoring/awareness context after changes are applied.
+
+§15 must not explain:
+
+- what changed in a plan update
+- why a plan update exists
+- old vs new plan diff
+- catalog version changes
+
+### 15.7 Relationship to §10
+
+§10 is capture.
+
+§15 is read/detail.
+
+§15 may route to §10, but must not duplicate:
+
+- §10 form fields
+- §10 validation
+- §10 out-of-season disclosure
+- §10 save behavior
+- §10 storage behavior
+
+Out-of-season program-context capture remains governed by §10 and locked §0.2. §15 may show a quiet route to capture, but it must not restate or paraphrase the capture-time disclosure.
+
+### 15.8 Relationship to Dnevnik
+
+Dnevnik remains the chronological history surface.
+
+Rules:
+
+- Variant A may show a short factual preview of program-attached monitoring observations.
+- Variant A links to `Otvori dnevnik ove voćke` for full plant history.
+- Variant B does not show records in current §15.
+- Variant B links to `Otvori dnevnik ove voćke` for full plant history.
+- Free-standing observations remain in Dnevnik / plant history.
+- Free-standing observations must not appear inside monitoring program records.
+- Program observations must not appear inside awareness detail.
+- §15 must not create attach, move, relink, or reinterpret behavior.
+
+### 15.9 S8/S9 and future dependency notes
+
+Dependency notes for S8/S9 or later:
+
+- stored query shape for program-attached observation previews
+- resolving current monitoring/awareness context after plan changes are applied
+- content/source storage and retrieval for §15 slots
+- whether stable-awareness §4.8 rows become tappable
+- future record-detail secondary link to `Otvori program praćenja`
+
+These dependencies must not be implemented or specified in §15.
+
+### 15.10 Forbidden §15 copy / behavior
+
+Do not use as §15 UI copy:
+
+```text
+trebaš provjeriti
+provjeri sada
+vrijeme za provjeru
+nisi provjerio
+nisi pratio
+monitoring nije odrađen
+kasniš s provjerom
+prošlo je X dana od zadnje provjere
+zadnji put si provjerio prije X dana
+još nema zapisa
+razmotri unos
+preporučeno tretiranje
+preporučeno prskanje
+treba prskati
+prskaj sada
+tretiraj sada
+prag je dosegnut
+pritisak bolesti
+visoka opasnost
+severity
+pressure
+score
+detect → treat
+ovo znači da
+ovo upućuje na
+vjerojatno imaš
+sigurno je
+čisto je
+problem je riješen
+sve je u redu
+all clear
+OK
+0/4 provjera
+1/4 provjera
+pokriveno X%
+engagement
+coverage
+compliance
+poveži s programom
+premjesti u program
+program_id
+catalog_version
+window_def_id
+overlay
+plan instance
+```
+
+§15 must not introduce:
+
+- free-standing observation inside monitoring program records
+- program observations inside awareness detail
+- attach-to-program
+- diagnosis confirmation
+- treatment routing
+- product or dose recommendation
+- "spray now" recommendation
+- threshold interpretation
+- pressure or severity scoring
+- compliance or progress metrics
+- time-since-last logic
+- exact agronomic content authoring
+- photo/media features
+- weather gating
+- runtime decisions
+- storage decisions
+- schema decisions
 
 ## 16. Evidence capture flow
 
