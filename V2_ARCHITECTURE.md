@@ -404,6 +404,127 @@ S8.B will cover the implementation-readiness closure for storage, including:
 - S8/S9/S10 handoff table
 - S8 closure checklist
 
+### 1.20 Write-time invariants
+
+S8 write paths validate durable facts and references at the moment they are written. They do not store derived state.
+
+| Area | S8 write-time invariant | Source / owner | Must fail if |
+|---|---|---|---|
+| Catalog retention | Every referenced catalog version remains present in the retained catalog version store. | `V2_DOMAIN_MODEL.md` §0.9.5 / S8 | A Plant, Plan instance, Plan overlay, Activity, Observation, Correction, or review state references a catalog version that is not retained. |
+| Plant identity | `plant_id` is unique and stable. | `V2_DOMAIN_MODEL.md` §0.1 / S8 | A write duplicates `plant_id` or mutates identity used by existing history. |
+| Plant missing vs unknown | Missing values and explicit `ne znam` remain distinct. | `V2_UX_MODEL.md` §13 / S8 | A write collapses missing and unknown or treats either as an error. |
+| Plan instance | Plan instance references one existing Plant and retained catalog/template context. | `V2_DOMAIN_MODEL.md` §0.1 / S8 | The Plant, catalog version, or template reference is missing. |
+| Plan overlay | Overlay references a plan instance plus retained window/action context. | `V2_DOMAIN_MODEL.md` §0.7, §7 / S8 | The plan instance is missing or the window/action reference has no retained resolution context. |
+| Activity | Activity has Plant, date, status, action context, and catalog/version reference. | `V2_DOMAIN_MODEL.md` §0.6 / S8 | A required field is missing, status is outside `done`/`skipped`, the Plant is missing, the catalog version is missing, or the event date is invalid. |
+| Activity group | Multi-plant Activity group writes are atomic per capture batch. | `V2_DOMAIN_MODEL.md` §0.11 / S8 | Only part of a grouped write validates or group invariants fail. |
+| Observation | Observation has Plant, observed date, kind, payload, and catalog/version reference. | `V2_DOMAIN_MODEL.md` §0.6a, §3 / S8 | A required field is missing, kind is invalid, payload does not match kind, the Plant is missing, the catalog version is missing, or the observed date is invalid. |
+| Monitoring observation | `program_id`, when present, is valid at write time and immutable after write. | `V2_DOMAIN_MODEL.md` §1.7 / S8 | Program context is invalid for the record or a later write tries to mutate `program_id`. |
+| Free-standing observation | Free-standing Observation stores `program_id = null`. | `V2_DOMAIN_MODEL.md` §1.7.4 / S8 | A write or import tries to attach, infer, or relink it to a monitoring program. |
+| Stage observation | Stage Observation has stage reference or mapped MVP label with retained catalog/version context. | `V2_DOMAIN_MODEL.md` §3.2.3, `V2_UX_MODEL.md` §11 / S8 | Stage reference cannot be resolved or mapped as a history-preserving stage observation. |
+| Correction | Correction references one original Activity or Observation. | `V2_UX_MODEL.md` §17 / S8 | Original record is missing, target is a correction, or write would edit/delete the original. |
+| Archive | Archive state never deletes Plant or history records. | `V2_UX_MODEL.md` §14 / S8 | Archive write removes Plant, Activity, Observation, Correction, catalog, or plan history. |
+| Review state | Review state stores user interaction only and does not persist `available` as truth. | `V2_UX_MODEL.md` §9 / S8/S9 | Write treats `available` as authoritative stored state instead of an S9-derived comparison result. |
+| Za pregledati cue state | Persisted cue state, if any, is user interaction only. | `V2_UX_MODEL.md` §12 / S8/S9 | Cue state stores urgency, compliance, task completion, generated truth, or auto-resolution. |
+
+### 1.21 Backup / export shape
+
+A full V2 export is a full-state snapshot containing, at high level:
+
+- `meta`
+- retained catalogs needed by references
+- plants
+- plan instances
+- overlays
+- activities
+- observations
+- corrections
+- review state
+
+Export rules:
+
+- Export preserves immutable history.
+- Export includes every retained catalog version referenced by records.
+- Export does not export derived caches as authority.
+- Export does not rewrite historical Activity, Observation, or Correction records.
+- Export does not drop archived Plants.
+- Export does not drop free-standing Observations.
+- S8 does not define a final JSON schema or runtime code for export.
+
+### 1.22 Import validation shape
+
+Import validation checks a complete V2 export candidate before any replace/accept action.
+
+Validation boundary:
+
+- import validates the full shape before replace/accept
+- fail closed on validation errors
+- no partial import in S8
+- no merge import in S8
+- no auto-fix of missing required references
+- no free-standing Observation relinking
+- no catalog-version substitution
+- no duplicate suppression
+- no destructive history cleanup
+- no tolerant import unless explicitly approved in a future session
+
+Exact restore mechanics belong to S10 / implementation if opened. S8 defines the validation boundary only.
+
+### 1.23 Fail-closed validation rules
+
+Fail closed means invalid data is rejected rather than repaired, inferred, or partially accepted.
+
+Validation must fail when:
+
+- retained catalog version is missing
+- record references a missing Plant
+- Correction references a missing original Activity or Observation
+- Observation payload is invalid for its `kind`
+- Activity group is partially present or violates group invariants
+- archive state would imply deletion
+- import tries to attach a free-standing Observation to a monitoring program
+- import tries to mutate immutable record identity
+
+No auto-repair, auto-merge, relinking, substitution, or cleanup is defined in S8.
+
+### 1.24 S8 / S9 / S10 handoff
+
+| Topic | S8 owns | S9 owns | S10 / later owns |
+|---|---|---|---|
+| Catalog version retention | Retained catalog version store and reference invariant. | Historical resolution inputs for rendering and comparison. | Preservation during migration/restore, if opened. |
+| Plan instance storage | Pinned plan/catalog/template references. | Derived plan state and calendar projection. | Legacy plan migration, if opened. |
+| Overlay storage | User overlay facts and retained references. | Overlay reconciliation and rendering after catalog changes. | Legacy overlay migration, if opened. |
+| Activity storage | Immutable Activity records and group ids. | Evidence matching and derived window state. | Legacy Activity migration/import preservation, if opened. |
+| Observation storage | Immutable Observation records, payloads, and `program_id` boundary. | Monitoring state, stage effects, and Observation-derived rendering. | Legacy/import Observation preservation, if opened. |
+| Correction storage | Additive Correction records linked to originals. | Derived effects of corrections and Dnevnik correction rendering. | Correction migration/import preservation, if opened. |
+| Archive storage | Plant archive status/date/reason/note. | Active/future exclusion and archived-scope rendering. | Restore/admin recovery or migration mechanics, if later approved. |
+| Review state storage | User review interaction state only. | Availability trigger, diff content, and apply effects. | Import/migration preservation, if opened. |
+| Cue state storage | Optional user interaction state only. | Cue generation, ordering, disappearance, and derived visibility. | Import/migration preservation, if opened. |
+| Dnevnik history support | Durable references for historical query and resolution. | Row rendering, markers, grouping display, and filters. | Legacy history migration and restore mechanics, if opened. |
+| Import/export validation | Full-state snapshot contents and fail-closed validation boundary. | Derived caches are ignored as authority. | Exact restore, replace, backup UX, and migration mechanics. |
+| Migration mechanics | No mechanics; S8 only defines storage/validation boundary. | No migration ownership. | V1/V2 or later migration design, if opened. |
+| Derived plan state | Stores no derived plan state. | Active/upcoming/done/missed and plan projection. | Ensuring migrated data can feed S9, if opened. |
+| Plan upgrade diff | Stores current/candidate references and user review state. | Plan comparison, buckets, trigger logic, and application effects. | Migration/import preservation of review context, if opened. |
+| Overlay reconciliation | Stores overlays without destructive overwrite. | Reconciliation rules and display of unresolved overlays. | Migration preservation of overlay inputs, if opened. |
+| Evidence matching | Stores Activity and Observation facts. | Matching evidence to occurrences and derived plan effects. | Preservation of evidence identity during migration/import, if opened. |
+| Cue generation | Stores optional user cue interaction state. | Cue generation, ordering, and disappearance. | Migration/import handling for cue interaction state, if opened. |
+| Monitoring state | Stores Observation facts and program references. | Program state derivation and monitoring display inputs. | Import/migration preservation of FS-INV and program references, if opened. |
+| Stage-derived behavior | Stores `stage_obs` Observation records. | Any plan effects or display changes from stage Observations. | Preservation of stage records during migration/import, if opened. |
+
+### 1.25 S8 closure checklist
+
+S8 is complete when:
+
+- core storage entities are documented
+- write-time invariants are documented
+- export/import validation boundary is documented
+- S8/S9/S10 ownership is separated
+- no S9 algorithms are defined
+- no runtime implementation is defined
+- no domain model edits were required
+- no destructive data behavior was introduced
+
+After S8, next phase is S9 derived-state / algorithm planning, unless owner chooses a short S8 tracker sync first.
+
 ## 2. Upgrade diff engine
 
 *To be filled in S9.*
