@@ -201,7 +201,31 @@ Top-to-bottom order:
 4. `Za provjeru: nema evidencije`
 5. `Uskoro`
 6. `Praćenje`
-7. quiet state when no meaningful content exists beyond the status sentence
+7. plan-change review signal, only when one or more active plants have available plan changes
+8. quiet state when no meaningful content exists beyond the status sentence
+
+Plan-change review signal:
+
+```text
+Promjene plana za pregled
+Za 2 voćke postoje promjene plana.
+Pregledaj prije primjene.
+```
+
+Singular variant:
+
+```text
+Za 1 voćku postoje promjene plana.
+```
+
+Rules:
+
+- appears after `Praćenje`, before quiet state
+- calm informational card/section only
+- routes to Biljke filtered to affected plants
+- does not apply changes from Pregled
+- in-app only; no external notification
+- no urgency, alarm, task, progress, or compliance styling
 
 ### 1.4 Sada aktualno
 
@@ -1575,6 +1599,7 @@ Each row may show:
 - line 1: display label if available; otherwise species + variety
 - line 2: optional short disambiguator when useful, such as position/rootstock
 - optional one light seasonal cue
+- optional small neutral plan-change marker when that plant has available plan changes
 
 Allowed row example:
 
@@ -1585,6 +1610,22 @@ Aktualno: Postavljanje mreže protiv ptica
 ```
 
 If this is too much for a compact row, exact visual grouping, truncation, and component behavior are later design decisions. S6 defines the allowed content and forbidden content.
+
+Plan-change row marker:
+
+```text
+Promjene plana
+```
+
+Rules:
+
+- only when that plant has available plan changes
+- row still opens Plant detail
+- marker is discovery only
+- marker must not replace plant identity
+- marker must not make Biljke a task list
+- marker must not use alarm, progress, task, or compliance framing
+- marker does not replace the locked Plant detail §4.13 signal
 
 Rows must not show:
 
@@ -2505,24 +2546,313 @@ Detalj sezonske radnje must not:
 
 ## 9. Plan upgrade review flow
 
-*To be filled in S7.*
+Owner: S7.
 
-S6 Biljke dependency:
+Plan upgrade review defines the UX flow for reviewing available plan changes before the user applies them to one plant.
 
-Plan upgrade review must resolve the Plant detail signal:
+This is UX flow documentation only. It does not define runtime implementation, storage mechanics, id generation, trigger logic, plan comparison engine, template reconciliation, user adjustment reconciliation, import/export behavior, migration, or derived-state algorithms.
+
+### 9.1 Purpose and boundary
+
+§9 owns UX documentation for:
+
+- plan-change discovery labels
+- per-plant review entry
+- review screen shape
+- history-preservation copy
+- change bucket labels
+- apply and postpone behavior
+- forbidden silent or destructive behavior
+- dependency notes for S8/S9
+
+§9 does not own:
+
+- trigger logic for when changes become available
+- plan comparison engine
+- storage shape
+- persistence for postponed review state
+- template reconciliation mechanics
+- user adjustment reconciliation mechanics
+- derived active-plan state
+- Dnevnik row rendering
+- import/export behavior
+- migration behavior
+- runtime implementation
+
+Current §9 is per-plant only.
+
+Current §9 does not include:
+
+- orchard-wide or batch application
+- external notifications
+- permanent hide/ignore action
+- undo-after-apply flow
+- source, citation, or technical identifier UI
+- exact technical before/after comparison
+
+### 9.2 Entry model
+
+Plant detail remains the direct per-plant review entry.
+
+Keep the locked §4.13 Plant detail signal copy verbatim:
 
 ```text
 Ažuriranje plana dostupno
 Pregledaj promjene prije primjene.
 ```
 
-The future flow must define review-before-apply behavior for a plant, preserve overlays/history, avoid silent updates, and avoid any destructive "regenerate plan" action.
+Home/Pregled may show a calm aggregate discovery signal when one or more active plants have available plan changes:
+
+```text
+Promjene plana za pregled
+Za 2 voćke postoje promjene plana.
+Pregledaj prije primjene.
+```
+
+Singular variant:
+
+```text
+Za 1 voćku postoje promjene plana.
+```
+
+Home/Pregled signal rules:
+
+- discovery only
+- routes to Biljke filtered to affected plants
+- does not apply changes
+- does not include an orchard-wide apply action
+- in-app only; no external notification
+- no urgency, alarm, task, progress, or compliance styling
+
+Biljke rows may show a small neutral marker for affected plants:
+
+```text
+Promjene plana
+```
+
+Biljke marker rules:
+
+- discovery only
+- row still opens Plant detail
+- does not replace plant identity
+- does not replace the locked Plant detail §4.13 signal
+- no alarm, progress, task, or compliance framing
+
+### 9.3 Review screen
+
+Screen title:
+
+```text
+Pregled promjena plana
+```
+
+The screen is scoped to one plant.
+
+The screen shows:
+
+- plant identity
+- the available change summary
+- history-preservation block
+- non-empty change buckets
+- primary apply action
+- secondary postpone action
+
+Review screen rules:
+
+- one plant is reviewed at a time
+- applying requires explicit user tap
+- no silent apply
+- no second confirmation modal
+- no orchard-wide or batch action
+- no source, citation, or technical identifier UI
+- no exact technical before/after comparison in current §9
+- no treatment advice
+- no weather-based blocking or rescheduling
+- S9 owns generated review content
+
+### 9.4 History preservation
+
+Use this block on the review screen:
+
+```text
+Što ostaje sačuvano
+Dnevnik se ne mijenja.
+Postojeće evidencije, opažanja, bilješke i ispravci za ovu voćku ostaju vidljivi.
+Promjene utječu samo na budući prikaz plana za ovu voćku.
+```
+
+Rules:
+
+- history remains visible
+- existing Activity evidence remains unchanged
+- existing Observation evidence remains unchanged
+- existing notes remain unchanged
+- existing corrections remain unchanged
+- past Dnevnik rows are not rewritten
+- current §9 does not define Dnevnik correction or marker rendering
+
+### 9.5 Change buckets
+
+Use these bucket labels:
+
+```text
+Buduće sezonske radnje
+Praćenje
+Pojašnjenja radnji
+```
+
+Rules:
+
+- render a bucket only when non-empty
+- bucket content is a beginner-readable summary
+- bucket content must explain what kind of visible plan content changes
+- no exact technical before/after comparison in current §9
+- no schema or technical identifiers
+- no source, citation, or technical identifier UI
+- no treatment advice
+- S9 owns bucket content generation
+
+Bucket intent:
+
+- `Buduće sezonske radnje` = future seasonal action timing, labels, visibility, or practical wording may change
+- `Praćenje` = monitoring or awareness plan text/period/context may change
+- `Pojašnjenja radnji` = explanatory text for existing plan items may become clearer
+
+### 9.6 Apply / postpone behavior
+
+Primary action:
+
+```text
+Primijeni promjene plana
+```
+
+Secondary action:
+
+```text
+Ostavi postojeći plan za sada
+```
+
+After apply:
+
+```text
+Promjene plana primijenjene.
+```
+
+Apply rules:
+
+- user must explicitly tap the primary action
+- apply affects only the reviewed plant
+- no second confirmation modal
+- after apply, return to Plant detail or the entry surface with neutral success copy
+- current §9 does not define an undo-after-apply flow
+
+Postpone rules:
+
+- postpone applies nothing
+- postpone returns to the entry surface
+- signal may remain visible after postpone
+- no escalation or nagging after postpone
+- no permanent hide/ignore action in current §9
+- exact postponed-state persistence is S8/S9
+
+### 9.7 Monitoring update boundary
+
+If a plan change includes monitoring or awareness content, §9 may summarize it only inside:
+
+```text
+Praćenje
+```
+
+Rules:
+
+- obey locked §0 Monitoring UX constraints
+- no monitoring compliance language
+- no cadence pressure
+- no absence-as-failure wording
+- no treatment recommendation
+- no threshold interpretation
+- no detect-to-treat framing
+- no route that implies treatment after observation
+- do not define §15 Monitoring / Awareness detail
+- do not define monitoring capture fields
+
+§9 may say that monitoring plan text, period, or context changed. It must not tell the user to check immediately or imply they failed to monitor.
+
+### 9.8 No silent update / no destructive regenerate
+
+Rules:
+
+- no plan changes are applied without explicit user action
+- no plan content is replaced without review
+- no destructive plan rebuilding action
+- no reset-style action
+- no automatic weather-triggered plan change
+- no weather-based blocking, hiding, rescheduling, or reordering
+- no AI-authored explanation or recommendation
+- existing Dnevnik history remains preserved
+
+### 9.9 Relationship to other sections
 
 S6 Dnevnik dependency:
 
 - Dnevnik seasonal-action filters and historical labels depend on stable historical catalog/version resolution.
 - Plan upgrade review must not rewrite historical Dnevnik rows.
 - Historical Activity and Observation rows must remain understandable after catalog labels, timing, or explanatory text evolve.
+
+Concise boundaries:
+
+- §1 = Home/Pregled aggregate discovery signal
+- §4 = Plant detail direct entry and Biljke row marker
+- §3 = Dnevnik/history rendering
+- §10 = Monitoring capture
+- §13 = Plant profile edits that may later make review available
+- §14 = Plant archive flow
+- §15 = Monitoring / Awareness detail
+- §16 = Activity evidence capture
+- §17 = Record correction
+- S8/S9 = storage, comparison, reconciliation, and derived-state effects
+
+### 9.10 S8/S9 dependency notes
+
+Dependency notes for S8/S9:
+
+- availability trigger logic
+- plan comparison engine
+- storage shape for review/apply state
+- exact persistence for postponed review state
+- template reconciliation
+- user plan adjustment reconciliation
+- generated bucket summaries
+- Dnevnik historical-label resolution
+- derived active-plan effects after apply
+- import/export impact
+- migration impact
+
+§9 defines user-facing flow, labels, and boundaries only.
+
+### 9.11 Forbidden §9 copy / behavior
+
+§9 must not introduce:
+
+- pressure or urgency copy for applying plan changes
+- copy implying the old plan is invalid
+- copy implying changes already happened before explicit apply
+- automatic apply behavior
+- orchard-wide or batch application
+- external notifications
+- permanent hide/ignore action
+- undo-after-apply flow in current §9
+- destructive plan rebuilding
+- reset-style plan actions
+- exact technical before/after comparison
+- technical schema identifiers
+- source, citation, or technical identifier UI
+- treatment recommendation
+- monitoring compliance language
+- monitoring absence judgment
+- weather-triggered update logic
+- weather blocking or rescheduling
+- AI-authored explanation or recommendation
 
 ## 10. Monitoring capture flow
 
