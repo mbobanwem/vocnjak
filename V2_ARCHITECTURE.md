@@ -535,11 +535,485 @@ After S8, next phase is S9 derived-state / algorithm planning, unless owner choo
 
 ## 4. Active-window snapshot algorithm
 
-*To be filled in S9.*
+### 4.1 Purpose
+
+The active-window snapshot is the deterministic S9 read model for current V2 plan display.
+
+It reads persisted facts from S8 and projects current display state for:
+
+- Pregled
+- Kalendar
+- Biljke
+- Plant detail
+- Detalj sezonske radnje
+- monitoring surfaces
+- `Za pregledati` review cues
+
+The snapshot answers what is currently open, upcoming, closing, missed, evidenced, skipped, archived out of active scope, or relevant for calm review. It does not write those states back to storage.
+
+### 4.2 Non-goals
+
+S9.A does not define:
+
+- runtime implementation
+- storage or schema changes
+- upgrade diff engine
+- overlay reconciliation details
+- migration mechanics
+- plan generation as a product feature
+- treatment, diagnosis, product, or dose recommendation
+- weather gating
+- regional, climate, or numeric timing offsets
+- AI/photo recognition
+- task, compliance, coverage, pressure, or urgency systems
+
+### 4.3 Snapshot inputs
+
+The snapshot reads persisted facts and stable references only.
+
+Input categories:
+
+- current date / evaluation date
+- active Plants and archived Plants
+- retained catalog versions
+- Plan instances and pinned catalog context
+- Plan overlays, as stored facts
+- Activity records
+- Observation records
+- Correction records
+- archive state
+- review state / postponed state
+- cue interaction state, if persisted
+- weather advisory input only for §5 composition
+
+Rules:
+
+- Derived caches have zero authority.
+- Same persisted facts, same retained catalog context, and same evaluation date produce the same snapshot.
+- Activity and Observation group ids are display/query identity only; they are not derivation authority.
+- The snapshot does not infer orchard reality from missing records.
+
+### 4.4 Snapshot outputs
+
+The snapshot outputs display categories, not stored objects.
+
+Output categories:
+
+- projected windows / occurrences per plant
+- window state
+- gate state
+- plant aggregate state
+- orchard aggregate state
+- monitoring program state
+- stage-related gate satisfaction where applicable
+- review cue candidates
+- references needed by surfaces to open §5, §9, §10, §11, §12, §15, §16, and §17 routes
+- weather advisory annotations from §5, if present
+
+Rules:
+
+- Outputs are read-time projections.
+- Outputs do not rewrite Activity, Observation, Correction, Plant, Plan instance, Plan overlay, review state, or catalog records.
+- Outputs may be cached by a later implementation only as a performance detail with zero authority.
+
+### 4.5 Window occurrence projection
+
+Window occurrences are projected per Plant, pinned Plan instance, retained catalog version, and action-window identity.
+
+Projection boundary:
+
+- The catalog/plan context provides the action-window definitions.
+- The Plant and Plan instance define which pinned catalog context applies.
+- The action-window identity remains catalog-backed, including `window_def_id`, catalog version, and cycle context.
+- Calendar-anchored windows project from calendar anchor and tolerance.
+- Phenology-anchored windows project only when the required `stage_obs` evidence exists for that Plant and catalog context.
+- Plan overlays may modify projection inputs only as stored S8 facts; S9.A does not define overlay reconciliation across catalog versions.
+- Archive filtering affects active/future projection, not historical query or Dnevnik history.
+
+Rules:
+
+- Occurrences are derived and never stored.
+- No automatic plan generation is defined here.
+- No calendar dates are shifted by Activity execution, weather, monitoring cadence, or cue state.
+- If required catalog stage vocabulary or stage mapping is missing, S9.A must stop for owner decision rather than inventing a mapping.
+
+### 4.6 Window state derivation
+
+Window state is derived from the projected occurrence and effective Activity evidence.
+
+S9.A follows the locked domain vocabulary. Where a surface needs a "not yet open" concept, it maps to the domain `upcoming` state.
+
+| Derived state | Boundary |
+|---|---|
+| `upcoming` / not yet open | Evaluation date is before the effective open date, or a phenology occurrence is not yet produced because the required stage has not been observed. |
+| `open` | Evaluation date is inside the effective window and no matching `done` or `skipped` evidence exists. |
+| `closing-soon` | Display refinement of `open` near the effective close date, using the locked threshold. It is not an alarm. |
+| `missed` | The relevant window has closed and no matching `done` or `skipped` evidence exists. |
+| `done` | Matching Activity evidence with `status = done` exists inside the relevant window. |
+| `done_late` | Matching Activity evidence with `status = done` exists after the relevant window closes, per domain matching rules. |
+| `skipped` | Matching Activity evidence with `status = skipped` exists. |
+
+Rules:
+
+- `done`, `done_late`, and `skipped` require matching Activity evidence or an effective correction result.
+- `missed` is derived only after the relevant window closes with no matching `done` or `skipped` evidence.
+- `closing-soon` is display emphasis only, not pressure, blame, or task urgency.
+- Window state is never stored.
+- Window state is not derived from missing monitoring evidence.
+- Activity group id never marks unselected plants as evidenced.
+
+### 4.7 Gate state derivation
+
+Gate state is a separate axis from window state.
+
+S9.A does not create a new gate enum. It uses the locked gate-state values:
+
+```text
+čeka
+otvoreno
+propušteno
+ne primjenjuje se
+```
+
+Derivation boundary:
+
+- `open_condition` is the only structural gate mechanism.
+- Supported `open_condition` kinds remain the locked domain kinds: prior Activity evidence or Observation evidence limited to `stage_obs` / `symptom`.
+- Calendar and phenology anchors affect occurrence projection; they are not a separate stored gate system.
+- Terminal fallback may derive `propušteno` for display when the window becomes terminal and the gate was never satisfied.
+
+Rules:
+
+- Gate state never changes `effective_open` or `effective_close`.
+- Missing gate evidence does not block Activity capture, Observation capture, Stage confirmation, or Correction flows.
+- Gate state is not stored.
+- Weather, trap counts, scouting counts, cadence, missing observations, and cue state are not gate inputs.
+- Terminal fallback affects display only and must not rewrite history.
+
+### 4.8 Activity evidence matching
+
+Activity evidence matching connects immutable Activity records to projected window occurrences for derived display.
+
+Matching boundary:
+
+- Match by Plant identity and action/window context, including `window_def_id` where applicable.
+- Apply the locked per-occurrence date/window semantics from the domain model.
+- Use Activity `status` to derive `done`, `done_late`, or `skipped`.
+- Correction records may affect the effective match result without rewriting the original Activity.
+
+Rules:
+
+- `activity_group_id` is not consulted for derivation.
+- Multi-plant capture creates multiple per-plant Activity records.
+- Unmatched Activities remain visible in Dnevnik/history and are not deleted.
+- No Activity silently propagates to another Plant.
+- Duplicate suppression, merge, or hidden ignore behavior is not defined.
+
+Example:
+
+```text
+Copper spray on Plant A and Plant B in one group does not mark Plant C or Plant D as done.
+```
+
+### 4.9 Correction effects
+
+Corrections are additive inputs to derived display.
+
+Rules:
+
+- Original Activity and Observation records remain immutable.
+- Correction records may affect active-plan derived display when the correction changes an effective date, Plant, action/window context, status, note, or Observation value relevant to the current projection.
+- Dnevnik/history remains original record plus correction record.
+- No destructive rewrite, hidden edit, or deletion occurs.
+- No correction-of-correction model is defined in current architecture.
+- If a correction was wrong, a later correction may reference the same original record.
+- Duplicate suppression, merge, hiding, or ignore behavior is not defined.
+- S9.A defines the read-model boundary only; final row rendering belongs to Dnevnik/S9 implementation planning later.
+
+### 4.10 Archive active-scope filtering
+
+Archive state is stored in S8 and consumed by S9.
+
+Derived active-scope rule:
+
+- From the archive date forward, archived Plants are excluded from active/future plan surfaces.
+- Archived Plants do not contribute to current/future Pregled, Kalendar, Biljke active list, Plant active seasonal context, monitoring active context, or active orchard aggregates.
+- Historical records remain visible through Dnevnik/history and archived Plant routes.
+
+Rules:
+
+- Archive is not delete.
+- Archive does not rewrite Activity, Observation, Correction, catalog, Plan instance, or Plan overlay history.
+- Archived Plants may still resolve historical labels through retained catalog versions.
+- No restore/unarchive logic is defined in S9.A.
+
+### 4.11 Stage observation effects
+
+Stage observations are optional Observation records with `kind = stage_obs`.
+
+Derived boundary:
+
+- A valid `stage_obs` may satisfy phenology-related occurrence projection or an `open_condition` that explicitly references stage Observation evidence.
+- Stage evidence is consumed only from the recorded Observation and retained catalog context.
+- Missing stage evidence does not create a warning.
+- Missing stage evidence does not prove the stage did not happen.
+
+Rules:
+
+- No stage confirmation is forced.
+- No missing-stage cue is generated solely because a stage has not been recorded.
+- No plan shifting promise is made.
+- No stage is inferred from weather, calendar, temperature, Activity records, or visual media.
+- No BBCH model, AI/photo recognition, diagnosis, or treatment recommendation is introduced.
+- If stage vocabulary or MVP-label mapping is insufficient for a needed projection, stop for owner decision rather than inventing a mapping.
+
+### 4.12 Monitoring program state projection
+
+Monitoring program state is a derived read model per Plant, program, and cycle context.
+
+Closed state set:
+
+```text
+pre_season
+active
+ended
+```
+
+Rules:
+
+- State derives from program season dates / cycle context only.
+- Observation count does not affect program state.
+- Observation absence does not produce warning, failure, missed, stale, overdue, or incomplete state.
+- Cadence is display-only and never produces a state.
+- Program-attached Observations may appear as factual history/preview where UX allows.
+- Free-standing Observations are never program evidence.
+- Monitoring state is orthogonal to window state and gate state.
+
+### 4.13 Free-standing observation boundary
+
+Free-standing Observations remain permanently disjoint from monitoring programs.
+
+Rules:
+
+- `program_id = null` remains the durable boundary.
+- Free-standing Observations may appear in Dnevnik/history and Plant history.
+- Free-standing Observations never satisfy monitoring evidence.
+- Free-standing Observations are not auto-related to awareness/risk detail.
+- Free-standing Observations are not retroactively attached, relinked, moved, or counted into program context.
+- Payload similarity, date proximity, target match, or later catalog changes do not change this boundary.
+
+### 4.14 Za pregledati cue projection
+
+`Za pregledati` cue projection produces calm review candidates from the snapshot and existing S7 routes.
+
+Allowed cue families:
+
+- seasonal action review
+- monitoring review
+- awareness/risk review
+- stage/phenology review
+- plan upgrade review
+- existing observation/record review
+
+Rules:
+
+- Cues are not tasks.
+- Cues do not carry urgency, blame, pressure, compliance, coverage, score, or progress meaning.
+- No cue is generated from monitoring absence alone.
+- No cue is generated from cadence compliance or time since last monitoring Observation.
+- Cue ordering must be minimal and stable, not a priority/urgency system.
+- Cue disappearance is derived from downstream state changes and any persisted S8 interaction state; S9.A does not create automatic hidden clearing.
+- Postpone / leave-for-later behavior follows S8 stored interaction state and S9 rule boundaries.
+- If a new cue type is needed beyond §12 families, stop and ask the owner.
+
+Cue projection may reference:
+
+- terminal seasonal action state where §1/§12 allow calm review of missing evidence
+- active monitoring or awareness context where §12 routes to §15 or §10 without compliance language
+- optional stage/phenology review only when an existing §12 route is valid and not framed as missing or required
+- plan upgrade review availability only as S9.B-derived input when available later
+- existing records that may route to Dnevnik/detail/correction surfaces
+
+### 4.15 Plan / orchard aggregate projection
+
+Aggregates summarize derived state for orchard surfaces.
+
+Plant aggregate state may support:
+
+- Plant detail current seasonal context
+- Biljke row seasonal cue
+- Biljke plan-change marker when S9.B supplies review availability
+
+Orchard aggregate state may support:
+
+- Pregled status sentence
+- `Sada aktualno`
+- `Za provjeru: nema evidencije`
+- `Uskoro`
+- `Praćenje`
+- Calendar month/category summaries
+
+Rules:
+
+- Aggregates are summaries, not scores.
+- Do not compute or display percentages, progress metrics, compliance metrics, engagement metrics, or monitoring coverage.
+- Archived Plants are excluded from active aggregates from archive date forward.
+- Historical query and Dnevnik remain preserved for archived Plants.
+- Aggregation must not merge cards by visible label alone when catalog identity, dates, status, purpose, or user-facing meaning differ.
+
+### 4.16 Determinism and history preservation
+
+Determinism contract:
+
+```text
+same persisted facts
++ same retained catalog context
++ same evaluation date
+= same snapshot
+```
+
+Rules:
+
+- No derived output rewrites persisted records.
+- Dnevnik/history remains the durable source of truth for what happened.
+- The snapshot can be recomputed at read time.
+- Derived caches have zero authority.
+- Historical records resolve through their retained catalog/version context, not through the newest catalog labels alone.
+- Weather advisory annotations do not affect deterministic plan state.
+
+### 4.17 S9.A must-not-do checklist
+
+S9.A must not define:
+
+- runtime implementation
+- storage or schema changes
+- migration mechanics
+- upgrade diff or overlay reconciliation details
+- treatment, diagnosis, product, or dose recommendation
+- pressure, severity, threshold, confidence, or risk scoring
+- weather gating
+- regional, climate, or numeric offsets
+- task manager behavior
+- compliance, coverage, cadence, or engagement systems
+- AI/photo recognition
+- destructive history behavior
+- automatic plan generation as a product feature
+- duplicate suppression or merge behavior
+
+### 4.18 Handoff to S9.B
+
+S9.B owns the catalog-change layer:
+
+- upgrade availability trigger
+- current vs candidate plan comparison
+- generated review bucket content
+- apply/postpone effects
+- overlay reconciliation
+- unresolved overlays
+
+S9.A may expose stable snapshot references that S9.B can compare later. S9.A does not define S9.B comparison, review, or reconciliation behavior.
 
 ## 5. Weather layer
 
-*To be filled in S9.*
+### 5.1 Purpose
+
+The Weather layer is an advisory display layer on top of active-window snapshot outputs.
+
+It helps compose neutral weather notes near relevant plan/window/detail surfaces. It does not author plan state, orchard decisions, or treatment recommendations.
+
+### 5.2 Weather inputs
+
+Weather inputs are architecture-level advisory inputs only.
+
+Input categories:
+
+- forecast/current weather values
+- location context, if available
+- forecast horizon
+- timestamp / freshness
+
+Rules:
+
+- S9.A does not define a weather API.
+- S9.A does not define Open-Meteo or any provider-specific implementation.
+- S9.A does not define weather storage.
+- Weather input is optional; absence of weather data does not change plan state.
+
+### 5.3 Advisory-only contract
+
+Weather must not change:
+
+- window state
+- gate state
+- plan state
+- cue ordering
+- cue existence
+- effective open/close dates
+- Activity matching
+- monitoring state
+- archive visibility
+- stage effects
+
+Weather is display context only. It may help the grower decide when to act, but the grower remains the decision-maker.
+
+### 5.4 Weather display composition
+
+Weather may display neutral advisory notes next to current or near-term plan/window/detail surfaces that are already visible from the active-window snapshot.
+
+Allowed neutral examples:
+
+```text
+Vremenska napomena
+Provjeri uvjete prije rada.
+```
+
+```text
+Vremenska napomena
+Provjeri lokalnu prognozu i stvarne uvjete u voćnjaku prije odluke.
+```
+
+Composition rules:
+
+- Prefer inline notes on relevant seasonal action cards/details.
+- Use a global Home/Kalendar band only when one advisory applies to multiple visible current or near-term cards.
+- Far-future windows should not carry weather notes.
+- Weather notes must stay neutral and beginner-readable.
+- Weather notes may remind the user that forecast data does not know the exact micro-location or actual orchard conditions.
+
+### 5.5 Forbidden weather behavior
+
+Weather must not:
+
+- block actions
+- hide actions
+- reschedule actions
+- move windows
+- change derived state
+- reorder cards by urgency or suitability
+- push notifications
+- say treatment is safe or unsafe
+- recommend product, material, dose, or brand
+- trigger automatic plan changes
+- trigger plan upgrade review
+- create cue existence or cue ordering
+- create compliance, task, pressure, or urgency state
+- become a weather-derived gate
+
+### 5.6 Handoff and non-goals
+
+Weather implementation and API details are later implementation concerns after explicit approval.
+
+S9.A does not define:
+
+- weather provider integration
+- cache behavior
+- localStorage keys
+- sync behavior
+- regional/climate offsets
+- weather-based plan adjustment
+- weather-based treatment recommendation
+
+Weather-related regional/climate strategy is future work, not S9.
 
 ## 6. V1 → V2 migration
 
