@@ -3530,7 +3530,174 @@ preporučeno tretiranje
 
 ## 12. "Za pregledati" resolution flow
 
-*To be filled in S7.*
+Owner: S7.
+
+`Za pregledati` is a calm review surface. It helps the grower choose what to look at next and then route into the already-defined detail or capture flow.
+
+This is UX flow documentation only. It does not define cue generation, cue ordering, persistence, derived-state updates, import/export effects, storage, schema, or runtime behavior.
+
+### 12.1 Purpose and boundary
+
+§12 defines what happens after a user opens an item or list surfaced as:
+
+```text
+Za pregledati
+```
+
+Review cues may originate from:
+
+- seasonal-action review context
+- evidence context the grower may want to inspect
+- monitoring or awareness context that deserves reading
+- stage or phenology context that may be relevant
+- plan-change review signal
+- future non-alarm review cues
+
+Rules:
+
+- `Za pregledati` items are not themselves evidence.
+- §12 is routing and review only.
+- The user can open a relevant detail surface and decide no record is needed.
+- The user can record Activity evidence through §16.
+- The user can record Monitoring / Observation evidence through §10.
+- The user can record Stage confirmation through §11.
+- The user can open Monitoring / Awareness detail through §15.
+- The user can open Plan upgrade review through §9.
+- The user can leave an item for later with no penalty.
+- §12 does not create a separate final-state control for seasonal actions, monitoring, stage, plan, or records.
+- §12 does not introduce destructive actions.
+- §12 does not clear a cue behind the user's back.
+
+### 12.2 Entry surface
+
+`Za pregledati` may be entered from Pregled/Home or from any other surface where the review cue is shown.
+
+§12 does not add Home layout, Pregled sections, card ordering, or Home copy. §1 remains the source of truth for Pregled/Home.
+
+Once opened, the screen title is:
+
+```text
+Za pregledati
+```
+
+### 12.3 Item language
+
+Item copy is neutral and describes the kind of review.
+
+Allowed examples:
+
+```text
+Pregledaj sezonsku radnju
+Pregledaj praćenje
+Pregledaj razvojnu fazu
+Pregledaj promjene plana
+Pregledaj opažanje
+```
+
+Rules:
+
+- Use calm review wording.
+- Do not use blame, urgency, audit, alarm, or forced-action wording.
+- Do not use copy that says a record is absent as a warning.
+- Do not style review cues as failures.
+- Do not present review cues as machine-written orchard advice.
+
+### 12.4 Resolution action matrix
+
+| Item type | Primary route | Optional route | Allowed CTA copy | Rules |
+| --- | --- | --- | --- | --- |
+| Seasonal action review item | Open §5 Seasonal action detail. | Route to §16 with the relevant seasonal action and plant context. | `Otvori radnju`; optional `Dodaj evidenciju`. | §12 does not duplicate §16 fields. The cue may remain visible until S9 updates derived visibility. No local one-tap finalization exists in §12. |
+| Monitoring review item | Open §15 Monitoring / Awareness detail. | Route to §10 `Dodaj zapis o praćenju` only when explicitly chosen. | `Otvori praćenje`; `Dodaj zapis o praćenju`. | No inspect-now wording, time-since-last wording, cadence judgment, ratio, threshold interpretation, or spray/material advice. |
+| Awareness / risk review item | Open §15 Awareness / risk detail. | Route to §10 free-standing observation capture when explicitly chosen. | `Otvori detalje`; `Zabilježi što vidiš`. | Neutral next-step guidance is allowed. Do not ask the user to confirm a disease or pest conclusion. Do not route directly to orchard-work instructions or material application. |
+| Stage / phenology review item | Open §11 Stage confirmation flow. | None in §12. | `Zabilježi razvojnu fazu`. | Stage confirmation remains optional. Do not frame the stage as late, required, or blocking another flow. The user may leave it for later with no penalty. |
+| Plan upgrade review item | Open §9 Plan upgrade review flow. | None in §12. | `Pregledaj promjene plana`. | No auto-apply. Do not say the existing plan is invalid. Do not add urgency. |
+| Existing observation / record review item | Open Dnevnik record detail or the relevant detail surface. | Route to §17 when correction is explicitly chosen. | `Otvori zapis`; `Ispravi zapis`. | Show `Ispravi zapis` only when it opens §17 and does not duplicate correction UI. |
+
+### 12.5 Leave for later
+
+§12 supports:
+
+```text
+Ostavi za kasnije
+```
+
+Rules:
+
+- Applies no record.
+- Changes no evidence.
+- Does not mean the underlying item is finalized.
+- Does not hide the item permanently unless S8/S9 later define postponed visibility.
+- Has no penalty.
+- Does not escalate.
+- Does not add nagging copy.
+- Exact persistence is owned by S8/S9.
+- Use no label that implies final closure without evidence or a defined downstream flow.
+
+### 12.6 Empty state
+
+If there are no review cues, show:
+
+```text
+Nema ničega za pregledati.
+```
+
+Rules:
+
+- Keep the empty state neutral.
+- Do not add praise or achievement framing.
+- Do not imply the grower finished orchard work.
+
+### 12.7 Dnevnik relationship
+
+§12 itself does not create Dnevnik rows.
+
+Only downstream flows create records:
+
+- §16 Activity evidence
+- §10 Observation / monitoring evidence
+- §11 Stage confirmation
+- §17 correction
+
+Rules:
+
+- Opening a `Za pregledati` cue does not write to Dnevnik.
+- Leaving a cue for later does not write to Dnevnik.
+- Opening a detail surface without saving downstream evidence does not write to Dnevnik.
+- Dnevnik row rendering remains owned by §3 and the downstream flow that created the record.
+
+### 12.8 Relationship to S8/S9
+
+S8/S9 own:
+
+- cue generation
+- cue ordering
+- cue persistence
+- postponed state
+- when a cue disappears
+- derived-state update
+- visibility after evidence, correction, stage, or plan update
+- import/export impact
+
+§12 owns only UX labels, routes, and no-pressure review behavior.
+
+### 12.9 Non-goals
+
+§12 does not introduce:
+
+- alarm queues
+- audit trackers
+- machine-written orchard advice
+- disease or pest conclusions
+- threshold interpretation
+- direct material-application routes
+- weather-based access rules
+- mandatory action before the user can continue
+- forced stage confirmation
+- forced monitoring capture
+- forced evidence capture
+- destructive delete
+- automatic cue clearing
+- schema, storage, runtime, or import/export decisions
 
 ## 13. Plant profile management flow
 
