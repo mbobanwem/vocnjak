@@ -16,29 +16,28 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: S7 UX flow definition is active in `V2_UX_MODEL.md`.
+Phase: S7 UX flow definition is complete in `V2_UX_MODEL.md`.
 
 Current goal:
 
-Continue S7 interactive/capture flow definition while preserving the owner-approved S6 UX surfaces and completed S7 UX flow definitions.
+Close S7 with a documentation consistency audit, then prepare S8 storage/model planning. No implementation starts yet.
 
 Current immediate next step:
 
 ```text
-V2_UX_MODEL.md ## 9. Plan upgrade review flow
+V2_UX_MODEL.md S7 closure audit and S8 storage/model planning preparation.
 ```
 
 Completed S7 flows:
-- `## 16. Evidence capture flow`
-- `## 13. Plant profile management flow`
+- `## 9. Plan upgrade review flow`
 - `## 10. Monitoring capture flow`
-- `## 14. Plant lifecycle / archive flow`
-- `## 17. Record correction flow`
-
-Remaining S7 flow targets after §9:
-- `## 15. Monitoring / Awareness detail`
 - `## 11. Stage confirmation flow`
 - `## 12. "Za pregledati" resolution flow`
+- `## 13. Plant profile management flow`
+- `## 14. Plant lifecycle / archive flow`
+- `## 15. Monitoring / Awareness detail`
+- `## 16. Evidence capture flow`
+- `## 17. Record correction flow`
 
 S6 status:
 
