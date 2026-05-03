@@ -16,17 +16,31 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: S7 UX flow definition is complete in `V2_UX_MODEL.md`.
+Phase: S8 data and storage architecture is complete in `V2_ARCHITECTURE.md`.
 
 Current goal:
 
-Close S7 with a documentation consistency audit, then prepare S8 storage/model planning. No implementation starts yet.
+Start S9 derived-state / algorithm planning. No implementation starts yet.
 
 Current immediate next step:
 
 ```text
-V2_UX_MODEL.md S7 closure audit and S8 storage/model planning preparation.
+V2_ARCHITECTURE.md S9 derived-state / algorithm planning:
+## 2. Upgrade diff engine
+## 3. Overlay reconciliation
+## 4. Active-window snapshot algorithm
+## 5. Weather layer
 ```
+
+S10 remains:
+
+```text
+V2_ARCHITECTURE.md ## 6. V1 → V2 migration
+```
+
+Completed S8:
+- `S8.A — Core storage model` (`28c4b39 Define S8 core storage model`)
+- `S8.B — Validation, IO, and implementation-readiness closure` (`e443559 Define S8 validation and storage boundaries`)
 
 Completed S7 flows:
 - `## 9. Plan upgrade review flow`
@@ -50,7 +64,7 @@ Completed S6 core surfaces:
 - `## 4. Biljke`
 - `## 5. Detalj sezonske radnje`
 
-No implementation starts yet. No domain, schema, or runtime work starts yet.
+No implementation starts yet. No runtime work starts until explicitly approved.
 
 ---
 
@@ -1018,40 +1032,35 @@ The user must not be forced into per-plant checklist behavior when one real orch
 
 ### S8 — Data and storage architecture
 
+Status: DONE — completed in `V2_ARCHITECTURE.md` `## 1. Data model`.
+
 Purpose:
 
 Define V2 storage architecture after domain/UX shape is clear.
 
-Candidate topics:
+Completed patches:
 
-- stored entity shapes
-- catalog version storage
-- plan instance pinning
-- overlay persistence
-- activity and observation records
-- localStorage structure
-- backup/export implications
+- `S8.A — Core storage model` (`28c4b39 Define S8 core storage model`)
+- `S8.B — Validation, IO, and implementation-readiness closure` (`e443559 Define S8 validation and storage boundaries`)
 
 Key constraint:
 
-No schema change should be introduced before S8 unless owner explicitly opens a locked-domain amendment.
+No runtime implementation was introduced. Implementation remains forbidden until explicitly approved.
 
 ### S9 — Derived state, upgrade diff, and advisory layers
+
+Status: NEXT TARGET.
 
 Purpose:
 
 Define deterministic algorithms and advisory integrations.
 
-Candidate topics:
+Target sections in `V2_ARCHITECTURE.md`:
 
-- window-state derivation
-- gate-state display
-- plan-state projection
-- catalog upgrade diff
-- overlay reconciliation
-- weather advisory behavior
-- monitoring program state display
-- no inference from missing evidence
+- `## 2. Upgrade diff engine`
+- `## 3. Overlay reconciliation`
+- `## 4. Active-window snapshot algorithm`
+- `## 5. Weather layer`
 
 Key constraint:
 
