@@ -3206,7 +3206,327 @@ all clear
 
 ## 11. Stage confirmation flow
 
-*To be filled in S7.*
+Owner: S7.
+
+Stage confirmation defines how the grower records a visible development stage for one plant.
+
+This is UX flow documentation only. It does not define runtime implementation, storage mechanics, final stage ids, catalog mapping, derived-state algorithms, plan shifting, regional timing, weather adjustment, AI recognition, import/export behavior, or migration.
+
+Stage confirmation records what the grower clearly sees on a plant. It must stay a simple history-preserving observation flow, not a checklist, required task, diagnosis engine, treatment recommender, or automatic plan-recalculation UI.
+
+### 11.1 Purpose and boundary
+
+§11 owns UX documentation for:
+
+- the current Plant detail entry point
+- one-screen stage confirmation flow
+- beginner-facing MVP stage labels
+- observation date UX
+- uncertainty behavior
+- plan-impact copy
+- save/cancel behavior
+- Dnevnik/history boundary
+- S8/S9 dependency notes
+
+§11 does not own:
+
+- monitoring capture
+- symptom capture
+- trap/scouting capture
+- Activity evidence capture
+- Monitoring / Awareness detail
+- record correction flow
+- stage-code correction
+- plan upgrade review
+- §12 "Za pregledati" resolution behavior
+- final storage schema
+- stage id / mapping implementation
+- derived-state algorithm
+- plan-shift algorithm
+- per-species phenology modeling
+- BBCH modeling
+- AI/photo stage recognition
+- weather or regional offsets
+- diagnosis
+- treatment recommendation
+
+### 11.2 Entry model
+
+Current active entry:
+
+```text
+Plant detail → Zabilježi razvojnu fazu
+```
+
+Rules:
+
+- Plant detail is the only active entry in the first §11 patch.
+- The plant is preselected from Plant detail.
+- Current §11 records one plant at a time.
+- Do not add a Home/Pregled entry.
+- Do not add a Kalendar entry.
+- Do not add a global add/FAB entry.
+- Do not add a Seasonal action detail entry in current §11.
+- Do not add a §12 "Za pregledati" route in current §11.
+- Do not add a §15 Monitoring / Awareness route.
+
+Reason:
+
+- Plant detail has clear plant context.
+- Other entries risk turning stage confirmation into a checklist, prompt, or prerequisite.
+
+### 11.3 One-screen flow
+
+Screen title:
+
+```text
+Zabilježi razvojnu fazu
+```
+
+Screen sections:
+
+```text
+<plant identity>
+
+Razvojna faza
+Datum opažanja
+Bilješka (neobavezno)
+<plan-impact note>
+Spremi fazu
+Odustani
+```
+
+Rules:
+
+- Use one simple screen.
+- Do not use a multi-step wizard in current §11.
+- Do not require stage confirmation before any Activity evidence flow.
+- Do not show per-plant checklist controls.
+- Do not show progress, streaks, completion, or compliance.
+- Do not infer that a missing stage confirmation means the stage did not happen.
+
+### 11.4 MVP stage labels
+
+Use this current MVP beginner-facing stage label set:
+
+```text
+Mirovanje
+Pupovi bubre
+Cvatnja počela
+Cvatnja završila
+Formiranje ploda
+Plod mijenja boju
+Dozrijevanje
+Berba
+Opadanje lista
+```
+
+Rules:
+
+- Show beginner-readable labels.
+- Do not show BBCH codes.
+- Do not show raw `stage_code`.
+- Do not require the grower to understand technical phenology vocabulary.
+- Do not branch by species in §11.
+- Current §11 does not define full BBCH modeling.
+- Current §11 does not define per-species phenology modeling.
+- Future catalog/content work may refine labels per species later.
+- S8/S9 may later decide storage ids and mapping from these labels to persisted stage references.
+
+### 11.5 Uncertainty behavior
+
+Use helper copy:
+
+```text
+Ako nisi siguran/na, nemoj spremati fazu. Zabilježi samo ono što jasno vidiš.
+```
+
+Rules:
+
+- Do not save uncertain stage records.
+- Do not offer `Nisam siguran/na` as a saved stage value.
+- Do not create an unknown-stage record.
+- Do not force stage confirmation.
+- The user may cancel without penalty.
+- Do not automatically route uncertainty to §10.
+- Do not interpret uncertainty as missing data, failure, or orchard risk.
+
+### 11.6 Date behavior
+
+Use:
+
+```text
+Datum opažanja
+```
+
+Rules:
+
+- Date defaults to today.
+- Date is editable.
+- Past dates are allowed.
+- Future dates are rejected.
+- Recorded date is system-managed.
+- Retroactive stage confirmation is allowed when it describes a real observed past state.
+
+Future-date error:
+
+```text
+Datum ne može biti u budućnosti. Faza opisuje stvarno opaženo stanje.
+```
+
+### 11.7 Plan-impact copy
+
+Use:
+
+```text
+Ovaj zapis može utjecati na prikaz budućih sezonskih radnji za ovu voćku.
+Ne znači da treba odmah nešto raditi.
+```
+
+Rules:
+
+- Copy is informational.
+- Do not promise that the plan will change.
+- Do not claim that dates will shift.
+- Do not say any action is now available because the stage was saved.
+- Do not instruct treatment or orchard work.
+- S9 owns derived plan behavior and any future plan effects.
+
+### 11.8 Save and cancel
+
+Save:
+
+```text
+Spremi fazu
+```
+
+Cancel:
+
+```text
+Odustani
+```
+
+After save:
+
+```text
+Faza zabilježena.
+```
+
+Cancel guard if the user selected a stage or typed a note:
+
+```text
+Odustati? Faza neće biti spremljena.
+```
+
+Rules:
+
+- Save is enabled only when a stage label is selected and the date is valid.
+- Cancel exits without saving.
+- Closing the flow follows the same no-save behavior as cancel.
+- After save, return to Plant detail or the entry surface with neutral success copy.
+- Do not show a next-task suggestion after save.
+- Do not route to Seasonal action detail after save as advice.
+
+### 11.9 Dnevnik / history
+
+Stage confirmation is history.
+
+Rules:
+
+- A saved stage confirmation appears in Dnevnik as an Observation/history record.
+- Dnevnik renders stage confirmation under `Opažanja`, not `Praćenje`.
+- §11 does not define final Dnevnik row rendering.
+- §3 owns Dnevnik row, group, filter, and marker rules.
+- S8/S9 own storage, lookup, and derived rendering details.
+- Do not show compliance, progress, streak, or completion copy for stage confirmations.
+- Do not create a missing-stage Dnevnik row.
+
+### 11.10 Relationship to other sections
+
+Concise boundaries:
+
+- §10 Monitoring capture is separate; §11 does not define trap, scouting, symptom, or free-standing observation capture.
+- §15 Monitoring / Awareness detail is separate; §11 is not monitoring/risk detail.
+- §16 Activity evidence capture remains available; stage confirmation is never required before activity logging.
+- §17 Record correction remains separate; current §11 does not define stage-code correction.
+- §9 Plan upgrade review remains separate; stage confirmation does not explain plan updates.
+- §12 "Za pregledati" may later route to §11, but current §11 does not define §12 behavior.
+- S8/S9 own storage, ids, derived-state behavior, and any plan effects.
+
+### 11.11 Stage-code correction boundary
+
+Current §11 does not define stage-code correction.
+
+Rules:
+
+- If the grower later realizes the stage was wrong, current app behavior may allow another stage observation later.
+- Formal stage-code correction is future owner-approved correction work.
+- Do not define correction flow here.
+- Do not modify §17 from §11.
+- Do not destructively edit or delete the original stage observation.
+
+### 11.12 S8/S9 and future dependency notes
+
+Dependency notes for S8/S9 or later:
+
+- stored observation shape for stage confirmation
+- stage ids / mapping for the MVP labels
+- relationship between MVP labels and catalog-backed stage references
+- Dnevnik rendering for stage observations
+- derived plan-state effects after stage observations
+- whether future species-specific labels replace or refine the MVP label set
+- future route activation from §5 or §12, if owner-approved
+- formal stage-code correction behavior
+
+These dependencies must not be implemented or specified in §11.
+
+### 11.13 Forbidden §11 copy / behavior
+
+Do not use as §11 UI copy:
+
+```text
+nisi potvrdio fazu
+faza nedostaje
+provjeri fazu sada
+vrijeme je za fazu
+faza je obavezna
+treba zabilježiti fazu prije radnje
+moraš potvrditi fazu
+faza kasni
+overdue stage
+stage missing
+zadatak: faza
+checklist
+BBCH
+stage_code
+AI prepoznavanje
+prepoznavanje fotografije
+fotografiraj za fazu
+plan se automatski mijenja
+plan se pomiče za X dana
+radnja je sada dostupna
+sigurno pokrenuti radnju
+treba prskati
+prskaj sada
+preporučeno tretiranje
+```
+
+§11 must not introduce:
+
+- multi-plant stage confirmation
+- global stage entry
+- Kalendar stage prompt
+- Home/Pregled stage prompt
+- stage confirmation as prerequisite
+- treatment recommendation
+- diagnosis
+- weather or regional offset logic
+- S9 plan-shift algorithm
+- storage decisions
+- schema decisions
+- runtime decisions
+- import/export decisions
+- migration decisions
 
 ## 12. "Za pregledati" resolution flow
 
