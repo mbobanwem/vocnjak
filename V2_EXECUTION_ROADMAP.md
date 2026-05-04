@@ -1,6 +1,6 @@
 # V2 Execution Roadmap
 
-**Status:** S11.A, S11.B, S11.C1, and S11.C2 complete. S11.D pending.
+**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation pending explicit owner approval.
 
 This document converts the completed V2 specification stack (S6–S10) into an implementation execution roadmap. It is bound by the locked core documents and does not authorize runtime implementation by itself.
 
@@ -1161,3 +1161,299 @@ S11.D owns:
 - handoff to post-S11 sessions for plan upgrade review, Za pregledati cues, Settings split, native storage selection, legacy cleanup, and other §39 deferrals
 
 S11.D is authorized to begin only after S11.C2 is committed to `main` and the owner explicitly opens S11.D.
+
+---
+
+## 41. S11.D purpose
+
+S11.D closes the V2 execution roadmap. S11.D defines:
+
+- universal verification gates that bind every runtime slice
+- the manual test matrix expressed as slice-specific verification gates for runtime Slice 0–9
+- usable / default / public-native milestone boundaries
+- consolidated runtime stop conditions
+- parallel implementation policy
+- final S11 closure checklist
+- runtime handoff to Slice 0
+
+S11.D is documentation-only. No runtime implementation starts in S11.D.
+
+S11.D edits only `V2_EXECUTION_ROADMAP.md` and respects the legacy non-disturbance rule per §28: legacy key VALUES remain unchanged across V2 sessions; legacy boot may rewrite `vocnjak_v4` with identical content on every page load and that is allowed legacy behavior.
+
+---
+
+## 42. Universal verification gates
+
+These gates apply to every runtime slice (S11.C1 Slices 0–4 and S11.C2 Slices 5–9).
+
+Process gates:
+
+- branch is `main` before commit and push
+- working tree clean before edits
+- targeted `git add` only — never bulk `add .` or `add -A`
+- `git diff --check` clean before commit
+- never stage `.DS_Store`
+- never stage `.claude` or `.claude/worktrees`
+- never stage unexpected files
+
+Runtime gates:
+
+- app loads with no console errors
+- legacy app still opens and behaves identically to before the V2 session
+- PWA still loads offline
+- iPhone Safari / Add to Home Screen smoke test passes
+- V2 shell is reachable through the approved owner-only V2 entry per §17 + §23
+- legacy key VALUES are unchanged across the V2 session (per §28)
+- no V2 code path reads or writes legacy keys as V2 data (per §14 + §22)
+- `vocnjak_v2` is the only V2 runtime store key (per §14)
+- where applicable: export / import round-trip preserves all records (per §26)
+- where applicable: invalid import fails closed; original `vocnjak_v2` is unchanged (per §26)
+- where applicable: same persisted facts + same evaluation date produce the same displayed snapshot (per §34 + §4.16)
+- weather absence does not break V2 (per §35)
+
+Important wording:
+
+- Verification checks legacy key VALUES, not whether legacy boot touched the keys.
+- Legacy boot may rewrite `vocnjak_v4` with identical content on every page load; this is allowed legacy behavior and must not be suppressed by V2.
+
+---
+
+## 43. Slice-specific verification gates
+
+The per-slice "Manual verification" blocks in §23–§37 remain authoritative. The gates below are a quick-reference summary and add the minimum-required checks per slice.
+
+Slice 0 — V2 shell:
+
+- V2 shell appears via the approved owner-only entry
+- `vocnjak_v2` is not yet created
+- legacy app unchanged; legacy key VALUES unchanged
+- no new persistent storage key for the V2 mode toggle
+
+Slice 1 — Store boot:
+
+- empty `vocnjak_v2` is created with the §1.3 root shape
+- corrupt `vocnjak_v2` fails safely; no silent overwrite
+- no legacy key VALUE changed across the session
+- the store boundary is the only path to `vocnjak_v2`
+
+Slice 2 — Catalog seed:
+
+- exactly one retained catalog baseline exists under `catalogs[catalog_version]`
+- the active catalog pointer in `meta` is set
+- no catalog or template doc was edited
+- only the foundation-scoped subset is seeded (per §25 catalog seed scope rule)
+
+Slice 3 — Export / import safety:
+
+- V2 export / import round-trip preserves all collections
+- invalid import is rejected and original `vocnjak_v2` is unchanged
+- a raw legacy export file is not accepted as a V2 import (per §6.9 source classification)
+- legacy `vocnjak_v4` export / import code in `index.html` continues to work
+
+Slice 4 — Plant foundation:
+
+- owner can add plants; `plant_id` is stable and immutable from first write
+- `nije upisano` vs `ne znam` distinction preserved per §4.6
+- export / import preserves all plants with the same `plant_id` values
+- the plan-change marker on Biljke rows renders as a null placeholder
+
+Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction:
+
+- multi-plant Activity creates N per-plant records sharing one `activity_group_id`
+- future-dated `occurred_on` is rejected at write time
+- Activity correction is additive; original Activity bytes are unchanged
+- Dnevnik renders the corrected version with the §3.9 correction marker
+
+Slice 6 — Snapshot, Pregled, Kalendar:
+
+- the snapshot is derived; no derived state is stored back to `vocnjak_v2`
+- Pregled renders without task / compliance / progress framing
+- Kalendar renders without urgency reordering or hidden cards
+- `activity_group_id` is not used as derivation authority
+
+Slice 7 — Plant detail, Detalj, optional weather:
+
+- Plant detail and Detalj sezonske radnje render correctly from snapshot
+- weather is optional; its absence does not break Plant detail or Detalj
+- weather, when present, never gates, reorders, blocks, or reschedules
+- the legacy weather widget continues to render in legacy DOM unchanged
+
+Slice 8 — Observation, stage confirmation, monitoring / awareness:
+
+- a free-standing Observation has `program_id` absent and remains permanently program-disjoint
+- a program-context Observation links to a valid `program_id` and resolves against the pinned `catalog_version`
+- a monitoring program with no observations renders neutrally; no warning, no overdue badge
+- the stage confirmation flow is one screen per §11.3
+
+Slice 9 — Observation correction, archive / lifecycle:
+
+- Observation correction is additive; original Observation bytes are unchanged
+- archive sets a flag; no Plant record is physically removed (per §14)
+- archived plant history remains queryable in Dnevnik archived view per §3.12
+- archive-state filtering applies in active scope per §4.10
+
+---
+
+## 44. Usable V2 milestone
+
+Definition:
+
+- Usable V2 for owner field testing = Slices 0 through 7 complete and verified.
+
+At the Usable milestone, the owner can:
+
+- enter plants
+- export and import a V2 backup
+- log real activities, including multi-plant capture
+- review activities in Dnevnik and correct mistakes via additive Correction records
+- see Pregled with current orchard reality
+- see Kalendar with seasonal action windows
+- open Plant detail with live current-action and history sections
+- open Detalj sezonske radnje with per-plant evidence and beginner explanation
+- see advisory weather only if available without legacy refactor (per §35 Slice 7 weather rule)
+
+Caveat:
+
+- Monitoring, stage confirmation, and Observation capture may still be incomplete at the Usable milestone. Owners running formal monitoring programs continue to use the legacy app until the Default milestone.
+
+Usable does not imply default. The legacy app remains the default mode at Usable. The default flip is owner-approved and gated by §45.
+
+---
+
+## 45. Default V2 milestone
+
+Recommended definition:
+
+- Default V2 = Slices 0 through 8 complete and verified.
+
+Reason:
+
+- Slice 8 adds Observation, stage confirmation, and monitoring / awareness baseline. These are part of V2 product identity per V2_UX_MODEL.md §0 monitoring constraints + PRODUCT_VISION.md. Without Slice 8, owners running formal monitoring must remain in the legacy app, which contradicts "default V2".
+
+Documented owner-speed alternative:
+
+- The owner may choose Default at Slice 7 if speed is preferred over monitoring completeness. In that case, monitoring users must keep the legacy app available until Slice 8 lands. This trade-off is owner-explicit and must be recorded with the default-flip decision.
+
+Default-flip behavior:
+
+- The actual default flip is owner-approved and must not happen automatically.
+- The flip moves V2 to be the default surface and moves the legacy app behind an "Old app" entry.
+- The flip does not delete legacy data, legacy keys, or legacy code paths.
+- The flip may require a service worker `CACHE_NAME` bump (see §47); this is the only sanctioned place to bump `CACHE_NAME`.
+- The flip should be reversible: the owner can flip back to legacy default if a regression is found.
+
+---
+
+## 46. Public/native readiness milestone
+
+Definition:
+
+- Public / native readiness = Slices 0 through 9 complete and verified, plus storage substrate review per §18 native review.
+
+At Public / native readiness:
+
+- archive / lifecycle works (Slice 9)
+- Observation correction works (Slice 9)
+- export / import round-trip is tested across realistic data volumes
+- invalid import fail-closed is tested with multiple failure shapes
+- same-platform platform backup posture is reviewed (iCloud / Android Auto Backup)
+- cross-platform transfer still uses V2 export / import as the only portability contract per §18 + §6.7
+- native / public storage review is complete (eligible storage location, quota review, backup eligibility, persistence semantics)
+
+Out of scope for the Public / native readiness milestone:
+
+- Final native storage engine selection. The §18 native review evaluates options and recommends; the actual selection is a separate post-S11 decision.
+- Plan upgrade review, Za pregledati cues, Settings split, and other §39 deferrals.
+
+---
+
+## 47. Runtime stop conditions
+
+Consolidated runtime stop conditions across S11.A, S11.B, S11.C1, S11.C2, and S11.D. If a runtime slice would require any of the following, STOP and route to a new patch or session:
+
+- a domain or schema change is needed (S2 / S8 owners; not S11)
+- a UX route or copy change is needed beyond approved docs (S6 / S7 owners)
+- a catalog or template content edit is needed (S5 / S5.x owner; not S11)
+- a runtime slice would need to read or write any legacy key as V2 data
+- a runtime slice would need a new persistent storage key beyond `vocnjak_v2`
+- import would need to be tolerant, merge-style, or partial-accept
+- a slice would need destructive edit or delete of Activity, Observation, or Correction history
+- multi-plant Activity cannot be implemented from the first Activity slice
+- `activity_group_id` would be used as derivation authority
+- the snapshot would need to persist any derived state back to `vocnjak_v2`
+- weather would gate, reorder, block, or reschedule any plan / window / cue
+- monitoring absence would become a warning, overdue badge, or compliance copy
+- stage missing would become a task or cue
+- archive would delete records
+- plan upgrade review is needed before a post-usable session opens it
+- Za pregledati cues are needed before a post-usable session opens them
+- service worker `CACHE_NAME` bump is needed before owner approval (the only sanctioned bump is the one tied to the default flip per §45)
+- `manifest.json` change is needed
+- legacy weather, Supabase, iCal / GitHub sync, or AES-GCM refactor is needed
+- parallel commits to `main` would overlap (per §48)
+
+If a stop condition fires, do not work around it. Route to the owning session.
+
+---
+
+## 48. Parallel implementation policy
+
+Hard rules:
+
+- Runtime slices commit serially in slice order: 0 → 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9.
+- Cross-slice parallel commits to `main` are forbidden.
+- Cross-slice parallel planning and design are allowed. Two implementers may draft Slice N+1 design while Slice N is in commit.
+- Two implementers may work disjoint sub-units within a single slice only after the owner assigns merge order.
+- Same-slice sub-unit commits are allowed only under one owner-approved slice scope.
+- After each runtime commit, the next agent must `git pull --ff-only` `main` before editing.
+- If both Codex and Claude Code are used, they must not edit overlapping `index.html` regions at the same time.
+
+Foundation-specific:
+
+- Foundation Slices 0–4 are especially serialized. The store boundary, V2 shell, catalog seed, export / import safety, and Plant foundation are foundational and tightly interdependent; no parallel commits.
+
+Post-foundation:
+
+- After Slice 6 snapshot is stable, design work for later slices may happen in parallel; commits still land serially.
+
+Default-flip and post-default:
+
+- The default flip per §45 is a single owner-approved commit.
+- Post-default sessions (plan upgrade review, Za pregledati cues, Settings split, etc.) are independent sessions and follow their own owner-approved order.
+
+---
+
+## 49. S11 closure checklist
+
+Documentation-only checklist for S11 closure:
+
+- [x] S11.A complete (`627c83d Define S11 roadmap authority and runtime safety`)
+- [x] S11.B complete (`3822f1e Define S11 storage and activation posture`)
+- [x] S11.C1 complete (`bf7b066 Define S11 foundation slice plan`)
+- [x] S11.C2 complete (`a56fe75 Define S11 usable-default slice plan`)
+- [x] S11.D complete (this patch)
+- [x] `V2_EXECUTION_ROADMAP.md` contains §1 through §50
+- [x] runtime implementation has not started
+- [ ] tracker sync (separate commit immediately after S11.D)
+- [ ] next phase: runtime Slice 0 — V2 shell and owner-only entry, only after explicit owner approval
+
+S11.D roadmap closure is complete before tracker sync. Project-level S11 closure is complete only after the tracker sync commit lands.
+
+---
+
+## 50. Handoff to runtime implementation
+
+After S11.D and the tracker sync are committed, the next approved work is:
+
+- Runtime Slice 0 — V2 shell and owner-only entry (per §23)
+
+Runtime Slice 0 rules (re-stated for the handoff):
+
+- edit `index.html` only, inside a clearly demarcated V2 region
+- no `vocnjak_v2` write yet (the write boundary lands in Slice 1)
+- no legacy key read or write as V2 data
+- legacy app remains the default
+- V2 entry is ephemeral (URL hash or a hidden owner-only toggle); no persistent V2-mode storage key
+- no `manifest.json` change, no `sw.js` change, no weather / Supabase / iCal / AES-GCM changes
+
+Runtime implementation still requires explicit owner approval after S11 is closed. Even with this roadmap complete, no runtime work begins until the owner explicitly opens runtime Slice 0.
