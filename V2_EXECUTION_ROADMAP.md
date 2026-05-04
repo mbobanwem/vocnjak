@@ -1,6 +1,6 @@
 # V2 Execution Roadmap
 
-**Status:** S11.A complete. S11.B–S11.D pending.
+**Status:** S11.A and S11.B complete. S11.C1–S11.D pending.
 
 This document converts the completed V2 specification stack (S6–S10) into an implementation execution roadmap. It is bound by the locked core documents and does not authorize runtime implementation by itself.
 
@@ -227,3 +227,199 @@ S11.B owns the next set of decisions. S11.B will define:
 - the native / public storage review stop condition
 
 S11.A does not define any of these. S11.B is authorized to begin only after S11.A is committed to `main` and the owner explicitly opens S11.B.
+
+---
+
+## 12. S11.B purpose
+
+S11.B defines the storage and activation posture for the first runtime implementation.
+
+S11.B does not implement storage. S11.B does not select the final native storage engine. S11.B does not define runtime code.
+
+S11.B exists so that S11.C1 can begin foundation slices against a fixed storage and activation contract instead of inventing one slice by slice.
+
+---
+
+## 13. First runtime storage posture
+
+Decision:
+
+The first V2 runtime uses a single JSON blob under a new V2 storage key, behind a thin `store.read()` / `store.write()` boundary.
+
+Why this posture:
+
+- minimal change from the current single-file PWA
+- matches the S8 root-store boundary
+- easy V2 export / import
+- keeps future IndexedDB, native, or SQLite migration possible
+- avoids per-collection localStorage sprawl
+
+Constraints:
+
+- This is the owner / dev / early V2 posture. It is not the final native or public storage decision.
+- Derived caches have zero authority. Source of truth lives in the root V2 store, per S8.
+- No direct localStorage access outside the store boundary in V2 runtime slices.
+
+Do not choose IndexedDB, SQLite, Room, or Core Data now. Native storage selection is deferred to §18 review.
+
+---
+
+## 14. V2 store key and namespace boundary
+
+The new V2 storage key is:
+
+`vocnjak_v2`
+
+Rules:
+
+- V2 runtime writes only to `vocnjak_v2` for V2 app state.
+- V2 runtime must not read legacy keys as V2 data.
+- V2 runtime must not write legacy keys.
+- V2 runtime must not delete legacy keys.
+- Legacy raw export remains archive / reference only per S10. It is not V2 import material.
+
+Protected legacy keys (V2 runtime must not read, write, delete, or rename any of these — same set as §8):
+
+- `vocnjak_v3`
+- `vocnjak_v4`
+- `vocnjak_v3_premigration`
+- `vocnjak_v4_preimport_backup`
+- `vocnjak_user_key`
+- `vocnjak_gh_token`
+- `vocnjak_gh_repo`
+- `vocnjak_sb_url`
+- `vocnjak_sb_key`
+- `vocnjak_data`
+- `vocnjak_kalendar_puni_v2`
+- `vocnjak_salt_2026`
+- `vocnjak_v4_last_supabase_backup`
+
+Do not introduce any other new storage keys in S11.B. Future keys (for example a separate cache or feature flag) are out of scope for S11.B and require explicit later approval.
+
+---
+
+## 15. Store read/write boundary
+
+S11.B requires a runtime store boundary, but not its code.
+
+Required semantics:
+
+- All V2 storage access goes through one small store boundary.
+- The store boundary is the only layer that reads or writes `vocnjak_v2`.
+- UI surfaces consume store data through the runtime state layer, not by direct storage calls.
+- Validation happens before write.
+- Import validation happens before replace.
+- Pre-import backup belongs to the export / import slice (S11.C1 onward), not to the boundary itself.
+
+Conceptual roles (no function names, no signatures):
+
+- store read boundary
+- store write boundary
+- store validation boundary
+
+UI, snapshot, derived caches, and any future surface read through the runtime state layer fed by these boundaries. They never call `localStorage` directly.
+
+---
+
+## 16. Clean-start contract
+
+This contract restates and binds the S10 transition decision for runtime use.
+
+Rules:
+
+- If no valid V2 store exists, initialize an empty V2 store under `vocnjak_v2`.
+- Do not migrate plants from legacy keys.
+- Do not migrate copper spray history.
+- Do not migrate activities, observations, or plans.
+- The owner manually adds plants in V2.
+- The owner manually logs copper spray (or any prior action) as a normal V2 Activity if desired.
+- A clean start must not be reported as "migration complete". A clean start is a clean start.
+- The legacy app and its data remain available until explicit retirement (out of scope for S11).
+
+---
+
+## 17. V2 activation strategy
+
+Rollout:
+
+- V2 is introduced behind an owner-only V2 entry / mode during runtime slices.
+- The legacy app remains the default until a usable / default milestone (defined in S11.D) is approved.
+- V2 must be testable without breaking the legacy app.
+- After the approved milestone, V2 may become the default and the legacy app may move behind an "Old app" entry.
+- Activation does not delete the legacy app or its data.
+
+Boundaries:
+
+- The mode switch / V2 entry must not trigger any legacy migration or write paths.
+- V2 boot must not run any legacy write paths.
+- V2 tests must include before / after legacy key checks to prove no legacy key changed during V2 activation.
+
+S11.B does not define exact UI copy, route names, or the toggle mechanism. Those belong to S11.C1 / S11.C2 surfaces and S11.D milestone gating.
+
+---
+
+## 18. Native/public storage review stop condition
+
+Before any public or native release of V2, storage must be reviewed.
+
+The review must consider:
+
+- iOS backup eligibility
+- Android Auto Backup eligibility
+- PWA persistence limitations
+- V2 export / import portability
+- data size and quota
+- whether localStorage remains acceptable
+- whether IndexedDB, native SQLite, or file storage is needed
+
+Rules:
+
+- Platform backup may help same-platform restore.
+- Platform backup is not sync.
+- Platform backup is not iPhone ↔ Android portability.
+- V2 export / import remains the platform-neutral portability contract per S10.
+
+Do not select the final native storage engine inside S11. Selection requires the review above plus owner approval, and is a stop condition for any public or native release that has not completed the review.
+
+---
+
+## 19. S11.B non-goals
+
+S11.B does not define:
+
+- runtime implementation
+- exact function names
+- final JSON schema
+- IndexedDB / SQLite / Room / Core Data choice
+- cloud / sync / account identity
+- Supabase / iCal redesign
+- AES-GCM expansion
+- service worker cache change
+- V1 / V3 / V4 migration
+- legacy cleanup
+- exact UI copy
+
+Anything in this list that is needed later belongs to S11.C1, S11.C2, S11.D, or post-S11 sessions.
+
+---
+
+## 20. Handoff to S11.C1
+
+S11.C1 owns the foundation slices:
+
+- V2 shell
+- store boot
+- empty `vocnjak_v2` initialization
+- catalog seed
+- Plants foundation
+- early export / import safety
+
+S11.C1 must obey the S11.B storage and activation rules:
+
+- single `vocnjak_v2` key for V2 state
+- store read / write boundary as the only path to storage
+- clean-start contract on first boot
+- legacy keys untouched
+- V2 testable without breaking the legacy app
+
+S11.C1 is authorized to begin only after S11.B is committed to `main` and the owner explicitly opens S11.C1.
