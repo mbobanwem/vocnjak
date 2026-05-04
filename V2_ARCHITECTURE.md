@@ -1351,4 +1351,176 @@ Weather-related regional/climate strategy is future work, not S9.
 
 ## 6. V1 → V2 migration
 
-*To be filled in S10.*
+### 6.1 Purpose and stance
+
+S10 intentionally defines a clean V2 transition strategy, not automatic legacy record conversion.
+
+The section heading remains `V1 → V2 migration` because S10 owns the transition from the current pre-V2 app to V2. The approved architecture is clean V2 start, legacy data preservation, V2 backup/export/import as the portability contract, and platform-backup-aware future storage selection.
+
+The current legacy app has only been used by the owner. There are no external V1 users with legacy data. S10 therefore treats pre-V2 data as archive/reference material unless the owner later opens a dedicated conversion session.
+
+### 6.2 Non-goals
+
+S10 does not define:
+
+- runtime code
+- final storage engine
+- first-launch UI
+- native storage implementation
+- cloud/sync or account identity
+- V1/V3/V4 field mapping
+- automatic V1/V3/V4 record conversion
+- catalog baseline migration version
+- migration of legacy plants
+- migration of copper spray
+- migration of legacy activities, plans, observations, or corrections
+- localStorage key layout, backup file naming, or import/export screen behavior
+
+### 6.3 Legacy data preservation
+
+Pre-V2 data includes existing V1/V3/V4 browser storage, legacy JSON exports, and legacy app backup material.
+
+- Existing pre-V2 data is never deleted by S10.
+- Existing pre-V2 data is never rewritten by S10.
+- Existing pre-V2 data is never treated as V2 data.
+- Existing pre-V2 data is never silently cleaned, normalized, or upgraded.
+- V2 may offer raw legacy export for archive/reference only, preserving legacy shape as-is.
+- Raw legacy export is not a V2 backup, not supported V2 import material, and not a long-term application data format.
+
+Legacy preservation protects owner trust without pretending that legacy data satisfies V2 invariants.
+
+### 6.4 No automatic record conversion
+
+S10 defines no automatic conversion from pre-V2 records into V2 records.
+
+- no automatic Plant migration
+- no automatic Activity migration
+- no automatic Observation migration
+- no automatic Correction migration
+- no automatic Plan migration
+- no automatic Overlay migration
+- no automatic Review state or Cue state migration
+- no copper special-case migration
+- no heuristic matching by label, date, text, species, title, or note similarity
+- no migration-time `activity_group_id` or `observation_group_id` creation
+- no migration-time `program_id` attachment
+- no migration-time catalog-version or `window_def_id` fabrication
+
+This follows the V2 rule that Activity and Observation records are immutable real-world facts with write-time catalog and reference context. Legacy data may be useful to read, but it is not automatically authoritative enough to become V2 history.
+
+### 6.5 Clean V2 initialization
+
+If no valid V2 store exists and no valid V2 backup is being imported, V2 initializes an empty V2 store per S8 storage architecture.
+
+Clean initialization means:
+
+- an empty V2 store uses the S8 root-store boundary
+- onboarding / Add Plant flow owns Plant entry
+- no synthetic orchard data, Plant, Activity, Observation, Plan, Overlay, Correction, review state, or cue state is created
+- pre-V2 local data is not read as V2 state
+- no claim of "migration complete" is made when V2 starts clean
+
+Clean start is not data loss because S10 does not delete or rewrite legacy data. It is a deliberate separation between archive/reference legacy material and valid V2 state.
+
+### 6.6 Manual owner recovery path
+
+The approved owner recovery path is manual, normal V2 entry:
+
+- The owner manually re-enters plants through the V2 Plant onboarding / Add Plant flow.
+- The owner manually logs copper spray as a normal V2 Activity.
+- Retroactive Activity dates are valid when they describe real past work.
+- Multi-plant copper spray uses the normal V2 multi-plant Activity evidence flow.
+- Selected plants receive per-plant Activity records according to normal V2 capture rules.
+- Unselected plants receive no record; any grouping comes only from the normal capture flow.
+
+This keeps the copper spray history honest: one real-world spray pass is captured through the same path future users will use, with the same V2 validation, date, selected-plant scope, and grouping semantics.
+
+### 6.7 V2 portability contract
+
+V2 export/import is the platform-neutral portability unit.
+
+- A V2 backup/export file is distinct from raw legacy export.
+- A V2 backup/export file contains V2 state, not legacy state.
+- A V2 backup/export file follows the S8 full-state snapshot boundary.
+- V2 import follows S8 fail-closed validation before any replace/accept action.
+- Invalid V2 import is rejected rather than repaired, merged, or partially accepted.
+- V2 import/export is the cross-device and cross-platform contract unless future sync/cloud is explicitly approved.
+
+The storage substrate may change across PWA, hybrid, iOS, Android, or future native implementations. The portability contract is the validated V2 export/import shape, not the substrate.
+
+### 6.8 Native / platform backup posture
+
+Storage substrate is an implementation detail. Future native storage should be chosen with iOS and Android platform backup eligibility in mind:
+
+- iCloud / iOS backup may help same-platform restore when durable V2 data is stored in an eligible location.
+- Android Auto Backup / Google backup may help same-platform restore when durable V2 data is stored in an eligible location and within platform limits.
+- Platform backup is not cross-platform portability.
+- Platform backup is not sync.
+- Platform backup is not a substitute for V2 export/import.
+- Platform backup is not a V2 validation boundary.
+- Platform backup must not be described as iPhone-to-Android or Android-to-iPhone portability.
+- UserDefaults / SharedPreferences / Preferences-style storage are not the orchard database contract.
+
+S10 does not select SQLite, IndexedDB, Room, Core Data, Capacitor SQLite, localStorage, file storage, or any final storage engine. S10 only requires the later storage choice to preserve V2 invariants and not undermine V2 export/import portability.
+
+### 6.9 Source classification boundary
+
+S10 classifies possible data sources at architecture level only:
+
+| Source state | S10 classification |
+|---|---|
+| Valid V2 store present | No S10 action. Use existing V2 state. |
+| No V2 store, legacy data present | Optional raw legacy export for archive/reference; then clean V2 start. |
+| No V2 store, no legacy data | Clean V2 start. |
+| V2 backup/export file | S8 import validation path. |
+| Raw legacy export file | Archive/reference only; not V2 import material. |
+| Unknown, corrupt, partial, or ambiguous source | Reject / no conversion. |
+
+This table does not define runtime UI, prompts, copy, file pickers, storage keys, or error handling. It defines only the allowed source treatment.
+
+### 6.10 S11 handoff
+
+S11 / later implementation owns:
+
+- first-launch UX
+- legacy export button/copy/filename
+- storage engine decision
+- PWA storage substrate
+- native iOS storage location
+- native Android storage location
+- backup eligibility configuration
+- V2 export/import UI
+- V2 import validation implementation
+- pre-restore backup behavior
+- technical error handling
+- manual test matrix for reinstall, same-platform restore, cross-platform import, invalid import, and retained-catalog validation
+
+S11 must preserve the S10 boundary: implementation may expose archive/export affordances, but it must not turn raw legacy material into V2 records unless the owner opens and approves a separate conversion scope.
+
+### 6.11 Forbidden S10 behavior
+
+S10 explicitly forbids:
+
+- automatic V1/V3/V4 → V2 record conversion
+- plant migration
+- copper special-case migration
+- Activity migration
+- Observation migration
+- Correction migration
+- Plan or Overlay migration
+- heuristic migration by label/date/text similarity
+- migration-time group creation
+- migration-time catalog-version or window/action identity fabrication
+- migration-time monitoring-program attachment
+- silent deletion
+- silent cleanup
+- silent overwrite
+- silent legacy data normalization
+- claiming migration happened when V2 starts clean
+- treating raw legacy export as V2 backup
+- importing raw legacy export as V2
+- cloud/sync as migration source
+- platform backup described as sync
+- platform backup described as iPhone ↔ Android portability
+- final native storage engine selection
+- runtime implementation
