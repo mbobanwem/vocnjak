@@ -237,6 +237,9 @@
   <!-- BEGIN V2 STORE — Slice 1 -->
   <p id="v2StoreStatus"></p>
   <!-- END V2 STORE — Slice 1 -->
+  <!-- BEGIN V2 CATALOG — Slice 2 -->
+  <p id="v2CatalogStatus"></p>
+  <!-- END V2 CATALOG — Slice 2 -->
   <button type="button" id="v2ExitBtn">Natrag na staru aplikaciju</button>
 </div>
 <!-- END V2 SHELL — Slice 0 -->
@@ -3355,6 +3358,323 @@ if ('serviceWorker' in navigator) {
   console.log('vocnjak: V2 store loaded; format v1');
 })();
 // END V2 STORE — Slice 1
+
+// BEGIN V2 CATALOG — Slice 2
+(function () {
+  if (!document.documentElement.classList.contains('v2-active')) return;
+
+  var CATALOG_V1 = {
+    catalog_version: 'catalog_v1',
+    species: {
+      "apple": {
+        "group": "pome",
+        "varieties": {
+          "gala":             { "timing": "mid",  "harvestWindow": { "monthStart": 8,  "dayStart": 20, "monthEnd": 9,  "dayEnd": 10 } },
+          "golden_delicious": { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 10, "monthEnd": 9,  "dayEnd": 30 } },
+          "jonagold":         { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 15, "monthEnd": 10, "dayEnd": 5  } },
+          "topaz":            { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 20, "monthEnd": 10, "dayEnd": 10 } },
+          "elstar":           { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 10, "monthEnd": 9,  "dayEnd": 30 } },
+          "fuji":             { "timing": "late", "harvestWindow": { "monthStart": 9,  "dayStart": 25, "monthEnd": 10, "dayEnd": 15 } },
+          "granny_smith":     { "timing": "late", "harvestWindow": { "monthStart": 10, "dayStart": 1,  "monthEnd": 10, "dayEnd": 20 } },
+          "idared":           { "timing": "late", "harvestWindow": { "monthStart": 10, "dayStart": 1,  "monthEnd": 10, "dayEnd": 20 } }
+        },
+        "fallback": {
+          "early": { "harvestWindow": { "monthStart": 8,  "dayStart": 1,  "monthEnd": 9,  "dayEnd": 5  } },
+          "mid":   { "harvestWindow": { "monthStart": 8,  "dayStart": 20, "monthEnd": 9,  "dayEnd": 30 } },
+          "late":  { "harvestWindow": { "monthStart": 9,  "dayStart": 25, "monthEnd": 10, "dayEnd": 20 } }
+        }
+      },
+      "sweet_cherry": {
+        "group": "stone",
+        "varieties": {
+          "burlat":     { "timing": "early", "harvestWindow": { "monthStart": 6, "dayStart": 1,  "monthEnd": 6, "dayEnd": 15 } },
+          "kordia":     { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 5  } },
+          "lapins":     { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 25, "monthEnd": 7, "dayEnd": 10 } },
+          "regina":     { "timing": "late",  "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 20 } },
+          "sweetheart": { "timing": "late",  "harvestWindow": { "monthStart": 7, "dayStart": 10, "monthEnd": 7, "dayEnd": 25 } }
+        },
+        "fallback": {
+          "early": { "harvestWindow": { "monthStart": 6, "dayStart": 1,  "monthEnd": 6, "dayEnd": 15 } },
+          "mid":   { "harvestWindow": { "monthStart": 6, "dayStart": 15, "monthEnd": 7, "dayEnd": 5  } },
+          "late":  { "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 25 } }
+        }
+      },
+      "sour_cherry": {
+        "group": "stone",
+        "varieties": {
+          "oblacinska":  { "timing": "early", "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 5  } },
+          "marasca":     { "timing": "mid",   "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 15 } },
+          "montmorency": { "timing": "mid",   "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 20 } },
+          "morello":     { "timing": "late",  "harvestWindow": { "monthStart": 7, "dayStart": 10, "monthEnd": 7, "dayEnd": 31 } }
+        },
+        "fallback": {
+          "early": { "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 10 } },
+          "mid":   { "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 20 } },
+          "late":  { "harvestWindow": { "monthStart": 7, "dayStart": 15, "monthEnd": 7, "dayEnd": 31 } }
+        }
+      },
+      "plum": {
+        "group": "stone",
+        "varieties": {
+          "cacanska_rana":     { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 20, "monthEnd": 8, "dayEnd": 10 } },
+          "cacanska_lepotica": { "timing": "early", "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 20 } },
+          "cacanska_najbolja": { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 10, "monthEnd": 8, "dayEnd": 31 } },
+          "stanley":           { "timing": "late",  "harvestWindow": { "monthStart": 8, "dayStart": 20, "monthEnd": 9, "dayEnd": 10 } },
+          "prezident":         { "timing": "late",  "harvestWindow": { "monthStart": 9, "dayStart": 1,  "monthEnd": 9, "dayEnd": 20 } },
+          "bistrica":          { "timing": "late",  "harvestWindow": { "monthStart": 8, "dayStart": 25, "monthEnd": 9, "dayEnd": 20 } }
+        },
+        "fallback": {
+          "early": { "harvestWindow": { "monthStart": 7, "dayStart": 20, "monthEnd": 8, "dayEnd": 15 } },
+          "mid":   { "harvestWindow": { "monthStart": 8, "dayStart": 10, "monthEnd": 8, "dayEnd": 31 } },
+          "late":  { "harvestWindow": { "monthStart": 8, "dayStart": 20, "monthEnd": 9, "dayEnd": 20 } }
+        }
+      },
+      "peach": {
+        "group": "stone",
+        "varieties": {
+          "springcrest": { "timing": "early", "harvestWindow": { "monthStart": 6, "dayStart": 25, "monthEnd": 7, "dayEnd": 15 } },
+          "redhaven":    { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 20 } },
+          "royal_glory": { "timing": "mid",   "harvestWindow": { "monthStart": 7, "dayStart": 20, "monthEnd": 8, "dayEnd": 5  } },
+          "fayette":     { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 20 } },
+          "o_henry":     { "timing": "late",  "harvestWindow": { "monthStart": 8, "dayStart": 10, "monthEnd": 8, "dayEnd": 31 } }
+        },
+        "fallback": {
+          "early": { "harvestWindow": { "monthStart": 6, "dayStart": 25, "monthEnd": 7, "dayEnd": 20 } },
+          "mid":   { "harvestWindow": { "monthStart": 7, "dayStart": 20, "monthEnd": 8, "dayEnd": 20 } },
+          "late":  { "harvestWindow": { "monthStart": 8, "dayStart": 10, "monthEnd": 9, "dayEnd": 5  } }
+        }
+      },
+      "nectarine": {
+        "group": "stone",
+        "varieties": {
+          "caldesi_2000":  { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 20 } },
+          "big_top":       { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 10, "monthEnd": 7, "dayEnd": 31 } },
+          "fantasia":      { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 20 } },
+          "stark_redgold": { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 5,  "monthEnd": 8, "dayEnd": 25 } },
+          "venus":         { "timing": "late",  "harvestWindow": { "monthStart": 8, "dayStart": 15, "monthEnd": 9, "dayEnd": 5  } }
+        },
+        "fallback": {
+          "early": { "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 31 } },
+          "mid":   { "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 25 } },
+          "late":  { "harvestWindow": { "monthStart": 8, "dayStart": 15, "monthEnd": 9, "dayEnd": 10 } }
+        }
+      },
+      "pear": {
+        "group": "pome",
+        "varieties": {
+          "santa_maria":  { "timing": "early", "harvestWindow": { "monthStart": 8, "dayStart": 5,  "monthEnd": 8,  "dayEnd": 25 } },
+          "williams":     { "timing": "early", "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8,  "dayEnd": 20 } },
+          "conference":   { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 25, "monthEnd": 9,  "dayEnd": 15 } },
+          "boscs_bottle": { "timing": "mid",   "harvestWindow": { "monthStart": 9, "dayStart": 1,  "monthEnd": 9,  "dayEnd": 20 } },
+          "abate_fetel":  { "timing": "late",  "harvestWindow": { "monthStart": 9, "dayStart": 15, "monthEnd": 10, "dayEnd": 5  } }
+        },
+        "fallback": {
+          "early": { "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8,  "dayEnd": 25 } },
+          "mid":   { "harvestWindow": { "monthStart": 8, "dayStart": 25, "monthEnd": 9,  "dayEnd": 20 } },
+          "late":  { "harvestWindow": { "monthStart": 9, "dayStart": 15, "monthEnd": 10, "dayEnd": 5  } }
+        }
+      },
+      "quince": {
+        "group": "pome",
+        "varieties": {
+          "leskovacka": { "timing": "mid",  "harvestWindow": { "monthStart": 10, "dayStart": 1,  "monthEnd": 10, "dayEnd": 20 } },
+          "vranjska":   { "timing": "mid",  "harvestWindow": { "monthStart": 10, "dayStart": 5,  "monthEnd": 10, "dayEnd": 25 } },
+          "champion":   { "timing": "late", "harvestWindow": { "monthStart": 10, "dayStart": 15, "monthEnd": 11, "dayEnd": 5  } }
+        },
+        "fallback": {
+          "mid":  { "harvestWindow": { "monthStart": 10, "dayStart": 1,  "monthEnd": 10, "dayEnd": 25 } },
+          "late": { "harvestWindow": { "monthStart": 10, "dayStart": 15, "monthEnd": 11, "dayEnd": 10 } }
+        }
+      },
+      "apricot": {
+        "group": "stone",
+        "varieties": {
+          "novosadska_rodna":   { "timing": "early", "harvestWindow": { "monthStart": 6, "dayStart": 5,  "monthEnd": 6, "dayEnd": 25 } },
+          "kioto":              { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 10 } },
+          "goldrich":           { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 10 } },
+          "hargrand":           { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 25, "monthEnd": 7, "dayEnd": 15 } },
+          "bergeron":           { "timing": "late",  "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 25 } },
+          "madjarska_najbolja": { "timing": "mid",   "harvestWindow": { "monthStart": 6, "dayStart": 25, "monthEnd": 7, "dayEnd": 15 } }
+        },
+        "fallback": {
+          "early": { "harvestWindow": { "monthStart": 6, "dayStart": 5,  "monthEnd": 6, "dayEnd": 25 } },
+          "mid":   { "harvestWindow": { "monthStart": 6, "dayStart": 20, "monthEnd": 7, "dayEnd": 15 } },
+          "late":  { "harvestWindow": { "monthStart": 7, "dayStart": 5,  "monthEnd": 7, "dayEnd": 31 } }
+        }
+      },
+      "almond": {
+        "group": "stone",
+        "varieties": {
+          "ferragnes": { "timing": "late", "harvestWindow": { "monthStart": 9, "dayStart": 5,  "monthEnd": 9, "dayEnd": 25 } },
+          "ferraduel": { "timing": "late", "harvestWindow": { "monthStart": 9, "dayStart": 10, "monthEnd": 9, "dayEnd": 30 } },
+          "supernova": { "timing": "mid",  "harvestWindow": { "monthStart": 8, "dayStart": 25, "monthEnd": 9, "dayEnd": 15 } }
+        },
+        "fallback": {
+          "mid":  { "harvestWindow": { "monthStart": 8, "dayStart": 20, "monthEnd": 9, "dayEnd": 15 } },
+          "late": { "harvestWindow": { "monthStart": 9, "dayStart": 5,  "monthEnd": 9, "dayEnd": 30 } }
+        }
+      },
+      "walnut": {
+        "group": "nut",
+        "varieties": {
+          "chandler":   { "timing": "late", "harvestWindow": { "monthStart": 9, "dayStart": 20, "monthEnd": 10, "dayEnd": 15 } },
+          "franquette": { "timing": "late", "harvestWindow": { "monthStart": 9, "dayStart": 25, "monthEnd": 10, "dayEnd": 20 } },
+          "sejnovo":    { "timing": "mid",  "harvestWindow": { "monthStart": 9, "dayStart": 10, "monthEnd": 10, "dayEnd": 1  } }
+        },
+        "fallback": {
+          "mid":  { "harvestWindow": { "monthStart": 9, "dayStart": 10, "monthEnd": 10, "dayEnd": 5  } },
+          "late": { "harvestWindow": { "monthStart": 9, "dayStart": 20, "monthEnd": 10, "dayEnd": 20 } }
+        }
+      },
+      "hazelnut": {
+        "group": "nut",
+        "varieties": {
+          "istarski_dugi":    { "timing": "mid",  "harvestWindow": { "monthStart": 8, "dayStart": 25, "monthEnd": 9, "dayEnd": 15 } },
+          "tonda_di_giffoni": { "timing": "mid",  "harvestWindow": { "monthStart": 8, "dayStart": 20, "monthEnd": 9, "dayEnd": 10 } },
+          "ennis":            { "timing": "late", "harvestWindow": { "monthStart": 9, "dayStart": 1,  "monthEnd": 9, "dayEnd": 25 } }
+        },
+        "fallback": {
+          "mid":  { "harvestWindow": { "monthStart": 8, "dayStart": 25, "monthEnd": 9, "dayEnd": 15 } },
+          "late": { "harvestWindow": { "monthStart": 9, "dayStart": 1,  "monthEnd": 9, "dayEnd": 25 } }
+        }
+      },
+      "olive": {
+        "group": "mediterranean",
+        "seasonProfile": "mediterranean",
+        "varieties": {
+          "oblica": {},
+          "istarska_bjelica": {},
+          "leccino": {},
+          "frantoio": {},
+          "coratina": {},
+          "picholine": {},
+          "aglandau": {}
+        }
+      },
+      "pomegranate": { "group": "mediterranean", "seasonProfile": "mediterranean" }
+    }
+  };
+
+  var EXPECTED_SPECIES = [
+    'apple','sweet_cherry','sour_cherry','plum','peach','nectarine',
+    'pear','quince','apricot','almond','walnut','hazelnut',
+    'olive','pomegranate'
+  ];
+
+  var EXPECTED_VARIETY_COUNTS = {
+    apple: 8, sweet_cherry: 5, sour_cherry: 4, plum: 6, peach: 5,
+    nectarine: 5, pear: 5, quince: 3, apricot: 6, almond: 3,
+    walnut: 3, hazelnut: 3, olive: 7, pomegranate: 0
+  };
+
+  var TIMING_DRIVEN_SPECIES = [
+    'apple','sweet_cherry','sour_cherry','plum','peach','nectarine',
+    'pear','quince','apricot','almond','walnut','hazelnut'
+  ];
+
+  function setCatalogStatus(text) {
+    var el = document.getElementById('v2CatalogStatus');
+    if (el) el.textContent = text;
+  }
+
+  function isPlainObject(v) {
+    return v !== null && typeof v === 'object' && !Array.isArray(v);
+  }
+
+  function isValidCatalogV1(c) {
+    if (!isPlainObject(c)) return false;
+    if (c.catalog_version !== 'catalog_v1') return false;
+    if (!isPlainObject(c.species)) return false;
+    var keys = Object.keys(c.species);
+    if (keys.length !== EXPECTED_SPECIES.length) return false;
+    for (var i = 0; i < EXPECTED_SPECIES.length; i++) {
+      if (keys.indexOf(EXPECTED_SPECIES[i]) === -1) return false;
+    }
+    for (var j = 0; j < EXPECTED_SPECIES.length; j++) {
+      var s = EXPECTED_SPECIES[j];
+      var entry = c.species[s];
+      if (!isPlainObject(entry)) return false;
+      var expectedCount = EXPECTED_VARIETY_COUNTS[s];
+      var varieties = entry.varieties;
+      if (expectedCount === 0) {
+        if (varieties !== undefined && !(isPlainObject(varieties) && Object.keys(varieties).length === 0)) return false;
+      } else {
+        if (!isPlainObject(varieties)) return false;
+        if (Object.keys(varieties).length !== expectedCount) return false;
+      }
+    }
+    if (!isPlainObject(c.species.olive) || c.species.olive.seasonProfile !== 'mediterranean') return false;
+    if (!isPlainObject(c.species.pomegranate) || c.species.pomegranate.seasonProfile !== 'mediterranean') return false;
+    if (c.species.pomegranate.varieties !== undefined) return false;
+    for (var k = 0; k < TIMING_DRIVEN_SPECIES.length; k++) {
+      var ts = TIMING_DRIVEN_SPECIES[k];
+      var tEntry = c.species[ts];
+      if (!isPlainObject(tEntry.varieties)) return false;
+      if (!isPlainObject(tEntry.fallback)) return false;
+    }
+    return true;
+  }
+
+  function validateStoreShape(parsed) {
+    if (!isPlainObject(parsed)) return false;
+    var expected = ['meta','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
+    for (var i = 0; i < expected.length; i++) if (!(expected[i] in parsed)) return false;
+    if (!isPlainObject(parsed.meta)) return false;
+    if (parsed.meta.store_format_version !== 1) return false;
+    var acv = parsed.meta.active_catalog_version;
+    if (!(acv === null || (typeof acv === 'string' && acv.length > 0))) return false;
+    if (!isPlainObject(parsed.catalogs)) return false;
+    var arrKeys = ['plants','plan_instances','plan_overlays','activities','observations','corrections'];
+    for (var j = 0; j < arrKeys.length; j++) if (!Array.isArray(parsed[arrKeys[j]])) return false;
+    if (!isPlainObject(parsed.review_state)) return false;
+    return true;
+  }
+
+  var raw = localStorage.getItem('vocnjak_v2');
+  if (raw === null) return;
+
+  var parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (e) {
+    return;
+  }
+
+  if (!validateStoreShape(parsed)) return;
+
+  if (
+    parsed.meta.active_catalog_version === 'catalog_v1' &&
+    parsed.catalogs &&
+    parsed.catalogs.catalog_v1 &&
+    isValidCatalogV1(parsed.catalogs.catalog_v1)
+  ) {
+    setCatalogStatus('Slice 2 — katalog je već učitan.');
+    console.log('vocnjak: catalog already loaded; active_catalog_version=catalog_v1');
+    return;
+  }
+
+  if (
+    parsed.meta.active_catalog_version !== null ||
+    Object.keys(parsed.catalogs || {}).length !== 0
+  ) {
+    setCatalogStatus('Slice 2 — postoji drugi katalog. Bez izmjena.');
+    console.warn('vocnjak: existing different active_catalog_version; Slice 2 made no changes');
+    return;
+  }
+
+  parsed.catalogs.catalog_v1 = CATALOG_V1;
+  parsed.meta.active_catalog_version = 'catalog_v1';
+
+  try {
+    localStorage.setItem('vocnjak_v2', JSON.stringify(parsed));
+    setCatalogStatus('Slice 2 — katalog je učitan.');
+    console.log('vocnjak: catalog seeded; active_catalog_version=catalog_v1; species=14');
+  } catch (e) {
+    setCatalogStatus('Slice 2 — katalog nije moguće učitati. Vrati se u staru aplikaciju.');
+    console.error('vocnjak: catalog seed failed:', e && e.message ? e.message : e);
+  }
+})();
+// END V2 CATALOG — Slice 2
 </script>
 </body>
 </html>
