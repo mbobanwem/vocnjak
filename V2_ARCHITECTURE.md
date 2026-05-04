@@ -527,11 +527,345 @@ After S8, next phase is S9 derived-state / algorithm planning, unless owner choo
 
 ## 2. Upgrade diff engine
 
-*To be filled in S9.*
+### 2.1 Purpose
+
+The upgrade diff engine determines, for one Plant, whether a newer catalog/template context creates reviewable plan changes.
+
+It feeds the `V2_UX_MODEL.md` §9 Plan upgrade review flow by producing calm, beginner-readable review content before the owner chooses whether to apply a newer plan context.
+
+### 2.2 Non-goals
+
+S9.B does not define:
+
+- runtime implementation
+- storage or schema changes
+- migration mechanics
+- automatic apply behavior
+- destructive plan regeneration
+- Dnevnik/history rewrites
+- exact technical before/after UI
+- source or citation UI
+- treatment or diagnosis
+- weather-triggered plan changes
+- regional offsets
+- AI-authored recommendations
+- overlay reconciliation details beyond the handoff to §3
+
+### 2.3 Diff inputs
+
+The diff engine reads persisted facts and retained references; derived caches have zero authority.
+
+| Input | Boundary |
+|---|---|
+| Plant | One Plant only; current S9.B is per-plant, not orchard-wide. |
+| Current pinned Plan instance / catalog context | The currently applied plan context for that Plant. |
+| Candidate catalog/template context | The newer context being reviewed for that Plant. |
+| Retained catalog versions | Needed so old and candidate meanings remain resolvable. |
+| Plan overlays | User-authored adjustments that may affect reviewable future/current display. |
+| Activity records | Immutable evidence records, interpreted through S9.A boundaries. |
+| Observation records | Immutable observation records, including stage and monitoring context where applicable. |
+| Correction records | Additive corrections that may affect effective derived display without rewriting originals. |
+| Archive state | Determines whether active/future review signals should be produced. |
+| S9.A snapshot read-model boundary | Used conceptually for comparable projected content; S9.B does not redefine snapshot internals. |
+
+The diff compares derived reviewable plan content, not raw JSON trees. Same inputs produce the same diff result.
+
+### 2.4 Diff outputs
+
+The diff engine may output:
+
+- whether a review is available for the Plant
+- generated review buckets for §9
+- safe summary references needed by review surfaces
+- overlay reconciliation handoff data for §3
+
+The diff engine does not directly apply UI changes, auto-apply a plan, or rewrite Dnevnik/history.
+
+### 2.5 Upgrade availability
+
+Upgrade availability is derived truth, not authoritative stored state.
+
+Rules:
+
+- availability is per-plant only in current S9.B
+- availability does not mean the existing plan is invalid
+- availability does not mean the owner must apply changes
+- no orchard-wide apply is defined
+- no push or external notification is defined
+- no urgency, escalation, nagging, or compliance meaning is attached to availability
+
+### 2.6 Per-plant comparison boundary
+
+The comparison is between the Plant's current pinned context and a candidate context for the same Plant.
+
+Rules:
+
+- S9.B may use the S9.A snapshot boundary conceptually, but does not redefine snapshot internals.
+- Archived Plants do not produce active/future upgrade review signals.
+- Archived Plant history remains resolvable through retained catalog versions.
+- User profile changes and plan upgrade review remain different flows.
+- The diff must not compare or batch multiple Plants as one apply target.
+
+### 2.7 Change categories / review buckets
+
+Reviewable differences map to the §9 buckets:
+
+| Difference boundary | Review bucket |
+|---|---|
+| Window timing, visibility, or label change | `Buduće sezonske radnje` |
+| Monitoring program text, period, or context change | `Praćenje` |
+| Clarified explanatory copy | `Pojašnjenja radnji` |
+
+Rules:
+
+- bucket content is a beginner-readable summary
+- render only non-empty buckets
+- no exact technical before/after diff is required in the current UX
+- no raw ids are shown in user-facing copy
+- user-facing copy must not expose `catalog_version`, `window_def_id`, `overlay`, or `plan instance` terminology
+- do not invent AI-authored advice
+- do not introduce treatment advice
+
+### 2.8 History preservation
+
+Activity, Observation, Correction, and Dnevnik history remain unchanged.
+
+Rules:
+
+- historical rows resolve through retained catalog versions
+- applying an upgrade never rewrites past records
+- existing evidence remains evidence for the historical context in which it was recorded
+- S9.A and S9.B may project current/future display from retained facts, but cannot mutate history
+
+### 2.9 Apply behavior boundary
+
+Applying a plan upgrade is an explicit user action: `Primijeni promjene plana`.
+
+Rules:
+
+- apply affects only the reviewed Plant
+- apply updates the pinned plan/catalog context for that Plant
+- apply invokes overlay reconciliation per §3
+- no second modal is required by architecture
+- no auto-apply is allowed
+- no plan regeneration shortcut is defined
+- no destructive rebuild is allowed
+- runtime mechanics are not defined in S9.B
+
+### 2.10 Postpone behavior boundary
+
+Postponing uses the §9 action: `Ostavi postojeći plan za sada`.
+
+Rules:
+
+- postpone applies nothing
+- postpone keeps the current plan pin
+- postpone may persist S8 interaction state
+- postpone does not permanently hide the review unless future owner approval adds that behavior
+- no escalation, nagging, or task behavior is attached to postponement
+
+### 2.11 Monitoring / awareness changes
+
+Monitoring-related changes may appear only as neutral review content.
+
+Rules:
+
+- no compliance language
+- no absence-as-failure language
+- no treatment advice
+- no threshold interpretation
+- no detect-to-treat path
+- no monitoring state change from observation counts
+- weather does not influence monitoring review content
+
+### 2.12 Weather exclusion
+
+Weather never triggers plan upgrade review.
+
+Rules:
+
+- weather is never catalog diff content
+- weather does not create, hide, or reorder review availability
+- weather does not change current or candidate plan context
+- the weather layer remains §5 advisory-only composition
+
+### 2.13 Determinism and safety
+
+```text
+same plant
++ same current context
++ same candidate context
++ same retained facts
+= same diff result
+```
+
+No derived diff result rewrites persisted history.
+
+### 2.14 S9.B must-not-do checklist
+
+S9.B must not define:
+
+- runtime code
+- storage or schema changes
+- migration
+- auto-apply
+- plan regeneration
+- destructive rebuild
+- Dnevnik rewrite
+- exact technical UI diff
+- treatment or diagnosis
+- weather-triggered upgrade
+- compliance or task logic
+- AI-authored advice
+
+### 2.15 Handoff to §3 overlay reconciliation
+
+The diff engine identifies when applying a candidate context requires overlay reconciliation.
+
+§3 owns:
+
+- whether existing overlays still resolve
+- which overlays become unresolved
+- how unresolved overlays remain retained
+- which safe review references can be surfaced later without deleting user-authored facts
 
 ## 3. Overlay reconciliation
 
-*To be filled in S9.*
+### 3.1 Purpose
+
+Overlay reconciliation defines how user-authored plan overlays survive catalog/template changes.
+
+It protects user edits and notes when the owner applies a reviewed plan upgrade.
+
+### 3.2 Non-goals
+
+S9.B overlay reconciliation does not define:
+
+- runtime implementation
+- storage or schema changes
+- migration mechanics
+- UI review surface design beyond §9 and §12 boundaries
+- automatic rename or merge inference
+- destructive deletion
+- exact technical before/after diff
+- overlay editing UI
+- plan generation
+
+### 3.3 Reconciliation inputs
+
+Reconciliation reads:
+
+- current plan context
+- candidate plan context
+- overlays from S8
+- retained catalog versions
+- diff handoff from §2
+
+### 3.4 Reconciliation outputs
+
+Reconciliation may output:
+
+- retained overlays that still resolve
+- unresolved overlays that no longer resolve cleanly
+- review references for user-facing surfaces
+
+It must not silently delete overlays.
+
+### 3.5 Surviving window/action identity
+
+If the same stable window/action identity survives in the candidate context, the overlay remains attached.
+
+Rules:
+
+- retained catalog context keeps the old meaning understandable
+- no user action is required when identity survives cleanly
+- no history rewrite occurs
+- label, copy, or timing changes do not break the overlay by themselves
+
+### 3.6 Removed or unresolved window/action identity
+
+If the referenced window/action identity no longer exists in the candidate context, the overlay becomes unresolved.
+
+Rules:
+
+- unresolved overlays are retained
+- no silent deletion is allowed
+- no auto-merge is allowed
+- no auto-copy to another window is allowed
+- future UI may surface unresolved overlays for review
+
+### 3.7 Changed labels, copy, or timing
+
+Label, copy, or timing changes alone do not delete a user overlay.
+
+Rules:
+
+- the overlay remains user-authored
+- review content may summarize that the underlying plan content changed
+- the user note must not be overwritten
+- retained catalog versions keep the previous context understandable
+
+### 3.8 User overlay preservation
+
+User-authored overlay facts survive catalog upgrade unless explicitly changed by the user in a future approved flow.
+
+Rules:
+
+- upgrade apply cannot destructively overwrite overlays
+- overlay history and references remain resolvable through retained catalog versions
+- unresolved state is not data loss
+- reconciliation must prefer retention over inference
+
+### 3.9 Apply-time relationship to §2
+
+§2 apply behavior invokes §3 reconciliation.
+
+Rules:
+
+- reconciliation result informs post-apply plan display
+- unresolved overlays may feed review cues later if §12 allows
+- runtime mechanics are not defined here
+- reconciliation does not create an additional apply target beyond the reviewed Plant
+
+### 3.10 Unresolved overlay review boundary
+
+Unresolved overlays may be shown later as calm review items.
+
+Rules:
+
+- not an alarm
+- not data loss
+- not automatic failure
+- no forced correction
+- no permanent hide unless later approved
+- if new UX copy or a new cue type beyond §12 is needed, stop and ask the owner
+
+### 3.11 Forbidden reconciliation behavior
+
+Reconciliation must not:
+
+- delete an overlay silently
+- overwrite a user overlay
+- infer rename or merge automatically
+- attach an overlay by label similarity only
+- attach an overlay by timing similarity only
+- create a duplicate overlay
+- mutate history
+- hide an unresolved overlay permanently
+- generate a treatment recommendation
+- generate a plan regeneration shortcut
+
+### 3.12 Future owner-approved cases
+
+These cases are deferred until explicitly approved by the owner:
+
+- rename or merge mapping
+- manual overlay reassignment UI
+- overlay conflict resolution UI
+- rollback after plan upgrade
+- batch apply or orchard-wide plan upgrade
+- permanent hide or ignore
+- technical before/after review UI
 
 ## 4. Active-window snapshot algorithm
 
