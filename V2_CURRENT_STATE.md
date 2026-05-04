@@ -16,21 +16,29 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: S11 implementation execution roadmap is complete in `V2_EXECUTION_ROADMAP.md` (§1–§50).
+Phase: Runtime implementation has begun. Runtime Slice 0 (V2 shell and owner-only entry) is complete; Runtime Slice 1 is the next eligible runtime work and requires explicit owner approval.
 
 Current goal:
 
-Prepare runtime Slice 0 implementation after explicit owner approval. No runtime work has started.
+Await explicit owner approval to open Runtime Slice 1 — Store boot and empty `vocnjak_v2` initialization.
 
 Current immediate next step:
 
 ```text
-Runtime Slice 0 — V2 shell and owner-only entry.
+Runtime Slice 1 — Store boot and empty vocnjak_v2 initialization.
 ```
 
 S11 status: DONE.
 
-Runtime Slice 0 status: NEXT TARGET, not started.
+Runtime Slice 0 status: DONE (`642d0b1 Implement Runtime Slice 0 V2 shell`).
+
+Owner runtime verification of Slice 0:
+- `#v2` shell works
+- exit back to legacy works
+- all 13 protected legacy key VALUES unchanged
+- `vocnjak_v2` not created
+
+Runtime Slice 1 status: NEXT TARGET, not started; requires explicit owner approval before implementation.
 
 Completed S11 patches:
 - `S11.A — Roadmap authority, sequencing principles, commit/runtime safety boundaries` (`627c83d Define S11 roadmap authority and runtime safety`)
@@ -39,7 +47,7 @@ Completed S11 patches:
 - `S11.C2 — Usable/default slices 5–9` (`a56fe75 Define S11 usable-default slice plan`)
 - `S11.D — Verification gates, milestones, stop conditions, runtime handoff` (`06feb13 Define S11 verification gates and runtime handoff`)
 
-Implementation remained forbidden through S11 documentation. Runtime implementation now requires explicit owner approval.
+Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 has been implemented and verified (commit `642d0b1`). Runtime Slice 1 and all subsequent slices still require explicit per-slice owner approval before implementation.
 
 §0 monitoring constraints remain locked and authoritative.
 
@@ -1148,7 +1156,7 @@ S11 exit criteria met:
 - owner approved S11.A, S11.B, S11.C1, S11.C2, S11.D
 - runtime implementation may now begin once explicitly opened by owner
 
-Next eligible work: Runtime Slice 0 — V2 shell and owner-only entry. Implementation requires explicit owner approval.
+Next eligible work: Runtime Slice 1 — Store boot and empty `vocnjak_v2` initialization. Implementation requires explicit owner approval. (Runtime Slice 0 — V2 shell and owner-only entry was completed at `642d0b1 Implement Runtime Slice 0 V2 shell`.)
 
 ---
 

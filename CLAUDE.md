@@ -65,11 +65,12 @@ Current:
 - S9 derived-state / algorithm architecture is complete in `V2_ARCHITECTURE.md` `## 2`–`## 5`
 - S10 clean V2 transition / migration architecture is complete in `V2_ARCHITECTURE.md` `## 6. V1 → V2 migration`
 - S11 implementation execution roadmap is complete in `V2_EXECUTION_ROADMAP.md` `§1`–`§50`
-- next target: Runtime Slice 0 — V2 shell and owner-only entry, only after explicit owner approval
+- Runtime Slice 0 (V2 shell and owner-only entry) is complete (`642d0b1 Implement Runtime Slice 0 V2 shell`); legacy app remains the default
+- next target: Runtime Slice 1 — Store boot and empty `vocnjak_v2` initialization, only after explicit owner approval
 - §0 monitoring constraints remain locked and authoritative
 - legacy data and V1/V3/V4 keys remain protected
-- implementation remained forbidden through S11 documentation
-- runtime implementation now requires explicit owner approval
+- implementation was forbidden through S11 documentation; Slice 0 was then owner-approved and committed
+- next runtime slice (Slice 1) and all subsequent slices require explicit per-slice owner approval before implementation
 
 ### INPUT FILES (NOT YET VALIDATED V2 TRUTH)
 
