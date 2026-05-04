@@ -61,12 +61,10 @@ Rules:
 Current:
 - S6 core UX surfaces are complete in `V2_UX_MODEL.md`
 - S7 UX flow definition is complete in `V2_UX_MODEL.md`
-- completed S7 flows: §9 Plan upgrade review, §10 Monitoring capture, §11 Stage confirmation, §12 "Za pregledati" resolution, §13 Plant profile management, §14 Plant lifecycle/archive, §15 Monitoring/Awareness detail, §16 Evidence capture, §17 Record correction
 - S8 data and storage architecture is complete in `V2_ARCHITECTURE.md` `## 1. Data model`
-- completed S8 patches: `28c4b39 Define S8 core storage model`; `e443559 Define S8 validation and storage boundaries`
-- next target: S9 derived-state / algorithm planning in `V2_ARCHITECTURE.md`
-- S9 target sections: `## 2. Upgrade diff engine`, `## 3. Overlay reconciliation`, `## 4. Active-window snapshot algorithm`, `## 5. Weather layer`
-- S10 remains: `## 6. V1 → V2 migration`
+- S9 derived-state / algorithm architecture is complete in `V2_ARCHITECTURE.md` `## 2`–`## 5`
+- completed S9 patches: `c19eeeb Define S9 active snapshot and weather boundaries`; `656d403 Define S9 upgrade diff and overlay reconciliation`
+- next target: S10 migration architecture in `V2_ARCHITECTURE.md` `## 6. V1 → V2 migration`
 - §0 monitoring constraints remain locked and authoritative
 - implementation remains forbidden until explicitly approved
 

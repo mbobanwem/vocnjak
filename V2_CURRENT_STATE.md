@@ -16,27 +16,26 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: S8 data and storage architecture is complete in `V2_ARCHITECTURE.md`.
+Phase: S9 derived-state / algorithm architecture is complete in `V2_ARCHITECTURE.md`.
 
 Current goal:
 
-Start S9 derived-state / algorithm planning. No implementation starts yet.
+Prepare S10 migration architecture with a careful challenge pass before patching. No implementation starts yet.
 
 Current immediate next step:
 
 ```text
-V2_ARCHITECTURE.md S9 derived-state / algorithm planning:
-## 2. Upgrade diff engine
-## 3. Overlay reconciliation
-## 4. Active-window snapshot algorithm
-## 5. Weather layer
+V2_ARCHITECTURE.md S10 migration architecture:
+## 6. V1 → V2 migration
 ```
 
-S10 remains:
+Completed S9:
+- `S9.A — Active-window snapshot + weather advisory` (`c19eeeb Define S9 active snapshot and weather boundaries`)
+- `S9.B — Upgrade diff engine + overlay reconciliation` (`656d403 Define S9 upgrade diff and overlay reconciliation`)
 
-```text
-V2_ARCHITECTURE.md ## 6. V1 → V2 migration
-```
+S10 note:
+
+S10 must explicitly consider iPhone/Android usage, device changes, local-first backup/restore, import/export, and fail-closed migration safety. Migration architecture must not introduce destructive migration, tolerant auto-fix, free-standing observation relinking, or history rewrite.
 
 Completed S8:
 - `S8.A — Core storage model` (`28c4b39 Define S8 core storage model`)
@@ -1049,24 +1048,31 @@ No runtime implementation was introduced. Implementation remains forbidden until
 
 ### S9 — Derived state, upgrade diff, and advisory layers
 
-Status: NEXT TARGET.
+Status: DONE — completed in `V2_ARCHITECTURE.md` `## 2`–`## 5`.
 
 Purpose:
 
 Define deterministic algorithms and advisory integrations.
 
-Target sections in `V2_ARCHITECTURE.md`:
+Completed sections in `V2_ARCHITECTURE.md`:
 
 - `## 2. Upgrade diff engine`
 - `## 3. Overlay reconciliation`
 - `## 4. Active-window snapshot algorithm`
 - `## 5. Weather layer`
 
+Completed patches:
+
+- `S9.A — Active-window snapshot + weather advisory` (`c19eeeb Define S9 active snapshot and weather boundaries`)
+- `S9.B — Upgrade diff engine + overlay reconciliation` (`656d403 Define S9 upgrade diff and overlay reconciliation`)
+
 Key constraint:
 
 Weather and monitoring remain advisory/evidence surfaces, not automatic decision engines.
 
 ### S10 — V1 to V2 migration architecture
+
+Status: NEXT TARGET.
 
 Purpose:
 
@@ -1085,6 +1091,8 @@ Candidate topics:
 Key constraint:
 
 No existing data may be deleted or silently rewritten. Migration must preserve trust.
+
+S10 must explicitly consider iPhone/Android usage, device changes, local-first backup/restore, import/export, and fail-closed migration safety. Migration architecture must not introduce destructive migration, tolerant auto-fix, free-standing observation relinking, or history rewrite.
 
 ### S11 — Implementation execution roadmap
 
