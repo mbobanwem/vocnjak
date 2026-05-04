@@ -234,6 +234,9 @@
 <div id="v2Shell" aria-hidden="true">
   <h1>Vocnjak V2</h1>
   <p>Slice 0 — ljuska</p>
+  <!-- BEGIN V2 STORE — Slice 1 -->
+  <p id="v2StoreStatus"></p>
+  <!-- END V2 STORE — Slice 1 -->
   <button type="button" id="v2ExitBtn">Natrag na staru aplikaciju</button>
 </div>
 <!-- END V2 SHELL — Slice 0 -->
@@ -3272,6 +3275,86 @@ if ('serviceWorker' in navigator) {
   });
 })();
 // END V2 SHELL — Slice 0
+
+// BEGIN V2 STORE — Slice 1
+(function () {
+  if (!document.documentElement.classList.contains('v2-active')) return;
+
+  var EMPTY_STORE_V1 = {
+    meta: { store_format_version: 1, active_catalog_version: null },
+    catalogs: {},
+    plants: [],
+    plan_instances: [],
+    plan_overlays: [],
+    activities: [],
+    observations: [],
+    corrections: [],
+    review_state: {}
+  };
+
+  function setStatus(text) {
+    var el = document.getElementById('v2StoreStatus');
+    if (el) el.textContent = text;
+  }
+
+  function isPlainObject(v) {
+    return v !== null && typeof v === 'object' && !Array.isArray(v);
+  }
+
+  function validateV2StoreV1(parsed) {
+    var errors = [];
+    if (!isPlainObject(parsed)) { errors.push('root not a plain object'); return { ok: false, errors: errors }; }
+    var expected = ['meta','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
+    expected.forEach(function (k) { if (!(k in parsed)) errors.push('missing key: ' + k); });
+    Object.keys(parsed).forEach(function (k) { if (expected.indexOf(k) === -1) errors.push('unexpected root key: ' + k); });
+    if (!isPlainObject(parsed.meta)) errors.push('meta not a plain object');
+    else {
+      if (parsed.meta.store_format_version !== 1) errors.push('meta.store_format_version !== 1 (got ' + parsed.meta.store_format_version + ')');
+      var acv = parsed.meta.active_catalog_version;
+      if (!(acv === null || (typeof acv === 'string' && acv.length > 0))) errors.push('meta.active_catalog_version must be null or non-empty string');
+    }
+    if (!isPlainObject(parsed.catalogs)) errors.push('catalogs not a plain object');
+    ['plants','plan_instances','plan_overlays','activities','observations','corrections'].forEach(function (k) {
+      if (!Array.isArray(parsed[k])) errors.push(k + ' not an array');
+    });
+    if (!isPlainObject(parsed.review_state)) errors.push('review_state not a plain object');
+    return { ok: errors.length === 0, errors: errors };
+  }
+
+  var raw = localStorage.getItem('vocnjak_v2');
+
+  if (raw === null) {
+    try {
+      localStorage.setItem('vocnjak_v2', JSON.stringify(EMPTY_STORE_V1));
+      setStatus('Slice 1 — V2 pohrana je inicijalizirana (prazna).');
+      console.log('vocnjak: V2 store initialized empty (clean start; no migration)');
+    } catch (e) {
+      setStatus('Slice 1 — V2 pohranu nije moguće zapisati. Vrati se u staru aplikaciju.');
+      console.error('vocnjak: V2 store init failed:', e && e.message ? e.message : e);
+    }
+    return;
+  }
+
+  var parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (e) {
+    setStatus('Slice 1 — V2 pohrana je neispravna. Vrati se u staru aplikaciju.');
+    console.error('vocnjak: V2 store JSON.parse failed:', e && e.message ? e.message : e);
+    return;
+  }
+
+  var validation = validateV2StoreV1(parsed);
+  if (!validation.ok) {
+    setStatus('Slice 1 — V2 pohrana je neispravna. Vrati se u staru aplikaciju.');
+    console.error('vocnjak: V2 store invalid:', validation.errors);
+    return;
+  }
+
+  setStatus('Slice 1 — V2 pohrana je učitana.');
+  console.log('vocnjak: V2 store loaded; format v1');
+})();
+// END V2 STORE — Slice 1
 </script>
 </body>
 </html>
