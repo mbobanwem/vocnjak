@@ -16,17 +16,34 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: S10 clean V2 transition / migration architecture is complete in `V2_ARCHITECTURE.md`.
+Phase: S11 implementation execution roadmap is complete in `V2_EXECUTION_ROADMAP.md` (§1–§50).
 
 Current goal:
 
-Prepare S11 implementation execution roadmap. No runtime implementation starts yet.
+Prepare runtime Slice 0 implementation after explicit owner approval. No runtime work has started.
 
 Current immediate next step:
 
 ```text
-V2_EXECUTION_ROADMAP.md S11 implementation execution roadmap.
+Runtime Slice 0 — V2 shell and owner-only entry.
 ```
+
+S11 status: DONE.
+
+Runtime Slice 0 status: NEXT TARGET, not started.
+
+Completed S11 patches:
+- `S11.A — Roadmap authority, sequencing principles, commit/runtime safety boundaries` (`627c83d Define S11 roadmap authority and runtime safety`)
+- `S11.B — Storage substrate, V2 key, clean-start contract, activation strategy` (`3822f1e Define S11 storage and activation posture`)
+- `S11.C1 — Foundation slices 0–4` (`bf7b066 Define S11 foundation slice plan`)
+- `S11.C2 — Usable/default slices 5–9` (`a56fe75 Define S11 usable-default slice plan`)
+- `S11.D — Verification gates, milestones, stop conditions, runtime handoff` (`06feb13 Define S11 verification gates and runtime handoff`)
+
+Implementation remained forbidden through S11 documentation. Runtime implementation now requires explicit owner approval.
+
+§0 monitoring constraints remain locked and authoritative.
+
+Legacy data and V1/V3/V4 keys remain protected per `V2_EXECUTION_ROADMAP.md` §8 and §14.
 
 Completed S10:
 - `S10 — Clean V2 transition / migration architecture` in `V2_ARCHITECTURE.md` `## 6. V1 → V2 migration`
@@ -1104,26 +1121,34 @@ No existing legacy data may be deleted or silently rewritten. Legacy material mu
 
 ### S11 — Implementation execution roadmap
 
-Status: NEXT TARGET.
+Status: DONE — S11.A through S11.D complete in `V2_EXECUTION_ROADMAP.md` §1–§50.
 
-Purpose:
+Completed S11 patches:
 
-Create the exact implementation roadmap before coding resumes.
+- `S11.A — Roadmap authority, sequencing principles, commit/runtime safety boundaries` (`627c83d`)
+- `S11.B — Storage substrate, V2 key, clean-start contract, activation strategy` (`3822f1e`)
+- `S11.C1 — Foundation slices 0–4` (`bf7b066`)
+- `S11.C2 — Usable/default slices 5–9` (`a56fe75`)
+- `S11.D — Verification gates, milestones, stop conditions, runtime handoff` (`06feb13`)
 
-Expected output:
+Output delivered:
 
-- implementation sessions
-- dependency graph
-- verification gates
-- commit order
-- rollback/fail-safe expectations
-- what can be implemented in the single-file vanilla JS app
-- what remains deferred
+- implementation slice sequence (Slices 0–9)
+- dependency graph (per-slice depends-on blocks)
+- universal and slice-specific verification gates
+- commit and git safety rules
+- runtime safety boundaries and protected legacy keys
+- usable / default / public-native milestone definitions
+- consolidated runtime stop conditions
+- parallel implementation policy
+- post-usable deferrals (plan upgrade review, Za pregledati cues, Settings split, native storage selection, etc.)
 
-S11 exit criteria:
+S11 exit criteria met:
 
-- owner approves implementation roadmap
-- only after S11 may coding resume
+- owner approved S11.A, S11.B, S11.C1, S11.C2, S11.D
+- runtime implementation may now begin once explicitly opened by owner
+
+Next eligible work: Runtime Slice 0 — V2 shell and owner-only entry. Implementation requires explicit owner approval.
 
 ---
 
