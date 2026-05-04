@@ -63,8 +63,8 @@ Current:
 - S7 UX flow definition is complete in `V2_UX_MODEL.md`
 - S8 data and storage architecture is complete in `V2_ARCHITECTURE.md` `## 1. Data model`
 - S9 derived-state / algorithm architecture is complete in `V2_ARCHITECTURE.md` `## 2`–`## 5`
-- completed S9 patches: `c19eeeb Define S9 active snapshot and weather boundaries`; `656d403 Define S9 upgrade diff and overlay reconciliation`
-- next target: S10 migration architecture in `V2_ARCHITECTURE.md` `## 6. V1 → V2 migration`
+- S10 clean V2 transition / migration architecture is complete in `V2_ARCHITECTURE.md` `## 6. V1 → V2 migration`
+- next target: S11 implementation execution roadmap in `V2_EXECUTION_ROADMAP.md`
 - §0 monitoring constraints remain locked and authoritative
 - implementation remains forbidden until explicitly approved
 

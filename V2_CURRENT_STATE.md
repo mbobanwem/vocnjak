@@ -16,26 +16,34 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: S9 derived-state / algorithm architecture is complete in `V2_ARCHITECTURE.md`.
+Phase: S10 clean V2 transition / migration architecture is complete in `V2_ARCHITECTURE.md`.
 
 Current goal:
 
-Prepare S10 migration architecture with a careful challenge pass before patching. No implementation starts yet.
+Prepare S11 implementation execution roadmap. No runtime implementation starts yet.
 
 Current immediate next step:
 
 ```text
-V2_ARCHITECTURE.md S10 migration architecture:
-## 6. V1 → V2 migration
+V2_EXECUTION_ROADMAP.md S11 implementation execution roadmap.
 ```
+
+Completed S10:
+- `S10 — Clean V2 transition / migration architecture` in `V2_ARCHITECTURE.md` `## 6. V1 → V2 migration`
+
+S10 strategy:
+
+- clean V2 start
+- no automatic legacy record conversion
+- legacy data preserved untouched
+- optional raw legacy export is archive/reference only
+- raw legacy export is not a V2 backup
+- V2 export/import is the platform-neutral portability contract
+- native storage choice and backup eligibility are S11/later implementation concerns
 
 Completed S9:
 - `S9.A — Active-window snapshot + weather advisory` (`c19eeeb Define S9 active snapshot and weather boundaries`)
 - `S9.B — Upgrade diff engine + overlay reconciliation` (`656d403 Define S9 upgrade diff and overlay reconciliation`)
-
-S10 note:
-
-S10 must explicitly consider iPhone/Android usage, device changes, local-first backup/restore, import/export, and fail-closed migration safety. Migration architecture must not introduce destructive migration, tolerant auto-fix, free-standing observation relinking, or history rewrite.
 
 Completed S8:
 - `S8.A — Core storage model` (`28c4b39 Define S8 core storage model`)
@@ -1072,29 +1080,31 @@ Weather and monitoring remain advisory/evidence surfaces, not automatic decision
 
 ### S10 — V1 to V2 migration architecture
 
-Status: NEXT TARGET.
+Status: DONE — completed in `V2_ARCHITECTURE.md` `## 6. V1 → V2 migration`.
 
 Purpose:
 
-Define migration from current app data to V2.
+Define the clean V2 transition strategy from the owner-only legacy app to V2.
 
-Candidate topics:
+Completed strategy:
 
-- V1/V4 localStorage migration
-- backup before migration
-- validation gates
-- fail-closed behavior
-- import/export compatibility
-- preserving history
-- catalog version pinning on migrated records where applicable
+- clean V2 start
+- no automatic V1/V3/V4 record conversion
+- no automatic plant migration
+- no automatic copper migration
+- legacy data preserved untouched
+- optional raw legacy export for archive/reference only
+- raw legacy export is not V2 import material
+- V2 export/import is the platform-neutral portability contract
+- platform backup may help same-platform restore but is not sync or cross-platform portability
 
 Key constraint:
 
-No existing data may be deleted or silently rewritten. Migration must preserve trust.
-
-S10 must explicitly consider iPhone/Android usage, device changes, local-first backup/restore, import/export, and fail-closed migration safety. Migration architecture must not introduce destructive migration, tolerant auto-fix, free-standing observation relinking, or history rewrite.
+No existing legacy data may be deleted or silently rewritten. Legacy material must not be treated as V2 state.
 
 ### S11 — Implementation execution roadmap
+
+Status: NEXT TARGET.
 
 Purpose:
 
