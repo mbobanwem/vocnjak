@@ -1,6 +1,6 @@
 # V2 Execution Roadmap
 
-**Status:** S11.A, S11.B, and S11.C1 complete. S11.C2 and S11.D pending.
+**Status:** S11.A, S11.B, S11.C1, and S11.C2 complete. S11.D pending.
 
 This document converts the completed V2 specification stack (S6–S10) into an implementation execution roadmap. It is bound by the locked core documents and does not authorize runtime implementation by itself.
 
@@ -751,3 +751,413 @@ S11.C2 must obey all S11.A–S11.C1 rules, including:
 - foundation slices remain stable; S11.C2 may extend the Slice 2 catalog seed with action-window definitions, monitoring program declarations, and stage vocabulary as the surfaces that consume them are introduced, but only from already-approved V2 catalog / template docs and without catalog re-authoring
 
 S11.C2 is authorized to begin only after S11.C1 is committed to `main` and the owner explicitly opens S11.C2.
+
+---
+
+## 31. S11.C2 purpose
+
+S11.C2 defines the usable / default runtime slices that follow the S11.C1 foundation. S11.C2 is documentation; it does not implement runtime code, surfaces, or storage.
+
+S11.C2 exists so that the second wave of runtime work has a fixed slice sequence, fixed scope per slice, fixed verification expectations, and explicit boundaries against legacy code and post-usable surfaces. Any runtime slice that drifts outside what S11.C2 defines must stop and route to a new S11 patch or to S11.D.
+
+S11.C2 binds:
+
+- S2 domain model (Activity §0.6, Observation §0.6a, group identity §0.11, no inferred state)
+- S6 / S7 UX surfaces (Pregled §1, Kalendar §2, Dnevnik §3, Detalj sezonske radnje §5, monitoring capture §10, stage confirmation §11, plant lifecycle §14, monitoring detail §15, evidence capture §16, record correction §17)
+- S8 storage (immutable Activity / Observation / Correction; Plant archive flag; export / import shape)
+- S9.A derived state (active-window snapshot §4); S9.B upgrade diff and overlay reconciliation are out of S11.C2
+- S10 clean V2 transition (legacy keys untouched, no migration)
+- S11.A safety boundaries (§7 git rules, §8 runtime safety, §9 deferrals, §10 tracker timing)
+- S11.B storage and activation (§14 V2 key, §15 store boundary, §17 activation, §19 non-goals)
+- S11.C1 foundation (§22 cross-cutting rules, §28 serialization rule, §28 legacy key VALUES verification rule, §30 catalog seed extension rule)
+
+S11.C2 does not redefine any of these. S11.C2 only orders runtime slices against them.
+
+---
+
+## 32. Usable/default slice overview
+
+S11.C2 has five usable / default slices, in this order:
+
+- Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction
+- Slice 6 — Active-window snapshot, Pregled, and Kalendar
+- Slice 7 — Plant detail integration, Detalj sezonske radnje, and advisory weather composition
+- Slice 8 — Observation capture, stage confirmation, and monitoring / awareness baseline
+- Slice 9 — Observation correction and archive / lifecycle baseline
+
+All five slices land inside `index.html` in a clearly demarcated V2 region. No slice may interleave with or refactor legacy code paths. Naming overlap with the legacy app (Pregled, Kalendar, Dnevnik, Aktivnost) is intentional; code-path overlap is not.
+
+Cross-cutting rules that bind every S11.C2 slice (in addition to §22):
+
+- Activity is multi-plant from the first Activity implementation (per §6).
+- History is immutable from the first write implementation (per §6). All edits land as additive Correction records linked to originals; no in-place mutation.
+- The active-window snapshot is a read-time projection. Derived caches have zero authority. No window state, gate state, plan state, or aggregate is stored back to `vocnjak_v2`.
+- Weather is advisory only. Weather must not change window state, gate state, plan state, cue ordering, cue existence, effective open / close dates, Activity matching, monitoring state, archive visibility, or stage effects.
+- Monitoring absence is neutral. No warning, no overdue badge, no compliance copy on missing observations or unconfirmed stages.
+- Single capture path. Each capture surface (Activity, Observation, stage confirmation) has exactly one write boundary; no surface re-implements capture.
+- Same Correction record shape across Activity (Slice 5) and Observation (Slice 9). Per S8 §1.24 handoff: one Correction storage shape.
+- Catalog seed extension only from already-approved V2 catalog / template docs and without catalog re-authoring (per §30). Slice 6 may extend with action-window definitions; Slice 8 may extend with monitoring program declarations and stage vocabulary.
+- Verification of legacy non-disturbance asserts that legacy key VALUES are unchanged, NOT that legacy keys are never written-to (per §28).
+
+---
+
+## 33. Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction
+
+Purpose:
+
+Make V2 useful for capturing real orchard work. Owner can log a single Activity covering multiple plants in one pass; review Activity history in Dnevnik; correct mistaken Activity dates / status / notes via additive Correction records.
+
+Allowed touch points:
+
+- `index.html` only, inside the V2 region. Activity capture form, multi-plant selection UI, Activity-only Dnevnik render, Activity correction entry, additive Correction write.
+
+Must not touch:
+
+- Snapshot, Pregled, Kalendar (Slice 6).
+- Plant detail live integration, Detalj sezonske radnje, weather composition (Slice 7).
+- Observation, stage confirmation, monitoring (Slice 8).
+- Observation correction, archive (Slice 9).
+- Plan upgrade review or Za pregledati cues (post-usable; out of S11.C2).
+- Legacy keys.
+- Legacy V4 capture / Dnevnik flows in `index.html`. They must remain functionally byte-identical for the legacy app.
+
+Depends on:
+
+- S11.C1 Slice 4 (stable `plant_id` per §1.5).
+- S11.C1 Slice 2 (retained `catalog_version`).
+- S11.C1 Slice 1 (store read / write / validation boundary).
+- S11.C1 Slice 3 (export / import safety so Activity records and Correction records are immediately portable).
+
+Produces:
+
+- Activity write per V2_DOMAIN_MODEL.md §0.6: `plant_id`, `window_def_id`, `catalog_version`, `action_type`, `status` ∈ {done, skipped}, `occurred_on`, `recorded_at`, optional `activity_group_id`, optional `notes`, `provenance`. Temporal-order rule (`occurred_on ≤ recorded_at`) enforced at write time.
+- Multi-plant capture per V2_UX_MODEL.md §16 + V2_DOMAIN_MODEL.md §0.11: a single capture pass over N selected plants writes N Activity records sharing one freshly-minted `activity_group_id`. Group identity is display / query identity only; never derivation authority.
+- Activity-only Dnevnik per V2_UX_MODEL.md §3: default Dnevnik (§3.3), plant-filtered (§3.4), seasonal-action-filtered (§3.5), year / month grouping (§3.6), row anatomy (§3.8), marker semantics (§3.9), multi-plant grouping (§3.11). At Slice 5: no observation rows, no archived-plant rows.
+- Activity correction per V2_UX_MODEL.md §17 + V2_ARCHITECTURE.md §4.9: a Correction record links to the original Activity; the original is not mutated; Dnevnik displays the corrected version with the §3.9 correction marker.
+
+Manual verification:
+
+- Add 4 plants in V2; capture a single multi-plant Activity selecting 2 plants → 2 Activity records written, sharing one `activity_group_id`, both pointing to the same `window_def_id` and `catalog_version`.
+- Try a future-dated `occurred_on` → write rejected.
+- Open Dnevnik → 2 rows visible (or 1 grouped row per §3.11), correct date, correct plant labels.
+- Correct one Activity's date → Correction record written, original Activity bytes unchanged in storage, Dnevnik shows corrected date with §3.9 marker.
+- Export → JSON contains both Activity records and the Correction record under `activities` and `corrections` collections.
+- Wipe `vocnjak_v2`, re-import → all records reappear with same identities.
+- Legacy `vocnjak_v4` VALUE byte-equal across the entire Slice 5 session (per §28).
+
+Stop conditions:
+
+- Activity capture would be single-plant only.
+- Activity correction would mutate the original record in place.
+- Dnevnik would treat `activity_group_id` as derivation authority.
+- Activity write would require any snapshot dependency (snapshot lands in Slice 6; Slice 5 is snapshot-independent).
+- Activity write would touch any legacy key.
+
+Parallelization notes:
+
+- Cannot parallelize across slices. Slice 6 reads Slice 5 records.
+- Within Slice 5, Activity write + Dnevnik render + Activity correction may be drafted in parallel by two implementers but commit serially as one slice (or as 2-3 sub-unit commits within one owner-approved scope).
+
+---
+
+## 34. Slice 6 — Active-window snapshot, Pregled, and Kalendar
+
+Purpose:
+
+Make V2 visible. Implement the deterministic active-window snapshot read model per V2_ARCHITECTURE.md §4. Render Pregled per V2_UX_MODEL.md §1 and Kalendar per §2 from snapshot output.
+
+Allowed touch points:
+
+- `index.html` only, inside the V2 region. Snapshot algorithm, Pregled rendering, Kalendar rendering. Catalog seed extension with action-window definitions if not already present in the Slice 2 seed (only from already-approved V2 catalog / template docs).
+
+Must not touch:
+
+- Plant detail live integration, Detalj sezonske radnje, weather composition (Slice 7).
+- Observation, stage confirmation, monitoring (Slice 8).
+- Observation correction, archive (Slice 9).
+- Plan upgrade review (post-usable).
+- Za pregledati cues (post-usable).
+- Legacy keys.
+- Legacy V4 Pregled / Kalendar flows. They must remain functionally byte-identical.
+
+Depends on:
+
+- Slice 5 (Activity records and Activity correction records to project).
+- S11.C1 Slice 2 (catalog with species / variety; extended in Slice 6 with action-window definitions if needed).
+
+Produces:
+
+- Snapshot per V2_ARCHITECTURE.md §4: inputs (current date, active + archived Plants, retained catalogs, Plan instances + pinning, Plan overlays, Activities, Observations [empty in Slice 6], Corrections, archive state, review state, cue state, weather [absent in Slice 6]); outputs (projected windows per plant, window state per §0.4, gate state per §0.5, plant aggregate, orchard aggregate; monitoring / cue projections empty in Slice 6).
+- Window state derivation per §4.6 (independently per plant + window_def_id + cycle_year per §6.3; group identity is never derivation authority).
+- Activity evidence matching per §4.8; Activity correction effects per §4.9.
+- Pregled per V2_UX_MODEL.md §1: always-visible status sentence (§1.1), Sada aktualno (§1.4), aggregation rule (§1.5), Za provjeru: nema evidencije (§1.6), Uskoro (§1.7), quiet state (§1.10). At Slice 6: no Praćenje surface (§1.8 — Slice 8), no weather advisory band (§1.9 — Slice 7).
+- Kalendar per V2_UX_MODEL.md §2: month sections (§2.4), card identity and grouping (§2.7), plant scope (§2.8), evidence / outcome copy (§2.10), purpose cue (§2.15), young-tree relevance (§2.16), tap destination (§2.18 — opens placeholder until Slice 7 Detalj). At Slice 6: no monitoring copy (§2.11 — Slice 8), no weather inline (§2.17 — Slice 7).
+
+Manual verification:
+
+- With 4 plants and a single multi-plant Activity from Slice 5: Pregled shows current orchard state aggregated per §1.5 including the recent done window for both plants.
+- Kalendar shows the next month's relevant action windows from catalog + plants.
+- Activity correction from Slice 5 → snapshot reflects corrected date in Pregled per §4.9.
+- No window state stored back to `vocnjak_v2`; storage remains read-only from snapshot's perspective.
+- Same date + same persisted facts → same snapshot output (determinism per §4.16).
+- Pregled "Za provjeru: nema evidencije" frames absence neutrally, not as warning.
+- Legacy `vocnjak_v4` VALUE byte-equal across session.
+
+Stop conditions:
+
+- Snapshot would store derived state (forbidden per §0.3 / §4.4).
+- Pregled adopts task-manager / compliance / progress framing (forbidden per §1.11).
+- Kalendar reorders or filters cards by urgency (forbidden per §2.20).
+- Snapshot would require weather to gate or order anything (forbidden per §5.5; weather lands in Slice 7 only as advisory).
+- Snapshot would treat absence of monitoring or observation records as warning (forbidden per §0).
+- Snapshot would use `activity_group_id` as derivation input.
+
+Parallelization notes:
+
+- Within Slice 6, snapshot must land first; Pregled and Kalendar may then be drafted in parallel but commit serially. Not parallelizable with Slice 7.
+
+---
+
+## 35. Slice 7 — Plant detail integration, Detalj sezonske radnje, and advisory weather composition
+
+Purpose:
+
+Make V2 deeply visible per plant and per action. Populate Plant detail's live sections from snapshot. Ship Detalj sezonske radnje for per-window deep view. Optionally add advisory weather composition as inline notes if and only if weather data is available through a clearly read-only boundary.
+
+Allowed touch points:
+
+- `index.html` only, inside the V2 region. Plant detail live sections (§4.7–§4.11), Detalj sezonske radnje surface, Activity capture entry from Detalj (§5.18 — opens Slice 5 capture), per-plant Dnevnik (§3.4) integration.
+
+Must not touch:
+
+- Observation, stage confirmation, monitoring write (Slice 8).
+- Observation correction, archive (Slice 9).
+- Plan upgrade review or Za pregledati cues (post-usable).
+- Legacy weather provider / cache / widget code paths. Slice 7 may consume current-conditions data only through a clearly read-only boundary (see Slice 7 weather rule below). No refactor.
+- Legacy keys.
+
+Depends on:
+
+- Slice 6 (snapshot output).
+- S11.C1 Slice 4 (Plant detail static blocks ready for live-section fill).
+
+Slice 7 weather rule (strict):
+
+- Slice 7 may display advisory weather only if existing weather data is available through a clearly read-only boundary that does not refactor, mutate, or depend on legacy app state.
+- If advisory weather cannot be composed without touching or refactoring legacy weather provider / cache / widget code, omit weather from Slice 7 and defer weather display to a later owner-approved session.
+- Weather is optional for Slice 7. Plant detail and Detalj sezonske radnje must still work without weather.
+- When weather is composed, it follows V2_ARCHITECTURE.md §5.4: inline neutral notes on relevant Detalj cards; global Pregled / Kalendar weather band only when one advisory applies to multiple visible current or near-term cards; far-future windows carry no weather notes.
+- When weather is composed, it must not change window state, gate state, plan state, cue ordering, cue existence, effective open / close dates, Activity matching, monitoring state, archive visibility, or stage effects (per §5.5).
+
+Produces:
+
+- Plant detail per V2_UX_MODEL.md §4.7 current seasonal actions (snapshot-fed), §4.8 Na što obratiti pažnju (snapshot-fed), §4.9 Sezonski rizici (snapshot-fed where data exists), §4.11 Dnevnik ove voćke (plant-filtered Dnevnik per §3.4). At Slice 7: §4.10 monitoring section remains placeholder until Slice 8.
+- Plan-change marker on Biljke list (§4.2) remains null placeholder; depends on plan diff (S9.B, post-usable).
+- Detalj sezonske radnje per V2_UX_MODEL.md §5: identity (§5.3), date / relevance copy (§5.5), plant scope (§5.6), orchard-level evidence summary (§5.7), per-plant evidence (§5.8), gate-state (§5.9), purpose / beginner explanation (§5.10), authored catalog content boundary (§5.11), product / material category (§5.12), young-tree caveats (§5.13), irrigation / watering (§5.14), bird net / variety timing (§5.15), Dnevnik relationship (§5.17), capture entry (§5.18 — opens Slice 5).
+- Optionally: advisory weather composition per the Slice 7 weather rule above.
+
+Manual verification:
+
+- Open a plant from Biljke → Plant detail shows current seasonal actions populated from snapshot, with stable orchard order.
+- Tap a current seasonal action card → Detalj sezonske radnje opens with orchard-level evidence summary, per-plant evidence, gate state, and authored catalog explanation.
+- Tap "Logiraj aktivnost" from Detalj → Slice 5 Activity capture opens with the action context preselected.
+- Per-plant Dnevnik (§4.11) opens scoped to that plant.
+- If weather is composed: inline note appears on Detalj cards for near-term actions; far-future cards carry no weather note; Pregled / Kalendar show a global weather band only when one advisory affects multiple current cards.
+- If weather is omitted: Plant detail and Detalj still render correctly with no weather affordances and no missing-data placeholders. Defer note may be added to S11.D or a later session.
+- Legacy `vocnjak_v4` VALUE byte-equal across session.
+- Legacy weather widget continues to render in legacy DOM unchanged.
+
+Stop conditions:
+
+- Weather composition would refactor or mutate the legacy weather provider / cache / widget. Omit weather and defer.
+- Weather composition would create a hidden V2-to-legacy runtime dependency. Omit weather and defer.
+- Weather would change window / gate / plan state, ordering, or visibility (per §5.5).
+- Plant detail would render derived state that snapshot does not produce.
+- Detalj would author treatment / dose / brand recommendations.
+- Plant detail or Detalj would attempt monitoring rendering.
+
+Parallelization notes:
+
+- Within Slice 7, Plant detail and Detalj may be designed in parallel but commit serially. If weather is composed, ship weather last within Slice 7 to avoid double-touching surfaces. Not parallelizable with Slice 8.
+
+---
+
+## 36. Slice 8 — Observation capture, stage confirmation, and monitoring/awareness baseline
+
+Purpose:
+
+Make V2 useful for monitoring and stage observation. Land Observation write (free-standing + program-context), one-screen stage confirmation flow, and monitoring / awareness display.
+
+Allowed touch points:
+
+- `index.html` only, inside the V2 region. Observation capture flows (program-context, free-standing, trap, scouting), stage confirmation one-screen flow, monitoring program rendering, awareness rendering. Catalog seed extension with monitoring program declarations and stage vocabulary if not already present (only from already-approved V2 catalog / template docs).
+
+Must not touch:
+
+- Observation correction, archive (Slice 9).
+- Treatment / diagnosis / dose / brand recommendation (forbidden per §10.10 + §0).
+- Plan upgrade review (post-usable).
+- Za pregledati cues (post-usable).
+- Legacy keys.
+- Legacy weather, monitoring, or sync code (read-only).
+
+Depends on:
+
+- Slice 7 (Plant detail §4.10 monitoring section ready for fill; Detalj per-plant evidence summary ready to extend with observation rows).
+- Slice 6 (snapshot §4.11 stage observation effects, §4.12 monitoring program state projection, §4.13 free-standing observation boundary).
+- Catalog seed extension with monitoring program declarations and stage vocabulary.
+
+Produces:
+
+- Observation write per V2_DOMAIN_MODEL.md §0.6a: `plant_id`, `catalog_version`, `kind` ∈ {trap, scouting, stage_obs, symptom}, `observed_on`, `recorded_at`, `payload` (per kind §3.2), optional `program_id`, optional `observation_group_id`, `provenance`. Catalog-version pinning per write-time invariant.
+- Free-standing observation per §0.6a + §1.7.4 FS-INV: `program_id` absent is legal; observation is first-class plant-history entry, permanently disjoint from any monitoring program.
+- Monitoring capture flow per V2_UX_MODEL.md §10: program-context (§10.3), free-standing (§10.4), trap check (§10.5), visual scouting (§10.6), date behavior (§10.7), out-of-season behavior (§10.8), multi-plant monitoring boundary (§10.9 — separate observations per plant, not single multi-plant observation), treatment-advice boundary (§10.10).
+- Stage confirmation flow per V2_UX_MODEL.md §11: one-screen (§11.3), MVP stage labels (§11.4), uncertainty (§11.5), date behavior (§11.6), plan-impact copy (§11.7), Dnevnik / history (§11.9). Stage-code correction deferred to Slice 9 per §11.11.
+- Monitoring / Awareness baseline rendering per V2_UX_MODEL.md §15 + V2_ARCHITECTURE.md §4.12–§4.13: Plant detail §4.10 monitoring section populated; Pregled §1.8 Praćenje surface populated; Detalj per-plant evidence summary extended with observation rows; Dnevnik §3.13 / §3.14 free-standing and monitoring rows visible.
+- Awareness / risk monitoring per §0 + §10: pest / disease vs awareness / risk distinction maintained in copy; absence of records remains neutral.
+
+Manual verification:
+
+- Capture a free-standing observation on a plant → Observation record written with `program_id` absent; appears in plant Dnevnik (§3.13) and per-plant evidence summary.
+- Capture a program-context observation → Observation record written with `program_id` set; monitoring program state in Pregled / Plant detail / Detalj reflects it per §4.12.
+- Confirm a stage on a plant → Stage observation written; snapshot reflects stage effect per §4.11; gate-state updates where applicable.
+- Try a future-dated observation → write rejected per §0.6a temporal-order rule.
+- Try a multi-plant single observation → not allowed; separate Observation records written per plant per §10.9.
+- Monitoring program with no observations remains neutral (no warning, no overdue badge).
+- Legacy `vocnjak_v4` VALUE byte-equal across session.
+
+Stop conditions:
+
+- Observation capture would derive stale / overdue state from missing observations.
+- Stage missing would generate a cue or task.
+- Monitoring would auto-recommend treatment, dose, brand, or product.
+- Multi-plant single observation would be allowed.
+- Stage confirmation would be more than one screen.
+- Slice 8 would require Observation correction logic (defer to Slice 9).
+- Slice 8 would require plan upgrade review or Za pregledati cues.
+
+Parallelization notes:
+
+- Within Slice 8, Observation capture must land first; stage confirmation and monitoring rendering may then be drafted in parallel but commit serially. Not parallelizable with Slice 9.
+
+---
+
+## 37. Slice 9 — Observation correction and archive/lifecycle baseline
+
+Purpose:
+
+Close correction and lifecycle in V2. Owner can correct Observation records (including stage observations) using additive Correction records. Owner can archive plants without losing history.
+
+Allowed touch points:
+
+- `index.html` only, inside the V2 region. Observation correction entry, Correction write reusing the Slice 5 shape, Plant archive flag UI, archive-state filtering in snapshot consumers.
+
+Must not touch:
+
+- Plan upgrade review or Za pregledati cues (post-usable).
+- Legacy delete paths.
+- Legacy keys.
+- Legacy plant-archive UX (read-only).
+
+Depends on:
+
+- Slice 5 (Correction record shape — Slice 9 reuses it for Observation correction; one Correction shape per S8 §1.24).
+- Slice 8 (Observation records to correct; stage observation records).
+- S11.C1 Slice 4 (Plant identity for archive flag).
+
+Produces:
+
+- Observation correction per V2_UX_MODEL.md §17 + §11.11: additive Correction record linked to the original Observation; original is not mutated; Dnevnik / Detalj / Plant detail render the corrected version with the §3.9 correction marker.
+- Stage-code correction per §11.11 using the same Correction shape.
+- Archive / lifecycle per V2_UX_MODEL.md §14 + §4.14 + §4.16 + V2_ARCHITECTURE.md §4.10: archive flag + date + reason on Plant; archived plants excluded from active orchard scope (Pregled, Kalendar, current actions) but visible for historical query (Dnevnik archived plants per §3.12, archived-scope rendering per §4.10).
+- No-delete invariant per §14: archive is reversible; no Plant record is ever physically removed; history of archived plants remains queryable.
+
+Manual verification:
+
+- Correct an Observation date → Correction record written; original Observation bytes unchanged; Plant detail / Dnevnik / Detalj show corrected date with §3.9 marker.
+- Correct a stage code → same pattern; snapshot stage effect updated per §4.11.
+- Archive a plant → archive flag set; plant disappears from Biljke active list (§4.14) and from Pregled / Kalendar active scope (§4.10); plant remains visible in archived view; Dnevnik history preserved.
+- Unarchive a plant → archive flag cleared; plant returns to active scope.
+- Export → JSON contains correction records and archive flags.
+- Round-trip import → all corrections and archive states preserved.
+- Legacy `vocnjak_v4` VALUE byte-equal across session.
+
+Stop conditions:
+
+- Observation correction would mutate the original record.
+- Archive would delete records.
+- Archive would silently rewrite history.
+- Slice 9 would touch plan upgrade review or Za pregledati cues.
+- Slice 9 would require any new persistent storage key.
+- Slice 9 would diverge the Correction record shape from Slice 5.
+
+Parallelization notes:
+
+- Within Slice 9, Observation correction and archive are independent — may be drafted in parallel by two implementers, commit serially as one slice or as 2 sub-unit commits within one owner-approved scope.
+
+---
+
+## 38. C2 default-readiness boundary
+
+S11.C2 itself does not flip the default. The actual "V2 becomes default" decision belongs to S11.D milestone gating (§17 V2 activation strategy + S11.D verification gates).
+
+Recommended minimum for default:
+
+- Slice 8 complete and approved.
+- Rationale: Slice 5 + Slice 6 + Slice 7 cover Activity, snapshot, Pregled, Kalendar, Plant detail, Detalj, and (optionally) advisory weather. Slice 8 adds monitoring, stage confirmation, and observation capture. Without Slice 8, owners running formal monitoring programs must remain in the legacy app; this is incomplete relative to V2 product identity per V2_UX_MODEL.md §0 + PRODUCT_VISION.md.
+
+Documented owner-speed alternative:
+
+- Slice 7 complete and approved, with monitoring deferred to a post-default session.
+- Rationale: covers ~90% of daily orchard work for casual growers (capture + correction + visibility + per-plant context + per-action context). Cost: monitoring users keep using the legacy app until Slice 8 lands.
+
+Both options preserve:
+
+- Activity correction available from Slice 5 (first-day mistakes are recoverable).
+- Export / import safety from S11.C1 Slice 3 (data is portable from day 1 of capture).
+- Legacy app remains available behind an "Old app" entry per §17.
+- Legacy data and keys remain untouched.
+
+S11.D ratifies the choice and defines:
+
+- The actual default-flip toggle behavior.
+- The persistent V2-mode setting (S11.C2 keeps V2 entry ephemeral per S11.C1 §23).
+- Service worker `CACHE_NAME` bump if hard-reload becomes impractical for owners during testing.
+- The post-Slice-9 / public-native release gate via §18 native review.
+
+---
+
+## 39. C2 post-usable deferrals
+
+S11.C2 does not include the following surfaces. Each is named here so it is clear they are deferred and not forgotten.
+
+- **Plan upgrade review** (V2_UX_MODEL.md §9 + V2_ARCHITECTURE.md §2 / §3 / §2.15 handoff). Depends on a second `catalog_version` existing and on S9.B upgrade diff + overlay reconciliation. Defer to a later session that opens catalog versioning.
+- **Za pregledati cues** (V2_UX_MODEL.md §12 + V2_ARCHITECTURE.md §4.14 cue projection). Depends on mature monitoring / stage state plus cue projection. Defer to post-default session.
+- **Persistent V2 mode toggle / default-flip** (V2_EXECUTION_ROADMAP.md §17 V2 activation strategy). Belongs to S11.D milestone gating.
+- **Service worker `CACHE_NAME` bump** (`sw.js`). Defer to S11.D milestone decision; do not bump inside any S11.C2 slice. If hard-reload becomes impractical for owners during testing, escalate to S11.D.
+- **Settings / Postavke split** (S11.B §19 deferral). Defer until V2 settings surface accumulates enough items.
+- **Supabase backup redesign**, **iCal sync redesign**, **GitHub sync redesign**, **AES-GCM secure storage redesign** (S11.B §19 deferrals). Each is a future separate session.
+- **Native storage engine selection** (S11.B §18 native review). Future separate session.
+- **Legacy data cleanup / legacy retirement** (S11.B §19 deferral). Future separate session, owner-explicit.
+- **Catalog content edits** (forbidden per S11.A §3 + S11.C1 §25 / §30). Catalog gaps discovered during S11.C2 implementation must route to a separate S5.x session.
+- **Fig and citrus catalog expansion** (S11.B §19 + S4 owner decisions). Future separate session.
+- **Regional / climate offsets, AI / photo recognition, push notifications** (S11.B §19). Future.
+
+If any S11.C2 slice would require one of these, STOP and escalate. Do not implement in S11.C2.
+
+---
+
+## 40. Handoff to S11.D
+
+S11.D owns:
+
+- verification gates across S11.C1 and S11.C2 slices
+- usable / default milestone definitions, including the actual default-flip gate (per §38)
+- stop conditions consolidated across S11.A / S11.B / S11.C1 / S11.C2
+- tracker sync timing (`CLAUDE.md` and `V2_CURRENT_STATE.md` sync after S11.D approval, per §10)
+- service worker `CACHE_NAME` bump decision if testing-window reload friction warrants it
+- public / native release gate via §18 native storage review
+- authorization for any post-usable parallelization policy
+- handoff to post-S11 sessions for plan upgrade review, Za pregledati cues, Settings split, native storage selection, legacy cleanup, and other §39 deferrals
+
+S11.D is authorized to begin only after S11.C2 is committed to `main` and the owner explicitly opens S11.D.
