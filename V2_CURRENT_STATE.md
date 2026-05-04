@@ -16,16 +16,16 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: Runtime implementation has begun. Runtime Slice 0 (V2 shell and owner-only entry) is complete; Runtime Slice 1 is the next eligible runtime work and requires explicit owner approval.
+Phase: Runtime implementation continues. Runtime Slice 0 (V2 shell and owner-only entry) and Runtime Slice 1 (store boot and empty `vocnjak_v2` initialization) are complete; Runtime Slice 2 is the next eligible runtime work and requires explicit owner approval.
 
 Current goal:
 
-Await explicit owner approval to open Runtime Slice 1 — Store boot and empty `vocnjak_v2` initialization.
+Await explicit owner approval to open Runtime Slice 2 — Catalog seed and retained catalog baseline.
 
 Current immediate next step:
 
 ```text
-Runtime Slice 1 — Store boot and empty vocnjak_v2 initialization.
+Runtime Slice 2 — Catalog seed and retained catalog baseline.
 ```
 
 S11 status: DONE.
@@ -38,7 +38,20 @@ Owner runtime verification of Slice 0:
 - all 13 protected legacy key VALUES unchanged
 - `vocnjak_v2` not created
 
-Runtime Slice 1 status: NEXT TARGET, not started; requires explicit owner approval before implementation.
+Runtime Slice 1 status: DONE (`178cfa8 Implement Runtime Slice 1 V2 store boot`).
+
+Owner runtime verification of Slice 1:
+- `#v2` visual boot works
+- clean-start store creation works
+- valid-load status works
+- `vocnjak_v2` empty v1 shape OK
+- `vocnjak_v2` byte-identical across `#v2` reload (idempotency)
+- invalid `vocnjak_v2` is preserved, not overwritten or auto-fixed
+- invalid cleanup + reinitialize works
+- all 13 protected legacy key VALUES unchanged
+- `vocnjak_v2` exists after Slice 1, as expected
+
+Runtime Slice 2 status: NEXT TARGET, not started; requires explicit owner approval before implementation.
 
 Completed S11 patches:
 - `S11.A — Roadmap authority, sequencing principles, commit/runtime safety boundaries` (`627c83d Define S11 roadmap authority and runtime safety`)
@@ -47,7 +60,7 @@ Completed S11 patches:
 - `S11.C2 — Usable/default slices 5–9` (`a56fe75 Define S11 usable-default slice plan`)
 - `S11.D — Verification gates, milestones, stop conditions, runtime handoff` (`06feb13 Define S11 verification gates and runtime handoff`)
 
-Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 has been implemented and verified (commit `642d0b1`). Runtime Slice 1 and all subsequent slices still require explicit per-slice owner approval before implementation.
+Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 and all subsequent slices still require explicit per-slice owner approval before implementation.
 
 §0 monitoring constraints remain locked and authoritative.
 
@@ -1156,7 +1169,7 @@ S11 exit criteria met:
 - owner approved S11.A, S11.B, S11.C1, S11.C2, S11.D
 - runtime implementation may now begin once explicitly opened by owner
 
-Next eligible work: Runtime Slice 1 — Store boot and empty `vocnjak_v2` initialization. Implementation requires explicit owner approval. (Runtime Slice 0 — V2 shell and owner-only entry was completed at `642d0b1 Implement Runtime Slice 0 V2 shell`.)
+Next eligible work: Runtime Slice 2 — Catalog seed and retained catalog baseline. Implementation requires explicit owner approval. (Runtime Slice 0 — V2 shell and owner-only entry was completed at `642d0b1 Implement Runtime Slice 0 V2 shell`; Runtime Slice 1 — V2 store boot and empty `vocnjak_v2` initialization was completed at `178cfa8 Implement Runtime Slice 1 V2 store boot`.)
 
 ---
 
