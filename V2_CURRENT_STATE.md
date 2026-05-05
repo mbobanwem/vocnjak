@@ -16,16 +16,16 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: Runtime implementation continues. Runtime Slice 0 (V2 shell and owner-only entry), Runtime Slice 1 (store boot and empty `vocnjak_v2` initialization), and Runtime Slice 2 (catalog seed and retained catalog baseline) are complete; Runtime Slice 3 is the next eligible runtime work and requires explicit owner approval.
+Phase: Runtime implementation continues. Runtime Slice 0, Slice 1, Slice 2, and Slice 3 are complete. Runtime Slice 4 is the next eligible runtime work and requires explicit owner approval.
 
 Current goal:
 
-Await explicit owner approval to open Runtime Slice 3 — Early V2 export/import safety baseline.
+Await explicit owner approval to open Runtime Slice 4 — Plant foundation and Biljke first cut.
 
 Current immediate next step:
 
 ```text
-Runtime Slice 3 — Early V2 export/import safety baseline.
+Runtime Slice 4 — Plant foundation and Biljke first cut.
 ```
 
 S11 status: DONE.
@@ -71,7 +71,31 @@ Owner runtime verification of Slice 2:
 - different-catalog cleanup restore works
 - all 13 protected legacy key VALUES unchanged
 
-Runtime Slice 3 status: NEXT TARGET, not started; requires explicit owner approval before implementation.
+Runtime Slice 3 status: DONE (`8fd2571 Implement Runtime Slice 3 V2 export/import safety baseline`).
+
+Owner runtime verification of Slice 3:
+- default route without `#v2` keeps legacy app as default
+- `#v2` shows Slice 3 export/import controls
+- baseline export creates valid `vocnjak-v2-YYYY-MM-DDTHHMMSS.json`
+- exported V2 JSON has exact Slice 3 foundation baseline shape (9 root keys, `meta.store_format_version` 1, `meta.active_catalog_version` `catalog_v1`, `catalogs` exactly `{ catalog_v1 }`, all 6 immutable arrays empty, `review_state` `{}`)
+- valid export/import round-trip succeeds
+- invalid semantic edit (`active_catalog_version: null`) fails closed
+- malformed JSON import fails closed
+- missing / unexpected root keys fail closed
+- wrong collection types fail closed
+- non-empty `plants`, `activities`, or `review_state` fail closed
+- catalog shape drift (missing species, wrong variety counts, pomegranate with varieties, catalog key/value mismatch) fails closed
+- file-size guard rejects files over 1 MB
+- cancelled import does not modify `vocnjak_v2`
+- successful import writes compact `vocnjak_v2`
+- no persistent V2 backup key is created (`vocnjak_v2` is the only V2 storage key)
+- only `vocnjak_v2` is used by the Slice 3 V2 path
+- Slice 3 V2 path does not read, write, or delete protected legacy keys
+- legacy v4 export still works
+- legacy v4 import still works and writes `vocnjak_v4_preimport_backup` via the existing legacy code path, as expected
+- protected legacy key VALUES remained unchanged across V2-only Slice 3 activation/export/import tests; the separate legacy v4 import verification intentionally exercised existing legacy behavior and wrote `vocnjak_v4_preimport_backup`, which confirms legacy import remains functional and is not a Slice 3 mutation
+
+Runtime Slice 4 status: NEXT TARGET, not started; requires explicit owner approval before implementation.
 
 Completed S11 patches:
 - `S11.A — Roadmap authority, sequencing principles, commit/runtime safety boundaries` (`627c83d Define S11 roadmap authority and runtime safety`)
@@ -80,7 +104,7 @@ Completed S11 patches:
 - `S11.C2 — Usable/default slices 5–9` (`a56fe75 Define S11 usable-default slice plan`)
 - `S11.D — Verification gates, milestones, stop conditions, runtime handoff` (`06feb13 Define S11 verification gates and runtime handoff`)
 
-Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 was then owner-approved and implemented (commit `254448f`). Runtime Slice 3 and all subsequent slices still require explicit per-slice owner approval before implementation.
+Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 was then owner-approved and implemented (commit `254448f`). Runtime Slice 3 was then owner-approved and implemented (commit `8fd2571`). Runtime Slice 4 and all subsequent slices still require explicit per-slice owner approval before implementation.
 
 §0 monitoring constraints remain locked and authoritative.
 
@@ -1189,7 +1213,7 @@ S11 exit criteria met:
 - owner approved S11.A, S11.B, S11.C1, S11.C2, S11.D
 - runtime implementation may now begin once explicitly opened by owner
 
-Next eligible work: Runtime Slice 3 — Early V2 export/import safety baseline. Implementation requires explicit owner approval. (Runtime Slice 0 — V2 shell and owner-only entry was completed at `642d0b1 Implement Runtime Slice 0 V2 shell`; Runtime Slice 1 — V2 store boot and empty `vocnjak_v2` initialization was completed at `178cfa8 Implement Runtime Slice 1 V2 store boot`; Runtime Slice 2 — Catalog seed and retained catalog baseline was completed at `254448f Implement Runtime Slice 2 catalog seed`.)
+Next eligible work: Runtime Slice 4 — Plant foundation and Biljke first cut. Implementation requires explicit owner approval. (Runtime Slice 0 — V2 shell and owner-only entry was completed at `642d0b1 Implement Runtime Slice 0 V2 shell`; Runtime Slice 1 — V2 store boot and empty `vocnjak_v2` initialization was completed at `178cfa8 Implement Runtime Slice 1 V2 store boot`; Runtime Slice 2 — Catalog seed and retained catalog baseline was completed at `254448f Implement Runtime Slice 2 catalog seed`; Runtime Slice 3 — Early V2 export/import safety baseline was completed at `8fd2571 Implement Runtime Slice 3 V2 export/import safety baseline`.)
 
 ---
 
