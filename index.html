@@ -240,6 +240,12 @@
   <!-- BEGIN V2 CATALOG — Slice 2 -->
   <p id="v2CatalogStatus"></p>
   <!-- END V2 CATALOG — Slice 2 -->
+  <!-- BEGIN V2 BACKUP — Slice 3 -->
+  <p id="v2BackupStatus"></p>
+  <button type="button" id="v2ExportBtn">Izvezi V2 sigurnosnu kopiju</button>
+  <button type="button" id="v2ImportBtn">Uvezi V2 sigurnosnu kopiju</button>
+  <input type="file" id="v2ImportFile" accept=".json,application/json" hidden>
+  <!-- END V2 BACKUP — Slice 3 -->
   <button type="button" id="v2ExitBtn">Natrag na staru aplikaciju</button>
 </div>
 <!-- END V2 SHELL — Slice 0 -->
@@ -3675,6 +3681,214 @@ if ('serviceWorker' in navigator) {
   }
 })();
 // END V2 CATALOG — Slice 2
+
+// BEGIN V2 BACKUP — Slice 3
+(function () {
+  if (!document.documentElement.classList.contains('v2-active')) return;
+
+  var EXPECTED_ROOT_KEYS = ['meta','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
+  var EXPECTED_META_KEYS = ['store_format_version','active_catalog_version'];
+  var EMPTY_ARRAY_KEYS = ['plants','plan_instances','plan_overlays','activities','observations','corrections'];
+  var EXPECTED_SPECIES = [
+    'apple','sweet_cherry','sour_cherry','plum','peach','nectarine',
+    'pear','quince','apricot','almond','walnut','hazelnut',
+    'olive','pomegranate'
+  ];
+  var EXPECTED_VARIETY_COUNTS = {
+    apple: 8, sweet_cherry: 5, sour_cherry: 4, plum: 6, peach: 5,
+    nectarine: 5, pear: 5, quince: 3, apricot: 6, almond: 3,
+    walnut: 3, hazelnut: 3, olive: 7, pomegranate: 0
+  };
+  var TIMING_DRIVEN_SPECIES = [
+    'apple','sweet_cherry','sour_cherry','plum','peach','nectarine',
+    'pear','quince','apricot','almond','walnut','hazelnut'
+  ];
+  var MAX_FILE_SIZE = 1024 * 1024;
+
+  function isPlainObject(v) {
+    return v !== null && typeof v === 'object' && !Array.isArray(v);
+  }
+
+  function setStatus(text) {
+    var el = document.getElementById('v2BackupStatus');
+    if (el) el.textContent = text;
+  }
+
+  function validateCatalogV1(c) {
+    if (!isPlainObject(c)) return ['catalog_v1 not a plain object'];
+    var topKeys = Object.keys(c);
+    if (topKeys.length !== 2 || topKeys.indexOf('catalog_version') === -1 || topKeys.indexOf('species') === -1) {
+      return ['catalog_v1 keys must equal {catalog_version, species}'];
+    }
+    if (c.catalog_version !== 'catalog_v1') return ['catalog_v1.catalog_version must be "catalog_v1"'];
+    if (!isPlainObject(c.species)) return ['catalog_v1.species not a plain object'];
+    var sKeys = Object.keys(c.species);
+    if (sKeys.length !== EXPECTED_SPECIES.length) return ['catalog_v1.species must have exactly ' + EXPECTED_SPECIES.length + ' keys'];
+    for (var i = 0; i < EXPECTED_SPECIES.length; i++) {
+      if (sKeys.indexOf(EXPECTED_SPECIES[i]) === -1) return ['catalog_v1.species missing key: ' + EXPECTED_SPECIES[i]];
+    }
+    for (var j = 0; j < EXPECTED_SPECIES.length; j++) {
+      var s = EXPECTED_SPECIES[j];
+      var entry = c.species[s];
+      if (!isPlainObject(entry)) return ['catalog_v1.species.' + s + ' not a plain object'];
+      var expectedCount = EXPECTED_VARIETY_COUNTS[s];
+      var varieties = entry.varieties;
+      if (expectedCount === 0) {
+        if (varieties !== undefined) return ['catalog_v1.species.' + s + '.varieties must be undefined'];
+      } else {
+        if (!isPlainObject(varieties)) return ['catalog_v1.species.' + s + '.varieties not a plain object'];
+        if (Object.keys(varieties).length !== expectedCount) return ['catalog_v1.species.' + s + '.varieties must have exactly ' + expectedCount + ' keys'];
+      }
+    }
+    if (!isPlainObject(c.species.olive) || c.species.olive.seasonProfile !== 'mediterranean') return ['catalog_v1.species.olive.seasonProfile must be "mediterranean"'];
+    if (!isPlainObject(c.species.pomegranate) || c.species.pomegranate.seasonProfile !== 'mediterranean') return ['catalog_v1.species.pomegranate.seasonProfile must be "mediterranean"'];
+    if (c.species.pomegranate.varieties !== undefined) return ['catalog_v1.species.pomegranate.varieties must be undefined'];
+    for (var k = 0; k < TIMING_DRIVEN_SPECIES.length; k++) {
+      var ts = TIMING_DRIVEN_SPECIES[k];
+      var tEntry = c.species[ts];
+      if (!isPlainObject(tEntry.varieties)) return ['catalog_v1.species.' + ts + '.varieties not a plain object'];
+      if (!isPlainObject(tEntry.fallback)) return ['catalog_v1.species.' + ts + '.fallback not a plain object'];
+    }
+    return [];
+  }
+
+  function validateForBackup(parsed) {
+    if (!isPlainObject(parsed)) return ['root not a plain object'];
+    var rootKeys = Object.keys(parsed);
+    for (var i = 0; i < rootKeys.length; i++) {
+      if (EXPECTED_ROOT_KEYS.indexOf(rootKeys[i]) === -1) return ['unexpected root key: ' + rootKeys[i]];
+    }
+    for (var j = 0; j < EXPECTED_ROOT_KEYS.length; j++) {
+      if (rootKeys.indexOf(EXPECTED_ROOT_KEYS[j]) === -1) return ['missing key: ' + EXPECTED_ROOT_KEYS[j]];
+    }
+    if (!isPlainObject(parsed.meta)) return ['meta not a plain object'];
+    var metaKeys = Object.keys(parsed.meta);
+    for (var m = 0; m < metaKeys.length; m++) {
+      if (EXPECTED_META_KEYS.indexOf(metaKeys[m]) === -1) return ['unexpected meta key: ' + metaKeys[m]];
+    }
+    for (var n = 0; n < EXPECTED_META_KEYS.length; n++) {
+      if (metaKeys.indexOf(EXPECTED_META_KEYS[n]) === -1) return ['missing meta key: ' + EXPECTED_META_KEYS[n]];
+    }
+    if (parsed.meta.store_format_version !== 1) return ['meta.store_format_version must be 1'];
+    if (parsed.meta.active_catalog_version !== 'catalog_v1') return ['meta.active_catalog_version must be "catalog_v1"'];
+    if (!isPlainObject(parsed.catalogs)) return ['catalogs not a plain object'];
+    var catKeys = Object.keys(parsed.catalogs);
+    if (catKeys.length !== 1 || catKeys[0] !== 'catalog_v1') return ['catalogs keys must equal [catalog_v1]'];
+    var catErrs = validateCatalogV1(parsed.catalogs.catalog_v1);
+    if (catErrs.length > 0) return catErrs;
+    for (var p = 0; p < EMPTY_ARRAY_KEYS.length; p++) {
+      var ek = EMPTY_ARRAY_KEYS[p];
+      if (!Array.isArray(parsed[ek])) return [ek + ' not an array'];
+      if (parsed[ek].length !== 0) return [ek + ' must be empty in foundation baseline'];
+    }
+    if (!isPlainObject(parsed.review_state)) return ['review_state not a plain object'];
+    if (Object.keys(parsed.review_state).length !== 0) return ['review_state must be empty in foundation baseline'];
+    return [];
+  }
+
+  function exportV2() {
+    var raw = localStorage.getItem('vocnjak_v2');
+    if (raw === null) {
+      setStatus('Slice 3 — V2 pohrana ne postoji.');
+      return;
+    }
+    var parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (e) {
+      setStatus('Slice 3 — V2 pohrana je neispravna.');
+      console.error('vocnjak: V2 export parse failed:', e && e.message ? e.message : e);
+      return;
+    }
+    var errors = validateForBackup(parsed);
+    if (errors.length > 0) {
+      setStatus('Slice 3 — V2 pohrana ne prolazi validaciju: ' + errors[0] + '.');
+      console.error('vocnjak: V2 export validation failed:', errors);
+      return;
+    }
+    var iso = new Date().toISOString();
+    var stamp = iso.replace(/[:.]/g, '').slice(0, 17);
+    var filename = 'vocnjak-v2-' + stamp + '.json';
+    try {
+      var blob = new Blob([JSON.stringify(parsed, null, 2)], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setStatus('Slice 3 — izvoz: ' + filename);
+    } catch (e) {
+      setStatus('Slice 3 — izvoz nije moguć.');
+      console.error('vocnjak: V2 export blob failed:', e && e.message ? e.message : e);
+    }
+  }
+
+  function handleImportFile(file) {
+    if (!file) {
+      setStatus('Slice 3 — datoteka nije odabrana.');
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      setStatus('Slice 3 — datoteka prevelika (max 1 MB).');
+      return;
+    }
+    var reader = new FileReader();
+    reader.onerror = function () {
+      setStatus('Slice 3 — greška pri čitanju datoteke.');
+    };
+    reader.onload = function () {
+      var parsed;
+      try {
+        parsed = JSON.parse(reader.result);
+      } catch (e) {
+        setStatus('Slice 3 — neispravan JSON.');
+        console.error('vocnjak: V2 import parse failed:', e && e.message ? e.message : e);
+        return;
+      }
+      var errors = validateForBackup(parsed);
+      if (errors.length > 0) {
+        setStatus('Slice 3 — uvoz nije prošao validaciju: ' + errors[0] + '.');
+        console.error('vocnjak: V2 import validation failed:', errors);
+        return;
+      }
+      var ok = window.confirm('Cijela V2 pohrana bit će zamijenjena. Uvoz ne spaja s postojećim podacima i ne popravlja datoteku. Nastaviti?');
+      if (!ok) {
+        setStatus('Slice 3 — uvoz prekinut.');
+        return;
+      }
+      try {
+        localStorage.setItem('vocnjak_v2', JSON.stringify(parsed));
+        setStatus('Slice 3 — uvoz uspješan. Osvježi stranicu da bi promjene bile vidljive.');
+        console.log('vocnjak: V2 import succeeded; reload to re-run boot validation');
+      } catch (e) {
+        setStatus('Slice 3 — uvoz nije moguće zapisati. Vrati se i pokušaj ponovno.');
+        console.error('vocnjak: V2 import setItem failed:', e && e.message ? e.message : e);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  var exportBtn = document.getElementById('v2ExportBtn');
+  if (exportBtn) exportBtn.addEventListener('click', exportV2);
+
+  var importBtn = document.getElementById('v2ImportBtn');
+  var importInput = document.getElementById('v2ImportFile');
+  if (importBtn && importInput) {
+    importBtn.addEventListener('click', function () {
+      importInput.click();
+    });
+    importInput.addEventListener('change', function (event) {
+      var files = event.target.files;
+      var file = files && files.length > 0 ? files[0] : null;
+      handleImportFile(file);
+      event.target.value = '';
+    });
+  }
+})();
+// END V2 BACKUP — Slice 3
 </script>
 </body>
 </html>
