@@ -67,11 +67,12 @@ Current:
 - S11 implementation execution roadmap is complete in `V2_EXECUTION_ROADMAP.md` `§1`–`§50`
 - Runtime Slice 0 (V2 shell and owner-only entry) is complete (`642d0b1 Implement Runtime Slice 0 V2 shell`); legacy app remains the default
 - Runtime Slice 1 (V2 store boot and empty `vocnjak_v2` initialization) is complete (`178cfa8 Implement Runtime Slice 1 V2 store boot`); legacy app remains the default
-- next target: Runtime Slice 2 — Catalog seed and retained catalog baseline, only after explicit owner approval
+- Runtime Slice 2 (catalog seed and retained catalog baseline) is complete (`254448f Implement Runtime Slice 2 catalog seed`); legacy app remains the default
+- next target: Runtime Slice 3 — Early V2 export/import safety baseline, only after explicit owner approval
 - §0 monitoring constraints remain locked and authoritative
 - legacy data and V1/V3/V4 keys remain protected
-- implementation was forbidden through S11 documentation; Slices 0 and 1 were then owner-approved and committed
-- next runtime slice (Slice 2) and all subsequent slices require explicit per-slice owner approval before implementation
+- implementation was forbidden through S11 documentation; Slices 0, 1, and 2 were then owner-approved and committed
+- next runtime slice (Slice 3) and all subsequent slices require explicit per-slice owner approval before implementation
 
 ### INPUT FILES (NOT YET VALIDATED V2 TRUTH)
 

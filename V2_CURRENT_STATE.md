@@ -16,16 +16,16 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: Runtime implementation continues. Runtime Slice 0 (V2 shell and owner-only entry) and Runtime Slice 1 (store boot and empty `vocnjak_v2` initialization) are complete; Runtime Slice 2 is the next eligible runtime work and requires explicit owner approval.
+Phase: Runtime implementation continues. Runtime Slice 0 (V2 shell and owner-only entry), Runtime Slice 1 (store boot and empty `vocnjak_v2` initialization), and Runtime Slice 2 (catalog seed and retained catalog baseline) are complete; Runtime Slice 3 is the next eligible runtime work and requires explicit owner approval.
 
 Current goal:
 
-Await explicit owner approval to open Runtime Slice 2 — Catalog seed and retained catalog baseline.
+Await explicit owner approval to open Runtime Slice 3 — Early V2 export/import safety baseline.
 
 Current immediate next step:
 
 ```text
-Runtime Slice 2 — Catalog seed and retained catalog baseline.
+Runtime Slice 3 — Early V2 export/import safety baseline.
 ```
 
 S11 status: DONE.
@@ -51,7 +51,27 @@ Owner runtime verification of Slice 1:
 - all 13 protected legacy key VALUES unchanged
 - `vocnjak_v2` exists after Slice 1, as expected
 
-Runtime Slice 2 status: NEXT TARGET, not started; requires explicit owner approval before implementation.
+Runtime Slice 2 status: DONE (`254448f Implement Runtime Slice 2 catalog seed`).
+
+Owner runtime verification of Slice 2:
+- normal URL without `#v2` opens legacy app
+- `#v2` opens V2 shell
+- Slice 1 valid-load works
+- Slice 2 already-loaded status works
+- `catalog_v1` species set OK
+- `catalog_v1` variety counts OK
+- Mediterranean season profiles OK
+- all record collections remain empty
+- `review_state` remains `{}`
+- `vocnjak_v2` byte-identical across `#v2` reload
+- invalid `vocnjak_v2` is preserved, not overwritten or auto-fixed
+- invalid cleanup restore works
+- different `active_catalog_version` preserved
+- Slice 2 makes no changes for different `active_catalog_version`
+- different-catalog cleanup restore works
+- all 13 protected legacy key VALUES unchanged
+
+Runtime Slice 3 status: NEXT TARGET, not started; requires explicit owner approval before implementation.
 
 Completed S11 patches:
 - `S11.A — Roadmap authority, sequencing principles, commit/runtime safety boundaries` (`627c83d Define S11 roadmap authority and runtime safety`)
@@ -60,7 +80,7 @@ Completed S11 patches:
 - `S11.C2 — Usable/default slices 5–9` (`a56fe75 Define S11 usable-default slice plan`)
 - `S11.D — Verification gates, milestones, stop conditions, runtime handoff` (`06feb13 Define S11 verification gates and runtime handoff`)
 
-Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 and all subsequent slices still require explicit per-slice owner approval before implementation.
+Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 was then owner-approved and implemented (commit `254448f`). Runtime Slice 3 and all subsequent slices still require explicit per-slice owner approval before implementation.
 
 §0 monitoring constraints remain locked and authoritative.
 
@@ -1169,7 +1189,7 @@ S11 exit criteria met:
 - owner approved S11.A, S11.B, S11.C1, S11.C2, S11.D
 - runtime implementation may now begin once explicitly opened by owner
 
-Next eligible work: Runtime Slice 2 — Catalog seed and retained catalog baseline. Implementation requires explicit owner approval. (Runtime Slice 0 — V2 shell and owner-only entry was completed at `642d0b1 Implement Runtime Slice 0 V2 shell`; Runtime Slice 1 — V2 store boot and empty `vocnjak_v2` initialization was completed at `178cfa8 Implement Runtime Slice 1 V2 store boot`.)
+Next eligible work: Runtime Slice 3 — Early V2 export/import safety baseline. Implementation requires explicit owner approval. (Runtime Slice 0 — V2 shell and owner-only entry was completed at `642d0b1 Implement Runtime Slice 0 V2 shell`; Runtime Slice 1 — V2 store boot and empty `vocnjak_v2` initialization was completed at `178cfa8 Implement Runtime Slice 1 V2 store boot`; Runtime Slice 2 — Catalog seed and retained catalog baseline was completed at `254448f Implement Runtime Slice 2 catalog seed`.)
 
 ---
 
