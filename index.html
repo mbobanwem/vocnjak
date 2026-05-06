@@ -185,9 +185,174 @@
   .v2-active #v2Shell { display: block; }
   #v2Shell button { padding: 12px 16px; }
   /* END V2 SHELL — Slice 0 */
+
+  /* BEGIN V2 PLANTS — Slice 4 */
+  #v2Plants {
+    max-width: 760px;
+    margin: 24px auto;
+    color: #1f2933;
+  }
+  #v2Plants[hidden],
+  #v2Plants [hidden] { display: none !important; }
+  .v2-plants-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .v2-plants-topbar h2,
+  .v2-plants-detail h2,
+  .v2-plants-form h2 {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.2;
+  }
+  .v2-plants-primary,
+  .v2-plants-secondary,
+  .v2-plants-row {
+    min-height: 44px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    color: #1f2933;
+    font: inherit;
+  }
+  .v2-plants-primary {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+    font-weight: 700;
+  }
+  .v2-plants-secondary {
+    background: #f8fafc;
+    font-weight: 600;
+  }
+  .v2-plants-empty,
+  .v2-plants-error,
+  .v2-plants-status,
+  .v2-plants-hint,
+  .v2-plants-missing {
+    color: #64748b;
+  }
+  .v2-plants-error {
+    color: #b42318;
+    font-weight: 600;
+  }
+  .v2-plants-list {
+    display: grid;
+    gap: 10px;
+  }
+  .v2-plants-row {
+    width: 100%;
+    padding: 12px 14px;
+    text-align: left;
+  }
+  .v2-plants-row-title {
+    display: block;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .v2-plants-row-meta {
+    display: block;
+    margin-top: 4px;
+    color: #64748b;
+    line-height: 1.35;
+  }
+  .v2-plants-form {
+    display: grid;
+    gap: 14px;
+  }
+  .v2-plants-field {
+    display: grid;
+    gap: 6px;
+  }
+  .v2-plants-field label {
+    font-weight: 700;
+  }
+  .v2-plants-field input,
+  .v2-plants-field select,
+  .v2-plants-field textarea {
+    width: 100%;
+    min-height: 44px;
+    box-sizing: border-box;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font: inherit;
+    font-size: 16px;
+    color: #1f2933;
+    background: #fff;
+  }
+  .v2-plants-field textarea {
+    min-height: 88px;
+    resize: vertical;
+  }
+  .v2-plants-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    color: #334155;
+  }
+  .v2-plants-check input {
+    width: 18px;
+    height: 18px;
+    min-height: 18px;
+  }
+  .v2-plants-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .v2-plants-detail {
+    display: grid;
+    gap: 18px;
+  }
+  .v2-plants-detail-back {
+    justify-self: start;
+  }
+  .v2-plants-section {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 14px;
+  }
+  .v2-plants-section h3 {
+    margin: 0 0 10px;
+    font-size: 18px;
+  }
+  .v2-plants-karton {
+    display: grid;
+    gap: 8px;
+  }
+  .v2-plants-karton-row {
+    display: grid;
+    grid-template-columns: minmax(120px, 180px) 1fr;
+    gap: 8px;
+    line-height: 1.45;
+  }
+  .v2-plants-karton-label {
+    color: #64748b;
+    font-weight: 700;
+  }
+  @media (max-width: 640px) {
+    #v2Plants { margin: 20px 0; }
+    .v2-plants-topbar {
+      align-items: stretch;
+      flex-direction: column;
+    }
+    .v2-plants-actions {
+      flex-direction: column;
+    }
+    .v2-plants-karton-row {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+  }
+  /* END V2 PLANTS — Slice 4 */
 </style>
 <!-- BEGIN V2 SHELL — Slice 0 -->
-<script>if(location.hash==='#v2')document.documentElement.classList.add('v2-active');</script>
+<script>if(location.hash==='#v2'||location.hash.indexOf('#v2/')===0)document.documentElement.classList.add('v2-active');</script>
 <!-- END V2 SHELL — Slice 0 -->
 </head>
 <body>
@@ -246,6 +411,13 @@
   <button type="button" id="v2ImportBtn">Uvezi V2 sigurnosnu kopiju</button>
   <input type="file" id="v2ImportFile" accept=".json,application/json" hidden>
   <!-- END V2 BACKUP — Slice 3 -->
+  <!-- BEGIN V2 PLANTS — Slice 4 -->
+  <section id="v2Plants" aria-live="polite">
+    <div id="v2PlantsList"></div>
+    <form id="v2PlantsAddForm" class="v2-plants-form" hidden novalidate></form>
+    <article id="v2PlantsDetail" class="v2-plants-detail" hidden></article>
+  </section>
+  <!-- END V2 PLANTS — Slice 4 -->
   <button type="button" id="v2ExitBtn">Natrag na staru aplikaciju</button>
 </div>
 <!-- END V2 SHELL — Slice 0 -->
@@ -3688,7 +3860,7 @@ if ('serviceWorker' in navigator) {
 
   var EXPECTED_ROOT_KEYS = ['meta','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
   var EXPECTED_META_KEYS = ['store_format_version','active_catalog_version'];
-  var EMPTY_ARRAY_KEYS = ['plants','plan_instances','plan_overlays','activities','observations','corrections'];
+  var EMPTY_ARRAY_KEYS = ['plan_instances','plan_overlays','activities','observations','corrections'];
   var EXPECTED_SPECIES = [
     'apple','sweet_cherry','sour_cherry','plum','peach','nectarine',
     'pear','quince','apricot','almond','walnut','hazelnut',
@@ -3704,9 +3876,55 @@ if ('serviceWorker' in navigator) {
     'pear','quince','apricot','almond','walnut','hazelnut'
   ];
   var MAX_FILE_SIZE = 1024 * 1024;
+  var ALLOWED_PLANT_KEYS = [
+    'plant_id','catalog_version','stable_order','species','variety','ripening_fallback',
+    'display_label','rootstock','planted_at','purchased_at',
+    'source_label','position_label','profile_note'
+  ];
+  var REQUIRED_PLANT_KEYS = ['plant_id','catalog_version','stable_order','species'];
+  var STRING_OR_UNKNOWN_KEYS = ['rootstock','source_label','position_label'];
+  var DATE_OR_UNKNOWN_KEYS = ['planted_at','purchased_at'];
+  var STRING_ONLY_KEYS = ['display_label','profile_note'];
+  var PLANT_ID_RE = /^plant_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z_[0-9a-f]{5}$/;
+  var DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+  var hasOwn = Object.prototype.hasOwnProperty;
 
   function isPlainObject(v) {
     return v !== null && typeof v === 'object' && !Array.isArray(v);
+  }
+
+  function hasOwnKey(obj, key) {
+    return hasOwn.call(obj, key);
+  }
+
+  function isUnknownTag(v) {
+    return v !== null &&
+      typeof v === 'object' &&
+      !Array.isArray(v) &&
+      Object.getPrototypeOf(v) === Object.prototype &&
+      hasOwnKey(v, 'unknown') &&
+      v.unknown === true &&
+      Object.keys(v).length === 1;
+  }
+
+  function localTodayYmd() {
+    var now = new Date();
+    var y = now.getFullYear();
+    var m = now.getMonth() + 1;
+    var d = now.getDate();
+    return y + '-' + (m < 10 ? '0' + m : '' + m) + '-' + (d < 10 ? '0' + d : '' + d);
+  }
+
+  function checkDate(s) {
+    if (typeof s !== 'string' || !DATE_RE.test(s)) return 'invalid format';
+    var parts = s.split('-');
+    var year = Number(parts[0]);
+    var month = Number(parts[1]);
+    var day = Number(parts[2]);
+    var dt = new Date(Date.UTC(year, month - 1, day));
+    if (dt.getUTCFullYear() !== year || dt.getUTCMonth() !== month - 1 || dt.getUTCDate() !== day) return 'not a real date';
+    if (s > localTodayYmd()) return 'in the future';
+    return null;
   }
 
   function setStatus(text) {
@@ -3752,6 +3970,91 @@ if ('serviceWorker' in navigator) {
     return [];
   }
 
+  function validateAllPlants(plants, catalog) {
+    var seenIds = Object.create(null);
+    var seenOrders = Object.create(null);
+    for (var i = 0; i < plants.length; i++) {
+      var errs = validatePlant(plants[i], catalog);
+      if (errs.length > 0) return errs;
+      var pid = plants[i].plant_id;
+      var order = String(plants[i].stable_order);
+      if (seenIds[pid]) return ['duplicate plant_id: ' + pid];
+      seenIds[pid] = true;
+      if (seenOrders[order]) return ['duplicate stable_order: ' + plants[i].stable_order];
+      seenOrders[order] = true;
+    }
+    return [];
+  }
+
+  function validatePlant(p, catalog) {
+    if (!isPlainObject(p)) return ['plant not a plain object'];
+    var keys = Object.keys(p);
+    for (var i = 0; i < keys.length; i++) {
+      if (ALLOWED_PLANT_KEYS.indexOf(keys[i]) === -1) return ['plant: unexpected key: ' + keys[i]];
+    }
+    for (var j = 0; j < REQUIRED_PLANT_KEYS.length; j++) {
+      if (keys.indexOf(REQUIRED_PLANT_KEYS[j]) === -1) return ['plant: missing key: ' + REQUIRED_PLANT_KEYS[j]];
+    }
+    if (typeof p.plant_id !== 'string' || !PLANT_ID_RE.test(p.plant_id)) return ['plant.plant_id must match plant_<iso>_<5hex>'];
+    if (p.catalog_version !== 'catalog_v1') return ['plant.' + p.plant_id + '.catalog_version must be "catalog_v1"'];
+    if (typeof p.stable_order !== 'number' || !isFinite(p.stable_order) || Math.floor(p.stable_order) !== p.stable_order || p.stable_order < 0) return ['plant.' + p.plant_id + '.stable_order must be non-negative integer'];
+    if (typeof p.species !== 'string' || !catalog || !catalog.species || !hasOwnKey(catalog.species, p.species)) return ['plant.' + p.plant_id + '.species not in catalog'];
+
+    var sp = catalog.species[p.species];
+    if (!isPlainObject(sp)) return ['plant.' + p.plant_id + '.species catalog entry invalid'];
+
+    if (p.species === 'pomegranate') {
+      if (hasOwnKey(p, 'variety')) return ['plant.' + p.plant_id + '.variety must be absent for pomegranate'];
+    } else if (hasOwnKey(p, 'variety')) {
+      if (isUnknownTag(p.variety)) {
+        // valid unknown variety
+      } else if (typeof p.variety === 'string') {
+        if (!isPlainObject(sp.varieties) || !hasOwnKey(sp.varieties, p.variety)) return ['plant.' + p.plant_id + '.variety not in catalog'];
+      } else {
+        return ['plant.' + p.plant_id + '.variety must be string or {unknown:true}'];
+      }
+    }
+
+    if (hasOwnKey(p, 'ripening_fallback')) {
+      if (p.species === 'olive' || p.species === 'pomegranate') return ['plant.' + p.plant_id + '.ripening_fallback not allowed for ' + p.species];
+      if (!isPlainObject(sp.fallback)) return ['plant.' + p.plant_id + '.ripening_fallback not allowed (species has no fallback block)'];
+      if (!isUnknownTag(p.variety)) return ['plant.' + p.plant_id + '.ripening_fallback requires variety = {unknown:true}'];
+      if (isUnknownTag(p.ripening_fallback)) {
+        // valid explicit unknown fallback
+      } else if (typeof p.ripening_fallback === 'string') {
+        if (!hasOwnKey(sp.fallback, p.ripening_fallback)) return ['plant.' + p.plant_id + '.ripening_fallback must be a catalog fallback key'];
+      } else {
+        return ['plant.' + p.plant_id + '.ripening_fallback must be string or {unknown:true}'];
+      }
+    }
+
+    for (var u = 0; u < STRING_OR_UNKNOWN_KEYS.length; u++) {
+      var k = STRING_OR_UNKNOWN_KEYS[u];
+      if (hasOwnKey(p, k)) {
+        if (isUnknownTag(p[k])) continue;
+        if (typeof p[k] !== 'string' || p[k].trim().length === 0) return ['plant.' + p.plant_id + '.' + k + ' must be non-empty string or {unknown:true}'];
+      }
+    }
+
+    for (var d = 0; d < DATE_OR_UNKNOWN_KEYS.length; d++) {
+      var dk = DATE_OR_UNKNOWN_KEYS[d];
+      if (hasOwnKey(p, dk)) {
+        if (isUnknownTag(p[dk])) continue;
+        var derr = checkDate(p[dk]);
+        if (derr) return ['plant.' + p.plant_id + '.' + dk + ' ' + derr];
+      }
+    }
+
+    for (var s = 0; s < STRING_ONLY_KEYS.length; s++) {
+      var sk = STRING_ONLY_KEYS[s];
+      if (hasOwnKey(p, sk)) {
+        if (typeof p[sk] !== 'string' || p[sk].trim().length === 0) return ['plant.' + p.plant_id + '.' + sk + ' must be non-empty string'];
+      }
+    }
+
+    return [];
+  }
+
   function validateForBackup(parsed) {
     if (!isPlainObject(parsed)) return ['root not a plain object'];
     var rootKeys = Object.keys(parsed);
@@ -3776,6 +4079,9 @@ if ('serviceWorker' in navigator) {
     if (catKeys.length !== 1 || catKeys[0] !== 'catalog_v1') return ['catalogs keys must equal [catalog_v1]'];
     var catErrs = validateCatalogV1(parsed.catalogs.catalog_v1);
     if (catErrs.length > 0) return catErrs;
+    if (!Array.isArray(parsed.plants)) return ['plants not an array'];
+    var plantErrs = validateAllPlants(parsed.plants, parsed.catalogs.catalog_v1);
+    if (plantErrs.length > 0) return plantErrs;
     for (var p = 0; p < EMPTY_ARRAY_KEYS.length; p++) {
       var ek = EMPTY_ARRAY_KEYS[p];
       if (!Array.isArray(parsed[ek])) return [ek + ' not an array'];
@@ -3785,6 +4091,8 @@ if ('serviceWorker' in navigator) {
     if (Object.keys(parsed.review_state).length !== 0) return ['review_state must be empty in foundation baseline'];
     return [];
   }
+
+  window.v2ValidateForBackup = validateForBackup;
 
   function exportV2() {
     var raw = localStorage.getItem('vocnjak_v2');
@@ -3889,6 +4197,652 @@ if ('serviceWorker' in navigator) {
   }
 })();
 // END V2 BACKUP — Slice 3
+
+// BEGIN V2 PLANTS — Slice 4
+(function () {
+  if (!document.documentElement.classList.contains('v2-active')) return;
+
+  var plantsRoot = document.getElementById('v2Plants');
+  var listView = document.getElementById('v2PlantsList');
+  var addForm = document.getElementById('v2PlantsAddForm');
+  var detailView = document.getElementById('v2PlantsDetail');
+  if (!plantsRoot || !listView || !addForm || !detailView) return;
+
+  var UNKNOWN_SELECT_VALUE = '__unknown__';
+  var PLANT_ID_RE = /^plant_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z_[0-9a-f]{5}$/;
+  var hasOwn = Object.prototype.hasOwnProperty;
+  var currentFormFields = null;
+  var pendingDetailStatus = '';
+
+  var SPECIES_LABEL_HR = {
+    apple: 'Jabuka',
+    sweet_cherry: 'Trešnja',
+    sour_cherry: 'Višnja',
+    plum: 'Šljiva',
+    peach: 'Breskva',
+    nectarine: 'Nektarina',
+    pear: 'Kruška',
+    quince: 'Dunja',
+    apricot: 'Marelica',
+    almond: 'Badem',
+    walnut: 'Orah',
+    hazelnut: 'Lijeska',
+    olive: 'Maslina',
+    pomegranate: 'Šipak'
+  };
+
+  var VARIETY_LABEL_HR = {
+    apple: {
+      gala: 'Gala', golden_delicious: 'Golden Delicious', jonagold: 'Jonagold',
+      topaz: 'Topaz', elstar: 'Elstar', fuji: 'Fuji', granny_smith: 'Granny Smith', idared: 'Idared'
+    },
+    sweet_cherry: {
+      burlat: 'Burlat', kordia: 'Kordia', lapins: 'Lapins', regina: 'Regina', sweetheart: 'Sweetheart'
+    },
+    sour_cherry: {
+      oblacinska: 'Oblačinska', marasca: 'Marasca', montmorency: 'Montmorency', morello: 'Morello'
+    },
+    plum: {
+      cacanska_rana: 'Čačanska rana', cacanska_lepotica: 'Čačanska lepotica',
+      cacanska_najbolja: 'Čačanska najbolja', stanley: 'Stanley', prezident: 'Prezident', bistrica: 'Bistrica'
+    },
+    peach: {
+      springcrest: 'Springcrest', redhaven: 'Redhaven', royal_glory: 'Royal Glory', fayette: 'Fayette', o_henry: "O'Henry"
+    },
+    nectarine: {
+      caldesi_2000: 'Caldesi 2000', big_top: 'Big Top', fantasia: 'Fantasia', stark_redgold: 'Stark Redgold', venus: 'Venus'
+    },
+    pear: {
+      santa_maria: 'Santa Maria', williams: 'Williams', conference: 'Conference', boscs_bottle: "Bosc's Bottle", abate_fetel: 'Abate Fetel'
+    },
+    quince: {
+      leskovacka: 'Leskovačka', vranjska: 'Vranjska', champion: 'Champion'
+    },
+    apricot: {
+      novosadska_rodna: 'Novosadska rodna', kioto: 'Kioto', goldrich: 'Goldrich',
+      hargrand: 'Hargrand', bergeron: 'Bergeron', madjarska_najbolja: 'Mađarska najbolja'
+    },
+    almond: {
+      ferragnes: 'Ferragnes', ferraduel: 'Ferraduel', supernova: 'Supernova'
+    },
+    walnut: {
+      chandler: 'Chandler', franquette: 'Franquette', sejnovo: 'Šejnovo'
+    },
+    hazelnut: {
+      istarski_dugi: 'Istarski dugi', tonda_di_giffoni: 'Tonda di Giffoni', ennis: 'Ennis'
+    },
+    olive: {
+      oblica: 'Oblica', istarska_bjelica: 'Istarska bjelica', leccino: 'Leccino',
+      frantoio: 'Frantoio', coratina: 'Coratina', picholine: 'Picholine', aglandau: 'Aglandau'
+    }
+  };
+
+  var BAND_LABEL_HR = { early: 'rana', mid: 'srednja', late: 'kasna' };
+
+  function hasOwnKey(obj, key) {
+    return obj !== null && typeof obj === 'object' && hasOwn.call(obj, key);
+  }
+
+  function isPlainObject(v) {
+    return v !== null && typeof v === 'object' && !Array.isArray(v);
+  }
+
+  function isUnknownTag(v) {
+    return v !== null &&
+      typeof v === 'object' &&
+      !Array.isArray(v) &&
+      Object.getPrototypeOf(v) === Object.prototype &&
+      hasOwnKey(v, 'unknown') &&
+      v.unknown === true &&
+      Object.keys(v).length === 1;
+  }
+
+  function clearNode(node) {
+    while (node.firstChild) node.removeChild(node.firstChild);
+  }
+
+  function makeEl(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function makeOption(value, text) {
+    var option = document.createElement('option');
+    option.value = value;
+    option.textContent = text;
+    return option;
+  }
+
+  function humanizeKey(key) {
+    return String(key || '').replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+  }
+
+  function speciesLabel(species) {
+    return SPECIES_LABEL_HR[species] || humanizeKey(species);
+  }
+
+  function varietyLabel(species, variety) {
+    var speciesMap = VARIETY_LABEL_HR[species] || {};
+    return speciesMap[variety] || humanizeKey(variety);
+  }
+
+  function bandLabel(v) {
+    if (isUnknownTag(v)) return 'ne znam';
+    return BAND_LABEL_HR[v] || humanizeKey(v);
+  }
+
+  function formatDateYmd(s) {
+    if (typeof s !== 'string') return '';
+    var parts = s.split('-');
+    if (parts.length !== 3) return s;
+    return Number(parts[2]) + '.' + Number(parts[1]) + '.' + parts[0] + '.';
+  }
+
+  function renderValue(v, kind) {
+    if (isUnknownTag(v)) return 'ne znam';
+    if (v === undefined) return 'nije upisano';
+    if (kind === 'date') return formatDateYmd(v);
+    return String(v);
+  }
+
+  function plantTitle(plant) {
+    var label = typeof plant.display_label === 'string' ? plant.display_label.trim() : '';
+    if (label) return label;
+    var base = speciesLabel(plant.species);
+    if (isUnknownTag(plant.variety)) return base + ' — ne znam';
+    if (typeof plant.variety === 'string') return base + ' — ' + varietyLabel(plant.species, plant.variety);
+    return base;
+  }
+
+  function plantDetailRoute(plantId) {
+    return '#v2/plant/' + encodeURIComponent(plantId);
+  }
+
+  function getRoute() {
+    var h = location.hash;
+    if (h === '#v2' || h === '') return { name: 'list' };
+    if (h === '#v2/add') return { name: 'add' };
+    var prefix = '#v2/plant/';
+    if (h.indexOf(prefix) === 0) {
+      var raw = h.slice(prefix.length);
+      var id;
+      try {
+        id = decodeURIComponent(raw);
+      } catch (e) {
+        return { name: 'list' };
+      }
+      if (!PLANT_ID_RE.test(id)) return { name: 'detail', plant_id: id, malformed: true };
+      return { name: 'detail', plant_id: id };
+    }
+    return { name: 'list' };
+  }
+
+  function readValidStore() {
+    var raw = localStorage.getItem('vocnjak_v2');
+    if (raw === null) return { ok: false, error: 'Pohrana nije inicijalizirana.' };
+    var parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (e) {
+      return { ok: false, error: 'Pohrana je neispravna.' };
+    }
+    if (typeof window.v2ValidateForBackup !== 'function') return { ok: false, error: 'Validator sigurnosne kopije nije dostupan.' };
+    var errors = window.v2ValidateForBackup(parsed);
+    if (errors.length > 0) return { ok: false, error: 'Pohrana ne prolazi validaciju: ' + errors[0] + '.' };
+    return { ok: true, store: parsed, catalog: parsed.catalogs.catalog_v1 };
+  }
+
+  function findPlant(plants, plantId) {
+    for (var i = 0; i < plants.length; i++) {
+      if (plants[i].plant_id === plantId) return plants[i];
+    }
+    return null;
+  }
+
+  function setViews(active) {
+    listView.hidden = active !== 'list';
+    addForm.hidden = active !== 'add';
+    detailView.hidden = active !== 'detail';
+    currentFormFields = active === 'add' ? currentFormFields : null;
+  }
+
+  function renderList() {
+    setViews('list');
+    clearNode(listView);
+
+    var topbar = makeEl('div', 'v2-plants-topbar');
+    topbar.appendChild(makeEl('h2', '', 'Biljke'));
+    var addBtn = makeEl('button', 'v2-plants-primary', 'Dodaj voćku');
+    addBtn.type = 'button';
+    addBtn.addEventListener('click', function () { location.hash = '#v2/add'; });
+    topbar.appendChild(addBtn);
+    listView.appendChild(topbar);
+
+    var result = readValidStore();
+    if (!result.ok) {
+      listView.appendChild(makeEl('p', 'v2-plants-error', result.error));
+      return;
+    }
+
+    var plants = result.store.plants.slice().sort(function (a, b) {
+      return a.stable_order - b.stable_order;
+    });
+
+    if (plants.length === 0) {
+      listView.appendChild(makeEl('p', 'v2-plants-empty', 'Još nema unesenih voćki.'));
+      return;
+    }
+
+    var list = makeEl('div', 'v2-plants-list');
+    for (var i = 0; i < plants.length; i++) {
+      var plant = plants[i];
+      var row = makeEl('button', 'v2-plants-row');
+      row.type = 'button';
+      row.dataset.plantId = plant.plant_id;
+      row.addEventListener('click', function (event) {
+        location.hash = plantDetailRoute(event.currentTarget.dataset.plantId);
+      });
+      row.appendChild(makeEl('span', 'v2-plants-row-title', plantTitle(plant)));
+      var bits = [];
+      if (typeof plant.position_label === 'string') bits.push('Položaj: ' + plant.position_label);
+      else if (isUnknownTag(plant.position_label)) bits.push('Položaj: ne znam');
+      if (typeof plant.rootstock === 'string') bits.push('Podloga: ' + plant.rootstock);
+      else if (isUnknownTag(plant.rootstock)) bits.push('Podloga: ne znam');
+      if (bits.length > 0) row.appendChild(makeEl('span', 'v2-plants-row-meta', bits.join(' · ')));
+      list.appendChild(row);
+    }
+    listView.appendChild(list);
+  }
+
+  function addKartonRow(parent, label, value) {
+    var row = makeEl('div', 'v2-plants-karton-row');
+    row.appendChild(makeEl('span', 'v2-plants-karton-label', label));
+    row.appendChild(makeEl('span', '', value));
+    parent.appendChild(row);
+  }
+
+  function renderNotFound() {
+    setViews('detail');
+    clearNode(detailView);
+    var back = makeEl('button', 'v2-plants-secondary v2-plants-detail-back', '← Natrag na popis');
+    back.type = 'button';
+    back.addEventListener('click', function () { location.hash = '#v2'; });
+    detailView.appendChild(back);
+    detailView.appendChild(makeEl('p', 'v2-plants-empty', 'Voćka nije pronađena.'));
+  }
+
+  function renderDetail(route) {
+    var result = readValidStore();
+    if (!result.ok || route.malformed) {
+      renderNotFound();
+      return;
+    }
+    var plant = findPlant(result.store.plants, route.plant_id);
+    if (!plant) {
+      renderNotFound();
+      return;
+    }
+
+    setViews('detail');
+    clearNode(detailView);
+
+    var back = makeEl('button', 'v2-plants-secondary v2-plants-detail-back', '← Natrag na popis');
+    back.type = 'button';
+    back.addEventListener('click', function () { location.hash = '#v2'; });
+    detailView.appendChild(back);
+    if (pendingDetailStatus) {
+      detailView.appendChild(makeEl('p', 'v2-plants-status', pendingDetailStatus));
+      pendingDetailStatus = '';
+    }
+    detailView.appendChild(makeEl('h2', '', plantTitle(plant)));
+
+    var section = makeEl('section', 'v2-plants-section');
+    section.appendChild(makeEl('h3', '', 'Karton voćke'));
+    var karton = makeEl('div', 'v2-plants-karton');
+    addKartonRow(karton, 'Vrsta', speciesLabel(plant.species));
+    if (plant.species !== 'pomegranate') {
+      if (isUnknownTag(plant.variety)) addKartonRow(karton, 'Sorta', 'ne znam');
+      else if (typeof plant.variety === 'string') addKartonRow(karton, 'Sorta', varietyLabel(plant.species, plant.variety));
+      else addKartonRow(karton, 'Sorta', 'nije upisano');
+    }
+    if (hasOwnKey(plant, 'ripening_fallback')) addKartonRow(karton, 'Vrijeme dozrijevanja', bandLabel(plant.ripening_fallback));
+    addKartonRow(karton, 'Podloga', renderValue(plant.rootstock));
+    addKartonRow(karton, 'Posađeno', renderValue(plant.planted_at, 'date'));
+    addKartonRow(karton, 'Kupljeno', renderValue(plant.purchased_at, 'date'));
+    addKartonRow(karton, 'Izvor', renderValue(plant.source_label));
+    addKartonRow(karton, 'Položaj', renderValue(plant.position_label));
+    addKartonRow(karton, 'Bilješka', renderValue(plant.profile_note));
+    addKartonRow(karton, 'Korisnička oznaka', renderValue(plant.display_label));
+    section.appendChild(karton);
+    detailView.appendChild(section);
+
+    var diary = makeEl('section', 'v2-plants-section');
+    diary.appendChild(makeEl('h3', '', 'Dnevnik ove voćke'));
+    diary.appendChild(makeEl('p', 'v2-plants-empty', 'Dnevnik ove voćke bit će dostupan u sljedećem koraku.'));
+    detailView.appendChild(diary);
+  }
+
+  function appendField(parent, id, labelText, control, hintText) {
+    var wrap = makeEl('div', 'v2-plants-field');
+    var label = makeEl('label', '', labelText);
+    label.setAttribute('for', id);
+    control.id = id;
+    wrap.appendChild(label);
+    wrap.appendChild(control);
+    if (hintText) wrap.appendChild(makeEl('small', 'v2-plants-hint', hintText));
+    parent.appendChild(wrap);
+    return wrap;
+  }
+
+  function appendUnknownableField(parent, id, labelText, type) {
+    var input = type === 'textarea' ? document.createElement('textarea') : document.createElement('input');
+    if (type !== 'textarea') input.type = type;
+    var wrap = appendField(parent, id, labelText, input);
+    var checkLabel = makeEl('label', 'v2-plants-check');
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkLabel.appendChild(checkbox);
+    checkLabel.appendChild(document.createTextNode('ne znam'));
+    wrap.appendChild(checkLabel);
+    checkbox.addEventListener('change', function () {
+      input.disabled = checkbox.checked;
+    });
+    return { input: input, unknown: checkbox };
+  }
+
+  function optionalString(input) {
+    var value = input.value.trim();
+    return value ? value : null;
+  }
+
+  function renderAdd() {
+    setViews('add');
+    clearNode(addForm);
+
+    addForm.appendChild(makeEl('h2', '', 'Dodaj voćku'));
+    var message = makeEl('p', 'v2-plants-error');
+    message.hidden = true;
+    addForm.appendChild(message);
+
+    var result = readValidStore();
+    if (!result.ok) {
+      message.textContent = result.error;
+      message.hidden = false;
+      currentFormFields = null;
+      return;
+    }
+
+    var speciesSelect = document.createElement('select');
+    speciesSelect.required = true;
+    speciesSelect.appendChild(makeOption('', 'Odaberi vrstu'));
+    var speciesKeys = Object.keys(result.catalog.species);
+    for (var i = 0; i < speciesKeys.length; i++) {
+      speciesSelect.appendChild(makeOption(speciesKeys[i], speciesLabel(speciesKeys[i])));
+    }
+    appendField(addForm, 'v2PlantSpecies', 'Vrsta', speciesSelect);
+
+    var varietySelect = document.createElement('select');
+    var varietyWrap = appendField(addForm, 'v2PlantVariety', 'Sorta', varietySelect);
+
+    var fallbackSelect = document.createElement('select');
+    var fallbackWrap = appendField(addForm, 'v2PlantRipeningFallback', 'Vrijeme dozrijevanja', fallbackSelect, 'ako znaš');
+    fallbackWrap.hidden = true;
+
+    var timingHint = makeEl('p', 'v2-plants-hint', 'Ako znaš sortu ili otprilike kada dozrijeva, sezonski periodi mogu biti precizniji.');
+    timingHint.hidden = true;
+    addForm.appendChild(timingHint);
+
+    var rootstock = appendUnknownableField(addForm, 'v2PlantRootstock', 'Podloga', 'text');
+    var plantedAt = appendUnknownableField(addForm, 'v2PlantPlantedAt', 'Posađeno', 'date');
+    var purchasedAt = appendUnknownableField(addForm, 'v2PlantPurchasedAt', 'Kupljeno', 'date');
+    var sourceLabel = appendUnknownableField(addForm, 'v2PlantSourceLabel', 'Izvor / rasadnik', 'text');
+    var positionLabel = appendUnknownableField(addForm, 'v2PlantPositionLabel', 'Položaj / oznaka', 'text');
+
+    var note = document.createElement('textarea');
+    appendField(addForm, 'v2PlantProfileNote', 'Bilješka', note);
+
+    var displayLabel = document.createElement('input');
+    displayLabel.type = 'text';
+    appendField(addForm, 'v2PlantDisplayLabel', 'Korisnička oznaka / ime', displayLabel);
+
+    var actions = makeEl('div', 'v2-plants-actions');
+    var save = makeEl('button', 'v2-plants-primary', 'Spremi voćku');
+    save.type = 'submit';
+    save.disabled = true;
+    var cancel = makeEl('button', 'v2-plants-secondary', 'Odustani');
+    cancel.type = 'button';
+    cancel.addEventListener('click', function () { location.hash = '#v2'; });
+    actions.appendChild(save);
+    actions.appendChild(cancel);
+    addForm.appendChild(actions);
+
+    currentFormFields = {
+      catalog: result.catalog,
+      message: message,
+      speciesSelect: speciesSelect,
+      varietySelect: varietySelect,
+      varietyWrap: varietyWrap,
+      fallbackSelect: fallbackSelect,
+      fallbackWrap: fallbackWrap,
+      timingHint: timingHint,
+      rootstock: rootstock,
+      plantedAt: plantedAt,
+      purchasedAt: purchasedAt,
+      sourceLabel: sourceLabel,
+      positionLabel: positionLabel,
+      note: note,
+      displayLabel: displayLabel,
+      save: save
+    };
+
+    function refreshSpeciesDependent() {
+      var species = speciesSelect.value;
+      clearNode(varietySelect);
+      varietySelect.appendChild(makeOption('', 'nije upisano'));
+      clearNode(fallbackSelect);
+      fallbackSelect.appendChild(makeOption('', 'nije upisano'));
+      varietyWrap.hidden = true;
+      fallbackWrap.hidden = true;
+      timingHint.hidden = true;
+      save.disabled = !species;
+
+      if (!species || !hasOwnKey(result.catalog.species, species)) return;
+      var sp = result.catalog.species[species];
+      var varietyKeys = isPlainObject(sp.varieties) ? Object.keys(sp.varieties) : [];
+      if (varietyKeys.length > 0) {
+        varietyWrap.hidden = false;
+        for (var v = 0; v < varietyKeys.length; v++) {
+          varietySelect.appendChild(makeOption(varietyKeys[v], varietyLabel(species, varietyKeys[v])));
+        }
+        varietySelect.appendChild(makeOption(UNKNOWN_SELECT_VALUE, 'ne znam'));
+      }
+      if (isPlainObject(sp.fallback) && varietySelect.value === '') timingHint.hidden = false;
+    }
+
+    function refreshFallback() {
+      var species = speciesSelect.value;
+      clearNode(fallbackSelect);
+      fallbackSelect.appendChild(makeOption('', 'nije upisano'));
+      fallbackWrap.hidden = true;
+      timingHint.hidden = true;
+      if (!species || !hasOwnKey(result.catalog.species, species)) return;
+      var sp = result.catalog.species[species];
+      if (isPlainObject(sp.fallback) && varietySelect.value === '') timingHint.hidden = false;
+      if (!isPlainObject(sp.fallback) || varietySelect.value !== UNKNOWN_SELECT_VALUE) return;
+      timingHint.hidden = true;
+      var bands = Object.keys(sp.fallback);
+      for (var b = 0; b < bands.length; b++) fallbackSelect.appendChild(makeOption(bands[b], bandLabel(bands[b])));
+      fallbackSelect.appendChild(makeOption(UNKNOWN_SELECT_VALUE, 'ne znam'));
+      fallbackWrap.hidden = false;
+    }
+
+    speciesSelect.addEventListener('change', function () {
+      refreshSpeciesDependent();
+      refreshFallback();
+    });
+    varietySelect.addEventListener('change', refreshFallback);
+    refreshSpeciesDependent();
+  }
+
+  function addStringOrUnknown(candidate, key, field) {
+    if (field.unknown.checked) {
+      candidate[key] = { unknown: true };
+      return;
+    }
+    var value = optionalString(field.input);
+    if (value) candidate[key] = value;
+  }
+
+  function addDateOrUnknown(candidate, key, field) {
+    if (field.unknown.checked) {
+      candidate[key] = { unknown: true };
+      return;
+    }
+    if (field.input.value) candidate[key] = field.input.value;
+  }
+
+  function generatePlantId() {
+    var iso = new Date().toISOString();
+    var safe = iso.replace(/[:.]/g, '-');
+    var rand;
+    if (window.crypto && window.crypto.getRandomValues) {
+      var buf = new Uint8Array(3);
+      window.crypto.getRandomValues(buf);
+      rand = Array.prototype.map.call(buf, function (b) {
+        return ('0' + b.toString(16)).slice(-2);
+      }).join('').slice(0, 5);
+    } else {
+      rand = Math.floor(Math.random() * 0x100000).toString(16);
+      while (rand.length < 5) rand = '0' + rand;
+      rand = rand.slice(0, 5);
+    }
+    return 'plant_' + safe + '_' + rand;
+  }
+
+  function nextPlantId(plants) {
+    for (var attempt = 0; attempt < 2; attempt++) {
+      var id = generatePlantId();
+      if (!findPlant(plants, id)) return id;
+    }
+    return null;
+  }
+
+  function maxStableOrder(plants) {
+    var max = 0;
+    for (var i = 0; i < plants.length; i++) {
+      if (plants[i].stable_order > max) max = plants[i].stable_order;
+    }
+    return max;
+  }
+
+  function buildCandidate(fields, plants) {
+    var species = fields.speciesSelect.value;
+    if (!species) return { ok: false, error: 'Vrsta je obavezna.' };
+    if (!hasOwnKey(fields.catalog.species, species)) return { ok: false, error: 'Odabrana vrsta nije u katalogu.' };
+
+    var id = nextPlantId(plants);
+    if (!id) return { ok: false, error: 'Greška pri generaciji identifikatora.' };
+
+    var candidate = {
+      plant_id: id,
+      catalog_version: 'catalog_v1',
+      stable_order: maxStableOrder(plants) + 1000,
+      species: species
+    };
+
+    if (!fields.varietyWrap.hidden) {
+      if (fields.varietySelect.value === UNKNOWN_SELECT_VALUE) candidate.variety = { unknown: true };
+      else if (fields.varietySelect.value) candidate.variety = fields.varietySelect.value;
+    }
+
+    if (!fields.fallbackWrap.hidden) {
+      if (fields.fallbackSelect.value === UNKNOWN_SELECT_VALUE) candidate.ripening_fallback = { unknown: true };
+      else if (fields.fallbackSelect.value) candidate.ripening_fallback = fields.fallbackSelect.value;
+    }
+
+    addStringOrUnknown(candidate, 'rootstock', fields.rootstock);
+    addDateOrUnknown(candidate, 'planted_at', fields.plantedAt);
+    addDateOrUnknown(candidate, 'purchased_at', fields.purchasedAt);
+    addStringOrUnknown(candidate, 'source_label', fields.sourceLabel);
+    addStringOrUnknown(candidate, 'position_label', fields.positionLabel);
+
+    var note = optionalString(fields.note);
+    if (note) candidate.profile_note = note;
+    var display = optionalString(fields.displayLabel);
+    if (display) candidate.display_label = display;
+
+    return { ok: true, plant: candidate };
+  }
+
+  function saveCurrentForm() {
+    var fields = currentFormFields;
+    if (!fields) return;
+    fields.message.hidden = true;
+
+    var current = readValidStore();
+    if (!current.ok) {
+      fields.message.textContent = current.error;
+      fields.message.hidden = false;
+      return;
+    }
+
+    var built = buildCandidate(fields, current.store.plants);
+    if (!built.ok) {
+      fields.message.textContent = built.error;
+      fields.message.hidden = false;
+      return;
+    }
+
+    var nextStore = {
+      meta: current.store.meta,
+      catalogs: current.store.catalogs,
+      plants: current.store.plants.concat([built.plant]),
+      plan_instances: current.store.plan_instances,
+      plan_overlays: current.store.plan_overlays,
+      activities: current.store.activities,
+      observations: current.store.observations,
+      corrections: current.store.corrections,
+      review_state: current.store.review_state
+    };
+
+    var errors = window.v2ValidateForBackup(nextStore);
+    if (errors.length > 0) {
+      fields.message.textContent = 'Voćka nije spremljena: ' + errors[0] + '.';
+      fields.message.hidden = false;
+      return;
+    }
+
+    try {
+      localStorage.setItem('vocnjak_v2', JSON.stringify(nextStore));
+    } catch (e) {
+      fields.message.textContent = 'Pohranu nije moguće zapisati.';
+      fields.message.hidden = false;
+      return;
+    }
+
+    addForm.reset();
+    pendingDetailStatus = 'Voćka spremljena.';
+    location.hash = plantDetailRoute(built.plant.plant_id);
+  }
+
+  addForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    saveCurrentForm();
+  });
+
+  function render() {
+    var route = getRoute();
+    if (route.name === 'add') renderAdd();
+    else if (route.name === 'detail') renderDetail(route);
+    else renderList();
+  }
+
+  window.addEventListener('hashchange', render);
+  render();
+})();
+// END V2 PLANTS — Slice 4
 </script>
 </body>
 </html>
