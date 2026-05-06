@@ -71,7 +71,8 @@ Current:
 - Runtime Slice 3 (Early V2 export/import safety baseline) is complete (`8fd2571 Implement Runtime Slice 3 V2 export/import safety baseline`); legacy app remains the default
 - Runtime Slice 4 (Plant foundation and Biljke first cut) is complete (`f99e5f6 Implement Runtime Slice 4 V2 plant foundation`); legacy app remains the default
 - Post-Slice-4 safety fix for canonical `catalog_v1` import validation is complete (`8a9c4ae Fix Runtime Slice 4 catalog import validation`); adversarial review found imported `catalogs.catalog_v1` could drift while preserving counts, and this was closed before Slice 5
-- next target: Runtime Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction, only after explicit owner approval
+- Focused adversarial review of Runtime Slices 3 and 4 after the post-Slice-4 safety fix passed and owner verification accepted the PASS; one non-blocking UX polish item remains for friendlier Add Plant date-validation messages
+- next target: Runtime Slice 5 planning — Activity capture, Activity-only Dnevnik, and Activity correction; Slice 5 implementation has not started and requires explicit owner approval
 - §0 monitoring constraints remain locked and authoritative
 - legacy data and V1/V3/V4 keys remain protected
 - implementation was forbidden through S11 documentation; Slices 0, 1, 2, 3, and 4 were then owner-approved and committed
