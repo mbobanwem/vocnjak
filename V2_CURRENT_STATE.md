@@ -119,6 +119,24 @@ Owner runtime verification of Slice 4:
 - after deleting `vocnjak_v2` and importing exported JSON, plants are restored
 - protected legacy key VALUES remained unchanged across V2-only Slice 4 verification
 
+Post-Slice-4 safety fix status: DONE (`8a9c4ae Fix Runtime Slice 4 catalog import validation`).
+
+Adversarial review after Runtime Slice 4 tracker sync found a catalog import validation blocker before Slice 5: imported `catalogs.catalog_v1` was validated too loosely and could drift while preserving counts. The fix treats runtime `catalog_v1` as canonical, not user-editable:
+- Slice 2 exposes canonical runtime `CATALOG_V1` via non-writable/non-configurable `window.v2CanonicalCatalogV1`
+- Slice 3 `validateCatalogV1` now compares imported `catalog_v1` against canonical runtime `CATALOG_V1`
+- same-count variety drift is rejected
+- same-count fallback drift is rejected
+- changed canonical `harvestWindow` values are rejected
+- unsupported prototype-like keys such as `toString` / `__proto__` cannot be used to make plant validation pass
+
+Owner browser verification of post-Slice-4 safety fix:
+- `window.v2CanonicalCatalogV1` is truthy
+- `typeof window.v2ValidateForBackup === "function"`
+- `plum.varieties.toString` drift rejected with error `catalog_v1.species.plum.varieties unexpected key: toString`
+- `plum.fallback.toString` drift rejected with error `catalog_v1.species.plum.fallback unexpected key: toString`
+- changed `plum.fallback.early.harvestWindow.monthStart` rejected with error `catalog_v1.species.plum.fallback.early.harvestWindow.monthStart value differs from canonical catalog`
+- `localStorage.getItem("vocnjak_v2")` stayed unchanged after each test
+
 Runtime Slice 5 status: NEXT TARGET, not started; requires explicit owner approval before implementation.
 
 Completed S11 patches:
@@ -128,7 +146,7 @@ Completed S11 patches:
 - `S11.C2 — Usable/default slices 5–9` (`a56fe75 Define S11 usable-default slice plan`)
 - `S11.D — Verification gates, milestones, stop conditions, runtime handoff` (`06feb13 Define S11 verification gates and runtime handoff`)
 
-Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 was then owner-approved and implemented (commit `254448f`). Runtime Slice 3 was then owner-approved and implemented (commit `8fd2571`). Runtime Slice 4 was then owner-approved and implemented (commit `f99e5f6`). Runtime Slice 5 and all subsequent slices still require explicit per-slice owner approval before implementation.
+Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 was then owner-approved and implemented (commit `254448f`). Runtime Slice 3 was then owner-approved and implemented (commit `8fd2571`). Runtime Slice 4 was then owner-approved and implemented (commit `f99e5f6`). Post-Slice-4 adversarial review found and closed the canonical `catalog_v1` import validation blocker before Slice 5 (commit `8a9c4ae`). Runtime Slice 5 and all subsequent slices still require explicit per-slice owner approval before implementation.
 
 §0 monitoring constraints remain locked and authoritative.
 
