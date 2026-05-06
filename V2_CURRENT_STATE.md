@@ -16,7 +16,7 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: Runtime implementation continues. Runtime Slice 0, Slice 1, Slice 2, Slice 3, and Slice 4 are complete. Focused S3/S4 adversarial review after the post-Slice-4 safety fix passed and owner verification accepted the PASS. Runtime Slice 5 planning may begin; Runtime Slice 5 implementation has not started and requires explicit owner approval.
+Phase: Runtime implementation continues. Runtime Slice 0, Slice 1, Slice 2, Slice 3, and Slice 4 are complete. Focused S3/S4 adversarial review after the post-Slice-4 safety fix passed and owner verification accepted the PASS. Pre-Slice-5 Add Plant date-validation message polish is complete. Runtime Slice 5 planning may begin; Runtime Slice 5 implementation has not started and requires explicit owner approval.
 
 Current goal:
 
@@ -145,8 +145,8 @@ Owner verification after focused S3/S4 adversarial review:
 - malformed encoded hash and invalid plant route did not crash; app fell back safely to the V2/Biljke view
 - script-like nickname/note text rendered as plain text; no alert executed
 
-Non-blocking UX polish to carry forward:
-- map internal Add Plant date-validator errors such as `plant.plant_<id>.planted_at in the future` to user-friendly Croatian messages for planting/purchase dates
+Pre-Slice-5 UX polish completed:
+- internal Add Plant future-date validator errors for `planted_at` / `purchased_at` are mapped to user-friendly Croatian messages; validator invariants are unchanged
 
 Runtime Slice 5 status: PLANNING MAY BEGIN, implementation not started; requires explicit owner approval before implementation.
 
@@ -157,7 +157,7 @@ Completed S11 patches:
 - `S11.C2 — Usable/default slices 5–9` (`a56fe75 Define S11 usable-default slice plan`)
 - `S11.D — Verification gates, milestones, stop conditions, runtime handoff` (`06feb13 Define S11 verification gates and runtime handoff`)
 
-Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 was then owner-approved and implemented (commit `254448f`). Runtime Slice 3 was then owner-approved and implemented (commit `8fd2571`). Runtime Slice 4 was then owner-approved and implemented (commit `f99e5f6`). Post-Slice-4 adversarial review found and closed the canonical `catalog_v1` import validation blocker before Slice 5 (commit `8a9c4ae`). Focused S3/S4 adversarial review after that fix passed, and owner verification accepted the PASS. Runtime Slice 5 planning may begin; Runtime Slice 5 and all subsequent implementation still require explicit per-slice owner approval.
+Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 was then owner-approved and implemented (commit `254448f`). Runtime Slice 3 was then owner-approved and implemented (commit `8fd2571`). Runtime Slice 4 was then owner-approved and implemented (commit `f99e5f6`). Post-Slice-4 adversarial review found and closed the canonical `catalog_v1` import validation blocker before Slice 5 (commit `8a9c4ae`). Focused S3/S4 adversarial review after that fix passed, owner verification accepted the PASS, and the pre-Slice-5 Add Plant date-validation message polish was completed without starting Runtime Slice 5. Runtime Slice 5 planning may begin; Runtime Slice 5 and all subsequent implementation still require explicit per-slice owner approval.
 
 §0 monitoring constraints remain locked and authoritative.
 

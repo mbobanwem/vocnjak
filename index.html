@@ -4804,6 +4804,12 @@ if ('serviceWorker' in navigator) {
     return { ok: true, plant: candidate };
   }
 
+  function addPlantValidationMessage(error) {
+    if (/^plant\.plant_[^.]+\.planted_at in the future$/.test(error)) return 'datum sadnje ne može biti u budućnosti';
+    if (/^plant\.plant_[^.]+\.purchased_at in the future$/.test(error)) return 'datum kupnje ne može biti u budućnosti';
+    return error;
+  }
+
   function saveCurrentForm() {
     var fields = currentFormFields;
     if (!fields) return;
@@ -4837,7 +4843,7 @@ if ('serviceWorker' in navigator) {
 
     var errors = window.v2ValidateForBackup(nextStore);
     if (errors.length > 0) {
-      fields.message.textContent = 'Voćka nije spremljena: ' + errors[0] + '.';
+      fields.message.textContent = 'Voćka nije spremljena: ' + addPlantValidationMessage(errors[0]) + '.';
       fields.message.hidden = false;
       return;
     }
