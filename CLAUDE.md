@@ -69,11 +69,12 @@ Current:
 - Runtime Slice 1 (V2 store boot and empty `vocnjak_v2` initialization) is complete (`178cfa8 Implement Runtime Slice 1 V2 store boot`); legacy app remains the default
 - Runtime Slice 2 (catalog seed and retained catalog baseline) is complete (`254448f Implement Runtime Slice 2 catalog seed`); legacy app remains the default
 - Runtime Slice 3 (Early V2 export/import safety baseline) is complete (`8fd2571 Implement Runtime Slice 3 V2 export/import safety baseline`); legacy app remains the default
-- next target: Runtime Slice 4 — Plant foundation and Biljke first cut, only after explicit owner approval
+- Runtime Slice 4 (Plant foundation and Biljke first cut) is complete (`f99e5f6 Implement Runtime Slice 4 V2 plant foundation`); legacy app remains the default
+- next target: Runtime Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction, only after explicit owner approval
 - §0 monitoring constraints remain locked and authoritative
 - legacy data and V1/V3/V4 keys remain protected
-- implementation was forbidden through S11 documentation; Slices 0, 1, 2, and 3 were then owner-approved and committed
-- next runtime slice (Slice 4) and all subsequent slices require explicit per-slice owner approval before implementation
+- implementation was forbidden through S11 documentation; Slices 0, 1, 2, 3, and 4 were then owner-approved and committed
+- next runtime slice (Slice 5) and all subsequent slices require explicit per-slice owner approval before implementation
 
 ### INPUT FILES (NOT YET VALIDATED V2 TRUTH)
 
