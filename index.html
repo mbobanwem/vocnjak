@@ -3733,6 +3733,12 @@ if ('serviceWorker' in navigator) {
     }
   };
 
+  Object.defineProperty(window, 'v2CanonicalCatalogV1', {
+    value: CATALOG_V1,
+    writable: false,
+    configurable: false
+  });
+
   var EXPECTED_SPECIES = [
     'apple','sweet_cherry','sour_cherry','plum','peach','nectarine',
     'pear','quince','apricot','almond','walnut','hazelnut',
@@ -3861,20 +3867,6 @@ if ('serviceWorker' in navigator) {
   var EXPECTED_ROOT_KEYS = ['meta','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
   var EXPECTED_META_KEYS = ['store_format_version','active_catalog_version'];
   var EMPTY_ARRAY_KEYS = ['plan_instances','plan_overlays','activities','observations','corrections'];
-  var EXPECTED_SPECIES = [
-    'apple','sweet_cherry','sour_cherry','plum','peach','nectarine',
-    'pear','quince','apricot','almond','walnut','hazelnut',
-    'olive','pomegranate'
-  ];
-  var EXPECTED_VARIETY_COUNTS = {
-    apple: 8, sweet_cherry: 5, sour_cherry: 4, plum: 6, peach: 5,
-    nectarine: 5, pear: 5, quince: 3, apricot: 6, almond: 3,
-    walnut: 3, hazelnut: 3, olive: 7, pomegranate: 0
-  };
-  var TIMING_DRIVEN_SPECIES = [
-    'apple','sweet_cherry','sour_cherry','plum','peach','nectarine',
-    'pear','quince','apricot','almond','walnut','hazelnut'
-  ];
   var MAX_FILE_SIZE = 1024 * 1024;
   var ALLOWED_PLANT_KEYS = [
     'plant_id','catalog_version','stable_order','species','variety','ripening_fallback',
@@ -3890,11 +3882,14 @@ if ('serviceWorker' in navigator) {
   var hasOwn = Object.prototype.hasOwnProperty;
 
   function isPlainObject(v) {
-    return v !== null && typeof v === 'object' && !Array.isArray(v);
+    return v !== null &&
+      typeof v === 'object' &&
+      !Array.isArray(v) &&
+      Object.getPrototypeOf(v) === Object.prototype;
   }
 
   function hasOwnKey(obj, key) {
-    return hasOwn.call(obj, key);
+    return obj !== null && typeof obj === 'object' && hasOwn.call(obj, key);
   }
 
   function isUnknownTag(v) {
@@ -3932,42 +3927,75 @@ if ('serviceWorker' in navigator) {
     if (el) el.textContent = text;
   }
 
-  function validateCatalogV1(c) {
-    if (!isPlainObject(c)) return ['catalog_v1 not a plain object'];
-    var topKeys = Object.keys(c);
-    if (topKeys.length !== 2 || topKeys.indexOf('catalog_version') === -1 || topKeys.indexOf('species') === -1) {
-      return ['catalog_v1 keys must equal {catalog_version, species}'];
+  function compareKeySets(actual, canonical, path) {
+    var actualKeys = Object.keys(actual);
+    var canonicalKeys = Object.keys(canonical);
+    if (actualKeys.length !== canonicalKeys.length) return [path + ' keys must match canonical catalog'];
+    for (var i = 0; i < actualKeys.length; i++) {
+      if (!hasOwnKey(canonical, actualKeys[i])) return [path + ' unexpected key: ' + actualKeys[i]];
     }
-    if (c.catalog_version !== 'catalog_v1') return ['catalog_v1.catalog_version must be "catalog_v1"'];
-    if (!isPlainObject(c.species)) return ['catalog_v1.species not a plain object'];
-    var sKeys = Object.keys(c.species);
-    if (sKeys.length !== EXPECTED_SPECIES.length) return ['catalog_v1.species must have exactly ' + EXPECTED_SPECIES.length + ' keys'];
-    for (var i = 0; i < EXPECTED_SPECIES.length; i++) {
-      if (sKeys.indexOf(EXPECTED_SPECIES[i]) === -1) return ['catalog_v1.species missing key: ' + EXPECTED_SPECIES[i]];
-    }
-    for (var j = 0; j < EXPECTED_SPECIES.length; j++) {
-      var s = EXPECTED_SPECIES[j];
-      var entry = c.species[s];
-      if (!isPlainObject(entry)) return ['catalog_v1.species.' + s + ' not a plain object'];
-      var expectedCount = EXPECTED_VARIETY_COUNTS[s];
-      var varieties = entry.varieties;
-      if (expectedCount === 0) {
-        if (varieties !== undefined) return ['catalog_v1.species.' + s + '.varieties must be undefined'];
-      } else {
-        if (!isPlainObject(varieties)) return ['catalog_v1.species.' + s + '.varieties not a plain object'];
-        if (Object.keys(varieties).length !== expectedCount) return ['catalog_v1.species.' + s + '.varieties must have exactly ' + expectedCount + ' keys'];
-      }
-    }
-    if (!isPlainObject(c.species.olive) || c.species.olive.seasonProfile !== 'mediterranean') return ['catalog_v1.species.olive.seasonProfile must be "mediterranean"'];
-    if (!isPlainObject(c.species.pomegranate) || c.species.pomegranate.seasonProfile !== 'mediterranean') return ['catalog_v1.species.pomegranate.seasonProfile must be "mediterranean"'];
-    if (c.species.pomegranate.varieties !== undefined) return ['catalog_v1.species.pomegranate.varieties must be undefined'];
-    for (var k = 0; k < TIMING_DRIVEN_SPECIES.length; k++) {
-      var ts = TIMING_DRIVEN_SPECIES[k];
-      var tEntry = c.species[ts];
-      if (!isPlainObject(tEntry.varieties)) return ['catalog_v1.species.' + ts + '.varieties not a plain object'];
-      if (!isPlainObject(tEntry.fallback)) return ['catalog_v1.species.' + ts + '.fallback not a plain object'];
+    for (var j = 0; j < canonicalKeys.length; j++) {
+      if (!hasOwnKey(actual, canonicalKeys[j])) return [path + ' missing key: ' + canonicalKeys[j]];
     }
     return [];
+  }
+
+  function validateHarvestWindowNode(v, path) {
+    if (!isPlainObject(v)) return [path + ' not a plain object'];
+    var expected = ['monthStart','dayStart','monthEnd','dayEnd'];
+    var keyErrs = compareKeySets(v, {
+      monthStart: true,
+      dayStart: true,
+      monthEnd: true,
+      dayEnd: true
+    }, path);
+    if (keyErrs.length > 0) return keyErrs;
+    for (var i = 0; i < expected.length; i++) {
+      var key = expected[i];
+      var value = v[key];
+      if (typeof value !== 'number' || !isFinite(value) || Math.floor(value) !== value) return [path + '.' + key + ' must be an integer'];
+      if (key.indexOf('month') === 0 && (value < 1 || value > 12)) return [path + '.' + key + ' must be between 1 and 12'];
+      if (key.indexOf('day') === 0 && (value < 1 || value > 31)) return [path + '.' + key + ' must be between 1 and 31'];
+    }
+    return [];
+  }
+
+  function compareCanonicalCatalogNode(actual, canonical, path) {
+    if (path.slice(-14) === '.harvestWindow') {
+      var actualWindowErrs = validateHarvestWindowNode(actual, path);
+      if (actualWindowErrs.length > 0) return actualWindowErrs;
+      var canonicalWindowErrs = validateHarvestWindowNode(canonical, 'canonical ' + path);
+      if (canonicalWindowErrs.length > 0) return canonicalWindowErrs;
+    }
+    if (Array.isArray(actual) || Array.isArray(canonical)) {
+      if (!Array.isArray(actual) || !Array.isArray(canonical)) return [path + ' shape differs from canonical catalog'];
+      if (actual.length !== canonical.length) return [path + ' array length differs from canonical catalog'];
+      for (var a = 0; a < canonical.length; a++) {
+        var arrErrs = compareCanonicalCatalogNode(actual[a], canonical[a], path + '[' + a + ']');
+        if (arrErrs.length > 0) return arrErrs;
+      }
+      return [];
+    }
+    if (isPlainObject(canonical)) {
+      if (!isPlainObject(actual)) return [path + ' not a plain object'];
+      var keyErrs = compareKeySets(actual, canonical, path);
+      if (keyErrs.length > 0) return keyErrs;
+      var keys = Object.keys(canonical);
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        var childErrs = compareCanonicalCatalogNode(actual[key], canonical[key], path + '.' + key);
+        if (childErrs.length > 0) return childErrs;
+      }
+      return [];
+    }
+    if (actual !== canonical) return [path + ' value differs from canonical catalog'];
+    return [];
+  }
+
+  function validateCatalogV1(c) {
+    var canonical = window.v2CanonicalCatalogV1;
+    if (!isPlainObject(canonical)) return ['canonical catalog_v1 unavailable'];
+    return compareCanonicalCatalogNode(c, canonical, 'catalog_v1');
   }
 
   function validateAllPlants(plants, catalog) {
