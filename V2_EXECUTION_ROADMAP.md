@@ -777,8 +777,9 @@ S11.C2 does not redefine any of these. S11.C2 only orders runtime slices against
 
 ## 32. Usable/default slice overview
 
-S11.C2 has five usable / default slices, in this order:
+S11.C2 has five usable / default slices, after the Pre-Slice-5 Action Window Seed prerequisite:
 
+- Prerequisite — Pre-Slice-5 Action Window Seed
 - Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction
 - Slice 6 — Active-window snapshot, Pregled, and Kalendar
 - Slice 7 — Plant detail integration, Detalj sezonske radnje, and advisory weather composition
@@ -796,8 +797,70 @@ Cross-cutting rules that bind every S11.C2 slice (in addition to §22):
 - Monitoring absence is neutral. No warning, no overdue badge, no compliance copy on missing observations or unconfirmed stages.
 - Single capture path. Each capture surface (Activity, Observation, stage confirmation) has exactly one write boundary; no surface re-implements capture.
 - Same Correction record shape across Activity (Slice 5) and Observation (Slice 9). Per S8 §1.24 handoff: one Correction storage shape.
-- Catalog seed extension only from already-approved V2 catalog / template docs and without catalog re-authoring (per §30). Slice 6 may extend with action-window definitions; Slice 8 may extend with monitoring program declarations and stage vocabulary.
+- Catalog seed extension only from already-approved V2 catalog / template docs and without catalog re-authoring (per §30). Pre-Slice-5 Action Window Seed moves real action-window definitions before Slice 5; Slice 6 still owns snapshot / Pregled / Kalendar, not the first action-window seed. Slice 8 may extend with monitoring program declarations and stage vocabulary.
 - Verification of legacy non-disturbance asserts that legacy key VALUES are unchanged, NOT that legacy keys are never written-to (per §28).
+
+---
+
+### 32.1 Pre-Slice-5 Action Window Seed prerequisite
+
+Purpose:
+
+Resolve the `window_def_id` source-of-truth blocker before Activity capture. Slice 5 writes immutable Activity records, and `V2_DOMAIN_MODEL.md §0.6` requires those records to carry real `window_def_id` values. The current runtime `catalog_v1` seed is foundation-only and pre-usable because it contains species / variety / fallback / harvest data but no action-window definitions.
+
+Decision:
+
+- Keep `window_def_id` required.
+- Do not synthesize fake `window_def_id` values.
+- Do not make `window_def_id` nullable or sentinel-based.
+- Do not weaken Activity identity.
+- Do not move full Slice 6 before Slice 5.
+- Move only real action-window seeding out of Slice 6 into this prerequisite.
+- Keep Pregled / Kalendar / snapshot derivation in Slice 6.
+- Treat V2 `catalog_v1` as the first usable V2 canonical catalog after this prerequisite lands.
+- Do not introduce `catalog_v2` merely to preserve the incomplete pre-usable V2 dev seed.
+- Current `vocnjak_v2` dev/test stores may be reset or deterministically upgraded.
+- Protected legacy storage keys remain untouched.
+
+Allowed touch points for the later runtime prerequisite:
+
+- `index.html` only, inside the V2 region.
+- Canonical `CATALOG_V1` seed shape and exact-canonical validation.
+- V2 store boot / validation behavior only as needed to reset or deterministically upgrade pre-usable `vocnjak_v2` dev/test stores.
+- Export / import validation only as needed to keep canonical catalog validation fail-closed.
+
+Must not touch:
+
+- Activity capture, Activity-only Dnevnik, or Activity correction implementation (Slice 5).
+- Snapshot, Pregled, or Kalendar (Slice 6).
+- Plant detail live integration, Detalj sezonske radnje, or weather composition (Slice 7).
+- Observation, stage confirmation, monitoring programs, or stage vocabulary (Slice 8), except where the locked domain model already requires action-window validation to reject orphan `monitoring` action-windows.
+- Legacy app logic or protected legacy keys.
+- V2 catalog/template input docs unless the owner explicitly opens catalog-content curation.
+
+Produces:
+
+- Real catalog-backed action-window definitions in canonical V2 `catalog_v1`.
+- Stable source-backed `window_def_id` values suitable for Activity records.
+- Orchard-language labels such as `Bakar — zimska zaštita`, `Bakar — rano proljeće`, `Bakar — nakon rezidbe`, `Zimska rezidba`, and `Ljetna rezidba`.
+- Runtime validation that rejects missing, duplicate, synthetic, null, or sentinel `window_def_id` values.
+- A clean compatibility stance for pre-usable V2 dev/test stores and backups.
+
+Manual verification:
+
+- Clean `#v2` boot initializes / loads canonical `catalog_v1` with non-empty action-window definitions.
+- Every action-window has a stable `window_def_id`, valid `action_type`, non-empty label, valid anchor / tolerance, and required provenance by catalog fallback.
+- Canonical catalog drift is rejected by import validation.
+- Old foundation-only V2 dev/test stores are reset or deterministically upgraded according to the owner-approved prerequisite behavior.
+- Protected legacy key VALUES remain unchanged.
+
+Stop conditions:
+
+- A proposed Activity write would still lack a real `window_def_id`.
+- Any implementation proposes synthetic, generated-at-write, nullable, or sentinel `window_def_id` values.
+- The prerequisite tries to introduce full Slice 6 snapshot / Pregled / Kalendar behavior.
+- The prerequisite introduces `catalog_v2` only to preserve incomplete pre-usable V2 dev history.
+- Any protected legacy key would be read as V2 state, rewritten, deleted, normalized, or migrated.
 
 ---
 
@@ -823,6 +886,7 @@ Must not touch:
 
 Depends on:
 
+- Pre-Slice-5 Action Window Seed prerequisite (real action-window definitions and real `window_def_id` values in canonical V2 `catalog_v1`).
 - S11.C1 Slice 4 (stable `plant_id` per §1.5).
 - S11.C1 Slice 2 (retained `catalog_version`).
 - S11.C1 Slice 1 (store read / write / validation boundary).
@@ -830,7 +894,7 @@ Depends on:
 
 Produces:
 
-- Activity write per V2_DOMAIN_MODEL.md §0.6: `plant_id`, `window_def_id`, `catalog_version`, `action_type`, `status` ∈ {done, skipped}, `occurred_on`, `recorded_at`, optional `activity_group_id`, optional `notes`, `provenance`. Temporal-order rule (`occurred_on ≤ recorded_at`) enforced at write time.
+- Activity write per V2_DOMAIN_MODEL.md §0.6: `plant_id`, real catalog-backed `window_def_id`, `catalog_version`, `action_type`, `status` ∈ {done, skipped}, `occurred_on`, `recorded_at`, optional `activity_group_id`, optional `notes`, `provenance`. Temporal-order rule (`occurred_on ≤ recorded_at`) enforced at write time. Synthetic, null, sentinel, or write-time-fabricated `window_def_id` values are invalid.
 - Multi-plant capture per V2_UX_MODEL.md §16 + V2_DOMAIN_MODEL.md §0.11: a single capture pass over N selected plants writes N Activity records sharing one freshly-minted `activity_group_id`. Group identity is display / query identity only; never derivation authority.
 - Activity-only Dnevnik per V2_UX_MODEL.md §3: default Dnevnik (§3.3), plant-filtered (§3.4), seasonal-action-filtered (§3.5), year / month grouping (§3.6), row anatomy (§3.8), marker semantics (§3.9), multi-plant grouping (§3.11). At Slice 5: no observation rows, no archived-plant rows.
 - Activity correction per V2_UX_MODEL.md §17 + V2_ARCHITECTURE.md §4.9: a Correction record links to the original Activity; the original is not mutated; Dnevnik displays the corrected version with the §3.9 correction marker.
@@ -868,7 +932,7 @@ Make V2 visible. Implement the deterministic active-window snapshot read model p
 
 Allowed touch points:
 
-- `index.html` only, inside the V2 region. Snapshot algorithm, Pregled rendering, Kalendar rendering. Catalog seed extension with action-window definitions if not already present in the Slice 2 seed (only from already-approved V2 catalog / template docs).
+- `index.html` only, inside the V2 region. Snapshot algorithm, Pregled rendering, Kalendar rendering. Slice 6 assumes the Pre-Slice-5 Action Window Seed prerequisite already supplied action-window definitions; it does not own the first action-window seed.
 
 Must not touch:
 
@@ -883,7 +947,8 @@ Must not touch:
 Depends on:
 
 - Slice 5 (Activity records and Activity correction records to project).
-- S11.C1 Slice 2 (catalog with species / variety; extended in Slice 6 with action-window definitions if needed).
+- Pre-Slice-5 Action Window Seed prerequisite (canonical `catalog_v1` with action-window definitions).
+- S11.C1 Slice 2 (catalog with species / variety foundation, later extended by the prerequisite).
 
 Produces:
 

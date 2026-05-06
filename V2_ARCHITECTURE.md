@@ -1422,6 +1422,30 @@ Clean initialization means:
 
 Clean start is not data loss because S10 does not delete or rewrite legacy data. It is a deliberate separation between archive/reference legacy material and valid V2 state.
 
+### 6.5a V2 `catalog_v1` pre-usable seed and Action Window Seed prerequisite
+
+V2 `catalog_v1` is the first V2 catalog version inside `vocnjak_v2`. It is not the legacy V1 app, not legacy V1 logic, and not a reason to preserve legacy modeling mistakes.
+
+The current runtime `catalog_v1` seed is foundation-only and pre-usable: it contains species / variety / fallback / harvest data, but no action-window definitions. Because V2 is not yet in real owner use and no real V2 Activity records exist, this foundation-only seed is not production-stable catalog history.
+
+Before Runtime Slice 5 may write Activity records, the Pre-Slice-5 Action Window Seed prerequisite extends/replaces V2 `catalog_v1` into the first usable canonical V2 catalog:
+
+- real action-window definitions are added from approved V2 catalog / template / audit material
+- real stable `window_def_id` values become available for Activity writes
+- `catalog_v1` remains the first usable V2 canonical catalog
+- no `catalog_v2` is introduced merely to preserve the incomplete pre-usable dev seed
+- no synthetic, null, sentinel, or generated-at-write `window_def_id` values are allowed
+
+Compatibility stance for current `vocnjak_v2` dev/test stores:
+
+- existing pre-usable V2 dev/test stores may be reset
+- existing pre-usable V2 dev/test stores may instead be deterministically upgraded when they match the known foundation-only shape and do not contain real V2 Activity / Correction history
+- old V2 dev/test backups are not production-critical portability artifacts
+- exact-canonical catalog validation remains conceptually intact; after the prerequisite, the canonical `catalog_v1` is the expanded usable catalog with action-window definitions
+- import remains fail-closed; no tolerant catalog substitution, merge import, or automatic repair is introduced
+
+Protected legacy storage keys remain strictly isolated. The Action Window Seed prerequisite must not read legacy app data as V2 state, rewrite legacy keys, delete legacy keys, normalize legacy data, or reintroduce legacy V1 app logic into V2 modeling.
+
 ### 6.6 Manual owner recovery path
 
 The approved owner recovery path is manual, normal V2 entry:

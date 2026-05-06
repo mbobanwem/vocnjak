@@ -1190,6 +1190,8 @@ Rules:
 - S6 defines label and placement only
 - S7 owns full capture flow
 - seasonal action is prefilled in capture flow
+- internally, a seasonal-action filter is keyed by the catalog-backed action-window identity (`window_def_id` + `catalog_version`), not by bare `action_type`
+- the user sees the orchard-language label, for example `Bakar — zimska zaštita`; the user must not see `window_def_id`
 - default scope is all years, newest first
 - no score/streak/compliance
 
@@ -1241,6 +1243,7 @@ Rules:
 - filters compose with AND semantics
 - no search in S6
 - second-level filters are future dependency
+- broad category filtering/search may use `action_type`, but seasonal-action filtering must use window identity; `action_type = copper` is not enough to distinguish `Bakar — zimska zaštita`, `Bakar — rano proljeće`, and `Bakar — nakon rezidbe`
 - do not create monitoring coverage / compliance views
 
 Future search and second-level filters should support common recall needs such as:
@@ -1327,6 +1330,24 @@ If both apply, order:
 ```text
 nakon razdoblja · evidentirano naknadno
 ```
+
+#### Correction marker
+
+Correction marker copy must be owner-approved before implementation.
+
+Candidate neutral marker:
+
+```text
+ispravljeno
+```
+
+Rules:
+
+- correction marker is display-only
+- original records remain visible and immutable
+- marker rendering must follow the correction storage / derived-display rules approved for the implementing slice
+- do not invent destructive edit/delete copy
+- do not expose technical correction terms in the Dnevnik row
 
 ### 3.10 Row examples
 
@@ -4825,6 +4846,13 @@ From action-filtered Dnevnik / `Dodaj evidenciju za ovu radnju`:
 - relevant plants are shown
 - plant scope must be reviewed before save
 
+From a global Activity entry, if one is implemented:
+
+- the user selects the seasonal action from real catalog action-window definitions
+- the picker shows orchard-language labels such as `Bakar — zimska zaštita`, `Bakar — rano proljeće`, `Bakar — nakon rezidbe`, `Zimska rezidba`, and `Ljetna rezidba`
+- the picker must not expose `window_def_id`, `catalog_version`, schema names, or technical ids
+- `action_type` may support broad grouping/search, but it is not the picker identity
+
 ### 16.4 Plant selector
 
 The plant selector must be optimized for one-handed, outdoor use:
@@ -5313,6 +5341,7 @@ Dependency notes for S8/S9 or later:
 - correction storage shape is S8/S9
 - correction linkage to original is S8/S9
 - Dnevnik correction marker rendering is §3/S8/S9
+- effective display after multiple corrections must be deterministic before implementation; later corrections target the same original record, not prior Correction records
 - derived active-plan effects are S9
 - duplicate semantics are future owner-approved correction/admin flow
 - import/export/migration impact is S8/S9
