@@ -3541,9 +3541,325 @@ if ('serviceWorker' in navigator) {
 (function () {
   if (!document.documentElement.classList.contains('v2-active')) return;
 
-  var CATALOG_V1 = {
-    catalog_version: 'catalog_v1',
-    species: {
+  var CATALOG_ID = 'catalog_v1';
+  var ACTION_WINDOW_AUTHOR = 'Vocnjak V2 source-map projection';
+  var ACTION_WINDOW_EVIDENCE_SOURCE = 'V2_ORCHARD_PLAN_TEMPLATES.md + V2_PLANT_CATALOG.md + V2_CATALOG_AUDIT.md + V2_S3_AUDIT_CONSOLIDATION.md';
+  var ACTION_WINDOW_LAST_REVIEWED_ON = '2026-05-07';
+  var STANDARD_FRUIT_SPECIES = [
+    'apple','pear','quince','sweet_cherry','sour_cherry',
+    'plum','peach','nectarine','apricot','almond'
+  ];
+  var ACTION_TYPES = {
+    oil: true,
+    copper: true,
+    fungicide: true,
+    insecticide: true,
+    pruning: true,
+    monitoring: true,
+    irrigation: true,
+    harvest: true,
+    fertilization: true,
+    other: true
+  };
+  var FORBIDDEN_ACTION_WINDOW_IDS = {
+    'aw.quince.mixed.post_bloom_protection': true,
+    'aw.almond.mixed.post_bloom_protection': true,
+    'aw.walnut.pruning.summer': true,
+    'aw.walnut.copper.early_spring': true,
+    'aw.olive.insecticide.olive_fly_if_needed': true,
+    'aw.olive.pruning.post_harvest': true
+  };
+  var HARVEST_VARIETY_LABELS = {
+    apple: {
+      gala: 'Gala',
+      golden_delicious: 'Golden Delicious',
+      jonagold: 'Jonagold',
+      topaz: 'Topaz',
+      elstar: 'Elstar',
+      fuji: 'Fuji',
+      granny_smith: 'Granny Smith',
+      idared: 'Idared'
+    },
+    sweet_cherry: {
+      burlat: 'Burlat',
+      kordia: 'Kordia',
+      lapins: 'Lapins',
+      regina: 'Regina',
+      sweetheart: 'Sweetheart'
+    },
+    sour_cherry: {
+      oblacinska: 'Oblačinska',
+      marasca: 'Marasca',
+      montmorency: 'Montmorency',
+      morello: 'Morello'
+    },
+    plum: {
+      cacanska_rana: 'Čačanska rana',
+      cacanska_lepotica: 'Čačanska lepotica',
+      cacanska_najbolja: 'Čačanska najbolja',
+      stanley: 'Stanley',
+      prezident: 'Prezident',
+      bistrica: 'Bistrica'
+    },
+    peach: {
+      springcrest: 'Springcrest',
+      redhaven: 'Redhaven',
+      royal_glory: 'Royal Glory',
+      fayette: 'Fayette',
+      o_henry: "O'Henry"
+    },
+    nectarine: {
+      caldesi_2000: 'Caldesi 2000',
+      big_top: 'Big Top',
+      fantasia: 'Fantasia',
+      stark_redgold: 'Stark RedGold',
+      venus: 'Venus'
+    },
+    pear: {
+      santa_maria: 'Santa Maria',
+      williams: 'Williams',
+      conference: 'Conference',
+      boscs_bottle: "Bosc's Bottle",
+      abate_fetel: 'Abate Fetel'
+    },
+    quince: {
+      leskovacka: 'Leskovačka',
+      vranjska: 'Vranjska',
+      champion: 'Champion'
+    },
+    apricot: {
+      novosadska_rodna: 'Novosadska rodna',
+      kioto: 'Kioto',
+      goldrich: 'Goldrich',
+      hargrand: 'Hargrand',
+      bergeron: 'Bergeron',
+      madjarska_najbolja: 'Mađarska najbolja'
+    },
+    almond: {
+      ferragnes: 'Ferragnes',
+      ferraduel: 'Ferraduel',
+      supernova: 'Supernova'
+    },
+    walnut: {
+      chandler: 'Chandler',
+      franquette: 'Franquette',
+      sejnovo: 'Šejnovo'
+    },
+    hazelnut: {
+      istarski_dugi: 'Istarski dugi',
+      tonda_di_giffoni: 'Tonda di Giffoni',
+      ennis: 'Ennis'
+    }
+  };
+  var HARVEST_SPECIES_LABELS = {
+    apple: 'jabuka',
+    sweet_cherry: 'trešnja',
+    sour_cherry: 'višnja',
+    plum: 'šljiva',
+    peach: 'breskva',
+    nectarine: 'nektarina',
+    pear: 'kruška',
+    quince: 'dunja',
+    apricot: 'marelica',
+    almond: 'badem',
+    walnut: 'orah',
+    hazelnut: 'lijeska'
+  };
+  var HARVEST_FALLBACK_LABELS = {
+    early: 'rana sorta',
+    mid: 'srednja sorta',
+    late: 'kasna sorta'
+  };
+  var ALLOWED_PLANT_KEYS_FOR_UPGRADE = [
+    'plant_id','catalog_version','stable_order','species','variety','ripening_fallback',
+    'display_label','rootstock','planted_at','purchased_at',
+    'source_label','position_label','profile_note'
+  ];
+  var REQUIRED_PLANT_KEYS_FOR_UPGRADE = ['plant_id','catalog_version','stable_order','species'];
+  var PLANT_ID_RE_FOR_UPGRADE = /^plant_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z_[0-9a-f]{5}$/;
+  var DATE_RE_FOR_UPGRADE = /^\d{4}-\d{2}-\d{2}$/;
+  var hasOwn = Object.prototype.hasOwnProperty;
+
+  function hasOwnKey(obj, key) {
+    return hasOwn.call(obj, key);
+  }
+
+  function monthDay(month, day) {
+    return { month: month, day: day };
+  }
+
+  function zeroTolerance() {
+    return {
+      before: { value: 0, unit: 'days' },
+      after: { value: 0, unit: 'days' }
+    };
+  }
+
+  function actionWindow(windowDefId, label, actionType, monthStart, dayStart, monthEnd, dayEnd) {
+    return {
+      window_def_id: windowDefId,
+      catalog_id: CATALOG_ID,
+      action_type: actionType,
+      label: label,
+      anchor: {
+        kind: 'calendar',
+        month_day_open: monthDay(monthStart, dayStart),
+        month_day_close: monthDay(monthEnd, dayEnd)
+      },
+      tolerance: zeroTolerance()
+    };
+  }
+
+  function addStandardFruitWindow(defs, suffix, label, actionType, monthStart, dayStart, monthEnd, dayEnd) {
+    for (var i = 0; i < STANDARD_FRUIT_SPECIES.length; i++) {
+      var species = STANDARD_FRUIT_SPECIES[i];
+      defs.push(actionWindow(
+        'aw.' + species + '.' + suffix,
+        label,
+        actionType,
+        monthStart,
+        dayStart,
+        monthEnd,
+        dayEnd
+      ));
+    }
+  }
+
+  function addSpeciesWindow(defs, species, suffix, label, actionType, monthStart, dayStart, monthEnd, dayEnd) {
+    defs.push(actionWindow(
+      'aw.' + species + '.' + suffix,
+      label,
+      actionType,
+      monthStart,
+      dayStart,
+      monthEnd,
+      dayEnd
+    ));
+  }
+
+  function addHarvestWindow(defs, species, idSuffix, label, harvestWindow) {
+    defs.push(actionWindow(
+      'aw.' + species + '.' + idSuffix + '.harvest',
+      label,
+      'harvest',
+      harvestWindow.monthStart,
+      harvestWindow.dayStart,
+      harvestWindow.monthEnd,
+      harvestWindow.dayEnd
+    ));
+  }
+
+  function buildHarvestDefinitions(defs, speciesCatalog) {
+    var speciesKeys = Object.keys(HARVEST_VARIETY_LABELS);
+    for (var i = 0; i < speciesKeys.length; i++) {
+      var species = speciesKeys[i];
+      var entry = speciesCatalog[species];
+      if (!entry) continue;
+      var varieties = entry.varieties || {};
+      var varietyLabels = HARVEST_VARIETY_LABELS[species];
+      var varietyKeys = Object.keys(varietyLabels);
+      for (var j = 0; j < varietyKeys.length; j++) {
+        var varietyKey = varietyKeys[j];
+        if (varieties[varietyKey] && varieties[varietyKey].harvestWindow) {
+          addHarvestWindow(
+            defs,
+            species,
+            varietyKey,
+            'Berba — ' + varietyLabels[varietyKey],
+            varieties[varietyKey].harvestWindow
+          );
+        }
+      }
+      var fallback = entry.fallback || {};
+      var fallbackKeys = Object.keys(fallback);
+      for (var k = 0; k < fallbackKeys.length; k++) {
+        var fallbackKey = fallbackKeys[k];
+        if (!HARVEST_FALLBACK_LABELS[fallbackKey] || !fallback[fallbackKey].harvestWindow) continue;
+        addHarvestWindow(
+          defs,
+          species,
+          'fallback.' + fallbackKey,
+          'Berba — ' + HARVEST_SPECIES_LABELS[species] + ' (' + HARVEST_FALLBACK_LABELS[fallbackKey] + ')',
+          fallback[fallbackKey].harvestWindow
+        );
+      }
+    }
+  }
+
+  function buildActionWindowDefinitions(speciesCatalog) {
+    var defs = [];
+
+    addStandardFruitWindow(defs, 'trunk_whitewash', 'Krečenje debla', 'other', 1, 15, 2, 10);
+    addStandardFruitWindow(defs, 'oil.dormant', 'Bijelo mineralno ulje', 'oil', 2, 1, 2, 15);
+    addStandardFruitWindow(defs, 'copper.winter_protection', 'Bakar — zimska zaštita', 'copper', 2, 15, 2, 28);
+    addStandardFruitWindow(defs, 'pruning.winter', 'Zimska rezidba', 'pruning', 3, 1, 3, 15);
+    addStandardFruitWindow(defs, 'copper.pruning_wounds', 'Bakar na rane nakon rezidbe', 'copper', 3, 1, 3, 20);
+    addStandardFruitWindow(defs, 'fertilization.early_spring', 'Rana proljetna gnojidba', 'fertilization', 3, 1, 4, 15);
+    addStandardFruitWindow(defs, 'pruning.summer', 'Ljetna rezidba', 'pruning', 7, 1, 7, 15);
+    addStandardFruitWindow(defs, 'irrigation_shutdown', 'Gašenje navodnjavanja', 'other', 9, 1, 9, 15);
+    addStandardFruitWindow(defs, 'winter_inspection', 'Pregled za zimu', 'other', 10, 1, 10, 31);
+
+    addSpeciesWindow(defs, 'apple', 'fungicide.post_bloom_scab_mildew', 'Post-bloom zaštita — krastavost i pepelnica', 'fungicide', 4, 10, 5, 10);
+    addSpeciesWindow(defs, 'apple', 'thinning.fruitlets', 'Prorjeđivanje plodova', 'other', 5, 15, 6, 15);
+    addSpeciesWindow(defs, 'apple', 'bird_net.pre_harvest', 'Mreža protiv ptica — jabuka', 'other', 8, 15, 10, 1);
+
+    addSpeciesWindow(defs, 'pear', 'copper.fire_blight_pre_bloom', 'Bakar — zaštita od bakterijske paleži', 'copper', 3, 15, 4, 10);
+    addSpeciesWindow(defs, 'pear', 'fungicide.post_bloom_scab', 'Post-bloom zaštita — krastavost kruške', 'fungicide', 4, 15, 5, 15);
+    addSpeciesWindow(defs, 'pear', 'thinning.fruitlets', 'Prorjeđivanje plodova — kruška', 'other', 5, 20, 6, 15);
+    addSpeciesWindow(defs, 'pear', 'bird_net.pre_harvest', 'Mreža protiv ptica — kruška', 'other', 7, 20, 9, 15);
+
+    addSpeciesWindow(defs, 'quince', 'copper.fire_blight_pre_bloom', 'Bakar — pred cvatnju dunje', 'copper', 3, 20, 4, 15);
+    addSpeciesWindow(defs, 'quince', 'thinning.fruit_load_check', 'Provjera opterećenja plodovima — dunja', 'other', 5, 20, 6, 20);
+
+    addSpeciesWindow(defs, 'sweet_cherry', 'thinning.fruitlets', 'Prorjeđivanje trešnje', 'other', 5, 15, 6, 1);
+    addSpeciesWindow(defs, 'sweet_cherry', 'bird_net.pre_harvest', 'Mreža protiv ptica — trešnja', 'other', 6, 1, 6, 30);
+
+    addSpeciesWindow(defs, 'sour_cherry', 'bird_net.pre_harvest', 'Mreža protiv ptica — višnja', 'other', 6, 15, 7, 20);
+    addSpeciesWindow(defs, 'sour_cherry', 'thinning.fruitlets', 'Prorjeđivanje višnje', 'other', 5, 15, 6, 1);
+
+    addSpeciesWindow(defs, 'plum', 'fungicide.post_bloom_monilia_leaf_spot', 'Post-bloom zaštita — monilija i pjegavost lista', 'fungicide', 5, 5, 5, 25);
+    addSpeciesWindow(defs, 'plum', 'thinning.fruitlets', 'Prorjeđivanje plodova — šljiva', 'other', 5, 20, 6, 15);
+    addSpeciesWindow(defs, 'plum', 'bird_net.pre_harvest', 'Mreža protiv ptica — šljiva', 'other', 8, 8, 8, 22);
+
+    addSpeciesWindow(defs, 'peach', 'copper.leaf_curl_buds_closed', 'Bakar — kovrčavost lista', 'copper', 2, 10, 3, 5);
+    addSpeciesWindow(defs, 'peach', 'fungicide.post_bloom_monilia', 'Post-bloom zaštita — monilija', 'fungicide', 5, 5, 5, 25);
+    addSpeciesWindow(defs, 'peach', 'thinning.fruitlets', 'Prorjeđivanje plodova — breskva', 'other', 5, 20, 6, 10);
+    addSpeciesWindow(defs, 'peach', 'bird_net.pre_harvest', 'Mreža protiv ptica — breskva', 'other', 7, 10, 7, 25);
+
+    addSpeciesWindow(defs, 'nectarine', 'copper.leaf_curl_buds_closed', 'Bakar — kovrčavost lista', 'copper', 2, 10, 3, 5);
+    addSpeciesWindow(defs, 'nectarine', 'fungicide.post_bloom_monilia', 'Post-bloom zaštita — monilija', 'fungicide', 5, 5, 5, 25);
+    addSpeciesWindow(defs, 'nectarine', 'thinning.fruitlets', 'Prorjeđivanje plodova — nektarina', 'other', 5, 20, 6, 10);
+    addSpeciesWindow(defs, 'nectarine', 'bird_net.pre_harvest', 'Mreža protiv ptica — nektarina', 'other', 7, 20, 8, 5);
+
+    addSpeciesWindow(defs, 'apricot', 'copper.pre_bloom', 'Bakar — prije cvatnje', 'copper', 1, 20, 2, 15);
+    addSpeciesWindow(defs, 'apricot', 'fungicide.post_bloom_monilia', 'Post-bloom zaštita — monilija', 'fungicide', 4, 15, 5, 15);
+    addSpeciesWindow(defs, 'apricot', 'thinning.fruitlets', 'Prorjeđivanje plodova — marelica', 'other', 5, 1, 5, 25);
+
+    addSpeciesWindow(defs, 'almond', 'copper.pre_bloom', 'Bakar — prije cvatnje badema', 'copper', 1, 25, 2, 20);
+    addSpeciesWindow(defs, 'almond', 'copper.leaf_curl_buds_closed', 'Bakar — kovrčavost lista', 'copper', 2, 10, 3, 10);
+
+    addSpeciesWindow(defs, 'olive', 'pruning.winter', 'Zimska rezidba masline', 'pruning', 2, 1, 3, 15);
+    addSpeciesWindow(defs, 'olive', 'copper.pruning_wounds', 'Bakar na rane — maslina', 'copper', 2, 1, 3, 31);
+    addSpeciesWindow(defs, 'olive', 'fertilization.spring', 'Gnojidba masline', 'fertilization', 3, 1, 4, 15);
+    addSpeciesWindow(defs, 'olive', 'pruning.summer_correction', 'Ljetna korekcijska rezidba masline', 'pruning', 6, 1, 7, 15);
+    addSpeciesWindow(defs, 'olive', 'harvest', 'Berba maslina', 'harvest', 10, 1, 12, 31);
+    addSpeciesWindow(defs, 'olive', 'winter_inspection', 'Pregled masline za zimu', 'other', 10, 15, 11, 30);
+
+    addSpeciesWindow(defs, 'pomegranate', 'pruning.winter', 'Zimska rezidba šipka', 'pruning', 2, 1, 3, 15);
+    addSpeciesWindow(defs, 'pomegranate', 'fertilization.spring', 'Gnojidba šipka', 'fertilization', 3, 1, 4, 15);
+    addSpeciesWindow(defs, 'pomegranate', 'harvest', 'Berba šipka', 'harvest', 10, 1, 11, 15);
+    addSpeciesWindow(defs, 'pomegranate', 'winter_protection.young_trees', 'Zimska zaštita šipka', 'other', 11, 15, 12, 31);
+
+    addSpeciesWindow(defs, 'walnut', 'winter_inspection', 'Pregled oraha za zimu', 'other', 10, 15, 11, 30);
+
+    addSpeciesWindow(defs, 'hazelnut', 'pruning.winter', 'Zimska rezidba lijeske', 'pruning', 2, 1, 3, 15);
+    addSpeciesWindow(defs, 'hazelnut', 'winter_inspection', 'Pregled lijeske za zimu', 'other', 10, 15, 11, 30);
+
+    buildHarvestDefinitions(defs, speciesCatalog);
+    return defs;
+  }
+
+  var CATALOG_SPECIES = {
       "apple": {
         "group": "pome",
         "varieties": {
@@ -3730,7 +4046,16 @@ if ('serviceWorker' in navigator) {
         }
       },
       "pomegranate": { "group": "mediterranean", "seasonProfile": "mediterranean" }
-    }
+    };
+
+  var CATALOG_V1 = {
+    catalog_id: CATALOG_ID,
+    catalog_version: CATALOG_ID,
+    author: ACTION_WINDOW_AUTHOR,
+    evidence_source: ACTION_WINDOW_EVIDENCE_SOURCE,
+    last_reviewed_on: ACTION_WINDOW_LAST_REVIEWED_ON,
+    species: CATALOG_SPECIES,
+    action_window_definitions: buildActionWindowDefinitions(CATALOG_SPECIES)
   };
 
   Object.defineProperty(window, 'v2CanonicalCatalogV1', {
@@ -3765,7 +4090,113 @@ if ('serviceWorker' in navigator) {
     return v !== null && typeof v === 'object' && !Array.isArray(v);
   }
 
-  function isValidCatalogV1(c) {
+  function isKnownActionType(actionType) {
+    return typeof actionType === 'string' && hasOwnKey(ACTION_TYPES, actionType);
+  }
+
+  function isValidMonthDay(node) {
+    if (!isPlainObject(node)) return false;
+    if (!Number.isInteger(node.month) || !Number.isInteger(node.day)) return false;
+    if (node.month < 1 || node.month > 12) return false;
+    var maxDay = [31,29,31,30,31,30,31,31,30,31,30,31][node.month - 1];
+    return node.day >= 1 && node.day <= maxDay;
+  }
+
+  function monthDayOrdinal(node) {
+    return node.month * 100 + node.day;
+  }
+
+  function hasPlaceholderWindowId(id) {
+    if (typeof id !== 'string') return true;
+    var lower = id.toLowerCase();
+    return (
+      id.length === 0 ||
+      lower === 'null' ||
+      lower === 'undefined' ||
+      lower.indexOf('placeholder') !== -1 ||
+      lower.indexOf('synthetic') !== -1 ||
+      lower.indexOf('generated') !== -1 ||
+      lower.indexOf('todo') !== -1 ||
+      lower.indexOf('unknown') !== -1 ||
+      lower.indexOf('<') !== -1 ||
+      lower.indexOf('>') !== -1 ||
+      lower.indexOf('aw.shared.standard_fruit') === 0
+    );
+  }
+
+  function speciesFromWindowId(id) {
+    if (typeof id !== 'string') return null;
+    if (id.indexOf('aw.') !== 0) return null;
+    var rest = id.slice(3);
+    var speciesKeys = EXPECTED_SPECIES.slice().sort(function (a, b) { return b.length - a.length; });
+    for (var i = 0; i < speciesKeys.length; i++) {
+      var species = speciesKeys[i];
+      if (rest.indexOf(species + '.') === 0) return species;
+    }
+    return null;
+  }
+
+  function validateTolerance(tolerance) {
+    if (!isPlainObject(tolerance)) return false;
+    if (!isPlainObject(tolerance.before) || !isPlainObject(tolerance.after)) return false;
+    if (!Number.isInteger(tolerance.before.value) || tolerance.before.value < 0) return false;
+    if (!Number.isInteger(tolerance.after.value) || tolerance.after.value < 0) return false;
+    return tolerance.before.unit === 'days' && tolerance.after.unit === 'days';
+  }
+
+  function validateActionWindowDefinition(def, catalog, seenIds) {
+    if (!isPlainObject(def)) return false;
+    var required = ['window_def_id','catalog_id','action_type','label','anchor','tolerance'];
+    for (var i = 0; i < required.length; i++) {
+      if (!hasOwnKey(def, required[i])) return false;
+    }
+    if (typeof def.window_def_id !== 'string' || hasPlaceholderWindowId(def.window_def_id)) return false;
+    if (hasOwnKey(seenIds, def.window_def_id)) return false;
+    seenIds[def.window_def_id] = true;
+    if (def.catalog_id !== CATALOG_ID) return false;
+    if (!isKnownActionType(def.action_type)) return false;
+    if (def.action_type === 'insecticide' || def.action_type === 'monitoring' || def.action_type === 'irrigation') return false;
+    if (typeof def.label !== 'string' || def.label.trim().length === 0) return false;
+    if (def.label === 'Sezonsko navodnjavanje') return false;
+    if (hasOwnKey(FORBIDDEN_ACTION_WINDOW_IDS, def.window_def_id) || def.window_def_id.indexOf('.mixed.') !== -1) return false;
+
+    var species = speciesFromWindowId(def.window_def_id);
+    if (!species || !catalog.species || !catalog.species[species]) return false;
+
+    if (!isPlainObject(def.anchor) || def.anchor.kind !== 'calendar') return false;
+    if (!isValidMonthDay(def.anchor.month_day_open) || !isValidMonthDay(def.anchor.month_day_close)) return false;
+    if (monthDayOrdinal(def.anchor.month_day_close) < monthDayOrdinal(def.anchor.month_day_open)) return false;
+    if (!validateTolerance(def.tolerance)) return false;
+
+    if (def.action_type === 'harvest') {
+      var suffix = def.window_def_id.slice(('aw.' + species + '.').length);
+      var speciesEntry = catalog.species[species];
+      if (suffix === 'harvest') {
+        return species === 'olive' || species === 'pomegranate';
+      }
+      if (suffix.indexOf('fallback.') === 0 && suffix.lastIndexOf('.harvest') === suffix.length - 8) {
+        var fallbackKey = suffix.slice(9, -8);
+        return isPlainObject(speciesEntry.fallback) && hasOwnKey(speciesEntry.fallback, fallbackKey);
+      }
+      if (suffix.lastIndexOf('.harvest') !== suffix.length - 8) return false;
+      var varietyKey = suffix.slice(0, -8);
+      return isPlainObject(speciesEntry.varieties) && hasOwnKey(speciesEntry.varieties, varietyKey);
+    }
+
+    return true;
+  }
+
+  function hasValidActionWindowDefinitions(c) {
+    if (!isPlainObject(c)) return false;
+    if (!Array.isArray(c.action_window_definitions) || c.action_window_definitions.length === 0) return false;
+    var seenIds = {};
+    for (var i = 0; i < c.action_window_definitions.length; i++) {
+      if (!validateActionWindowDefinition(c.action_window_definitions[i], c, seenIds)) return false;
+    }
+    return true;
+  }
+
+  function hasValidSpeciesCatalog(c) {
     if (!isPlainObject(c)) return false;
     if (c.catalog_version !== 'catalog_v1') return false;
     if (!isPlainObject(c.species)) return false;
@@ -3799,10 +4230,26 @@ if ('serviceWorker' in navigator) {
     return true;
   }
 
+  function isFoundationCatalogV1(c) {
+    if (!hasValidSpeciesCatalog(c)) return false;
+    var keys = Object.keys(c);
+    if (keys.length !== 2 || !hasOwnKey(c, 'catalog_version') || !hasOwnKey(c, 'species')) return false;
+    return !hasOwnKey(c, 'action_window_definitions');
+  }
+
+  function isValidCatalogV1(c) {
+    if (!hasValidSpeciesCatalog(c)) return false;
+    if (c.catalog_id !== CATALOG_ID) return false;
+    if (c.author !== ACTION_WINDOW_AUTHOR) return false;
+    if (c.evidence_source !== ACTION_WINDOW_EVIDENCE_SOURCE) return false;
+    if (c.last_reviewed_on !== ACTION_WINDOW_LAST_REVIEWED_ON) return false;
+    return hasValidActionWindowDefinitions(c);
+  }
+
   function validateStoreShape(parsed) {
     if (!isPlainObject(parsed)) return false;
     var expected = ['meta','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
-    for (var i = 0; i < expected.length; i++) if (!(expected[i] in parsed)) return false;
+    for (var i = 0; i < expected.length; i++) if (!hasOwnKey(parsed, expected[i])) return false;
     if (!isPlainObject(parsed.meta)) return false;
     if (parsed.meta.store_format_version !== 1) return false;
     var acv = parsed.meta.active_catalog_version;
@@ -3812,6 +4259,119 @@ if ('serviceWorker' in navigator) {
     for (var j = 0; j < arrKeys.length; j++) if (!Array.isArray(parsed[arrKeys[j]])) return false;
     if (!isPlainObject(parsed.review_state)) return false;
     return true;
+  }
+
+  function isEmptyPlainObject(v) {
+    return isPlainObject(v) && Object.keys(v).length === 0;
+  }
+
+  function isUnknownTag(v) {
+    return isPlainObject(v) && v.unknown === true && Object.keys(v).length === 1;
+  }
+
+  function localTodayYmd() {
+    var now = new Date();
+    var y = now.getFullYear();
+    var m = now.getMonth() + 1;
+    var d = now.getDate();
+    return y + '-' + (m < 10 ? '0' + m : '' + m) + '-' + (d < 10 ? '0' + d : '' + d);
+  }
+
+  function isValidYmdDate(s) {
+    if (typeof s !== 'string' || !DATE_RE_FOR_UPGRADE.test(s)) return false;
+    var parts = s.split('-');
+    var year = Number(parts[0]);
+    var month = Number(parts[1]);
+    var day = Number(parts[2]);
+    var dt = new Date(Date.UTC(year, month - 1, day));
+    if (dt.getUTCFullYear() !== year || dt.getUTCMonth() !== month - 1 || dt.getUTCDate() !== day) return false;
+    return s <= localTodayYmd();
+  }
+
+  function isValidUpgradePlant(p, catalog) {
+    if (!isPlainObject(p)) return false;
+    var keys = Object.keys(p);
+    for (var i = 0; i < keys.length; i++) {
+      if (ALLOWED_PLANT_KEYS_FOR_UPGRADE.indexOf(keys[i]) === -1) return false;
+    }
+    for (var j = 0; j < REQUIRED_PLANT_KEYS_FOR_UPGRADE.length; j++) {
+      if (!hasOwnKey(p, REQUIRED_PLANT_KEYS_FOR_UPGRADE[j])) return false;
+    }
+    if (typeof p.plant_id !== 'string' || !PLANT_ID_RE_FOR_UPGRADE.test(p.plant_id)) return false;
+    if (p.catalog_version !== CATALOG_ID) return false;
+    if (!Number.isInteger(p.stable_order) || p.stable_order < 0) return false;
+    if (typeof p.species !== 'string' || !catalog.species || !hasOwnKey(catalog.species, p.species)) return false;
+
+    var speciesEntry = catalog.species[p.species];
+    if (!isPlainObject(speciesEntry)) return false;
+    if (p.species === 'pomegranate') {
+      if (hasOwnKey(p, 'variety')) return false;
+    } else if (hasOwnKey(p, 'variety')) {
+      if (isUnknownTag(p.variety)) {
+        // accepted
+      } else if (typeof p.variety === 'string') {
+        if (!isPlainObject(speciesEntry.varieties) || !hasOwnKey(speciesEntry.varieties, p.variety)) return false;
+      } else {
+        return false;
+      }
+    }
+
+    if (hasOwnKey(p, 'ripening_fallback')) {
+      if (p.species === 'olive' || p.species === 'pomegranate') return false;
+      if (!isPlainObject(speciesEntry.fallback)) return false;
+      if (!isUnknownTag(p.variety)) return false;
+      if (isUnknownTag(p.ripening_fallback)) {
+        // accepted but no harvest window is assigned from this value in this prerequisite
+      } else if (typeof p.ripening_fallback === 'string') {
+        if (!hasOwnKey(speciesEntry.fallback, p.ripening_fallback)) return false;
+      } else {
+        return false;
+      }
+    }
+
+    var stringOrUnknownKeys = ['rootstock','source_label','position_label'];
+    for (var u = 0; u < stringOrUnknownKeys.length; u++) {
+      var stringKey = stringOrUnknownKeys[u];
+      if (hasOwnKey(p, stringKey) && !isUnknownTag(p[stringKey]) && (typeof p[stringKey] !== 'string' || p[stringKey].trim().length === 0)) return false;
+    }
+    var dateOrUnknownKeys = ['planted_at','purchased_at'];
+    for (var d = 0; d < dateOrUnknownKeys.length; d++) {
+      var dateKey = dateOrUnknownKeys[d];
+      if (hasOwnKey(p, dateKey) && !isUnknownTag(p[dateKey]) && !isValidYmdDate(p[dateKey])) return false;
+    }
+    var stringOnlyKeys = ['display_label','profile_note'];
+    for (var s = 0; s < stringOnlyKeys.length; s++) {
+      var plainStringKey = stringOnlyKeys[s];
+      if (hasOwnKey(p, plainStringKey) && (typeof p[plainStringKey] !== 'string' || p[plainStringKey].trim().length === 0)) return false;
+    }
+    return true;
+  }
+
+  function hasValidUpgradePlants(plants, catalog) {
+    var seenIds = {};
+    var seenOrders = {};
+    for (var i = 0; i < plants.length; i++) {
+      if (!isValidUpgradePlant(plants[i], catalog)) return false;
+      if (hasOwnKey(seenIds, plants[i].plant_id)) return false;
+      seenIds[plants[i].plant_id] = true;
+      var order = String(plants[i].stable_order);
+      if (hasOwnKey(seenOrders, order)) return false;
+      seenOrders[order] = true;
+    }
+    return true;
+  }
+
+  function canUpgradeFoundationStore(parsed) {
+    if (parsed.meta.active_catalog_version !== CATALOG_ID) return false;
+    var catalogKeys = Object.keys(parsed.catalogs);
+    if (catalogKeys.length !== 1 || catalogKeys[0] !== CATALOG_ID) return false;
+    if (!isFoundationCatalogV1(parsed.catalogs.catalog_v1)) return false;
+    if (!isEmptyPlainObject(parsed.review_state)) return false;
+    var emptyArrays = ['plan_instances','plan_overlays','activities','observations','corrections'];
+    for (var i = 0; i < emptyArrays.length; i++) {
+      if (parsed[emptyArrays[i]].length !== 0) return false;
+    }
+    return hasValidUpgradePlants(parsed.plants, parsed.catalogs.catalog_v1);
   }
 
   var raw = localStorage.getItem('vocnjak_v2');
@@ -3834,6 +4394,29 @@ if ('serviceWorker' in navigator) {
   ) {
     setCatalogStatus('Slice 2 — katalog je već učitan.');
     console.log('vocnjak: catalog already loaded; active_catalog_version=catalog_v1');
+    return;
+  }
+
+  if (
+    parsed.meta.active_catalog_version === 'catalog_v1' &&
+    parsed.catalogs &&
+    parsed.catalogs.catalog_v1 &&
+    isFoundationCatalogV1(parsed.catalogs.catalog_v1)
+  ) {
+    if (!canUpgradeFoundationStore(parsed)) {
+      setCatalogStatus('Slice 2 — postoje V2 podaci koje ne smijem automatski nadograditi. Bez izmjena.');
+      console.warn('vocnjak: foundation catalog upgrade blocked; store left unchanged');
+      return;
+    }
+    parsed.catalogs.catalog_v1 = CATALOG_V1;
+    try {
+      localStorage.setItem('vocnjak_v2', JSON.stringify(parsed));
+      setCatalogStatus('Slice 2 — katalog je nadograđen.');
+      console.log('vocnjak: catalog upgraded from foundation-only catalog_v1; plants preserved=' + parsed.plants.length);
+    } catch (e) {
+      setCatalogStatus('Slice 2 — katalog nije moguće nadograditi. Vrati se u staru aplikaciju.');
+      console.error('vocnjak: catalog upgrade failed:', e && e.message ? e.message : e);
+    }
     return;
   }
 
@@ -3879,6 +4462,26 @@ if ('serviceWorker' in navigator) {
   var STRING_ONLY_KEYS = ['display_label','profile_note'];
   var PLANT_ID_RE = /^plant_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z_[0-9a-f]{5}$/;
   var DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+  var ACTION_TYPES = {
+    oil: true,
+    copper: true,
+    fungicide: true,
+    insecticide: true,
+    pruning: true,
+    monitoring: true,
+    irrigation: true,
+    harvest: true,
+    fertilization: true,
+    other: true
+  };
+  var FORBIDDEN_ACTION_WINDOW_IDS = {
+    'aw.quince.mixed.post_bloom_protection': true,
+    'aw.almond.mixed.post_bloom_protection': true,
+    'aw.walnut.pruning.summer': true,
+    'aw.walnut.copper.early_spring': true,
+    'aw.olive.insecticide.olive_fly_if_needed': true,
+    'aw.olive.pruning.post_harvest': true
+  };
   var hasOwn = Object.prototype.hasOwnProperty;
 
   function isPlainObject(v) {
@@ -3960,6 +4563,116 @@ if ('serviceWorker' in navigator) {
     return [];
   }
 
+  function isValidMonthDayNode(node) {
+    if (!isPlainObject(node)) return false;
+    if (typeof node.month !== 'number' || !isFinite(node.month) || Math.floor(node.month) !== node.month) return false;
+    if (typeof node.day !== 'number' || !isFinite(node.day) || Math.floor(node.day) !== node.day) return false;
+    if (node.month < 1 || node.month > 12) return false;
+    var maxDay = [31,29,31,30,31,30,31,31,30,31,30,31][node.month - 1];
+    return node.day >= 1 && node.day <= maxDay;
+  }
+
+  function monthDayOrdinal(node) {
+    return node.month * 100 + node.day;
+  }
+
+  function hasPlaceholderWindowId(id) {
+    if (typeof id !== 'string') return true;
+    var lower = id.toLowerCase();
+    return (
+      id.length === 0 ||
+      lower === 'null' ||
+      lower === 'undefined' ||
+      lower.indexOf('placeholder') !== -1 ||
+      lower.indexOf('synthetic') !== -1 ||
+      lower.indexOf('generated') !== -1 ||
+      lower.indexOf('todo') !== -1 ||
+      lower.indexOf('unknown') !== -1 ||
+      lower.indexOf('<') !== -1 ||
+      lower.indexOf('>') !== -1 ||
+      lower.indexOf('aw.shared.standard_fruit') === 0
+    );
+  }
+
+  function speciesFromWindowId(id, catalog) {
+    if (typeof id !== 'string' || id.indexOf('aw.') !== 0 || !isPlainObject(catalog) || !isPlainObject(catalog.species)) return null;
+    var speciesKeys = Object.keys(catalog.species).sort(function (a, b) { return b.length - a.length; });
+    var rest = id.slice(3);
+    for (var i = 0; i < speciesKeys.length; i++) {
+      var species = speciesKeys[i];
+      if (rest.indexOf(species + '.') === 0) return species;
+    }
+    return null;
+  }
+
+  function validateActionWindowTolerance(tolerance, path) {
+    if (!isPlainObject(tolerance)) return [path + '.tolerance not a plain object'];
+    if (!isPlainObject(tolerance.before) || !isPlainObject(tolerance.after)) return [path + '.tolerance.before/after required'];
+    if (typeof tolerance.before.value !== 'number' || !isFinite(tolerance.before.value) || Math.floor(tolerance.before.value) !== tolerance.before.value || tolerance.before.value < 0) return [path + '.tolerance.before.value must be non-negative integer'];
+    if (typeof tolerance.after.value !== 'number' || !isFinite(tolerance.after.value) || Math.floor(tolerance.after.value) !== tolerance.after.value || tolerance.after.value < 0) return [path + '.tolerance.after.value must be non-negative integer'];
+    if (tolerance.before.unit !== 'days' || tolerance.after.unit !== 'days') return [path + '.tolerance unit must be days'];
+    return [];
+  }
+
+  function validateActionWindowDefinition(def, catalog, seenIds, path) {
+    if (!isPlainObject(def)) return [path + ' not a plain object'];
+    var required = ['window_def_id','catalog_id','action_type','label','anchor','tolerance'];
+    for (var i = 0; i < required.length; i++) {
+      if (!hasOwnKey(def, required[i])) return [path + ' missing key: ' + required[i]];
+    }
+    if (typeof def.window_def_id !== 'string' || hasPlaceholderWindowId(def.window_def_id)) return [path + '.window_def_id invalid or placeholder'];
+    if (hasOwnKey(seenIds, def.window_def_id)) return [path + '.window_def_id duplicate: ' + def.window_def_id];
+    seenIds[def.window_def_id] = true;
+    if (def.catalog_id !== 'catalog_v1') return [path + '.catalog_id must be catalog_v1'];
+    if (typeof def.action_type !== 'string' || !hasOwnKey(ACTION_TYPES, def.action_type)) return [path + '.action_type unknown'];
+    if (def.action_type === 'insecticide') return [path + '.action_type insecticide deferred for this prerequisite'];
+    if (def.action_type === 'monitoring') return [path + '.action_type monitoring deferred for Slice 8'];
+    if (def.action_type === 'irrigation') return [path + '.action_type irrigation deferred for this prerequisite'];
+    if (typeof def.label !== 'string' || def.label.trim().length === 0) return [path + '.label required'];
+    if (def.label === 'Sezonsko navodnjavanje') return [path + '.label seasonal watering is not an Activity window'];
+    if (hasOwnKey(FORBIDDEN_ACTION_WINDOW_IDS, def.window_def_id) || def.window_def_id.indexOf('.mixed.') !== -1) return [path + '.window_def_id is deferred and must not be seeded'];
+
+    var species = speciesFromWindowId(def.window_def_id, catalog);
+    if (!species) return [path + '.window_def_id must use a supported species-first ID'];
+
+    if (!isPlainObject(def.anchor) || def.anchor.kind !== 'calendar') return [path + '.anchor.kind must be calendar'];
+    if (!isValidMonthDayNode(def.anchor.month_day_open) || !isValidMonthDayNode(def.anchor.month_day_close)) return [path + '.anchor month/day invalid'];
+    if (monthDayOrdinal(def.anchor.month_day_close) < monthDayOrdinal(def.anchor.month_day_open)) return [path + '.anchor cross-year windows are not allowed'];
+    var toleranceErrs = validateActionWindowTolerance(def.tolerance, path);
+    if (toleranceErrs.length > 0) return toleranceErrs;
+
+    if (def.action_type === 'harvest') {
+      var suffix = def.window_def_id.slice(('aw.' + species + '.').length);
+      var sp = catalog.species[species];
+      if (suffix === 'harvest') {
+        if (species === 'olive' || species === 'pomegranate') return [];
+        return [path + '.window_def_id species-level harvest only allowed for olive/pomegranate'];
+      }
+      if (suffix.indexOf('fallback.') === 0 && suffix.lastIndexOf('.harvest') === suffix.length - 8) {
+        var fallbackKey = suffix.slice(9, -8);
+        if (isPlainObject(sp.fallback) && hasOwnKey(sp.fallback, fallbackKey)) return [];
+        return [path + '.window_def_id fallback harvest key not in catalog'];
+      }
+      if (suffix.lastIndexOf('.harvest') !== suffix.length - 8) return [path + '.window_def_id harvest shape invalid'];
+      var varietyKey = suffix.slice(0, -8);
+      if (isPlainObject(sp.varieties) && hasOwnKey(sp.varieties, varietyKey)) return [];
+      return [path + '.window_def_id harvest variety not in catalog'];
+    }
+
+    return [];
+  }
+
+  function validateActionWindowDefinitions(c, path) {
+    if (!isPlainObject(c)) return [path + ' not a plain object'];
+    if (!Array.isArray(c.action_window_definitions) || c.action_window_definitions.length === 0) return [path + '.action_window_definitions required'];
+    var seenIds = Object.create(null);
+    for (var i = 0; i < c.action_window_definitions.length; i++) {
+      var errs = validateActionWindowDefinition(c.action_window_definitions[i], c, seenIds, path + '.action_window_definitions[' + i + ']');
+      if (errs.length > 0) return errs;
+    }
+    return [];
+  }
+
   function compareCanonicalCatalogNode(actual, canonical, path) {
     if (path.slice(-14) === '.harvestWindow') {
       var actualWindowErrs = validateHarvestWindowNode(actual, path);
@@ -3995,6 +4708,10 @@ if ('serviceWorker' in navigator) {
   function validateCatalogV1(c) {
     var canonical = window.v2CanonicalCatalogV1;
     if (!isPlainObject(canonical)) return ['canonical catalog_v1 unavailable'];
+    var canonicalActionWindowErrs = validateActionWindowDefinitions(canonical, 'canonical catalog_v1');
+    if (canonicalActionWindowErrs.length > 0) return canonicalActionWindowErrs;
+    var actionWindowErrs = validateActionWindowDefinitions(c, 'catalog_v1');
+    if (actionWindowErrs.length > 0) return actionWindowErrs;
     return compareCanonicalCatalogNode(c, canonical, 'catalog_v1');
   }
 
