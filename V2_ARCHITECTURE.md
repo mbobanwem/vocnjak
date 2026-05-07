@@ -1426,9 +1426,11 @@ Clean start is not data loss because S10 does not delete or rewrite legacy data.
 
 V2 `catalog_v1` is the first V2 catalog version inside `vocnjak_v2`. It is not the legacy V1 app, not legacy V1 logic, and not a reason to preserve legacy modeling mistakes.
 
-The current runtime `catalog_v1` seed is foundation-only and pre-usable: it contains species / variety / fallback / harvest data, but no action-window definitions. Because V2 is not yet in real owner use and no real V2 Activity records exist, this foundation-only seed is not production-stable catalog history.
+Historically, Runtime Slice 2 created a foundation-only pre-usable `catalog_v1`: it contained species / variety / fallback / harvest data, but no action-window definitions. Because V2 was not yet in real owner use and no real V2 Activity records existed, that foundation-only seed was not production-stable catalog history.
 
-Before Runtime Slice 5 may write Activity records, the Pre-Slice-5 Action Window Seed prerequisite extends/replaces V2 `catalog_v1` into the first usable canonical V2 catalog:
+As of `df6a7fc Implement Action Window Seed prerequisite`, canonical runtime `catalog_v1` has been expanded with source-backed `action_window_definitions` and real stable `window_def_id` values. Current runtime `catalog_v1` is no longer foundation-only.
+
+The Pre-Slice-5 Action Window Seed prerequisite extended/replaced V2 `catalog_v1` into the first usable canonical V2 catalog before Runtime Slice 5 implementation may write Activity records:
 
 - real action-window definitions are added from approved V2 catalog / template / audit material
 - real stable `window_def_id` values become available for Activity writes
@@ -1436,10 +1438,10 @@ Before Runtime Slice 5 may write Activity records, the Pre-Slice-5 Action Window
 - no `catalog_v2` is introduced merely to preserve the incomplete pre-usable dev seed
 - no synthetic, null, sentinel, or generated-at-write `window_def_id` values are allowed
 
-Compatibility stance for current `vocnjak_v2` dev/test stores:
+Compatibility stance for pre-usable foundation-only `vocnjak_v2` dev/test stores:
 
 - existing pre-usable V2 dev/test stores may be reset
-- existing pre-usable V2 dev/test stores may instead be deterministically upgraded when they match the known foundation-only shape and do not contain real V2 Activity / Correction history
+- existing pre-usable V2 dev/test stores may instead be deterministically upgraded to the expanded canonical catalog when they match the known foundation-only shape and do not contain real V2 Activity / Correction history
 - old V2 dev/test backups are not production-critical portability artifacts
 - exact-canonical catalog validation remains conceptually intact; after the prerequisite, the canonical `catalog_v1` is the expanded usable catalog with action-window definitions
 - import remains fail-closed; no tolerant catalog substitution, merge import, or automatic repair is introduced
@@ -1448,7 +1450,7 @@ Protected legacy storage keys remain strictly isolated. The Action Window Seed p
 
 ### 6.5b Runtime projection guardrail
 
-Runtime catalog seed work MUST be a faithful projection of the approved orchard plan templates and plant catalog. It MUST NOT begin from a generic runtime seed or a model-first convenience shape.
+Runtime catalog seed work MUST be a faithful projection of the approved orchard plan templates and plant catalog. It MUST NOT begin from a generic runtime seed or a model-first convenience shape. This plan-template-first projection guardrail was hardened by `bcaf3a2 Harden plan-template projection rules` and remains in force for future catalog/action-window/orchard-plan work.
 
 Before coding any catalog/action-window seed, an implementation plan MUST include a species-by-species source map from `PRODUCT_VISION.md`, `V2_ORCHARD_PLAN_TEMPLATES.md`, `V2_PLANT_CATALOG.md`, and the audit/consolidation docs.
 

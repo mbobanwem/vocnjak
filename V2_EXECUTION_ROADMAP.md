@@ -777,7 +777,7 @@ S11.C2 does not redefine any of these. S11.C2 only orders runtime slices against
 
 ## 32. Usable/default slice overview
 
-S11.C2 has five usable / default slices, after the Pre-Slice-5 Action Window Seed prerequisite:
+S11.C2 has five usable / default slices, after the completed Pre-Slice-5 Action Window Seed prerequisite:
 
 - Prerequisite — Pre-Slice-5 Action Window Seed
 - Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction
@@ -797,7 +797,7 @@ Cross-cutting rules that bind every S11.C2 slice (in addition to §22):
 - Monitoring absence is neutral. No warning, no overdue badge, no compliance copy on missing observations or unconfirmed stages.
 - Single capture path. Each capture surface (Activity, Observation, stage confirmation) has exactly one write boundary; no surface re-implements capture.
 - Same Correction record shape across Activity (Slice 5) and Observation (Slice 9). Per S8 §1.24 handoff: one Correction storage shape.
-- Catalog seed extension only from already-approved V2 catalog / template docs and without catalog re-authoring (per §30). Pre-Slice-5 Action Window Seed moves real action-window definitions before Slice 5; Slice 6 still owns snapshot / Pregled / Kalendar, not the first action-window seed. Slice 8 may extend with monitoring program declarations and stage vocabulary.
+- Catalog seed extension only from already-approved V2 catalog / template docs and without catalog re-authoring (per §30). Pre-Slice-5 Action Window Seed supplied real action-window definitions before Slice 5; Slice 6 still owns snapshot / Pregled / Kalendar, not the first action-window seed. Slice 8 may extend with monitoring program declarations and stage vocabulary.
 - Verification of legacy non-disturbance asserts that legacy key VALUES are unchanged, NOT that legacy keys are never written-to (per §28).
 
 ---
@@ -806,7 +806,15 @@ Cross-cutting rules that bind every S11.C2 slice (in addition to §22):
 
 Purpose:
 
-Resolve the `window_def_id` source-of-truth blocker before Activity capture. Slice 5 writes immutable Activity records, and `V2_DOMAIN_MODEL.md §0.6` requires those records to carry real `window_def_id` values. The current runtime `catalog_v1` seed is foundation-only and pre-usable because it contains species / variety / fallback / harvest data but no action-window definitions.
+Resolve the `window_def_id` source-of-truth blocker before Activity capture. Slice 5 writes immutable Activity records, and `V2_DOMAIN_MODEL.md §0.6` requires those records to carry real `window_def_id` values. Historically, Runtime Slice 2 created a foundation-only `catalog_v1` with species / variety / fallback / harvest data but no action-window definitions.
+
+Status:
+
+- The Action Window Seed prerequisite has been implemented by `df6a7fc Implement Action Window Seed prerequisite`.
+- Canonical `catalog_v1` now has source-backed real action-window definitions and real stable `window_def_id` values.
+- Owner browser verification passed and focused adversarial review passed.
+- Runtime Slice 5 planning may begin after owner approval.
+- Runtime Slice 5 implementation has not started and requires explicit owner approval.
 
 Decision:
 
@@ -828,9 +836,10 @@ Plan-template-first rule:
 - A species-by-species source map is REQUIRED before implementation.
 - The source map MUST preserve shared-source rows, species-specific overrides, variety/fallback harvest timing, and deferred monitoring/awareness/watering carry-forward.
 - A generic minimum seed is invalid. STOP if the plan starts from runtime convenience instead of approved orchard work-plan structure.
-- Runtime Slice 5 planning may start only after the source-backed seed is implemented, verified, adversarially reviewed, owner-accepted, and tracker-synced.
+- The plan-template-first rule remains hardened by `bcaf3a2 Harden plan-template projection rules`.
+- Runtime Slice 5 planning may begin after owner approval now that the source-backed seed is implemented, verified, adversarially reviewed, owner-accepted, and tracker-synced.
 
-Allowed touch points for the later runtime prerequisite:
+Allowed touch points for the completed runtime prerequisite:
 
 - `index.html` only, inside the V2 region.
 - Canonical `CATALOG_V1` seed shape and exact-canonical validation.

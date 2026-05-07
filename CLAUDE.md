@@ -82,11 +82,13 @@ Current:
 - Runtime Slice 4 (Plant foundation and Biljke first cut) is complete (`f99e5f6 Implement Runtime Slice 4 V2 plant foundation`); legacy app remains the default
 - Post-Slice-4 safety fix for canonical `catalog_v1` import validation is complete (`8a9c4ae Fix Runtime Slice 4 catalog import validation`); adversarial review found imported `catalogs.catalog_v1` could drift while preserving counts, and this was closed before Slice 5
 - Focused adversarial review of Runtime Slices 3 and 4 after the post-Slice-4 safety fix passed and owner verification accepted the PASS; pre-Slice-5 UX polish for friendlier Add Plant date-validation messages is complete
-- next target: Pre-Slice-5 Action Window Seed source-of-truth reconciliation/prerequisite; Runtime Slice 5 planning/implementation is blocked until V2 has real catalog action-window definitions and owner approval
+- Pre-Slice-5 Action Window Seed prerequisite is complete (`df6a7fc Implement Action Window Seed prerequisite`); owner browser verification passed, focused adversarial review passed, and canonical V2 `catalog_v1` now has source-backed action-window definitions with real `window_def_id` values
+- Plan-template projection hardening is complete (`bcaf3a2 Harden plan-template projection rules`); the plan-template-first/source-map hard stop remains locked for future catalog/action-window/orchard-plan work
+- Runtime Slice 5 planning may begin after owner approval
 - §0 monitoring constraints remain locked and authoritative
 - legacy data and V1/V3/V4 keys remain protected
 - implementation was forbidden through S11 documentation; Slices 0, 1, 2, 3, and 4 were then owner-approved and committed
-- Runtime Slice 5 and all subsequent slices require explicit per-slice owner approval before implementation; Slice 5 must not start until the Pre-Slice-5 Action Window Seed prerequisite is complete and owner-approved
+- Runtime Slice 5 implementation has not started and requires explicit owner approval; all subsequent slices also require explicit per-slice owner approval before implementation
 
 ### INPUT FILES (NOT YET VALIDATED V2 TRUTH)
 
