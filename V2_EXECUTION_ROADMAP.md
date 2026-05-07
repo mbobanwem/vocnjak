@@ -822,6 +822,14 @@ Decision:
 - Current `vocnjak_v2` dev/test stores may be reset or deterministically upgraded.
 - Protected legacy storage keys remain untouched.
 
+Plan-template-first rule:
+
+- Pre-Slice-5 Action Window Seed MUST start from `PRODUCT_VISION.md`, `V2_ORCHARD_PLAN_TEMPLATES.md`, `V2_PLANT_CATALOG.md`, and the audit/consolidation docs.
+- A species-by-species source map is REQUIRED before implementation.
+- The source map MUST preserve shared-source rows, species-specific overrides, variety/fallback harvest timing, and deferred monitoring/awareness/watering carry-forward.
+- A generic minimum seed is invalid. STOP if the plan starts from runtime convenience instead of approved orchard work-plan structure.
+- Runtime Slice 5 planning may start only after the source-backed seed is implemented, verified, adversarially reviewed, owner-accepted, and tracker-synced.
+
 Allowed touch points for the later runtime prerequisite:
 
 - `index.html` only, inside the V2 region.

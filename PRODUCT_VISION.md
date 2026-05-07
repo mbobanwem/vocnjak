@@ -16,6 +16,28 @@ Its job is to help a person understand which real-world windows are relevant at 
 
 ---
 
+## 1a. Orchard work plan is product truth
+
+The approved orchard work plan is product truth.
+
+`V2_ORCHARD_PLAN_TEMPLATES.md` and `V2_PLANT_CATALOG.md`, after audit and owner approval for a runtime slice, MUST drive runtime representation.
+
+Runtime, domain, and architecture work MUST serve the approved orchard work plan. They MUST NOT flatten it into convenient generic buckets.
+
+The product must preserve these distinctions:
+
+- shared orchard work that truly applies across a defined species set;
+- species-specific additions and overrides;
+- variety-specific and fallback timing, especially harvest;
+- monitoring, trap, scouting, symptom, and awareness content as first-class future product material;
+- watering and water-need context as advisory/seasonal guidance unless a source-backed one-shot management action is explicitly defined.
+
+A model that cannot faithfully represent the approved plan-template structure is incomplete.
+
+If a proposal requires weakening, generalizing, dropping, or renaming away the approved plan-template structure, the agent MUST STOP or revise the model/runtime proposal. The templates are not decorative input for a generic task system.
+
+---
+
 ## 2. Real user mental model
 
 The user thinks in simple orchard actions:

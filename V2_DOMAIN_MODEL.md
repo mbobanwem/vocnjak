@@ -28,6 +28,23 @@
 
 - `window_def_id`, `catalog_id`, `action_type` (category), `label`, `anchor` (phenological, calendar fallback), `tolerance`, `open_condition?` (`requires_prior_activity` or `requires_observation`).
 
+### 0.2a Plan-template projection rule
+
+Action-window definitions are projections of approved orchard plan-template work. They are not arbitrary technical buckets and MUST NOT be authored from runtime convenience first.
+
+`window_def_id` identifies the approved orchard work item projected into the catalog. `action_type` is category/search/history metadata; it is NOT template identity and MUST NOT be used to merge distinct orchard meanings.
+
+Shared-source template rows may exist, but the domain model MUST preserve species-specific overrides and variety/fallback timing. A shared source row MAY be represented with species-specific runtime identities when that is necessary to preserve safe override behavior.
+
+The model MUST NOT collapse:
+
+- fungicide and insecticide into a generic treatment bucket;
+- monitoring, trap/scouting/symptom observation, and treatment into one action;
+- seasonal watering / water-need advisory context into a normal done/skipped Activity;
+- variety/fallback harvest timing into broad species-level harvest when the plant catalog defines variety or fallback timing.
+
+If approved plan-template content cannot be represented faithfully, the domain model MUST be amended in an owner-approved session. The content MUST NOT be silently flattened, dropped, generalized, or renamed away.
+
 ### 0.3 Derived (never stored)
 
 - **Window state** per (plant, action).

@@ -1446,6 +1446,25 @@ Compatibility stance for current `vocnjak_v2` dev/test stores:
 
 Protected legacy storage keys remain strictly isolated. The Action Window Seed prerequisite must not read legacy app data as V2 state, rewrite legacy keys, delete legacy keys, normalize legacy data, or reintroduce legacy V1 app logic into V2 modeling.
 
+### 6.5b Runtime projection guardrail
+
+Runtime catalog seed work MUST be a faithful projection of the approved orchard plan templates and plant catalog. It MUST NOT begin from a generic runtime seed or a model-first convenience shape.
+
+Before coding any catalog/action-window seed, an implementation plan MUST include a species-by-species source map from `PRODUCT_VISION.md`, `V2_ORCHARD_PLAN_TEMPLATES.md`, `V2_PLANT_CATALOG.md`, and the audit/consolidation docs.
+
+The source map MUST preserve:
+
+- shared-source template rows and their explicit species scope;
+- species-specific additions and overrides;
+- variety-specific and fallback timing, especially harvest;
+- monitoring, trap/scouting/symptom, awareness, and watering/advisory content that belongs to future slices.
+
+Shared template source MAY be projected into species-first runtime IDs when that preserves species-specific override safety. Broad generic IDs MUST NOT be used when they flatten approved plan-template meaning.
+
+Deferred monitoring, awareness, and watering/advisory items MUST be carried forward to their owning future slice instead of being dropped.
+
+Import/export validation MUST protect the projection against canonical drift, placeholders, broad generic IDs, synthetic/null/sentinel IDs, forbidden action types, and deferred rows accidentally entering the runtime seed.
+
 ### 6.6 Manual owner recovery path
 
 The approved owner recovery path is manual, normal V2 entry:

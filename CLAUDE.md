@@ -50,6 +50,16 @@ Rules:
 - proposals must preserve weather-aware execution support: forecast may guide execution timing, but it must remain advisory, must not replace grower judgment, and must not create automatic domino shifting
 - if a proposal conflicts with `PRODUCT_VISION.md`, revise it before continuing
 
+### PLAN-TEMPLATE PROJECTION HARD STOP
+
+For catalog, action-window, and orchard-plan work, agents MUST NOT propose model-first solutions.
+
+A proposal that starts from runtime convenience instead of `PRODUCT_VISION.md`, `V2_ORCHARD_PLAN_TEMPLATES.md`, and `V2_PLANT_CATALOG.md` is invalid.
+
+Required proof before any catalog/action-window implementation plan: a source map preserving the shared block, species-specific overrides, variety/fallback timing, and deferred monitoring/awareness/watering carry-forward.
+
+If that proof is missing: STOP.
+
 ### IN PROGRESS
 
 - current target document only
