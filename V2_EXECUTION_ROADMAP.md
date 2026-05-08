@@ -813,8 +813,8 @@ Status:
 - The Action Window Seed prerequisite has been implemented by `df6a7fc Implement Action Window Seed prerequisite`.
 - Canonical `catalog_v1` now has source-backed real action-window definitions and real stable `window_def_id` values.
 - Owner browser verification passed and focused adversarial review passed.
-- Runtime Slice 5 planning may begin after owner approval.
-- Runtime Slice 5 implementation has not started and requires explicit owner approval.
+- Runtime Slice 5 has since completed at `8bc630a Implement Runtime Slice 5 activity capture`.
+- Runtime Slice 6 planning is next eligible only after owner approval; Slice 6 implementation has not started.
 
 Decision:
 
@@ -837,7 +837,7 @@ Plan-template-first rule:
 - The source map MUST preserve shared-source rows, species-specific overrides, variety/fallback harvest timing, and deferred monitoring/awareness/watering carry-forward.
 - A generic minimum seed is invalid. STOP if the plan starts from runtime convenience instead of approved orchard work-plan structure.
 - The plan-template-first rule remains hardened by `bcaf3a2 Harden plan-template projection rules`.
-- Runtime Slice 5 planning may begin after owner approval now that the source-backed seed is implemented, verified, adversarially reviewed, owner-accepted, and tracker-synced.
+- Runtime Slice 5 has since completed after owner approval. The same source-backed, plan-template-first discipline remains required before any future catalog/action-window/orchard-plan runtime work.
 
 Allowed touch points for the completed runtime prerequisite:
 
@@ -883,6 +883,8 @@ Stop conditions:
 
 ## 33. Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction
 
+Status: COMPLETE — implemented and pushed to `main` at `8bc630a Implement Runtime Slice 5 activity capture`.
+
 Purpose:
 
 Make V2 useful for capturing real orchard work. Owner can log a single Activity covering multiple plants in one pass; review Activity history in Dnevnik; correct mistaken Activity dates / status / notes via additive Correction records.
@@ -918,17 +920,29 @@ Produces:
 - Activity-only Dnevnik per V2_UX_MODEL.md §3: default Dnevnik (§3.3), plant-filtered (§3.4), seasonal-action-filtered (§3.5), year / month grouping (§3.6), row anatomy (§3.8), marker semantics (§3.9), multi-plant grouping (§3.11). At Slice 5: no observation rows, no archived-plant rows.
 - Activity correction per V2_UX_MODEL.md §17 + V2_DOMAIN_MODEL.md §0.6c + V2_ARCHITECTURE.md §1.14 / §4.9: a Correction record with `correction_id`, `original_record_id`, `original_record_type`, `correction_types`, `corrected_values`, optional `explanation`, and `created_at` links to the original Activity; the original is not mutated; Dnevnik displays the corrected version with the §3.9 correction marker.
 
+Implementation summary:
+
+- Runtime Slice 5 landed in `index.html` at `8bc630a Implement Runtime Slice 5 activity capture`.
+- The implementation added global Activity capture, Activity-only Dnevnik, additive Activity correction, and validator/import/export support for Activity and Correction records.
+- Slice 5 remained independent of Slice 6 snapshot / Pregled / Kalendar state and did not implement observations, monitoring programs, weather, Supabase, iCal/GitHub sync, or legacy app changes.
+- Known deferred gap: `V2_UX_MODEL.md` §16.7 outside-period disclosure was not implemented in Slice 5. Safe implementation requires window-active-period derivation and overlaps with Slice 6 snapshot/window-state logic; it remains non-blocking guidance, not a write-time invariant.
+
 Manual verification:
 
-- Add 4 plants in V2; capture a single multi-plant Activity selecting 2 plants → 2 Activity records written, sharing one `activity_group_id`, both pointing to the same `window_def_id` and `catalog_version`, same `action_type`, same `occurred_on`, same `recorded_at`, same `status`, and each with `provenance: { source: "user" }`.
-- Try a future-dated `occurred_on` → write rejected.
-- Try an imported grouped Activity with mixed `window_def_id`, `catalog_version`, `action_type`, `occurred_on`, `recorded_at`, or `status` → import rejected fail-closed.
-- Add an unknown-variety / unknown-ripening apple where `fallback.mid` exists; harvest capture uses `aw.apple.fallback.mid.harvest` and Dnevnik discloses that mid ripening was assumed.
-- Open Dnevnik → 2 rows visible (or 1 grouped row per §3.11), correct date, correct plant labels.
-- Correct one Activity's date → Correction record written with `original_record_type: "activity"`, `correction_types: ["date"]`, `corrected_values.occurred_on`, and UTC `created_at`; original Activity bytes unchanged in storage, Dnevnik shows corrected date with §3.9 marker.
-- Export → JSON contains both Activity records and the Correction record under `activities` and `corrections` collections.
-- Wipe `vocnjak_v2`, re-import → all records reappear with same identities.
-- Legacy `vocnjak_v4` VALUE byte-equal across the entire Slice 5 session (per §28).
+- Local browser verification was performed on `http://localhost:8765/index.html#v2`.
+- Initial `vocnjak_v2` validator returned `[]`.
+- Basic Activity capture passed.
+- Activity shape/provenance passed.
+- Multi-plant Activity capture passed.
+- Grouped Activity invariant passed.
+- Correction creation passed.
+- Correction shape passed.
+- Dnevnik effective correction display passed with `ispravljeno`.
+- Final `vocnjak_v2` validator returned `[]`.
+- Protected legacy key byte-equality passed for `vocnjak_v3`, `vocnjak_v4`, `vocnjak_v3_premigration`, and `vocnjak_v4_preimport_backup`.
+- Negative validator tests passed: cross-species window rejected, invalid provenance rejected, correction missing target rejected, mixed group status rejected, and the Zagreb-midnight valid case accepted.
+- Full Cloudflare deployment verification was not performed.
+- Full import/export UI round-trip was not manually verified. Validator/import/export support for Activity and Correction records exists in runtime, but this manual Slice 5 verification did not include a full import/export UI round-trip.
 
 Stop conditions:
 
@@ -1347,10 +1361,13 @@ Slice 4 — Plant foundation:
 
 Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction:
 
+- completed at `8bc630a Implement Runtime Slice 5 activity capture`
 - multi-plant Activity creates N per-plant records sharing one `activity_group_id`
 - future-dated `occurred_on` is rejected at write time
 - Activity correction is additive; original Activity bytes are unchanged
 - Dnevnik renders the corrected version with the §3.9 correction marker
+- validator/import/export support for Activity and Correction records exists; full import/export UI round-trip was not manually verified in Slice 5
+- `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred as non-blocking Slice 6-adjacent polish
 
 Slice 6 — Snapshot, Pregled, Kalendar:
 

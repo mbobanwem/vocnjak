@@ -84,11 +84,13 @@ Current:
 - Focused adversarial review of Runtime Slices 3 and 4 after the post-Slice-4 safety fix passed and owner verification accepted the PASS; pre-Slice-5 UX polish for friendlier Add Plant date-validation messages is complete
 - Pre-Slice-5 Action Window Seed prerequisite is complete (`df6a7fc Implement Action Window Seed prerequisite`); owner browser verification passed, focused adversarial review passed, and canonical V2 `catalog_v1` now has source-backed action-window definitions with real `window_def_id` values
 - Plan-template projection hardening is complete (`bcaf3a2 Harden plan-template projection rules`); the plan-template-first/source-map hard stop remains locked for future catalog/action-window/orchard-plan work
-- Runtime Slice 5 planning may begin after owner approval
+- Runtime Slice 5 (Activity capture, Activity-only Dnevnik, and Activity correction) is complete (`8bc630a Implement Runtime Slice 5 activity capture`); legacy app remains the default
+- Runtime Slice 5 local browser verification passed for Activity capture, locked Activity shape/provenance, multi-plant group invariants, Activity correction, Dnevnik effective correction display, targeted negative validator cases, and protected legacy-key byte equality; full Cloudflare deployment verification and full import/export UI round-trip were not performed for the Slice 5 commit
+- `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred from Slice 5 because safe implementation overlaps with Slice 6 snapshot/window-state derivation
 - §0 monitoring constraints remain locked and authoritative
 - legacy data and V1/V3/V4 keys remain protected
-- implementation was forbidden through S11 documentation; Slices 0, 1, 2, 3, and 4 were then owner-approved and committed
-- Runtime Slice 5 implementation has not started and requires explicit owner approval; all subsequent slices also require explicit per-slice owner approval before implementation
+- implementation was forbidden through S11 documentation; Slices 0, 1, 2, 3, 4, and 5 were then owner-approved and committed
+- Runtime Slice 6 is the next runtime slice, but only after owner approval and a fresh source-of-truth consistency check; no later implementation may advance without explicit per-slice owner approval
 
 ### INPUT FILES (NOT YET VALIDATED V2 TRUTH)
 
