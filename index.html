@@ -350,6 +350,83 @@
     }
   }
   /* END V2 PLANTS — Slice 4 */
+
+  /* BEGIN V2 ACTIVITIES — Slice 5 */
+  .v2-activity-panel,
+  .v2-correction-form {
+    display: grid;
+    gap: 16px;
+  }
+  .v2-activity-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 0 0 18px;
+  }
+  .v2-activity-choice-list,
+  .v2-diary-list {
+    display: grid;
+    gap: 10px;
+  }
+  .v2-activity-choice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 44px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 12px;
+    background: #fff;
+    color: #1f2933;
+  }
+  .v2-activity-choice input {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    flex: 0 0 auto;
+  }
+  .v2-activity-choice span {
+    display: block;
+    line-height: 1.35;
+  }
+  .v2-activity-choice small,
+  .v2-diary-note,
+  .v2-diary-meta {
+    display: block;
+    color: #64748b;
+    line-height: 1.4;
+  }
+  .v2-diary-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    background: #fff;
+  }
+  .v2-diary-title {
+    margin: 0 0 6px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .v2-diary-corrected {
+    display: inline-block;
+    margin-left: 6px;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .v2-diary-plant-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  @media (max-width: 640px) {
+    .v2-activity-actions,
+    .v2-diary-plant-actions {
+      flex-direction: column;
+    }
+  }
+  /* END V2 ACTIVITIES — Slice 5 */
 </style>
 <!-- BEGIN V2 SHELL — Slice 0 -->
 <script>if(location.hash==='#v2'||location.hash.indexOf('#v2/')===0)document.documentElement.classList.add('v2-active');</script>
@@ -416,6 +493,11 @@
     <div id="v2PlantsList"></div>
     <form id="v2PlantsAddForm" class="v2-plants-form" hidden novalidate></form>
     <article id="v2PlantsDetail" class="v2-plants-detail" hidden></article>
+    <!-- BEGIN V2 ACTIVITIES — Slice 5 -->
+    <form id="v2ActivityCapture" class="v2-plants-form v2-activity-panel" hidden novalidate></form>
+    <section id="v2Diary" class="v2-activity-panel" hidden></section>
+    <form id="v2CorrectionForm" class="v2-plants-form v2-correction-form" hidden novalidate></form>
+    <!-- END V2 ACTIVITIES — Slice 5 -->
   </section>
   <!-- END V2 PLANTS — Slice 4 -->
   <button type="button" id="v2ExitBtn">Natrag na staru aplikaciju</button>
@@ -4449,7 +4531,7 @@ if ('serviceWorker' in navigator) {
 
   var EXPECTED_ROOT_KEYS = ['meta','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
   var EXPECTED_META_KEYS = ['store_format_version','active_catalog_version'];
-  var EMPTY_ARRAY_KEYS = ['plan_instances','plan_overlays','activities','observations','corrections'];
+  var EMPTY_ARRAY_KEYS = ['plan_instances','plan_overlays','observations'];
   var MAX_FILE_SIZE = 1024 * 1024;
   var ALLOWED_PLANT_KEYS = [
     'plant_id','catalog_version','stable_order','species','variety','ripening_fallback',
@@ -4462,6 +4544,33 @@ if ('serviceWorker' in navigator) {
   var STRING_ONLY_KEYS = ['display_label','profile_note'];
   var PLANT_ID_RE = /^plant_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z_[0-9a-f]{5}$/;
   var DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+  var ISO_UTC_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/;
+  var ALLOWED_ACTIVITY_KEYS = [
+    'activity_id','plant_id','window_def_id','catalog_version','action_type',
+    'status','occurred_on','recorded_at','provenance','activity_group_id','notes'
+  ];
+  var REQUIRED_ACTIVITY_KEYS = [
+    'activity_id','plant_id','window_def_id','catalog_version','action_type',
+    'status','occurred_on','recorded_at','provenance'
+  ];
+  var SHARED_GROUP_ACTIVITY_KEYS = ['window_def_id','catalog_version','action_type','occurred_on','recorded_at','status'];
+  var ACTIVITY_STATUSES = { done: true, skipped: true };
+  var ALLOWED_CORRECTION_KEYS = [
+    'correction_id','original_record_id','original_record_type','correction_types',
+    'corrected_values','explanation','created_at'
+  ];
+  var REQUIRED_CORRECTION_KEYS = [
+    'correction_id','original_record_id','original_record_type','correction_types',
+    'corrected_values','created_at'
+  ];
+  var ALLOWED_CORRECTION_TYPES = { date: true, plant: true, window: true, status: true, notes: true };
+  var CORRECTION_TYPE_KEYS = {
+    date: ['occurred_on'],
+    plant: ['plant_id'],
+    window: ['window_def_id','catalog_version','action_type'],
+    status: ['status'],
+    notes: ['notes']
+  };
   var ACTION_TYPES = {
     oil: true,
     copper: true,
@@ -4603,6 +4712,77 @@ if ('serviceWorker' in navigator) {
       if (rest.indexOf(species + '.') === 0) return species;
     }
     return null;
+  }
+
+  function isIsoUtcTimestamp(value) {
+    if (typeof value !== 'string' || !ISO_UTC_RE.test(value)) return false;
+    var dt = new Date(value);
+    if (Number.isNaN(dt.getTime())) return false;
+    var normalized = value.indexOf('.') === -1 ? value.replace('Z', '.000Z') : value;
+    return dt.toISOString() === normalized;
+  }
+
+  function localDateFromIsoUtc(value) {
+    var dt = new Date(value);
+    var y = dt.getFullYear();
+    var m = dt.getMonth() + 1;
+    var d = dt.getDate();
+    return y + '-' + (m < 10 ? '0' + m : '' + m) + '-' + (d < 10 ? '0' + d : '' + d);
+  }
+
+  function findPlantById(plants, plantId) {
+    if (!Array.isArray(plants)) return null;
+    for (var i = 0; i < plants.length; i++) {
+      if (plants[i].plant_id === plantId) return plants[i];
+    }
+    return null;
+  }
+
+  function findActionWindowById(catalog, windowDefId) {
+    if (!isPlainObject(catalog) || !Array.isArray(catalog.action_window_definitions)) return null;
+    for (var i = 0; i < catalog.action_window_definitions.length; i++) {
+      if (catalog.action_window_definitions[i].window_def_id === windowDefId) return catalog.action_window_definitions[i];
+    }
+    return null;
+  }
+
+  function isSlice5ActivityWindow(def) {
+    if (!isPlainObject(def)) return false;
+    return def.action_type !== 'insecticide' &&
+      def.action_type !== 'monitoring' &&
+      def.action_type !== 'irrigation' &&
+      def.label !== 'Sezonsko navodnjavanje';
+  }
+
+  function fallbackKeyForPlant(plant, speciesEntry) {
+    if (!isPlainObject(speciesEntry) || !isPlainObject(speciesEntry.fallback)) return null;
+    if (!isUnknownTag(plant.variety)) return null;
+    if (hasOwnKey(plant, 'ripening_fallback')) {
+      if (isUnknownTag(plant.ripening_fallback)) return hasOwnKey(speciesEntry.fallback, 'mid') ? 'mid' : null;
+      if (typeof plant.ripening_fallback === 'string' && hasOwnKey(speciesEntry.fallback, plant.ripening_fallback)) return plant.ripening_fallback;
+      return null;
+    }
+    return hasOwnKey(speciesEntry.fallback, 'mid') ? 'mid' : null;
+  }
+
+  function isWindowApplicableToPlant(def, plant, catalog) {
+    if (!isPlainObject(def) || !isPlainObject(plant) || !isPlainObject(catalog)) return false;
+    var species = speciesFromWindowId(def.window_def_id, catalog);
+    if (!species || plant.species !== species || !isPlainObject(catalog.species[species])) return false;
+    if (def.action_type !== 'harvest') return true;
+
+    var suffix = def.window_def_id.slice(('aw.' + species + '.').length);
+    var speciesEntry = catalog.species[species];
+    if (suffix === 'harvest') return species === 'olive' || species === 'pomegranate';
+
+    if (suffix.indexOf('fallback.') === 0 && suffix.lastIndexOf('.harvest') === suffix.length - 8) {
+      var fallbackKey = suffix.slice(9, -8);
+      return fallbackKeyForPlant(plant, speciesEntry) === fallbackKey;
+    }
+
+    if (suffix.lastIndexOf('.harvest') !== suffix.length - 8) return false;
+    var varietyKey = suffix.slice(0, -8);
+    return typeof plant.variety === 'string' && plant.variety === varietyKey;
   }
 
   function validateActionWindowTolerance(tolerance, path) {
@@ -4800,6 +4980,203 @@ if ('serviceWorker' in navigator) {
     return [];
   }
 
+  function validateActivityCore(activity, parsed, catalog, path) {
+    if (typeof activity.activity_id !== 'string' || activity.activity_id.trim().length === 0) return [path + '.activity_id required'];
+    if (typeof activity.plant_id !== 'string' || activity.plant_id.trim().length === 0) return [path + '.plant_id required'];
+    var plant = findPlantById(parsed.plants, activity.plant_id);
+    if (!plant) return [path + '.plant_id must reference an existing plant'];
+
+    if (typeof activity.window_def_id !== 'string' || activity.window_def_id.trim().length === 0) return [path + '.window_def_id required'];
+    var def = findActionWindowById(catalog, activity.window_def_id);
+    if (!def) return [path + '.window_def_id must reference catalog_v1.action_window_definitions'];
+    if (!isSlice5ActivityWindow(def)) return [path + '.window_def_id is out of scope for Slice 5 Activity capture'];
+    if (activity.catalog_version !== def.catalog_id || activity.catalog_version !== parsed.meta.active_catalog_version) return [path + '.catalog_version must match the canonical action window'];
+    if (activity.action_type !== def.action_type) return [path + '.action_type must match the canonical action window'];
+
+    if (typeof activity.status !== 'string' || !hasOwnKey(ACTIVITY_STATUSES, activity.status)) return [path + '.status must be done or skipped'];
+    var dateErr = checkDate(activity.occurred_on);
+    if (dateErr) return [path + '.occurred_on ' + dateErr];
+    if (!isIsoUtcTimestamp(activity.recorded_at)) return [path + '.recorded_at must be an ISO UTC timestamp'];
+    var recordedOn = localDateFromIsoUtc(activity.recorded_at);
+    if (recordedOn < activity.occurred_on) return [path + '.occurred_on must be on or before recorded_at local calendar date'];
+    if (!isPlainObject(activity.provenance) || Object.keys(activity.provenance).length !== 1 || activity.provenance.source !== 'user') return [path + '.provenance must be exactly {source:"user"}'];
+    if (hasOwnKey(activity, 'activity_group_id') && (typeof activity.activity_group_id !== 'string' || activity.activity_group_id.trim().length === 0)) return [path + '.activity_group_id must be a non-empty string'];
+    if (hasOwnKey(activity, 'notes') && (typeof activity.notes !== 'string' || activity.notes.trim().length === 0)) return [path + '.notes must be a non-empty string'];
+    if (!isWindowApplicableToPlant(def, plant, catalog)) return [path + '.window_def_id is not applicable to plant_id'];
+    return [];
+  }
+
+  function validateActivity(activity, parsed, catalog, path) {
+    if (!isPlainObject(activity)) return [path + ' not a plain object'];
+    var keys = Object.keys(activity);
+    for (var i = 0; i < keys.length; i++) {
+      if (ALLOWED_ACTIVITY_KEYS.indexOf(keys[i]) === -1) return [path + ' unexpected key: ' + keys[i]];
+    }
+    for (var j = 0; j < REQUIRED_ACTIVITY_KEYS.length; j++) {
+      if (keys.indexOf(REQUIRED_ACTIVITY_KEYS[j]) === -1) return [path + ' missing key: ' + REQUIRED_ACTIVITY_KEYS[j]];
+    }
+    return validateActivityCore(activity, parsed, catalog, path);
+  }
+
+  function validateAllActivities(activities, parsed, catalog) {
+    if (!Array.isArray(activities)) return ['activities not an array'];
+    var seenIds = Object.create(null);
+    var groups = Object.create(null);
+    for (var i = 0; i < activities.length; i++) {
+      var path = 'activities[' + i + ']';
+      var errs = validateActivity(activities[i], parsed, catalog, path);
+      if (errs.length > 0) return errs;
+      var activityId = activities[i].activity_id;
+      if (seenIds[activityId]) return ['duplicate activity_id: ' + activityId];
+      seenIds[activityId] = true;
+      if (!hasOwnKey(activities[i], 'activity_group_id')) continue;
+      var groupId = activities[i].activity_group_id;
+      if (!groups[groupId]) {
+        groups[groupId] = { activity: activities[i], plantIds: Object.create(null) };
+      } else {
+        for (var g = 0; g < SHARED_GROUP_ACTIVITY_KEYS.length; g++) {
+          var sharedKey = SHARED_GROUP_ACTIVITY_KEYS[g];
+          if (groups[groupId].activity[sharedKey] !== activities[i][sharedKey]) return ['activity_group_id ' + groupId + ' has mixed ' + sharedKey];
+        }
+      }
+      if (groups[groupId].plantIds[activities[i].plant_id]) return ['activity_group_id ' + groupId + ' repeats plant_id'];
+      groups[groupId].plantIds[activities[i].plant_id] = true;
+    }
+    return [];
+  }
+
+  function correctionSort(a, b) {
+    if (a.created_at < b.created_at) return -1;
+    if (a.created_at > b.created_at) return 1;
+    if (a.correction_id < b.correction_id) return -1;
+    if (a.correction_id > b.correction_id) return 1;
+    return 0;
+  }
+
+  function correctionExpectedKeys(types) {
+    var expected = Object.create(null);
+    var count = 0;
+    for (var i = 0; i < types.length; i++) {
+      var keys = CORRECTION_TYPE_KEYS[types[i]];
+      for (var j = 0; j < keys.length; j++) {
+        if (!expected[keys[j]]) {
+          expected[keys[j]] = true;
+          count++;
+        }
+      }
+    }
+    return { keys: expected, count: count };
+  }
+
+  function validateCorrection(correction, parsed, catalog, activityById, path) {
+    if (!isPlainObject(correction)) return [path + ' not a plain object'];
+    var keys = Object.keys(correction);
+    for (var i = 0; i < keys.length; i++) {
+      if (ALLOWED_CORRECTION_KEYS.indexOf(keys[i]) === -1) return [path + ' unexpected key: ' + keys[i]];
+    }
+    for (var j = 0; j < REQUIRED_CORRECTION_KEYS.length; j++) {
+      if (keys.indexOf(REQUIRED_CORRECTION_KEYS[j]) === -1) return [path + ' missing key: ' + REQUIRED_CORRECTION_KEYS[j]];
+    }
+    if (typeof correction.correction_id !== 'string' || correction.correction_id.trim().length === 0) return [path + '.correction_id required'];
+    if (typeof correction.original_record_id !== 'string' || correction.original_record_id.trim().length === 0) return [path + '.original_record_id required'];
+    if (correction.original_record_type !== 'activity') return [path + '.original_record_type must be activity in Slice 5'];
+    if (!activityById[correction.original_record_id]) return [path + '.original_record_id must target an original Activity'];
+    if (!Array.isArray(correction.correction_types) || correction.correction_types.length === 0) return [path + '.correction_types must be a non-empty array'];
+    var seenTypes = Object.create(null);
+    for (var t = 0; t < correction.correction_types.length; t++) {
+      var type = correction.correction_types[t];
+      if (typeof type !== 'string' || !hasOwnKey(ALLOWED_CORRECTION_TYPES, type)) return [path + '.correction_types contains unsupported type'];
+      if (seenTypes[type]) return [path + '.correction_types contains duplicate type'];
+      seenTypes[type] = true;
+    }
+    if (!isPlainObject(correction.corrected_values)) return [path + '.corrected_values not a plain object'];
+    var expected = correctionExpectedKeys(correction.correction_types);
+    var valueKeys = Object.keys(correction.corrected_values);
+    if (valueKeys.length !== expected.count) return [path + '.corrected_values keys must match correction_types'];
+    for (var v = 0; v < valueKeys.length; v++) {
+      if (!expected.keys[valueKeys[v]]) return [path + '.corrected_values unexpected key: ' + valueKeys[v]];
+    }
+    var cv = correction.corrected_values;
+    if (seenTypes.date) {
+      var dateErr = checkDate(cv.occurred_on);
+      if (dateErr) return [path + '.corrected_values.occurred_on ' + dateErr];
+    }
+    if (seenTypes.plant && !findPlantById(parsed.plants, cv.plant_id)) return [path + '.corrected_values.plant_id must reference an existing plant'];
+    if (seenTypes.window) {
+      var def = findActionWindowById(catalog, cv.window_def_id);
+      if (!def) return [path + '.corrected_values.window_def_id must reference catalog_v1.action_window_definitions'];
+      if (!isSlice5ActivityWindow(def)) return [path + '.corrected_values.window_def_id is out of scope for Slice 5 Activity capture'];
+      if (cv.catalog_version !== def.catalog_id || cv.catalog_version !== parsed.meta.active_catalog_version) return [path + '.corrected_values.catalog_version must match the canonical action window'];
+      if (cv.action_type !== def.action_type) return [path + '.corrected_values.action_type must match the canonical action window'];
+    }
+    if (seenTypes.status && (typeof cv.status !== 'string' || !hasOwnKey(ACTIVITY_STATUSES, cv.status))) return [path + '.corrected_values.status must be done or skipped'];
+    if (seenTypes.notes && (typeof cv.notes !== 'string' || cv.notes.trim().length === 0)) return [path + '.corrected_values.notes must be a non-empty string'];
+    if (!isIsoUtcTimestamp(correction.created_at)) return [path + '.created_at must be an ISO UTC timestamp'];
+    if (hasOwnKey(correction, 'explanation') && (typeof correction.explanation !== 'string' || correction.explanation.trim().length === 0)) return [path + '.explanation must be a non-empty string'];
+    return [];
+  }
+
+  function composeEffectiveActivity(activity, corrections) {
+    var effective = {
+      activity_id: activity.activity_id,
+      plant_id: activity.plant_id,
+      window_def_id: activity.window_def_id,
+      catalog_version: activity.catalog_version,
+      action_type: activity.action_type,
+      status: activity.status,
+      occurred_on: activity.occurred_on,
+      recorded_at: activity.recorded_at,
+      provenance: activity.provenance
+    };
+    if (hasOwnKey(activity, 'activity_group_id')) effective.activity_group_id = activity.activity_group_id;
+    if (hasOwnKey(activity, 'notes')) effective.notes = activity.notes;
+    var sorted = corrections.slice().sort(correctionSort);
+    for (var i = 0; i < sorted.length; i++) {
+      var correction = sorted[i];
+      var types = correction.correction_types;
+      var cv = correction.corrected_values;
+      if (types.indexOf('date') !== -1) effective.occurred_on = cv.occurred_on;
+      if (types.indexOf('plant') !== -1) effective.plant_id = cv.plant_id;
+      if (types.indexOf('window') !== -1) {
+        effective.window_def_id = cv.window_def_id;
+        effective.catalog_version = cv.catalog_version;
+        effective.action_type = cv.action_type;
+      }
+      if (types.indexOf('status') !== -1) effective.status = cv.status;
+      if (types.indexOf('notes') !== -1) effective.notes = cv.notes;
+    }
+    return effective;
+  }
+
+  function validateAllCorrections(corrections, parsed, catalog) {
+    if (!Array.isArray(corrections)) return ['corrections not an array'];
+    var activityById = Object.create(null);
+    var correctionsByActivity = Object.create(null);
+    for (var a = 0; a < parsed.activities.length; a++) {
+      activityById[parsed.activities[a].activity_id] = parsed.activities[a];
+    }
+    var seenCorrectionIds = Object.create(null);
+    for (var i = 0; i < corrections.length; i++) {
+      var path = 'corrections[' + i + ']';
+      var errs = validateCorrection(corrections[i], parsed, catalog, activityById, path);
+      if (errs.length > 0) return errs;
+      var correctionId = corrections[i].correction_id;
+      if (seenCorrectionIds[correctionId]) return ['duplicate correction_id: ' + correctionId];
+      seenCorrectionIds[correctionId] = true;
+      var activityId = corrections[i].original_record_id;
+      if (!correctionsByActivity[activityId]) correctionsByActivity[activityId] = [];
+      correctionsByActivity[activityId].push(corrections[i]);
+    }
+    var activityIds = Object.keys(correctionsByActivity);
+    for (var c = 0; c < activityIds.length; c++) {
+      var original = activityById[activityIds[c]];
+      var effective = composeEffectiveActivity(original, correctionsByActivity[activityIds[c]]);
+      var effectiveErrs = validateActivityCore(effective, parsed, catalog, 'effective activity ' + activityIds[c]);
+      if (effectiveErrs.length > 0) return effectiveErrs;
+    }
+    return [];
+  }
+
   function validateForBackup(parsed) {
     if (!isPlainObject(parsed)) return ['root not a plain object'];
     var rootKeys = Object.keys(parsed);
@@ -4827,17 +5204,31 @@ if ('serviceWorker' in navigator) {
     if (!Array.isArray(parsed.plants)) return ['plants not an array'];
     var plantErrs = validateAllPlants(parsed.plants, parsed.catalogs.catalog_v1);
     if (plantErrs.length > 0) return plantErrs;
+    if (!Array.isArray(parsed.activities)) return ['activities not an array'];
+    var activityErrs = validateAllActivities(parsed.activities, parsed, parsed.catalogs.catalog_v1);
+    if (activityErrs.length > 0) return activityErrs;
+    if (!Array.isArray(parsed.corrections)) return ['corrections not an array'];
+    var correctionErrs = validateAllCorrections(parsed.corrections, parsed, parsed.catalogs.catalog_v1);
+    if (correctionErrs.length > 0) return correctionErrs;
     for (var p = 0; p < EMPTY_ARRAY_KEYS.length; p++) {
       var ek = EMPTY_ARRAY_KEYS[p];
       if (!Array.isArray(parsed[ek])) return [ek + ' not an array'];
-      if (parsed[ek].length !== 0) return [ek + ' must be empty in foundation baseline'];
+      if (parsed[ek].length !== 0) return [ek + ' must remain empty in Slice 5'];
     }
     if (!isPlainObject(parsed.review_state)) return ['review_state not a plain object'];
-    if (Object.keys(parsed.review_state).length !== 0) return ['review_state must be empty in foundation baseline'];
+    if (Object.keys(parsed.review_state).length !== 0) return ['review_state must remain empty in Slice 5'];
     return [];
   }
 
   window.v2ValidateForBackup = validateForBackup;
+  window.v2ActivityHelpers = {
+    speciesFromWindowId: speciesFromWindowId,
+    isSlice5ActivityWindow: isSlice5ActivityWindow,
+    fallbackKeyForPlant: fallbackKeyForPlant,
+    isWindowApplicableToPlant: isWindowApplicableToPlant,
+    correctionSort: correctionSort,
+    findActionWindowById: findActionWindowById
+  };
 
   function exportV2() {
     var raw = localStorage.getItem('vocnjak_v2');
@@ -4951,13 +5342,21 @@ if ('serviceWorker' in navigator) {
   var listView = document.getElementById('v2PlantsList');
   var addForm = document.getElementById('v2PlantsAddForm');
   var detailView = document.getElementById('v2PlantsDetail');
-  if (!plantsRoot || !listView || !addForm || !detailView) return;
+  var activityForm = document.getElementById('v2ActivityCapture');
+  var diaryView = document.getElementById('v2Diary');
+  var correctionForm = document.getElementById('v2CorrectionForm');
+  if (!plantsRoot || !listView || !addForm || !detailView || !activityForm || !diaryView || !correctionForm) return;
 
   var UNKNOWN_SELECT_VALUE = '__unknown__';
   var PLANT_ID_RE = /^plant_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z_[0-9a-f]{5}$/;
+  var ESTIMATED_MID_FALLBACK_TEXT = 'Procjena: koristi se srednje dozrijevanje jer sorta i vrijeme dozrijevanja nisu poznati.';
   var hasOwn = Object.prototype.hasOwnProperty;
+  var activityHelpers = window.v2ActivityHelpers;
   var currentFormFields = null;
+  var currentActivityFields = null;
+  var currentCorrectionFields = null;
   var pendingDetailStatus = '';
+  var pendingDiaryStatus = '';
 
   var SPECIES_LABEL_HR = {
     apple: 'Jabuka',
@@ -5105,10 +5504,92 @@ if ('serviceWorker' in navigator) {
     return '#v2/plant/' + encodeURIComponent(plantId);
   }
 
+  function activityCorrectionRoute(activityId) {
+    return '#v2/activity/' + encodeURIComponent(activityId) + '/correct';
+  }
+
+  function localTodayYmd() {
+    var now = new Date();
+    var y = now.getFullYear();
+    var m = now.getMonth() + 1;
+    var d = now.getDate();
+    return y + '-' + (m < 10 ? '0' + m : '' + m) + '-' + (d < 10 ? '0' + d : '' + d);
+  }
+
+  function findActionWindow(catalog, windowDefId) {
+    return activityHelpers.findActionWindowById(catalog, windowDefId);
+  }
+
+  function usesEstimatedMidFallback(plant, def, catalog) {
+    if (!isPlainObject(plant) || !isPlainObject(def)) return false;
+    var species = activityHelpers.speciesFromWindowId(def.window_def_id, catalog);
+    if (!species || def.action_type !== 'harvest') return false;
+    var suffix = def.window_def_id.slice(('aw.' + species + '.').length);
+    if (suffix !== 'fallback.mid.harvest' || !isUnknownTag(plant.variety)) return false;
+    return !hasOwnKey(plant, 'ripening_fallback') || isUnknownTag(plant.ripening_fallback);
+  }
+
+  function actionWindowLabel(def, catalog) {
+    var species = activityHelpers.speciesFromWindowId(def.window_def_id, catalog);
+    var prefix = species ? speciesLabel(species) + ' — ' : '';
+    return prefix + def.label;
+  }
+
+  function statusLabel(status) {
+    if (status === 'done') return 'Odrađeno';
+    if (status === 'skipped') return 'Preskočeno';
+    return status || '';
+  }
+
+  function plantCountText(count) {
+    if (count === 1) return '1 voćku';
+    if (count > 1 && count < 5) return count + ' voćke';
+    return count + ' voćki';
+  }
+
+  function activityDateDisclosure(value) {
+    if (!value) return '';
+    if (value === localTodayYmd()) return 'Evidencija se dodaje danas.';
+    return 'Evidencija se dodaje za datum ' + value + '.';
+  }
+
+  function captureWindowsForPlants(catalog, plants) {
+    var defs = [];
+    if (!isPlainObject(catalog) || !Array.isArray(catalog.action_window_definitions)) return defs;
+    for (var i = 0; i < catalog.action_window_definitions.length; i++) {
+      var def = catalog.action_window_definitions[i];
+      if (!activityHelpers.isSlice5ActivityWindow(def)) continue;
+      for (var p = 0; p < plants.length; p++) {
+        if (activityHelpers.isWindowApplicableToPlant(def, plants[p], catalog)) {
+          defs.push(def);
+          break;
+        }
+      }
+    }
+    return defs.sort(function (a, b) {
+      var sa = activityHelpers.speciesFromWindowId(a.window_def_id, catalog) || '';
+      var sb = activityHelpers.speciesFromWindowId(b.window_def_id, catalog) || '';
+      if (sa !== sb) return speciesLabel(sa).localeCompare(speciesLabel(sb), 'hr');
+      return a.label.localeCompare(b.label, 'hr');
+    });
+  }
+
   function getRoute() {
     var h = location.hash;
     if (h === '#v2' || h === '') return { name: 'list' };
     if (h === '#v2/add') return { name: 'add' };
+    if (h === '#v2/activity/add') return { name: 'activity_add' };
+    if (h === '#v2/diary') return { name: 'diary' };
+    var correctionPrefix = '#v2/activity/';
+    var correctionSuffix = '/correct';
+    if (h.indexOf(correctionPrefix) === 0 && h.slice(-correctionSuffix.length) === correctionSuffix) {
+      var correctionRaw = h.slice(correctionPrefix.length, -correctionSuffix.length);
+      try {
+        return { name: 'correction', activity_id: decodeURIComponent(correctionRaw) };
+      } catch (e) {
+        return { name: 'diary' };
+      }
+    }
     var prefix = '#v2/plant/';
     if (h.indexOf(prefix) === 0) {
       var raw = h.slice(prefix.length);
@@ -5134,6 +5615,7 @@ if ('serviceWorker' in navigator) {
       return { ok: false, error: 'Pohrana je neispravna.' };
     }
     if (typeof window.v2ValidateForBackup !== 'function') return { ok: false, error: 'Validator sigurnosne kopije nije dostupan.' };
+    if (!activityHelpers) return { ok: false, error: 'Pomoćne provjere evidencije nisu dostupne.' };
     var errors = window.v2ValidateForBackup(parsed);
     if (errors.length > 0) return { ok: false, error: 'Pohrana ne prolazi validaciju: ' + errors[0] + '.' };
     return { ok: true, store: parsed, catalog: parsed.catalogs.catalog_v1 };
@@ -5150,7 +5632,12 @@ if ('serviceWorker' in navigator) {
     listView.hidden = active !== 'list';
     addForm.hidden = active !== 'add';
     detailView.hidden = active !== 'detail';
+    activityForm.hidden = active !== 'activity_add';
+    diaryView.hidden = active !== 'diary';
+    correctionForm.hidden = active !== 'correction';
     currentFormFields = active === 'add' ? currentFormFields : null;
+    currentActivityFields = active === 'activity_add' ? currentActivityFields : null;
+    currentCorrectionFields = active === 'correction' ? currentCorrectionFields : null;
   }
 
   function renderList() {
@@ -5164,6 +5651,17 @@ if ('serviceWorker' in navigator) {
     addBtn.addEventListener('click', function () { location.hash = '#v2/add'; });
     topbar.appendChild(addBtn);
     listView.appendChild(topbar);
+
+    var activityActions = makeEl('div', 'v2-activity-actions');
+    var addActivity = makeEl('button', 'v2-plants-primary', 'Dodaj evidenciju');
+    addActivity.type = 'button';
+    addActivity.addEventListener('click', function () { location.hash = '#v2/activity/add'; });
+    var diaryBtn = makeEl('button', 'v2-plants-secondary', 'Dnevnik');
+    diaryBtn.type = 'button';
+    diaryBtn.addEventListener('click', function () { location.hash = '#v2/diary'; });
+    activityActions.appendChild(addActivity);
+    activityActions.appendChild(diaryBtn);
+    listView.appendChild(activityActions);
 
     var result = readValidStore();
     if (!result.ok) {
@@ -5474,6 +5972,40 @@ if ('serviceWorker' in navigator) {
     return null;
   }
 
+  function randomHex(length) {
+    var out = '';
+    if (window.crypto && window.crypto.getRandomValues) {
+      var buf = new Uint8Array(Math.ceil(length / 2));
+      window.crypto.getRandomValues(buf);
+      out = Array.prototype.map.call(buf, function (b) {
+        return ('0' + b.toString(16)).slice(-2);
+      }).join('');
+    } else {
+      while (out.length < length) out += Math.floor(Math.random() * 0x100000).toString(16);
+    }
+    return out.slice(0, length);
+  }
+
+  function generateStoreId(prefix) {
+    var safe = new Date().toISOString().replace(/[:.]/g, '-');
+    return prefix + '_' + safe + '_' + randomHex(5);
+  }
+
+  function nextUniqueId(prefix, records, key) {
+    for (var attempt = 0; attempt < 4; attempt++) {
+      var id = generateStoreId(prefix);
+      var exists = false;
+      for (var i = 0; i < records.length; i++) {
+        if (records[i][key] === id) {
+          exists = true;
+          break;
+        }
+      }
+      if (!exists) return id;
+    }
+    return null;
+  }
+
   function maxStableOrder(plants) {
     var max = 0;
     for (var i = 0; i < plants.length; i++) {
@@ -5578,14 +6110,651 @@ if ('serviceWorker' in navigator) {
     location.hash = plantDetailRoute(built.plant.plant_id);
   }
 
+  function activityValidationMessage(error) {
+    if (error.indexOf('.occurred_on in the future') !== -1) return 'datum radnje ne može biti u budućnosti';
+    if (error.indexOf('occurred_on must be on or before recorded_at local calendar date') !== -1) return 'datum radnje ne može biti nakon datuma zapisa';
+    if (error.indexOf('window_def_id is not applicable to plant_id') !== -1) return 'odabrana radnja ne pripada odabranoj voćki';
+    if (error.indexOf('.status must be done or skipped') !== -1) return 'status mora biti odrađeno ili preskočeno';
+    return error;
+  }
+
+  function activityStoreCandidate(current, nextActivities, nextCorrections) {
+    return {
+      meta: current.store.meta,
+      catalogs: current.store.catalogs,
+      plants: current.store.plants,
+      plan_instances: current.store.plan_instances,
+      plan_overlays: current.store.plan_overlays,
+      activities: nextActivities,
+      observations: current.store.observations,
+      corrections: nextCorrections,
+      review_state: current.store.review_state
+    };
+  }
+
+  function updateActivitySaveState(fields) {
+    var selectedCount = fields.plantInputs.filter(function (item) { return item.checked; }).length;
+    fields.save.disabled = selectedCount === 0;
+    fields.save.textContent = selectedCount > 0 ? 'Spremi evidenciju za ' + plantCountText(selectedCount) : 'Spremi evidenciju';
+  }
+
+  function refreshActivityDateDisclosure(fields) {
+    fields.dateHint.textContent = activityDateDisclosure(fields.dateInput.value);
+  }
+
+  function refreshActivityPlantChoices(fields) {
+    clearNode(fields.plantList);
+    fields.plantInputs = [];
+    fields.save.disabled = true;
+    fields.save.textContent = 'Spremi evidenciju';
+    var def = findActionWindow(fields.catalog, fields.windowSelect.value);
+    if (!def) {
+      fields.plantList.appendChild(makeEl('p', 'v2-plants-hint', 'Odaberi radnju za prikaz voćki.'));
+      return;
+    }
+    var applicable = [];
+    for (var i = 0; i < fields.plants.length; i++) {
+      if (activityHelpers.isWindowApplicableToPlant(def, fields.plants[i], fields.catalog)) applicable.push(fields.plants[i]);
+    }
+    if (applicable.length === 0) {
+      fields.plantList.appendChild(makeEl('p', 'v2-plants-empty', 'Nema voćki za odabranu radnju.'));
+      return;
+    }
+    for (var p = 0; p < applicable.length; p++) {
+      var plant = applicable[p];
+      var label = makeEl('label', 'v2-activity-choice');
+      var input = document.createElement('input');
+      input.type = 'checkbox';
+      input.value = plant.plant_id;
+      var text = makeEl('span', '', plantTitle(plant));
+      if (usesEstimatedMidFallback(plant, def, fields.catalog)) text.appendChild(makeEl('small', '', ESTIMATED_MID_FALLBACK_TEXT));
+      label.appendChild(input);
+      label.appendChild(text);
+      fields.plantList.appendChild(label);
+      fields.plantInputs.push(input);
+      input.addEventListener('change', function () {
+        updateActivitySaveState(fields);
+      });
+    }
+  }
+
+  function renderActivityAdd() {
+    setViews('activity_add');
+    clearNode(activityForm);
+
+    var back = makeEl('button', 'v2-plants-secondary', 'Natrag na popis');
+    back.type = 'button';
+    back.addEventListener('click', function () { location.hash = '#v2'; });
+    activityForm.appendChild(back);
+    activityForm.appendChild(makeEl('h2', '', 'Dodaj evidenciju'));
+    var message = makeEl('p', 'v2-plants-error');
+    message.hidden = true;
+    activityForm.appendChild(message);
+
+    var result = readValidStore();
+    if (!result.ok) {
+      message.textContent = result.error;
+      message.hidden = false;
+      currentActivityFields = null;
+      return;
+    }
+    var plants = result.store.plants.slice().sort(function (a, b) { return a.stable_order - b.stable_order; });
+    if (plants.length === 0) {
+      activityForm.appendChild(makeEl('p', 'v2-plants-empty', 'Prije evidencije dodaj barem jednu voćku.'));
+      currentActivityFields = null;
+      return;
+    }
+    var windows = captureWindowsForPlants(result.catalog, plants);
+    if (windows.length === 0) {
+      activityForm.appendChild(makeEl('p', 'v2-plants-empty', 'Za unesene voćke nema dostupnih radnji iz kataloga.'));
+      currentActivityFields = null;
+      return;
+    }
+
+    var windowSelect = document.createElement('select');
+    windowSelect.required = true;
+    windowSelect.appendChild(makeOption('', 'Odaberi radnju'));
+    for (var w = 0; w < windows.length; w++) {
+      windowSelect.appendChild(makeOption(windows[w].window_def_id, actionWindowLabel(windows[w], result.catalog)));
+    }
+    appendField(activityForm, 'v2ActivityWindow', 'Radnja', windowSelect);
+
+    var plantList = makeEl('div', 'v2-activity-choice-list');
+    var plantWrap = makeEl('div', 'v2-plants-field');
+    plantWrap.appendChild(makeEl('label', '', 'Voćke'));
+    plantWrap.appendChild(makeEl('small', 'v2-plants-hint', 'Označi voćke za koje želiš spremiti evidenciju.'));
+    plantWrap.appendChild(plantList);
+    activityForm.appendChild(plantWrap);
+
+    var dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.value = localTodayYmd();
+    var dateWrap = appendField(activityForm, 'v2ActivityDate', 'Datum radnje', dateInput);
+    var dateHint = makeEl('small', 'v2-plants-hint');
+    dateWrap.appendChild(dateHint);
+
+    var statusSelect = document.createElement('select');
+    statusSelect.appendChild(makeOption('done', 'Odrađeno'));
+    statusSelect.appendChild(makeOption('skipped', 'Preskočeno'));
+    appendField(activityForm, 'v2ActivityStatus', 'Status', statusSelect);
+
+    var notes = document.createElement('textarea');
+    appendField(activityForm, 'v2ActivityNotes', 'Bilješka (neobavezno)', notes);
+
+    var actions = makeEl('div', 'v2-plants-actions');
+    var save = makeEl('button', 'v2-plants-primary', 'Spremi evidenciju');
+    save.type = 'submit';
+    save.disabled = true;
+    var cancel = makeEl('button', 'v2-plants-secondary', 'Odustani');
+    cancel.type = 'button';
+    cancel.addEventListener('click', function () { location.hash = '#v2'; });
+    actions.appendChild(save);
+    actions.appendChild(cancel);
+    activityForm.appendChild(actions);
+
+    currentActivityFields = {
+      catalog: result.catalog,
+      plants: plants,
+      message: message,
+      windowSelect: windowSelect,
+      plantList: plantList,
+      plantInputs: [],
+      dateInput: dateInput,
+      dateHint: dateHint,
+      statusSelect: statusSelect,
+      notes: notes,
+      save: save
+    };
+    windowSelect.addEventListener('change', function () { refreshActivityPlantChoices(currentActivityFields); });
+    dateInput.addEventListener('change', function () { refreshActivityDateDisclosure(currentActivityFields); });
+    refreshActivityDateDisclosure(currentActivityFields);
+    refreshActivityPlantChoices(currentActivityFields);
+  }
+
+  function saveCurrentActivity() {
+    var fields = currentActivityFields;
+    if (!fields) return;
+    fields.message.hidden = true;
+
+    var current = readValidStore();
+    if (!current.ok) {
+      fields.message.textContent = current.error;
+      fields.message.hidden = false;
+      return;
+    }
+    var def = findActionWindow(current.catalog, fields.windowSelect.value);
+    if (!def) {
+      fields.message.textContent = 'Odaberi radnju iz kataloga.';
+      fields.message.hidden = false;
+      return;
+    }
+    var selected = fields.plantInputs.filter(function (input) { return input.checked; }).map(function (input) { return input.value; });
+    if (selected.length === 0) {
+      fields.message.textContent = 'Odaberi barem jednu voćku.';
+      fields.message.hidden = false;
+      return;
+    }
+    if (!fields.dateInput.value) {
+      fields.message.textContent = 'Datum radnje je obavezan.';
+      fields.message.hidden = false;
+      return;
+    }
+
+    var recordedAt = new Date().toISOString();
+    var newActivities = [];
+    var groupId = selected.length > 1 ? generateStoreId('activity_group') : null;
+    var notes = optionalString(fields.notes);
+    for (var i = 0; i < selected.length; i++) {
+      var activityId = nextUniqueId('activity', current.store.activities.concat(newActivities), 'activity_id');
+      if (!activityId) {
+        fields.message.textContent = 'Greška pri generaciji identifikatora.';
+        fields.message.hidden = false;
+        return;
+      }
+      var activity = {
+        activity_id: activityId,
+        plant_id: selected[i],
+        window_def_id: def.window_def_id,
+        catalog_version: def.catalog_id,
+        action_type: def.action_type,
+        status: fields.statusSelect.value,
+        occurred_on: fields.dateInput.value,
+        recorded_at: recordedAt,
+        provenance: { source: 'user' }
+      };
+      if (groupId) activity.activity_group_id = groupId;
+      if (notes) activity.notes = notes;
+      newActivities.push(activity);
+    }
+
+    var nextStore = activityStoreCandidate(current, current.store.activities.concat(newActivities), current.store.corrections);
+    var errors = window.v2ValidateForBackup(nextStore);
+    if (errors.length > 0) {
+      fields.message.textContent = 'Evidencija nije spremljena: ' + activityValidationMessage(errors[0]) + '.';
+      fields.message.hidden = false;
+      return;
+    }
+    try {
+      localStorage.setItem('vocnjak_v2', JSON.stringify(nextStore));
+    } catch (e) {
+      fields.message.textContent = 'Pohranu nije moguće zapisati.';
+      fields.message.hidden = false;
+      return;
+    }
+    activityForm.reset();
+    pendingDiaryStatus = 'Evidencija spremljena.';
+    location.hash = '#v2/diary';
+  }
+
+  function copyActivity(activity) {
+    var out = {
+      activity_id: activity.activity_id,
+      plant_id: activity.plant_id,
+      window_def_id: activity.window_def_id,
+      catalog_version: activity.catalog_version,
+      action_type: activity.action_type,
+      status: activity.status,
+      occurred_on: activity.occurred_on,
+      recorded_at: activity.recorded_at,
+      provenance: activity.provenance
+    };
+    if (hasOwnKey(activity, 'activity_group_id')) out.activity_group_id = activity.activity_group_id;
+    if (hasOwnKey(activity, 'notes')) out.notes = activity.notes;
+    return out;
+  }
+
+  function applyCorrections(activity, corrections) {
+    var effective = copyActivity(activity);
+    var sorted = corrections.slice().sort(activityHelpers.correctionSort);
+    for (var i = 0; i < sorted.length; i++) {
+      var correction = sorted[i];
+      var cv = correction.corrected_values;
+      if (correction.correction_types.indexOf('date') !== -1) effective.occurred_on = cv.occurred_on;
+      if (correction.correction_types.indexOf('plant') !== -1) effective.plant_id = cv.plant_id;
+      if (correction.correction_types.indexOf('window') !== -1) {
+        effective.window_def_id = cv.window_def_id;
+        effective.catalog_version = cv.catalog_version;
+        effective.action_type = cv.action_type;
+      }
+      if (correction.correction_types.indexOf('status') !== -1) effective.status = cv.status;
+      if (correction.correction_types.indexOf('notes') !== -1) effective.notes = cv.notes;
+    }
+    return effective;
+  }
+
+  function activityValue(record, key) {
+    return hasOwnKey(record, key) ? record[key] : undefined;
+  }
+
+  function activityChanged(original, effective) {
+    var keys = ['plant_id','window_def_id','catalog_version','action_type','status','occurred_on','notes'];
+    for (var i = 0; i < keys.length; i++) {
+      if (activityValue(original, keys[i]) !== activityValue(effective, keys[i])) return true;
+    }
+    return false;
+  }
+
+  function effectiveActivityEntries(store, catalog) {
+    var byActivity = Object.create(null);
+    for (var c = 0; c < store.corrections.length; c++) {
+      var correction = store.corrections[c];
+      if (!byActivity[correction.original_record_id]) byActivity[correction.original_record_id] = [];
+      byActivity[correction.original_record_id].push(correction);
+    }
+    var entries = [];
+    for (var i = 0; i < store.activities.length; i++) {
+      var corrections = byActivity[store.activities[i].activity_id] || [];
+      var effective = applyCorrections(store.activities[i], corrections);
+      entries.push({
+        original: store.activities[i],
+        effective: effective,
+        corrections: corrections.slice().sort(activityHelpers.correctionSort),
+        corrected: activityChanged(store.activities[i], effective)
+      });
+    }
+    return entries;
+  }
+
+  function diaryGroupKey(entry) {
+    var e = entry.effective;
+    var groupId = hasOwnKey(e, 'activity_group_id') ? e.activity_group_id : 'single:' + e.activity_id;
+    var notes = hasOwnKey(e, 'notes') ? e.notes : '';
+    return [groupId, e.window_def_id, e.catalog_version, e.action_type, e.occurred_on, e.status, notes].join('|');
+  }
+
+  function renderDiary() {
+    setViews('diary');
+    clearNode(diaryView);
+
+    var topbar = makeEl('div', 'v2-plants-topbar');
+    topbar.appendChild(makeEl('h2', '', 'Dnevnik'));
+    var actions = makeEl('div', 'v2-plants-actions');
+    var back = makeEl('button', 'v2-plants-secondary', 'Natrag na popis');
+    back.type = 'button';
+    back.addEventListener('click', function () { location.hash = '#v2'; });
+    actions.appendChild(back);
+    topbar.appendChild(actions);
+    diaryView.appendChild(topbar);
+    if (pendingDiaryStatus) {
+      diaryView.appendChild(makeEl('p', 'v2-plants-status', pendingDiaryStatus));
+      pendingDiaryStatus = '';
+    }
+
+    var result = readValidStore();
+    if (!result.ok) {
+      diaryView.appendChild(makeEl('p', 'v2-plants-error', result.error));
+      return;
+    }
+    if (result.store.activities.length === 0) {
+      diaryView.appendChild(makeEl('p', 'v2-plants-empty', 'Još nema zapisa u Dnevniku.'));
+      return;
+    }
+    var entries = effectiveActivityEntries(result.store, result.catalog);
+    var groups = Object.create(null);
+    for (var i = 0; i < entries.length; i++) {
+      var key = diaryGroupKey(entries[i]);
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(entries[i]);
+    }
+    var groupList = Object.keys(groups).map(function (key) { return groups[key]; });
+    groupList.sort(function (a, b) {
+      var ae = a[0].effective;
+      var be = b[0].effective;
+      if (ae.occurred_on !== be.occurred_on) return be.occurred_on.localeCompare(ae.occurred_on);
+      return be.recorded_at.localeCompare(ae.recorded_at);
+    });
+
+    var list = makeEl('div', 'v2-diary-list');
+    for (var g = 0; g < groupList.length; g++) {
+      var group = groupList[g];
+      var sample = group[0].effective;
+      var def = findActionWindow(result.catalog, sample.window_def_id);
+      var card = makeEl('article', 'v2-diary-card');
+      var title = makeEl('p', 'v2-diary-title', formatDateYmd(sample.occurred_on) + ' · ' + actionWindowLabel(def, result.catalog));
+      if (group.some(function (entry) { return entry.corrected; })) title.appendChild(makeEl('span', 'v2-diary-corrected', 'ispravljeno'));
+      card.appendChild(title);
+      var plantNames = group.map(function (entry) {
+        var plant = findPlant(result.store.plants, entry.effective.plant_id);
+        return plant ? plantTitle(plant) : entry.effective.plant_id;
+      });
+      var plantMeta = group.length === 1 ? plantNames[0] : plantCountText(group.length);
+      card.appendChild(makeEl('span', 'v2-diary-meta', statusLabel(sample.status) + ' · ' + plantMeta));
+      if (hasOwnKey(sample, 'notes')) card.appendChild(makeEl('span', 'v2-diary-note', 'Bilješka: ' + sample.notes));
+      var estimated = group.some(function (entry) {
+        var plant = findPlant(result.store.plants, entry.effective.plant_id);
+        var activityDef = findActionWindow(result.catalog, entry.effective.window_def_id);
+        return plant && activityDef && usesEstimatedMidFallback(plant, activityDef, result.catalog);
+      });
+      if (estimated) card.appendChild(makeEl('small', 'v2-diary-meta', ESTIMATED_MID_FALLBACK_TEXT));
+      var correctionActions = makeEl('div', 'v2-diary-plant-actions');
+      for (var p = 0; p < group.length; p++) {
+        var button = makeEl('button', 'v2-plants-secondary', group.length > 1 ? 'Ispravi — ' + plantNames[p] : 'Ispravi zapis');
+        button.type = 'button';
+        button.dataset.activityId = group[p].original.activity_id;
+        button.addEventListener('click', function (event) {
+          location.hash = activityCorrectionRoute(event.currentTarget.dataset.activityId);
+        });
+        correctionActions.appendChild(button);
+      }
+      card.appendChild(correctionActions);
+      list.appendChild(card);
+    }
+    diaryView.appendChild(list);
+  }
+
+  function findEffectiveEntry(entries, activityId) {
+    for (var i = 0; i < entries.length; i++) {
+      if (entries[i].original.activity_id === activityId) return entries[i];
+    }
+    return null;
+  }
+
+  function renderCorrection(route) {
+    setViews('correction');
+    clearNode(correctionForm);
+
+    var result = readValidStore();
+    var back = makeEl('button', 'v2-plants-secondary', 'Natrag na Dnevnik');
+    back.type = 'button';
+    back.addEventListener('click', function () { location.hash = '#v2/diary'; });
+    correctionForm.appendChild(back);
+    correctionForm.appendChild(makeEl('h2', '', 'Ispravi zapis'));
+    var message = makeEl('p', 'v2-plants-error');
+    message.hidden = true;
+    correctionForm.appendChild(message);
+    if (!result.ok) {
+      message.textContent = result.error;
+      message.hidden = false;
+      currentCorrectionFields = null;
+      return;
+    }
+    var entries = effectiveActivityEntries(result.store, result.catalog);
+    var entry = findEffectiveEntry(entries, route.activity_id);
+    if (!entry) {
+      correctionForm.appendChild(makeEl('p', 'v2-plants-empty', 'Zapis nije pronađen.'));
+      currentCorrectionFields = null;
+      return;
+    }
+    var effective = entry.effective;
+    var effectivePlant = findPlant(result.store.plants, effective.plant_id);
+    var effectiveDef = findActionWindow(result.catalog, effective.window_def_id);
+    correctionForm.appendChild(makeEl('p', 'v2-diary-meta', formatDateYmd(effective.occurred_on) + ' · ' + actionWindowLabel(effectiveDef, result.catalog) + ' · ' + (effectivePlant ? plantTitle(effectivePlant) : '')));
+
+    function addCorrectionCheck(labelText) {
+      var label = makeEl('label', 'v2-plants-check');
+      var input = document.createElement('input');
+      input.type = 'checkbox';
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(labelText));
+      correctionForm.appendChild(label);
+      return input;
+    }
+
+    var dateCheck = addCorrectionCheck('Krivi datum');
+    var dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.value = effective.occurred_on;
+    appendField(correctionForm, 'v2CorrectionDate', 'Novi datum', dateInput);
+
+    var plantCheck = addCorrectionCheck('Kriva voćka');
+    var plantSelect = document.createElement('select');
+    for (var p = 0; p < result.store.plants.length; p++) {
+      plantSelect.appendChild(makeOption(result.store.plants[p].plant_id, plantTitle(result.store.plants[p])));
+    }
+    plantSelect.value = effective.plant_id;
+    appendField(correctionForm, 'v2CorrectionPlant', 'Nova voćka', plantSelect);
+
+    var windowCheck = addCorrectionCheck('Kriva radnja');
+    var windowSelect = document.createElement('select');
+    appendField(correctionForm, 'v2CorrectionWindow', 'Nova radnja', windowSelect);
+
+    var statusCheck = addCorrectionCheck('Krivi status');
+    var statusSelect = document.createElement('select');
+    statusSelect.appendChild(makeOption('done', 'Odrađeno'));
+    statusSelect.appendChild(makeOption('skipped', 'Preskočeno'));
+    statusSelect.value = effective.status;
+    appendField(correctionForm, 'v2CorrectionStatus', 'Novi status', statusSelect);
+
+    var notesCheck = addCorrectionCheck('Bilješka');
+    var notes = document.createElement('textarea');
+    notes.value = hasOwnKey(effective, 'notes') ? effective.notes : '';
+    appendField(correctionForm, 'v2CorrectionNotes', 'Nova bilješka', notes);
+
+    var explanation = document.createElement('textarea');
+    appendField(correctionForm, 'v2CorrectionExplanation', 'Bilješka ispravka', explanation, 'Što si točno ispravio/la i zašto? Neobavezno.');
+
+    var actions = makeEl('div', 'v2-plants-actions');
+    var save = makeEl('button', 'v2-plants-primary', 'Spremi ispravak');
+    save.type = 'submit';
+    var cancel = makeEl('button', 'v2-plants-secondary', 'Odustani');
+    cancel.type = 'button';
+    cancel.addEventListener('click', function () { location.hash = '#v2/diary'; });
+    actions.appendChild(save);
+    actions.appendChild(cancel);
+    correctionForm.appendChild(actions);
+
+    currentCorrectionFields = {
+      store: result.store,
+      catalog: result.catalog,
+      original: entry.original,
+      effective: effective,
+      message: message,
+      dateCheck: dateCheck,
+      dateInput: dateInput,
+      plantCheck: plantCheck,
+      plantSelect: plantSelect,
+      windowCheck: windowCheck,
+      windowSelect: windowSelect,
+      statusCheck: statusCheck,
+      statusSelect: statusSelect,
+      notesCheck: notesCheck,
+      notes: notes,
+      explanation: explanation
+    };
+
+    function refreshWindowOptions() {
+      clearNode(windowSelect);
+      var plant = findPlant(result.store.plants, plantCheck.checked ? plantSelect.value : effective.plant_id);
+      var selected = effective.window_def_id;
+      if (!plant) return;
+      for (var w = 0; w < result.catalog.action_window_definitions.length; w++) {
+        var def = result.catalog.action_window_definitions[w];
+        if (activityHelpers.isSlice5ActivityWindow(def) && activityHelpers.isWindowApplicableToPlant(def, plant, result.catalog)) {
+          windowSelect.appendChild(makeOption(def.window_def_id, actionWindowLabel(def, result.catalog)));
+        }
+      }
+      if (findActionWindow(result.catalog, selected)) windowSelect.value = selected;
+    }
+
+    function refreshEnabled() {
+      dateInput.disabled = !dateCheck.checked;
+      plantSelect.disabled = !plantCheck.checked;
+      windowSelect.disabled = !windowCheck.checked;
+      statusSelect.disabled = !statusCheck.checked;
+      notes.disabled = !notesCheck.checked;
+      refreshWindowOptions();
+    }
+
+    dateCheck.addEventListener('change', refreshEnabled);
+    plantCheck.addEventListener('change', refreshEnabled);
+    windowCheck.addEventListener('change', refreshEnabled);
+    statusCheck.addEventListener('change', refreshEnabled);
+    notesCheck.addEventListener('change', refreshEnabled);
+    plantSelect.addEventListener('change', refreshWindowOptions);
+    refreshEnabled();
+  }
+
+  function saveCurrentCorrection() {
+    var fields = currentCorrectionFields;
+    if (!fields) return;
+    fields.message.hidden = true;
+    var current = readValidStore();
+    if (!current.ok) {
+      fields.message.textContent = current.error;
+      fields.message.hidden = false;
+      return;
+    }
+    var types = [];
+    var values = {};
+    if (fields.dateCheck.checked) {
+      if (!fields.dateInput.value) {
+        fields.message.textContent = 'Novi datum je obavezan.';
+        fields.message.hidden = false;
+        return;
+      }
+      types.push('date');
+      values.occurred_on = fields.dateInput.value;
+    }
+    if (fields.plantCheck.checked) {
+      types.push('plant');
+      values.plant_id = fields.plantSelect.value;
+    }
+    if (fields.windowCheck.checked) {
+      var def = findActionWindow(current.catalog, fields.windowSelect.value);
+      if (!def) {
+        fields.message.textContent = 'Odaberi novu radnju iz kataloga.';
+        fields.message.hidden = false;
+        return;
+      }
+      types.push('window');
+      values.window_def_id = def.window_def_id;
+      values.catalog_version = def.catalog_id;
+      values.action_type = def.action_type;
+    }
+    if (fields.statusCheck.checked) {
+      types.push('status');
+      values.status = fields.statusSelect.value;
+    }
+    if (fields.notesCheck.checked) {
+      var note = optionalString(fields.notes);
+      if (!note) {
+        fields.message.textContent = 'Nova bilješka ne može biti prazna.';
+        fields.message.hidden = false;
+        return;
+      }
+      types.push('notes');
+      values.notes = note;
+    }
+    if (types.length === 0) {
+      fields.message.textContent = 'Odaberi barem jedno polje za ispravak.';
+      fields.message.hidden = false;
+      return;
+    }
+    var correctionId = nextUniqueId('correction', current.store.corrections, 'correction_id');
+    if (!correctionId) {
+      fields.message.textContent = 'Greška pri generaciji identifikatora.';
+      fields.message.hidden = false;
+      return;
+    }
+    var correction = {
+      correction_id: correctionId,
+      original_record_id: fields.original.activity_id,
+      original_record_type: 'activity',
+      correction_types: types,
+      corrected_values: values,
+      created_at: new Date().toISOString()
+    };
+    var explanation = optionalString(fields.explanation);
+    if (explanation) correction.explanation = explanation;
+
+    var nextStore = activityStoreCandidate(current, current.store.activities, current.store.corrections.concat([correction]));
+    var errors = window.v2ValidateForBackup(nextStore);
+    if (errors.length > 0) {
+      fields.message.textContent = 'Ispravak nije spremljen: ' + activityValidationMessage(errors[0]) + '.';
+      fields.message.hidden = false;
+      return;
+    }
+    try {
+      localStorage.setItem('vocnjak_v2', JSON.stringify(nextStore));
+    } catch (e) {
+      fields.message.textContent = 'Pohranu nije moguće zapisati.';
+      fields.message.hidden = false;
+      return;
+    }
+    correctionForm.reset();
+    pendingDiaryStatus = 'Ispravak spremljen.';
+    location.hash = '#v2/diary';
+  }
+
   addForm.addEventListener('submit', function (event) {
     event.preventDefault();
     saveCurrentForm();
+  });
+  activityForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    saveCurrentActivity();
+  });
+  correctionForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    saveCurrentCorrection();
   });
 
   function render() {
     var route = getRoute();
     if (route.name === 'add') renderAdd();
+    else if (route.name === 'activity_add') renderActivityAdd();
+    else if (route.name === 'diary') renderDiary();
+    else if (route.name === 'correction') renderCorrection(route);
     else if (route.name === 'detail') renderDetail(route);
     else renderList();
   }
