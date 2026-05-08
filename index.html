@@ -335,6 +335,71 @@
     color: #64748b;
     font-weight: 700;
   }
+  .v2-seasonal-view {
+    display: grid;
+    gap: 18px;
+  }
+  .v2-seasonal-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 18px;
+  }
+  .v2-seasonal-section {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 14px;
+  }
+  .v2-seasonal-section h3,
+  .v2-calendar-month h3 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    line-height: 1.25;
+  }
+  .v2-seasonal-list {
+    display: grid;
+    gap: 10px;
+  }
+  .v2-seasonal-card,
+  .v2-seasonal-card-button,
+  .v2-calendar-month {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fff;
+    padding: 12px;
+  }
+  .v2-seasonal-card-button {
+    width: 100%;
+    color: #1f2933;
+    font: inherit;
+    text-align: left;
+  }
+  .v2-seasonal-card-title {
+    margin: 0 0 6px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .v2-seasonal-meta,
+  .v2-seasonal-note {
+    display: block;
+    color: #64748b;
+    line-height: 1.4;
+  }
+  .v2-seasonal-note {
+    margin-top: 4px;
+  }
+  .v2-seasonal-status {
+    display: inline-block;
+    margin: 6px 0;
+    border-radius: 999px;
+    padding: 3px 8px;
+    background: #edf6f9;
+    color: #1d4ed8;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .v2-calendar-month {
+    scroll-margin-top: 16px;
+  }
   @media (max-width: 640px) {
     #v2Plants { margin: 20px 0; }
     .v2-plants-topbar {
@@ -342,6 +407,9 @@
       flex-direction: column;
     }
     .v2-plants-actions {
+      flex-direction: column;
+    }
+    .v2-seasonal-nav {
       flex-direction: column;
     }
     .v2-plants-karton-row {
@@ -490,6 +558,9 @@
   <!-- END V2 BACKUP — Slice 3 -->
   <!-- BEGIN V2 PLANTS — Slice 4 -->
   <section id="v2Plants" aria-live="polite">
+    <section id="v2Pregled" class="v2-seasonal-view" hidden></section>
+    <section id="v2Kalendar" class="v2-seasonal-view" hidden></section>
+    <section id="v2SeasonalAction" class="v2-seasonal-view" hidden></section>
     <div id="v2PlantsList"></div>
     <form id="v2PlantsAddForm" class="v2-plants-form" hidden novalidate></form>
     <article id="v2PlantsDetail" class="v2-plants-detail" hidden></article>
@@ -5339,17 +5410,27 @@ if ('serviceWorker' in navigator) {
   if (!document.documentElement.classList.contains('v2-active')) return;
 
   var plantsRoot = document.getElementById('v2Plants');
+  var pregledView = document.getElementById('v2Pregled');
+  var calendarView = document.getElementById('v2Kalendar');
+  var seasonalActionView = document.getElementById('v2SeasonalAction');
   var listView = document.getElementById('v2PlantsList');
   var addForm = document.getElementById('v2PlantsAddForm');
   var detailView = document.getElementById('v2PlantsDetail');
   var activityForm = document.getElementById('v2ActivityCapture');
   var diaryView = document.getElementById('v2Diary');
   var correctionForm = document.getElementById('v2CorrectionForm');
-  if (!plantsRoot || !listView || !addForm || !detailView || !activityForm || !diaryView || !correctionForm) return;
+  if (!plantsRoot || !pregledView || !calendarView || !seasonalActionView || !listView || !addForm || !detailView || !activityForm || !diaryView || !correctionForm) return;
 
   var UNKNOWN_SELECT_VALUE = '__unknown__';
   var PLANT_ID_RE = /^plant_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z_[0-9a-f]{5}$/;
   var ESTIMATED_MID_FALLBACK_TEXT = 'Procjena: koristi se srednje dozrijevanje jer sorta i vrijeme dozrijevanja nisu poznati.';
+  var SEASONAL_SNAPSHOT_ERROR_TEXT = 'V2 sezonski prikaz se ne može izračunati jer katalog sadrži nevaljan period ili vrstu radnje. Podaci nisu promijenjeni.';
+  var CLOSING_SOON_THRESHOLD_DAYS = 3;
+  var DEFERRED_SEASONAL_ACTION_TYPES = { insecticide: true, monitoring: true, irrigation: true };
+  var MONTH_NAMES_HR = [
+    'Siječanj','Veljača','Ožujak','Travanj','Svibanj','Lipanj',
+    'Srpanj','Kolovoz','Rujan','Listopad','Studeni','Prosinac'
+  ];
   var hasOwn = Object.prototype.hasOwnProperty;
   var activityHelpers = window.v2ActivityHelpers;
   var currentFormFields = null;
@@ -5484,6 +5565,54 @@ if ('serviceWorker' in navigator) {
     return Number(parts[2]) + '.' + Number(parts[1]) + '.' + parts[0] + '.';
   }
 
+  function parseYmd(s) {
+    if (typeof s !== 'string') return null;
+    var parts = s.split('-');
+    if (parts.length !== 3) return null;
+    var year = Number(parts[0]);
+    var month = Number(parts[1]);
+    var day = Number(parts[2]);
+    var dt = new Date(year, month - 1, day);
+    if (dt.getFullYear() !== year || dt.getMonth() !== month - 1 || dt.getDate() !== day) return null;
+    return dt;
+  }
+
+  function formatYmdLocal(dt) {
+    var y = dt.getFullYear();
+    var m = dt.getMonth() + 1;
+    var d = dt.getDate();
+    return y + '-' + (m < 10 ? '0' + m : '' + m) + '-' + (d < 10 ? '0' + d : '' + d);
+  }
+
+  function addDaysYmd(value, days) {
+    var dt = parseYmd(value);
+    if (!dt) return value;
+    dt.setDate(dt.getDate() + days);
+    return formatYmdLocal(dt);
+  }
+
+  function daysBetweenYmd(start, end) {
+    var a = parseYmd(start);
+    var b = parseYmd(end);
+    if (!a || !b) return 0;
+    return Math.round((b - a) / 86400000);
+  }
+
+  function ymdFromMonthDay(year, node) {
+    var month = node.month < 10 ? '0' + node.month : '' + node.month;
+    var day = node.day < 10 ? '0' + node.day : '' + node.day;
+    return year + '-' + month + '-' + day;
+  }
+
+  function monthDayOrdinal(node) {
+    return node.month * 100 + node.day;
+  }
+
+  function formatDateRange(open, close) {
+    if (open === close) return formatDateYmd(open);
+    return formatDateYmd(open) + ' - ' + formatDateYmd(close);
+  }
+
   function renderValue(v, kind) {
     if (isUnknownTag(v)) return 'ne znam';
     if (v === undefined) return 'nije upisano';
@@ -5502,6 +5631,13 @@ if ('serviceWorker' in navigator) {
 
   function plantDetailRoute(plantId) {
     return '#v2/plant/' + encodeURIComponent(plantId);
+  }
+
+  function seasonalActionRoute(group) {
+    return '#v2/seasonal-action/' +
+      encodeURIComponent(group.catalog_version) + '/' +
+      encodeURIComponent(group.window_def_id) + '/' +
+      encodeURIComponent(String(group.cycle_year));
   }
 
   function activityCorrectionRoute(activityId) {
@@ -5577,9 +5713,28 @@ if ('serviceWorker' in navigator) {
   function getRoute() {
     var h = location.hash;
     if (h === '#v2' || h === '') return { name: 'list' };
+    if (h === '#v2/pregled') return { name: 'pregled' };
+    if (h === '#v2/kalendar') return { name: 'kalendar' };
     if (h === '#v2/add') return { name: 'add' };
     if (h === '#v2/activity/add') return { name: 'activity_add' };
     if (h === '#v2/diary') return { name: 'diary' };
+    var seasonalPrefix = '#v2/seasonal-action/';
+    if (h.indexOf(seasonalPrefix) === 0) {
+      var seasonalParts = h.slice(seasonalPrefix.length).split('/');
+      if (seasonalParts.length === 3) {
+        try {
+          return {
+            name: 'seasonal_action',
+            catalog_version: decodeURIComponent(seasonalParts[0]),
+            window_def_id: decodeURIComponent(seasonalParts[1]),
+            cycle_year: Number(decodeURIComponent(seasonalParts[2]))
+          };
+        } catch (e) {
+          return { name: 'kalendar' };
+        }
+      }
+      return { name: 'kalendar' };
+    }
     var correctionPrefix = '#v2/activity/';
     var correctionSuffix = '/correct';
     if (h.indexOf(correctionPrefix) === 0 && h.slice(-correctionSuffix.length) === correctionSuffix) {
@@ -5629,6 +5784,9 @@ if ('serviceWorker' in navigator) {
   }
 
   function setViews(active) {
+    pregledView.hidden = active !== 'pregled';
+    calendarView.hidden = active !== 'kalendar';
+    seasonalActionView.hidden = active !== 'seasonal_action';
     listView.hidden = active !== 'list';
     addForm.hidden = active !== 'add';
     detailView.hidden = active !== 'detail';
@@ -5653,12 +5811,20 @@ if ('serviceWorker' in navigator) {
     listView.appendChild(topbar);
 
     var activityActions = makeEl('div', 'v2-activity-actions');
+    var pregledBtn = makeEl('button', 'v2-plants-secondary', 'Pregled');
+    pregledBtn.type = 'button';
+    pregledBtn.addEventListener('click', function () { location.hash = '#v2/pregled'; });
+    var calendarBtn = makeEl('button', 'v2-plants-secondary', 'Kalendar');
+    calendarBtn.type = 'button';
+    calendarBtn.addEventListener('click', function () { location.hash = '#v2/kalendar'; });
     var addActivity = makeEl('button', 'v2-plants-primary', 'Dodaj evidenciju');
     addActivity.type = 'button';
     addActivity.addEventListener('click', function () { location.hash = '#v2/activity/add'; });
     var diaryBtn = makeEl('button', 'v2-plants-secondary', 'Dnevnik');
     diaryBtn.type = 'button';
     diaryBtn.addEventListener('click', function () { location.hash = '#v2/diary'; });
+    activityActions.appendChild(pregledBtn);
+    activityActions.appendChild(calendarBtn);
     activityActions.appendChild(addActivity);
     activityActions.appendChild(diaryBtn);
     listView.appendChild(activityActions);
@@ -6415,6 +6581,495 @@ if ('serviceWorker' in navigator) {
     return entries;
   }
 
+  function seasonalSnapshotError(details) {
+    var err = new Error(SEASONAL_SNAPSHOT_ERROR_TEXT);
+    err.seasonalDetails = details;
+    return err;
+  }
+
+  function assertSeasonalCatalog(catalog) {
+    var details = [];
+    if (!isPlainObject(catalog) || !Array.isArray(catalog.action_window_definitions)) {
+      details.push('catalog.action_window_definitions missing');
+    } else {
+      for (var i = 0; i < catalog.action_window_definitions.length; i++) {
+        var def = catalog.action_window_definitions[i];
+        var path = 'catalog.action_window_definitions[' + i + ']';
+        if (!isPlainObject(def)) {
+          details.push(path + ' not an object');
+          continue;
+        }
+        if (hasOwnKey(DEFERRED_SEASONAL_ACTION_TYPES, def.action_type)) {
+          details.push(path + ' deferred action_type: ' + def.action_type);
+        }
+        if (def.label === 'Sezonsko navodnjavanje') {
+          details.push(path + ' seasonal watering is not an action window');
+        }
+        if (!isPlainObject(def.anchor) || def.anchor.kind !== 'calendar') {
+          details.push(path + ' non-calendar anchor');
+          continue;
+        }
+        if (!isPlainObject(def.anchor.month_day_open) || !isPlainObject(def.anchor.month_day_close)) {
+          details.push(path + ' missing calendar bounds');
+          continue;
+        }
+        if (monthDayOrdinal(def.anchor.month_day_close) < monthDayOrdinal(def.anchor.month_day_open)) {
+          details.push(path + ' cross-year window: ' + def.window_def_id);
+        }
+      }
+    }
+    if (details.length > 0) throw seasonalSnapshotError(details);
+  }
+
+  function seasonalWindowDates(def, year) {
+    var before = def.tolerance && def.tolerance.before ? def.tolerance.before.value : 0;
+    var after = def.tolerance && def.tolerance.after ? def.tolerance.after.value : 0;
+    var open = addDaysYmd(ymdFromMonthDay(year, def.anchor.month_day_open), -before);
+    var close = addDaysYmd(ymdFromMonthDay(year, def.anchor.month_day_close), after);
+    var nextOpen = addDaysYmd(ymdFromMonthDay(year + 1, def.anchor.month_day_open), -before);
+    return { effective_open: open, effective_close: close, next_effective_open: nextOpen };
+  }
+
+  function entrySort(a, b) {
+    var ae = a.effective;
+    var be = b.effective;
+    if (ae.occurred_on !== be.occurred_on) return ae.occurred_on.localeCompare(be.occurred_on);
+    if (ae.recorded_at !== be.recorded_at) return ae.recorded_at.localeCompare(be.recorded_at);
+    return ae.activity_id.localeCompare(be.activity_id);
+  }
+
+  function findOccurrenceEvidence(entries, occurrence) {
+    var matches = [];
+    for (var i = 0; i < entries.length; i++) {
+      var effective = entries[i].effective;
+      if (effective.plant_id !== occurrence.plant_id) continue;
+      if (effective.window_def_id !== occurrence.window_def_id) continue;
+      if (effective.catalog_version !== occurrence.catalog_version) continue;
+      if (effective.occurred_on < occurrence.effective_open) continue;
+      if (effective.occurred_on >= occurrence.next_effective_open) continue;
+      matches.push(entries[i]);
+    }
+    matches.sort(entrySort);
+    var firstDoneLate = null;
+    var firstSkipped = null;
+    for (var m = 0; m < matches.length; m++) {
+      var e = matches[m].effective;
+      if (e.status === 'done' && e.occurred_on <= occurrence.effective_close) {
+        return { status: 'done', entry: matches[m], occurred_on: e.occurred_on };
+      }
+      if (e.status === 'done' && e.occurred_on > occurrence.effective_close && !firstDoneLate) {
+        firstDoneLate = { status: 'done_late', entry: matches[m], occurred_on: e.occurred_on };
+      }
+      if (e.status === 'skipped' && !firstSkipped) {
+        firstSkipped = { status: 'skipped', entry: matches[m], occurred_on: e.occurred_on };
+      }
+    }
+    return firstDoneLate || firstSkipped;
+  }
+
+  function deriveOccurrenceState(today, occurrence, evidence) {
+    if (evidence) return evidence.status;
+    if (today < occurrence.effective_open) return 'upcoming';
+    if (today > occurrence.effective_close) return 'missed';
+    if (daysBetweenYmd(today, occurrence.effective_close) < CLOSING_SOON_THRESHOLD_DAYS) return 'closing-soon';
+    return 'open';
+  }
+
+  function buildSeasonalSnapshot(store, catalog, today) {
+    assertSeasonalCatalog(catalog);
+    var todayYear = Number(today.slice(0, 4));
+    if (!todayYear || String(todayYear).length !== 4) throw seasonalSnapshotError(['today invalid: ' + today]);
+    var plants = store.plants.slice().sort(function (a, b) { return a.stable_order - b.stable_order; });
+    var entries = effectiveActivityEntries(store, catalog);
+    var occurrences = [];
+    for (var d = 0; d < catalog.action_window_definitions.length; d++) {
+      var def = catalog.action_window_definitions[d];
+      var dates = seasonalWindowDates(def, todayYear);
+      for (var p = 0; p < plants.length; p++) {
+        var plant = plants[p];
+        if (!activityHelpers.isWindowApplicableToPlant(def, plant, catalog)) continue;
+        var occurrence = {
+          occurrence_id: plant.plant_id + '|' + def.window_def_id + '|' + todayYear,
+          plant_id: plant.plant_id,
+          plant: plant,
+          def: def,
+          window_def_id: def.window_def_id,
+          catalog_version: def.catalog_id,
+          action_type: def.action_type,
+          cycle_year: todayYear,
+          effective_open: dates.effective_open,
+          effective_close: dates.effective_close,
+          next_effective_open: dates.next_effective_open,
+          gate_state: 'ne primjenjuje se'
+        };
+        occurrence.evidence = findOccurrenceEvidence(entries, occurrence);
+        occurrence.state = deriveOccurrenceState(today, occurrence, occurrence.evidence);
+        occurrences.push(occurrence);
+      }
+    }
+    return {
+      today: today,
+      cycle_year: todayYear,
+      occurrences: occurrences,
+      groups: groupSeasonalOccurrences(occurrences, catalog),
+      monitoring: [],
+      cues: []
+    };
+  }
+
+  function groupSeasonalOccurrences(occurrences, catalog) {
+    var byKey = Object.create(null);
+    for (var i = 0; i < occurrences.length; i++) {
+      var o = occurrences[i];
+      var key = [
+        o.catalog_version,
+        o.window_def_id,
+        o.cycle_year,
+        o.effective_open,
+        o.effective_close
+      ].join('|');
+      if (!byKey[key]) {
+        byKey[key] = {
+          key: key,
+          def: o.def,
+          catalog: catalog,
+          window_def_id: o.window_def_id,
+          catalog_version: o.catalog_version,
+          cycle_year: o.cycle_year,
+          effective_open: o.effective_open,
+          effective_close: o.effective_close,
+          occurrences: []
+        };
+      }
+      byKey[key].occurrences.push(o);
+    }
+    var groups = Object.keys(byKey).map(function (key) { return byKey[key]; });
+    groups.sort(function (a, b) {
+      if (a.effective_open !== b.effective_open) return a.effective_open.localeCompare(b.effective_open);
+      return actionWindowLabel(a.def, catalog).localeCompare(actionWindowLabel(b.def, catalog), 'hr');
+    });
+    return groups;
+  }
+
+  function groupStats(group) {
+    var stats = {
+      total: group.occurrences.length,
+      upcoming: 0,
+      open: 0,
+      closingSoon: 0,
+      missed: 0,
+      done: 0,
+      doneLate: 0,
+      skipped: 0
+    };
+    for (var i = 0; i < group.occurrences.length; i++) {
+      var state = group.occurrences[i].state;
+      if (state === 'upcoming') stats.upcoming += 1;
+      else if (state === 'open') stats.open += 1;
+      else if (state === 'closing-soon') stats.closingSoon += 1;
+      else if (state === 'missed') stats.missed += 1;
+      else if (state === 'done') stats.done += 1;
+      else if (state === 'done_late') stats.doneLate += 1;
+      else if (state === 'skipped') stats.skipped += 1;
+    }
+    stats.evidenced = stats.done + stats.doneLate + stats.skipped;
+    stats.noEvidence = stats.total - stats.evidenced;
+    return stats;
+  }
+
+  function groupHasLiveState(group) {
+    var stats = groupStats(group);
+    return stats.open > 0 || stats.closingSoon > 0;
+  }
+
+  function groupHasMissedState(group) {
+    return groupStats(group).missed > 0;
+  }
+
+  function groupHasUpcomingState(group) {
+    return groupStats(group).upcoming > 0;
+  }
+
+  function upcomingGroupsForPregled(snapshot) {
+    var groups = snapshot.groups.filter(groupHasUpcomingState);
+    var soon = groups.filter(function (group) {
+      return daysBetweenYmd(snapshot.today, group.effective_open) <= 45;
+    });
+    return soon.length > 0 ? soon : groups.slice(0, 5);
+  }
+
+  function countCurrentGroups(groups) {
+    return groups.filter(groupHasLiveState).length;
+  }
+
+  function countClosingSoonGroups(groups) {
+    return groups.filter(function (group) { return groupStats(group).closingSoon > 0; }).length;
+  }
+
+  function seasonalStatusSentence(snapshot) {
+    var current = countCurrentGroups(snapshot.groups);
+    var closing = countClosingSoonGroups(snapshot.groups);
+    if (current === 0) return 'Trenutno nema aktualnih sezonskih radnji.';
+    var text = current === 1 ? 'Trenutno je aktualna 1 sezonska radnja.' : 'Trenutno su aktualne ' + current + ' sezonske radnje.';
+    if (closing === 1) text += ' Jedna je pri kraju.';
+    else if (closing > 1) text += ' ' + closing + ' su pri kraju.';
+    return text;
+  }
+
+  function evidenceFraction(count, total) {
+    if (count === total) return plantCountText(count);
+    return count + '/' + total + ' voćki';
+  }
+
+  function doneLateText(count) {
+    if (count === 1) return '1 evidencija je nakon razdoblja.';
+    return count + ' evidencije su nakon razdoblja.';
+  }
+
+  function evidenceLines(group, context) {
+    var stats = groupStats(group);
+    var lines = [];
+    if (stats.evidenced > 0) {
+      if (stats.skipped === stats.evidenced) lines.push('Preskočeno za ' + evidenceFraction(stats.skipped, stats.total) + '.');
+      else lines.push('Evidentirano za ' + evidenceFraction(stats.evidenced, stats.total) + '.');
+    }
+    if (stats.noEvidence > 0 && (context === 'missed' || stats.missed > 0)) {
+      lines.push('Nema evidencije za ' + plantCountText(stats.noEvidence) + '.');
+    }
+    if (stats.doneLate > 0) lines.push(doneLateText(stats.doneLate));
+    return lines;
+  }
+
+  function purposeCue(def) {
+    if (!def || typeof def.label !== 'string') return '';
+    if (def.action_type === 'oil') return 'Namjena: zimska i rana proljetna zaštita.';
+    if (def.action_type === 'copper') return 'Namjena: preventivna zaštita.';
+    if (def.action_type === 'fungicide') return 'Namjena: zaštita u osjetljivom razdoblju.';
+    if (def.action_type === 'pruning') return 'Namjena: oblikovanje i prozračnost krošnje.';
+    if (def.action_type === 'fertilization') return 'Namjena: podrška rastu u sezoni.';
+    if (def.label.indexOf('Mreža') !== -1) return 'Namjena: zaštita plodova.';
+    if (def.label.indexOf('Krečenje') !== -1) return 'Namjena: zaštita debla.';
+    if (def.label.indexOf('Prorjeđivanje') !== -1 || def.label.indexOf('opterećenja') !== -1) return 'Namjena: uravnoteženje roda.';
+    return '';
+  }
+
+  function groupDateLine(group, context) {
+    var stats = groupStats(group);
+    if (context === 'current') {
+      if (stats.closingSoon > 0) return 'Aktualno do ' + formatDateYmd(group.effective_close) + ' - pri kraju.';
+      return 'Aktualno: ' + formatDateRange(group.effective_open, group.effective_close);
+    }
+    if (context === 'upcoming') return 'Počinje ' + formatDateYmd(group.effective_open);
+    if (context === 'missed') return 'Bilo je aktualno: ' + formatDateRange(group.effective_open, group.effective_close);
+    if (stats.open > 0 || stats.closingSoon > 0) return groupDateLine(group, 'current');
+    if (stats.upcoming > 0) return groupDateLine(group, 'upcoming');
+    return groupDateLine(group, 'missed');
+  }
+
+  function groupStatusLabel(group, context) {
+    var stats = groupStats(group);
+    if (context === 'current') return stats.closingSoon > 0 ? 'Pri kraju' : 'Aktualno';
+    if (context === 'upcoming') return 'Uskoro';
+    if (context === 'missed') return '';
+    if (stats.open > 0 || stats.closingSoon > 0) return stats.closingSoon > 0 ? 'Pri kraju' : 'Aktualno';
+    if (stats.upcoming > 0) return 'Uskoro';
+    return '';
+  }
+
+  function appendSeasonalNav(parent, active) {
+    var nav = makeEl('div', 'v2-seasonal-nav');
+    var pregled = makeEl('button', active === 'pregled' ? 'v2-plants-primary' : 'v2-plants-secondary', 'Pregled');
+    pregled.type = 'button';
+    pregled.addEventListener('click', function () { location.hash = '#v2/pregled'; });
+    var calendar = makeEl('button', active === 'kalendar' ? 'v2-plants-primary' : 'v2-plants-secondary', 'Kalendar');
+    calendar.type = 'button';
+    calendar.addEventListener('click', function () { location.hash = '#v2/kalendar'; });
+    var plants = makeEl('button', 'v2-plants-secondary', 'Biljke');
+    plants.type = 'button';
+    plants.addEventListener('click', function () { location.hash = '#v2'; });
+    nav.appendChild(pregled);
+    nav.appendChild(calendar);
+    nav.appendChild(plants);
+    parent.appendChild(nav);
+  }
+
+  function appendSeasonalHeader(parent, title, active, subtitle) {
+    var topbar = makeEl('div', 'v2-plants-topbar');
+    topbar.appendChild(makeEl('h2', '', title));
+    parent.appendChild(topbar);
+    if (subtitle) parent.appendChild(makeEl('p', 'v2-seasonal-meta', subtitle));
+    appendSeasonalNav(parent, active);
+  }
+
+  function appendSeasonalCard(parent, group, context, clickable) {
+    var node = clickable ? makeEl('button', 'v2-seasonal-card-button') : makeEl('article', 'v2-seasonal-card');
+    if (clickable) {
+      node.type = 'button';
+      node.addEventListener('click', function () { location.hash = seasonalActionRoute(group); });
+    }
+    node.appendChild(makeEl('p', 'v2-seasonal-card-title', actionWindowLabel(group.def, group.catalog)));
+    var status = groupStatusLabel(group, context);
+    if (status) node.appendChild(makeEl('span', 'v2-seasonal-status', status));
+    node.appendChild(makeEl('span', 'v2-seasonal-meta', groupDateLine(group, context)));
+    node.appendChild(makeEl('span', 'v2-seasonal-meta', 'Primjenjuje se na ' + plantCountText(group.occurrences.length) + '.'));
+    var cue = purposeCue(group.def);
+    if (cue) node.appendChild(makeEl('span', 'v2-seasonal-note', cue));
+    var lines = evidenceLines(group, context);
+    for (var i = 0; i < lines.length; i++) node.appendChild(makeEl('span', 'v2-seasonal-note', lines[i]));
+    parent.appendChild(node);
+  }
+
+  function appendSeasonalSection(parent, title, groups, emptyText, context, clickable) {
+    var section = makeEl('section', 'v2-seasonal-section');
+    section.appendChild(makeEl('h3', '', title));
+    if (groups.length === 0) {
+      section.appendChild(makeEl('p', 'v2-plants-empty', emptyText));
+    } else {
+      var list = makeEl('div', 'v2-seasonal-list');
+      for (var i = 0; i < groups.length; i++) appendSeasonalCard(list, groups[i], context, clickable);
+      section.appendChild(list);
+    }
+    parent.appendChild(section);
+  }
+
+  function renderSeasonalReadFailure(parent, result) {
+    if (result.error.indexOf('.action_type') !== -1 || result.error.indexOf('cross-year') !== -1 || result.error.indexOf('month_day') !== -1) {
+      console.error('vocnjak: V2 seasonal snapshot validation failed:', result.error);
+      parent.appendChild(makeEl('p', 'v2-plants-error', SEASONAL_SNAPSHOT_ERROR_TEXT));
+      return;
+    }
+    parent.appendChild(makeEl('p', 'v2-plants-error', result.error));
+  }
+
+  function renderSeasonalSnapshotFailure(parent, error) {
+    console.error('vocnjak: V2 seasonal snapshot failed:', error && error.seasonalDetails ? error.seasonalDetails : error);
+    parent.appendChild(makeEl('p', 'v2-plants-error', SEASONAL_SNAPSHOT_ERROR_TEXT));
+  }
+
+  function renderPregled() {
+    setViews('pregled');
+    clearNode(pregledView);
+    appendSeasonalHeader(pregledView, 'Pregled', 'pregled');
+
+    var result = readValidStore();
+    if (!result.ok) {
+      renderSeasonalReadFailure(pregledView, result);
+      return;
+    }
+    var snapshot;
+    try {
+      snapshot = buildSeasonalSnapshot(result.store, result.catalog, localTodayYmd());
+    } catch (e) {
+      renderSeasonalSnapshotFailure(pregledView, e);
+      return;
+    }
+    if (result.store.plants.length === 0) {
+      pregledView.appendChild(makeEl('p', 'v2-plants-empty', 'Dodaj voćku kako bi se prikazale sezonske radnje.'));
+      return;
+    }
+
+    pregledView.appendChild(makeEl('p', 'v2-plants-status', seasonalStatusSentence(snapshot)));
+    var currentGroups = snapshot.groups.filter(groupHasLiveState);
+    var missedGroups = snapshot.groups.filter(groupHasMissedState);
+    var upcomingGroups = upcomingGroupsForPregled(snapshot);
+    appendSeasonalSection(pregledView, 'Sada aktualno', currentGroups, 'Trenutno nema aktualnih sezonskih radnji.', 'current', false);
+    appendSeasonalSection(pregledView, 'Za provjeru: nema evidencije', missedGroups, 'Nema prošlih sezonskih radnji bez evidencije u ovom prikazu.', 'missed', false);
+    appendSeasonalSection(pregledView, 'Uskoro', upcomingGroups, 'Nema skorih sezonskih radnji u ovom prikazu.', 'upcoming', false);
+    if (currentGroups.length === 0 && missedGroups.length === 0 && upcomingGroups.length === 0) {
+      pregledView.appendChild(makeEl('p', 'v2-plants-empty', 'Za ovaj dio sezone nema prikazanih sezonskih radnji.'));
+    }
+  }
+
+  function endOfMonthYmd(year, month) {
+    return formatYmdLocal(new Date(year, month, 0));
+  }
+
+  function groupOverlapsMonth(group, month) {
+    var start = ymdFromMonthDay(group.cycle_year, { month: month, day: 1 });
+    var end = endOfMonthYmd(group.cycle_year, month);
+    return group.effective_open <= end && group.effective_close >= start;
+  }
+
+  function renderKalendar() {
+    setViews('kalendar');
+    clearNode(calendarView);
+    var year = Number(localTodayYmd().slice(0, 4));
+    appendSeasonalHeader(calendarView, 'Kalendar', 'kalendar', 'Sezona ' + year + '.');
+
+    var result = readValidStore();
+    if (!result.ok) {
+      renderSeasonalReadFailure(calendarView, result);
+      return;
+    }
+    var snapshot;
+    try {
+      snapshot = buildSeasonalSnapshot(result.store, result.catalog, localTodayYmd());
+    } catch (e) {
+      renderSeasonalSnapshotFailure(calendarView, e);
+      return;
+    }
+    if (result.store.plants.length === 0) {
+      calendarView.appendChild(makeEl('p', 'v2-plants-empty', 'Dodaj voćku kako bi se prikazao sezonski kalendar.'));
+      return;
+    }
+
+    for (var m = 1; m <= 12; m++) {
+      var month = makeEl('section', 'v2-calendar-month');
+      month.id = 'v2CalendarMonth' + m;
+      month.appendChild(makeEl('h3', '', MONTH_NAMES_HR[m - 1]));
+      month.appendChild(makeEl('p', 'v2-seasonal-meta', 'Sezonske radnje'));
+      var monthGroups = snapshot.groups.filter(function (group) { return groupOverlapsMonth(group, m); });
+      if (monthGroups.length === 0) {
+        month.appendChild(makeEl('p', 'v2-plants-empty', 'Nema sezonskih radnji u ovom mjesecu.'));
+      } else {
+        var list = makeEl('div', 'v2-seasonal-list');
+        for (var g = 0; g < monthGroups.length; g++) appendSeasonalCard(list, monthGroups[g], 'calendar', true);
+        month.appendChild(list);
+      }
+      calendarView.appendChild(month);
+    }
+
+    var currentMonth = Number(localTodayYmd().slice(5, 7));
+    setTimeout(function () {
+      var node = document.getElementById('v2CalendarMonth' + currentMonth);
+      if (node && typeof node.scrollIntoView === 'function') node.scrollIntoView({ block: 'start' });
+    }, 0);
+  }
+
+  function renderSeasonalActionPlaceholder(route) {
+    setViews('seasonal_action');
+    clearNode(seasonalActionView);
+    appendSeasonalHeader(seasonalActionView, 'Sezonska radnja', 'kalendar');
+    var back = makeEl('button', 'v2-plants-secondary', 'Natrag na Kalendar');
+    back.type = 'button';
+    back.addEventListener('click', function () { location.hash = '#v2/kalendar'; });
+    seasonalActionView.appendChild(back);
+
+    var result = readValidStore();
+    if (!result.ok) {
+      renderSeasonalReadFailure(seasonalActionView, result);
+      return;
+    }
+    try {
+      var snapshot = buildSeasonalSnapshot(result.store, result.catalog, localTodayYmd());
+      var found = null;
+      for (var i = 0; i < snapshot.groups.length; i++) {
+        var group = snapshot.groups[i];
+        if (group.catalog_version === route.catalog_version &&
+            group.window_def_id === route.window_def_id &&
+            group.cycle_year === route.cycle_year) {
+          found = group;
+          break;
+        }
+      }
+      if (found) seasonalActionView.appendChild(makeEl('p', 'v2-seasonal-card-title', actionWindowLabel(found.def, found.catalog)));
+    } catch (e) {
+      renderSeasonalSnapshotFailure(seasonalActionView, e);
+      return;
+    }
+    seasonalActionView.appendChild(makeEl('p', 'v2-plants-empty', 'Detalj sezonske radnje stiže u Slice 7.'));
+  }
+
   function diaryGroupKey(entry) {
     var e = entry.effective;
     var groupId = hasOwnKey(e, 'activity_group_id') ? e.activity_group_id : 'single:' + e.activity_id;
@@ -6751,7 +7406,10 @@ if ('serviceWorker' in navigator) {
 
   function render() {
     var route = getRoute();
-    if (route.name === 'add') renderAdd();
+    if (route.name === 'pregled') renderPregled();
+    else if (route.name === 'kalendar') renderKalendar();
+    else if (route.name === 'seasonal_action') renderSeasonalActionPlaceholder(route);
+    else if (route.name === 'add') renderAdd();
     else if (route.name === 'activity_add') renderActivityAdd();
     else if (route.name === 'diary') renderDiary();
     else if (route.name === 'correction') renderCorrection(route);
