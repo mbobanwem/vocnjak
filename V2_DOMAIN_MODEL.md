@@ -91,6 +91,27 @@ Window state and gate state are computed independently. A window can be `open` w
 - Temporal order rule: `occurred_on ≤ recorded_at`. An Activity claiming an `occurred_on` in the future relative to its `recorded_at` is invalid. Records represent real-world events that have already happened; planned or future-dated captures are rejected at write-time.
 - Duplicate rule: two or more Activity records that are identical on meaningful fields (for example same `plant_id`, same `action_type`, same `window_def_id`, same `occurred_on`) MAY legally coexist as separate immutable records. The model does not deduplicate, merge, rewrite, or collapse them. Derivation remains deterministic: one valid matching Activity is sufficient for window-state derivation (§6.3); additional matching records do not create a second derived state. Duplicate presence is part of history, not a reason to mutate records automatically.
 
+#### Runtime Slice 5 Activity provenance shape
+
+For Runtime Slice 5 user-entered Activity records, `provenance` is required and has exactly this persisted shape:
+
+```json
+{ "source": "user" }
+```
+
+Rules:
+
+- `provenance` MUST be a plain object.
+- The only allowed key in Runtime Slice 5 is `source`.
+- The only allowed value in Runtime Slice 5 is `source: "user"`.
+- No extra keys are allowed.
+- Missing, null, string, or array provenance values are invalid.
+- `provenance: "user"` is invalid.
+- `provenance: { "source": "system" }` is invalid in Runtime Slice 5.
+- `provenance: { "source": "user", "extra": true }` is invalid in Runtime Slice 5.
+- Slice 5 does not expose provenance as a main UI feature; it records that the Activity was manually entered by the user.
+- Import/system/monitoring provenance expansion requires a future owner-approved schema session.
+
 ### 0.6a Observation MUST-HAVE fields
 
 - `plant_id`, `catalog_version`, `kind`, `observed_on`, `recorded_at`, `payload`.
@@ -99,6 +120,79 @@ Window state and gate state are computed independently. A window can be `open` w
 - Free-standing rule: `program_id` absent is legal; the Observation is a first-class plant-history entry (§1.7.4 FS-INV).
 - Write-time invariant: the Observation's `catalog_version` MUST equal the plant's pinned `catalog_version` at the moment of write. Captures cannot fabricate a version.
 - Temporal order rule: `observed_on ≤ recorded_at`. An Observation claiming an `observed_on` in the future relative to its `recorded_at` is invalid. Retroactive logging (`observed_on < recorded_at`) remains legal per §1.7.3 L5; only future-dated observations are rejected.
+
+### 0.6b Runtime Slice 5 Activity applicability and unknown harvest fallback
+
+Runtime Slice 5 Activity writes and imports MUST validate action-window applicability against the selected Plant and retained catalog. UI filtering is not sufficient.
+
+Rules:
+
+- Species-first action-window definitions apply only to matching `plant.species`.
+- Variety harvest windows apply only when the Plant has the exact known variety.
+- Fallback harvest windows apply only when `plant.variety` is `{ "unknown": true }`.
+- A known-variety Plant MUST NOT use a fallback harvest window.
+- If `plant.variety` is `{ "unknown": true }` and `plant.ripening_fallback` is a known fallback band, the matching fallback harvest window applies.
+- If `plant.variety` is `{ "unknown": true }` and `plant.ripening_fallback` is also `{ "unknown": true }`, use the species `mid` fallback harvest window where the catalog defines one. This is an estimate/fallback, not known variety data.
+- If that species has no `mid` fallback harvest window, no harvest window may be assigned from unknown variety + unknown ripening.
+- Olive and pomegranate use species-level harvest windows because current V2 treats their timing as species-level; their user-facing olive varieties do not change harvest timing.
+- Activity and Correction effective values MUST reject any `window_def_id` / `plant_id` combination that violates these rules.
+- UI and Dnevnik display MUST disclose when `mid` ripening was assumed because variety and ripening were both unknown.
+
+Examples:
+
+- unknown plum + unknown ripening -> `aw.plum.fallback.mid.harvest`
+- unknown apple + unknown ripening -> `aw.apple.fallback.mid.harvest`
+- olive -> `aw.olive.harvest`
+- pomegranate -> `aw.pomegranate.harvest`
+
+### 0.6c Correction record persisted shape
+
+Correction records are additive records linked to immutable original records. The exact persisted shape is:
+
+```json
+{
+  "correction_id": "string",
+  "original_record_id": "string",
+  "original_record_type": "activity",
+  "correction_types": ["date"],
+  "corrected_values": {},
+  "explanation": "optional string",
+  "created_at": "ISO UTC timestamp"
+}
+```
+
+Field rules:
+
+- `correction_id` is a string identifier.
+- `original_record_id` references the immutable original record.
+- `original_record_type` is `"activity"` or `"observation"` as the durable vocabulary. Runtime Slice 5 only permits `"activity"` because Observation correction is later-slice scope.
+- `correction_types` is a non-empty array with no duplicate values.
+- Runtime Slice 5 allowed `correction_types` values are exactly: `"date"`, `"plant"`, `"window"`, `"status"`, `"notes"`.
+- `corrected_values` is a plain object.
+- `explanation` is optional string user copy for "Bilješka ispravka"; it explains why the correction was made and does not replace Activity `notes`.
+- `created_at` is an ISO timestamp string in UTC, generated by the system.
+
+Runtime Slice 5 `correction_types` map to `corrected_values` as follows:
+
+| `correction_types` value | Required `corrected_values` keys |
+|---|---|
+| `"date"` | `occurred_on` |
+| `"plant"` | `plant_id` |
+| `"window"` | `window_def_id`, `catalog_version`, `action_type` |
+| `"status"` | `status` |
+| `"notes"` | `notes` |
+
+Rules:
+
+- Keys in `corrected_values` MUST correspond to `correction_types`.
+- No orphan corrected values are allowed.
+- No selected correction type may be missing its corrected value.
+- If `"window"` is present, `window_def_id`, `catalog_version`, and `action_type` are corrected as one canonical set; `action_type` MUST equal the referenced canonical action-window's `action_type`.
+- User does not manually choose `action_type`.
+- If `"notes"` is present in Runtime Slice 5, `corrected_values.notes` MUST be a non-empty string. Note removal is deferred to a future owner-approved session.
+- A Correction MUST target an original record only. Correction-of-correction is invalid.
+- Multiple Corrections may reference the same original record.
+- Effective display orders Corrections by `created_at`, then `correction_id`; the latest value per corrected field wins.
 
 ### 0.7 Overlay identity rule
 
@@ -209,6 +303,8 @@ Activity records (§0.1 item 5) and Observation records (§0.1 item 6) each carr
    - `status` (per-plant outcome decided by the grower within the single capture flow; e.g. two plants `done`, two plants `skipped` in one copper-spray decision moment).
 
    They MUST NOT share `activity_id` (always unique per record).
+
+   **Runtime Slice 5 stricter group profile.** Runtime Slice 5 uses one real-world action window and one status per multi-plant capture. All Activity records sharing one `activity_group_id` in Slice 5 MUST share `window_def_id`, `catalog_version`, `action_type`, `occurred_on`, `recorded_at`, and `status`. They differ by `activity_id` and `plant_id`. A future owner-approved session may reopen per-plant status or cross-version grouping inside one capture, but Slice 5 validators MUST reject grouped Activities with mixed window, catalog version, action type, occurred date, recorded timestamp, or status.
 
 6. **Minimum group invariants — Observation group.** All Observation records sharing an `observation_group_id` MUST share:
    - `observed_on` (one capture event on one date).
@@ -334,6 +430,8 @@ Given the same catalog, and — for phenology anchors only — the same `Observa
 An Activity is invalid if `activity_group_id` is present and is an empty string or non-string. An Observation is invalid if `observation_group_id` is present and is an empty string or non-string. A record with the field absent is valid; grouping is optional.
 
 **Cross-record group-invariant validation.** For any set of Activity records sharing the same `activity_group_id`, all members MUST satisfy the invariants in §0.11 item 5 (`occurred_on` equal, `action_type` equal). For any set of Observation records sharing the same `observation_group_id`, all members MUST satisfy the invariants in §0.11 item 6 (`observed_on` equal, `kind` equal, `program_id` equal; the all-`null` case is legal). A write batch that would produce records violating these invariants is rejected atomically — all records in the batch fail or all succeed. Because groups are capture-time only (§0.11 item 7) and records are immutable, write-time validation is sufficient; no retroactive enforcement is needed, and no post-hoc record can drift the group's invariants.
+
+Runtime Slice 5 validation additionally applies the stricter profile in §0.11 item 5: grouped Activity records must share `window_def_id`, `catalog_version`, `action_type`, `occurred_on`, `recorded_at`, and `status`.
 
 ### 1.7 Monitoring program — locked (S2.8)
 

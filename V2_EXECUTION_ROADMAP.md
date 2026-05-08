@@ -904,6 +904,7 @@ Must not touch:
 Depends on:
 
 - Pre-Slice-5 Action Window Seed prerequisite (real action-window definitions and real `window_def_id` values in canonical V2 `catalog_v1`).
+- Pre-Slice-5 Activity provenance and Correction storage-shape doc patch: Runtime Slice 5 Activity provenance is locked as `provenance: { source: "user" }`, and Correction records use the exact persisted shape in `V2_DOMAIN_MODEL.md §0.6c` / `V2_ARCHITECTURE.md §1.14`.
 - S11.C1 Slice 4 (stable `plant_id` per §1.5).
 - S11.C1 Slice 2 (retained `catalog_version`).
 - S11.C1 Slice 1 (store read / write / validation boundary).
@@ -911,17 +912,20 @@ Depends on:
 
 Produces:
 
-- Activity write per V2_DOMAIN_MODEL.md §0.6: `plant_id`, real catalog-backed `window_def_id`, `catalog_version`, `action_type`, `status` ∈ {done, skipped}, `occurred_on`, `recorded_at`, optional `activity_group_id`, optional `notes`, `provenance`. Temporal-order rule (`occurred_on ≤ recorded_at`) enforced at write time. Synthetic, null, sentinel, or write-time-fabricated `window_def_id` values are invalid.
-- Multi-plant capture per V2_UX_MODEL.md §16 + V2_DOMAIN_MODEL.md §0.11: a single capture pass over N selected plants writes N Activity records sharing one freshly-minted `activity_group_id`. Group identity is display / query identity only; never derivation authority.
+- Activity write per V2_DOMAIN_MODEL.md §0.6: `activity_id`, `plant_id`, real catalog-backed `window_def_id`, `catalog_version`, `action_type`, `status` ∈ {done, skipped}, `occurred_on`, `recorded_at`, required `provenance: { source: "user" }`, optional `activity_group_id`, optional `notes`. Temporal-order rule (`occurred_on ≤ recorded_at`) enforced at write time. Synthetic, null, sentinel, or write-time-fabricated `window_def_id` values are invalid.
+- Multi-plant capture per V2_UX_MODEL.md §16 + V2_DOMAIN_MODEL.md §0.11: a single capture pass over N selected plants writes N Activity records sharing one freshly-minted `activity_group_id`. Runtime Slice 5 uses one status per capture and requires grouped records to share `window_def_id`, `catalog_version`, `action_type`, `occurred_on`, `recorded_at`, and `status`; they differ by `activity_id` and `plant_id`. Group identity is display / query identity only; never derivation authority.
+- Activity applicability validation per V2_DOMAIN_MODEL.md §0.6b: species-first windows, variety harvest windows, fallback harvest windows, unknown variety + unknown ripening -> `fallback.mid.harvest` where available, olive/pomegranate species-level harvest, and canonical `action_type` matching are enforced by the validator, not only by UI filtering.
 - Activity-only Dnevnik per V2_UX_MODEL.md §3: default Dnevnik (§3.3), plant-filtered (§3.4), seasonal-action-filtered (§3.5), year / month grouping (§3.6), row anatomy (§3.8), marker semantics (§3.9), multi-plant grouping (§3.11). At Slice 5: no observation rows, no archived-plant rows.
-- Activity correction per V2_UX_MODEL.md §17 + V2_ARCHITECTURE.md §4.9: a Correction record links to the original Activity; the original is not mutated; Dnevnik displays the corrected version with the §3.9 correction marker.
+- Activity correction per V2_UX_MODEL.md §17 + V2_DOMAIN_MODEL.md §0.6c + V2_ARCHITECTURE.md §1.14 / §4.9: a Correction record with `correction_id`, `original_record_id`, `original_record_type`, `correction_types`, `corrected_values`, optional `explanation`, and `created_at` links to the original Activity; the original is not mutated; Dnevnik displays the corrected version with the §3.9 correction marker.
 
 Manual verification:
 
-- Add 4 plants in V2; capture a single multi-plant Activity selecting 2 plants → 2 Activity records written, sharing one `activity_group_id`, both pointing to the same `window_def_id` and `catalog_version`.
+- Add 4 plants in V2; capture a single multi-plant Activity selecting 2 plants → 2 Activity records written, sharing one `activity_group_id`, both pointing to the same `window_def_id` and `catalog_version`, same `action_type`, same `occurred_on`, same `recorded_at`, same `status`, and each with `provenance: { source: "user" }`.
 - Try a future-dated `occurred_on` → write rejected.
+- Try an imported grouped Activity with mixed `window_def_id`, `catalog_version`, `action_type`, `occurred_on`, `recorded_at`, or `status` → import rejected fail-closed.
+- Add an unknown-variety / unknown-ripening apple where `fallback.mid` exists; harvest capture uses `aw.apple.fallback.mid.harvest` and Dnevnik discloses that mid ripening was assumed.
 - Open Dnevnik → 2 rows visible (or 1 grouped row per §3.11), correct date, correct plant labels.
-- Correct one Activity's date → Correction record written, original Activity bytes unchanged in storage, Dnevnik shows corrected date with §3.9 marker.
+- Correct one Activity's date → Correction record written with `original_record_type: "activity"`, `correction_types: ["date"]`, `corrected_values.occurred_on`, and UTC `created_at`; original Activity bytes unchanged in storage, Dnevnik shows corrected date with §3.9 marker.
 - Export → JSON contains both Activity records and the Correction record under `activities` and `corrections` collections.
 - Wipe `vocnjak_v2`, re-import → all records reappear with same identities.
 - Legacy `vocnjak_v4` VALUE byte-equal across the entire Slice 5 session (per §28).
@@ -929,6 +933,8 @@ Manual verification:
 Stop conditions:
 
 - Activity capture would be single-plant only.
+- Activity write would omit required `provenance: { source: "user" }` or invent additional provenance fields.
+- Correction write would use fields outside the locked `V2_DOMAIN_MODEL.md §0.6c` / `V2_ARCHITECTURE.md §1.14` shape.
 - Activity correction would mutate the original record in place.
 - Dnevnik would treat `activity_group_id` as derivation authority.
 - Activity write would require any snapshot dependency (snapshot lands in Slice 6; Slice 5 is snapshot-independent).

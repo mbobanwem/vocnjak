@@ -154,6 +154,8 @@ Action Window Seed hardening lesson: runtime/model work MUST serve the approved 
 
 Runtime Slice 5 status: NOT STARTED. Runtime Slice 5 planning may begin after owner approval. Runtime Slice 5 implementation has not started and requires explicit owner approval.
 
+Pre-Slice-5 Activity provenance / Correction storage-shape doc patch status: DOCUMENTATION-ONLY LOCK. This patch locks the exact Runtime Slice 5 Activity provenance shape as `provenance: { source: "user" }`, locks Correction persisted fields as `correction_id`, `original_record_id`, `original_record_type`, `correction_types`, `corrected_values`, optional `explanation`, and `created_at`, records the stricter Slice 5 multi-plant group invariant, and records unknown variety + unknown ripening harvest fallback to the species `mid` fallback window where available. Runtime Slice 5 implementation has not started. Runtime Slice 5 planning remains the next eligible work after this documentation patch is accepted, and implementation still requires explicit owner approval.
+
 Completed S11 patches:
 - `S11.A — Roadmap authority, sequencing principles, commit/runtime safety boundaries` (`627c83d Define S11 roadmap authority and runtime safety`)
 - `S11.B — Storage substrate, V2 key, clean-start contract, activation strategy` (`3822f1e Define S11 storage and activation posture`)
