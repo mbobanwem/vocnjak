@@ -86,11 +86,15 @@ Current:
 - Plan-template projection hardening is complete (`bcaf3a2 Harden plan-template projection rules`); the plan-template-first/source-map hard stop remains locked for future catalog/action-window/orchard-plan work
 - Runtime Slice 5 (Activity capture, Activity-only Dnevnik, and Activity correction) is complete (`8bc630a Implement Runtime Slice 5 activity capture`); legacy app remains the default
 - Runtime Slice 5 local browser verification passed for Activity capture, locked Activity shape/provenance, multi-plant group invariants, Activity correction, Dnevnik effective correction display, targeted negative validator cases, and protected legacy-key byte equality; full Cloudflare deployment verification and full import/export UI round-trip were not performed for the Slice 5 commit
-- `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred from Slice 5 because safe implementation overlaps with Slice 6 snapshot/window-state derivation
+- Runtime Slice 6 (private active-window snapshot, Pregled, and Kalendar) is complete (`99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`); the implementation changed `index.html` only, keeps derived seasonal state read-time/private, persists no snapshot output, and exposes no `window.v2Snapshot` or new global debug API
+- Runtime Slice 6 local owner verification passed for `#v2/pregled`, `#v2/kalendar`, the minimal seasonal-action placeholder route (`Detalj sezonske radnje stiže u Slice 7.`), validator result `[]`, no visible Praćenje/Monitoring/weather/risk-awareness UI, no observed task/compliance/progress wording, `"v2Snapshot" in window === false`, and normal legacy load without `#v2`; Cloudflare deployment verification, full import/export UI round-trip, and direct protected legacy localStorage byte-dump comparison were not performed for the Slice 6 commit
+- Monitoring/Praćenje remains product-critical and long-term belongs in Pregled and Kalendar, but visible Monitoring UI is deferred from Slice 6 to Slice 8; Slice 8 must explicitly add Kalendar Praćenje, not only Pregled / Plant detail monitoring
+- Rich agronomic instruction/details for seasonal actions are deferred to Runtime Slice 7 Detalj sezonske radnje; Slice 7 is not started and must not begin before owner approval and a fresh consistency check
+- `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred from Slice 5/Slice 6 as Slice-6-adjacent polish or later owner-approved work
 - §0 monitoring constraints remain locked and authoritative
 - legacy data and V1/V3/V4 keys remain protected
-- implementation was forbidden through S11 documentation; Slices 0, 1, 2, 3, 4, and 5 were then owner-approved and committed
-- Runtime Slice 6 is the next runtime slice, but only after owner approval and a fresh source-of-truth consistency check; no later implementation may advance without explicit per-slice owner approval
+- implementation was forbidden through S11 documentation; Slices 0, 1, 2, 3, 4, 5, and 6 were then owner-approved and committed
+- Runtime Slice 7 planning is the next eligible runtime planning work, but only after owner approval and a fresh source-of-truth consistency check; no later implementation may advance without explicit per-slice owner approval
 
 ### INPUT FILES (NOT YET VALIDATED V2 TRUTH)
 

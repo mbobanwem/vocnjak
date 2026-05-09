@@ -814,7 +814,7 @@ Status:
 - Canonical `catalog_v1` now has source-backed real action-window definitions and real stable `window_def_id` values.
 - Owner browser verification passed and focused adversarial review passed.
 - Runtime Slice 5 has since completed at `8bc630a Implement Runtime Slice 5 activity capture`.
-- Runtime Slice 6 planning is next eligible only after owner approval; Slice 6 implementation has not started.
+- Runtime Slice 6 has since completed at `99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`.
 
 Decision:
 
@@ -963,6 +963,8 @@ Parallelization notes:
 
 ## 34. Slice 6 — Active-window snapshot, Pregled, and Kalendar
 
+Status: COMPLETE — implemented and pushed to `main` at `99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`.
+
 Purpose:
 
 Make V2 visible. Implement the deterministic active-window snapshot read model per V2_ARCHITECTURE.md §4. Render Pregled per V2_UX_MODEL.md §1 and Kalendar per §2 from snapshot output.
@@ -995,15 +997,40 @@ Produces:
 - Pregled per V2_UX_MODEL.md §1: always-visible status sentence (§1.1), Sada aktualno (§1.4), aggregation rule (§1.5), Za provjeru: nema evidencije (§1.6), Uskoro (§1.7), quiet state (§1.10). At Slice 6: no Praćenje surface (§1.8 — Slice 8), no weather advisory band (§1.9 — Slice 7).
 - Kalendar per V2_UX_MODEL.md §2: month sections (§2.4), card identity and grouping (§2.7), plant scope (§2.8), evidence / outcome copy (§2.10), purpose cue (§2.15), young-tree relevance (§2.16), tap destination (§2.18 — opens placeholder until Slice 7 Detalj). At Slice 6: no monitoring copy (§2.11 — Slice 8), no weather inline (§2.17 — Slice 7).
 
+Implementation summary:
+
+- Runtime Slice 6 landed in `index.html` at `99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`.
+- The implementation added a private deterministic read-time snapshot, Pregled rendering from the snapshot, Kalendar rendering from the snapshot, and a minimal seasonal-action placeholder route showing `Detalj sezonske radnje stiže u Slice 7.`
+- No derived seasonal state is persisted to `vocnjak_v2`.
+- No `window.v2Snapshot` or new global snapshot/debug API was added.
+- Pregled/Kalendar render no visible Monitoring/Praćenje UI in Slice 6; Monitoring/Praćenje remains product-critical and deferred to Slice 8.
+- Rich agronomic instruction/details remain deferred to Runtime Slice 7 Detalj sezonske radnje.
+- `V2_UX_MODEL.md` §16.7 outside-period disclosure was not implemented in Slice 6; it remains Slice-6-adjacent polish or later owner-approved work.
+
 Manual verification:
 
-- With 4 plants and a single multi-plant Activity from Slice 5: Pregled shows current orchard state aggregated per §1.5 including the recent done window for both plants.
-- Kalendar shows the next month's relevant action windows from catalog + plants.
-- Activity correction from Slice 5 → snapshot reflects corrected date in Pregled per §4.9.
-- No window state stored back to `vocnjak_v2`; storage remains read-only from snapshot's perspective.
-- Same date + same persisted facts → same snapshot output (determinism per §4.16).
-- Pregled "Za provjeru: nema evidencije" frames absence neutrally, not as warning.
-- Legacy `vocnjak_v4` VALUE byte-equal across session.
+- Owner manual local verification was performed after commit `99e76c8`.
+- `#v2/kalendar` loads and renders seasonal action cards.
+- `#v2/pregled` loads and renders neutral overview.
+- Kalendar current-month behavior was observed; owner had scrolled upward to January in one screenshot.
+- Kalendar placeholder route works and shows `Detalj sezonske radnje stiže u Slice 7.`
+- Legacy app without `#v2` loads normally.
+- `window.v2ValidateForBackup(JSON.parse(localStorage.getItem("vocnjak_v2")))` returned `[]`.
+- `"v2Snapshot" in window` returned `false`.
+- Kalendar renders `Sezonske radnje` only.
+- Pregled/Kalendar render no visible Praćenje/Monitoring UI.
+- Pregled/Kalendar render no weather or risk-awareness UI.
+- No forbidden task/compliance/progress wording was observed in screenshots.
+- Cloudflare deployment verification was not performed.
+- Full import/export UI round-trip was not performed.
+- Direct protected legacy localStorage byte-dump comparison was not performed; source isolation and legacy no-hash smoke test passed.
+- Cloudflare production state is not claimed.
+
+Deferred / next-slice notes:
+
+- Runtime Slice 7 must handle richer user-facing agronomic detail in Detalj sezonske radnje. Owner-observed example: Kalendar card `Trešnja — Prorjeđivanje trešnje` currently shows only a short purpose such as `Namjena: uravnoteženje roda.` Practical guidance from `V2_ORCHARD_PLAN_TEMPLATES.md`, such as thinning context and what to check, belongs in Slice 7 detail, not in Slice 6 cards.
+- Monitoring/Praćenje remains product-critical and must later appear in Kalendar/Pregled, but visible Monitoring UI is not part of Slice 6.
+- Runtime Slice 8 must explicitly add Kalendar Praćenje, not only Pregled / Plant detail monitoring.
 
 Stop conditions:
 
@@ -1025,6 +1052,8 @@ Parallelization notes:
 Purpose:
 
 Make V2 deeply visible per plant and per action. Populate Plant detail's live sections from snapshot. Ship Detalj sezonske radnje for per-window deep view. Optionally add advisory weather composition as inline notes if and only if weather data is available through a clearly read-only boundary.
+
+Current tracker note: Runtime Slice 7 is the next planning candidate after Runtime Slice 6 completion, but it has not started. Do not advance to Slice 7 implementation before owner approval and a fresh source-of-truth consistency check. Slice 7 should address Detalj sezonske radnje / richer agronomic action details.
 
 Allowed touch points:
 
@@ -1115,7 +1144,7 @@ Produces:
 - Free-standing observation per §0.6a + §1.7.4 FS-INV: `program_id` absent is legal; observation is first-class plant-history entry, permanently disjoint from any monitoring program.
 - Monitoring capture flow per V2_UX_MODEL.md §10: program-context (§10.3), free-standing (§10.4), trap check (§10.5), visual scouting (§10.6), date behavior (§10.7), out-of-season behavior (§10.8), multi-plant monitoring boundary (§10.9 — separate observations per plant, not single multi-plant observation), treatment-advice boundary (§10.10).
 - Stage confirmation flow per V2_UX_MODEL.md §11: one-screen (§11.3), MVP stage labels (§11.4), uncertainty (§11.5), date behavior (§11.6), plan-impact copy (§11.7), Dnevnik / history (§11.9). Stage-code correction deferred to Slice 9 per §11.11.
-- Monitoring / Awareness baseline rendering per V2_UX_MODEL.md §15 + V2_ARCHITECTURE.md §4.12–§4.13: Plant detail §4.10 monitoring section populated; Pregled §1.8 Praćenje surface populated; Detalj per-plant evidence summary extended with observation rows; Dnevnik §3.13 / §3.14 free-standing and monitoring rows visible.
+- Monitoring / Awareness baseline rendering per V2_UX_MODEL.md §15 + V2_ARCHITECTURE.md §4.12–§4.13: Plant detail §4.10 monitoring section populated; Pregled §1.8 Praćenje surface populated; Kalendar §2.11 Praćenje subgroup/items populated; Detalj per-plant evidence summary extended with observation rows; Dnevnik §3.13 / §3.14 free-standing and monitoring rows visible.
 - Awareness / risk monitoring per §0 + §10: pest / disease vs awareness / risk distinction maintained in copy; absence of records remains neutral.
 
 Manual verification:
@@ -1371,10 +1400,15 @@ Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction:
 
 Slice 6 — Snapshot, Pregled, Kalendar:
 
+- completed at `99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`
+- `#v2/pregled` and `#v2/kalendar` render from a private read-time snapshot
 - the snapshot is derived; no derived state is stored back to `vocnjak_v2`
+- no `window.v2Snapshot` or new global snapshot/debug API was added
 - Pregled renders without task / compliance / progress framing
 - Kalendar renders without urgency reordering or hidden cards
+- Kalendar renders `Sezonske radnje` only in Slice 6; visible Monitoring/Praćenje is deferred to Slice 8
 - `activity_group_id` is not used as derivation authority
+- `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred as Slice-6-adjacent polish or later owner-approved work
 
 Slice 7 — Plant detail, Detalj, optional weather:
 
@@ -1538,9 +1572,9 @@ Documentation-only checklist for S11 closure:
 - [x] S11.C2 complete (`a56fe75 Define S11 usable-default slice plan`)
 - [x] S11.D complete (this patch)
 - [x] `V2_EXECUTION_ROADMAP.md` contains §1 through §50
-- [x] runtime implementation has not started
-- [ ] tracker sync (separate commit immediately after S11.D)
-- [ ] next phase: runtime Slice 0 — V2 shell and owner-only entry, only after explicit owner approval
+- [x] at S11 closure, runtime implementation had not started (historical)
+- [x] tracker sync landed after S11.D
+- [x] next phase at S11 closure was runtime Slice 0 — V2 shell and owner-only entry; Runtime Slices 0–6 have since completed through `99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`
 
 S11.D roadmap closure is complete before tracker sync. Project-level S11 closure is complete only after the tracker sync commit lands.
 
@@ -1548,7 +1582,7 @@ S11.D roadmap closure is complete before tracker sync. Project-level S11 closure
 
 ## 50. Handoff to runtime implementation
 
-After S11.D and the tracker sync are committed, the next approved work is:
+Historical handoff note: after S11.D and its tracker sync were committed, the next approved work was:
 
 - Runtime Slice 0 — V2 shell and owner-only entry (per §23)
 
@@ -1562,3 +1596,5 @@ Runtime Slice 0 rules (re-stated for the handoff):
 - no `manifest.json` change, no `sw.js` change, no weather / Supabase / iCal / AES-GCM changes
 
 Runtime implementation still requires explicit owner approval after S11 is closed. Even with this roadmap complete, no runtime work begins until the owner explicitly opens runtime Slice 0.
+
+Post-Slice-6 tracker note: Runtime Slices 0–6 are complete. The next eligible planning work is Runtime Slice 7, only after owner approval and a fresh source-of-truth consistency check.

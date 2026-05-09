@@ -16,16 +16,16 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: Runtime implementation continues. Runtime Slice 0, Slice 1, Slice 2, Slice 3, Slice 4, and Slice 5 are complete. Focused S3/S4 adversarial review after the post-Slice-4 safety fix passed and owner verification accepted the PASS. Pre-Slice-5 Add Plant date-validation message polish is complete. Pre-Slice-5 Action Window Seed prerequisite is complete (`df6a7fc Implement Action Window Seed prerequisite`); owner browser verification passed and focused adversarial review passed. Plan-template projection hardening is complete (`bcaf3a2 Harden plan-template projection rules`). Runtime Slice 5 is complete (`8bc630a Implement Runtime Slice 5 activity capture`).
+Phase: Runtime implementation continues. Runtime Slice 0, Slice 1, Slice 2, Slice 3, Slice 4, Slice 5, and Slice 6 are complete. Focused S3/S4 adversarial review after the post-Slice-4 safety fix passed and owner verification accepted the PASS. Pre-Slice-5 Add Plant date-validation message polish is complete. Pre-Slice-5 Action Window Seed prerequisite is complete (`df6a7fc Implement Action Window Seed prerequisite`); owner browser verification passed and focused adversarial review passed. Plan-template projection hardening is complete (`bcaf3a2 Harden plan-template projection rules`). Runtime Slice 5 is complete (`8bc630a Implement Runtime Slice 5 activity capture`). Runtime Slice 6 is complete (`99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`).
 
 Current goal:
 
-Runtime Slice 5 tracker sync closure is recorded here. Runtime Slice 6 planning is the next eligible planning work, and only after owner approval.
+Runtime Slice 6 tracker sync closure is recorded here. Runtime Slice 7 planning is the next eligible planning work, and only after owner approval and a fresh consistency check.
 
 Current immediate next step:
 
 ```text
-Runtime Slice 6 planning may begin only after owner approval. Runtime Slice 6 implementation has not started and requires explicit owner approval.
+Runtime Slice 7 planning may begin only after owner approval and a fresh source-of-truth consistency check. Runtime Slice 7 implementation has not started and requires explicit owner approval. `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred and requires explicit owner approval if done before Slice 7.
 ```
 
 S11 status: DONE.
@@ -183,6 +183,42 @@ Runtime Slice 5 verification precision:
 
 Known deferred Runtime Slice 5 gap: `V2_UX_MODEL.md` §16.7 outside-period disclosure is deferred from the Slice 5 commit. Reason: safe implementation requires window-active-period derivation and overlaps with Slice 6 snapshot/window-state logic. This remains non-blocking guidance, not a write-time invariant, and should be tracked as deferred polish / Slice 6-adjacent work.
 
+Runtime Slice 6 status: DONE (`99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`). Runtime Slice 6 implemented a private deterministic active-window snapshot, Pregled rendering from that snapshot, Kalendar rendering from that snapshot, and the minimal seasonal-action placeholder route for Slice 7. The commit changed `index.html` only and was pushed to `origin/main`.
+
+Runtime Slice 6 implementation facts:
+- `#v2/pregled` renders a neutral overview from the read-time snapshot.
+- `#v2/kalendar` renders seasonal action cards from the read-time snapshot.
+- no derived seasonal state is persisted to `vocnjak_v2`
+- no `window.v2Snapshot` or new global snapshot/debug API was added
+- visible Monitoring/Praćenje UI is not part of Slice 6
+- weather, risk-awareness, observation capture, stage capture, archive/lifecycle, plan upgrade review, and Za pregledati behavior remain out of Slice 6
+
+Owner manual local verification for Runtime Slice 6:
+- `#v2/kalendar` loads and renders seasonal action cards
+- `#v2/pregled` loads and renders neutral overview
+- Kalendar current-month behavior was observed; owner had scrolled upward to January in one screenshot
+- Kalendar placeholder route works and shows `Detalj sezonske radnje stiže u Slice 7.`
+- legacy app without `#v2` loads normally
+- `window.v2ValidateForBackup(JSON.parse(localStorage.getItem("vocnjak_v2")))` returned `[]`
+- `"v2Snapshot" in window` returned `false`
+- Kalendar renders `Sezonske radnje` only
+- Pregled/Kalendar render no visible Praćenje/Monitoring UI
+- Pregled/Kalendar render no weather or risk-awareness UI
+- no forbidden task/compliance/progress wording was observed in screenshots
+
+Runtime Slice 6 verification precision:
+- Cloudflare deployment verification was not performed
+- full import/export UI round-trip was not performed
+- direct protected legacy localStorage byte-dump comparison was not performed
+- protected legacy isolation was checked by source isolation and legacy no-hash smoke test only
+- Cloudflare production state is not claimed
+
+Known deferred / next-slice notes after Runtime Slice 6:
+- Runtime Slice 7 must handle richer user-facing agronomic detail in Detalj sezonske radnje. Owner-observed example: Kalendar card `Trešnja — Prorjeđivanje trešnje` currently shows only a short purpose such as `Namjena: uravnoteženje roda.` Practical guidance from `V2_ORCHARD_PLAN_TEMPLATES.md`, such as thinning context and what to check, belongs in Slice 7 detail, not in Slice 6 cards.
+- Monitoring/Praćenje remains product-critical and must later appear in Kalendar/Pregled, but visible Monitoring UI is not part of Slice 6.
+- Runtime Slice 8 must explicitly add Kalendar Praćenje, not only Pregled / Plant detail monitoring.
+- `V2_UX_MODEL.md` §16.7 outside-period disclosure remains not implemented in Slice 6 and remains deferred as Slice-6-adjacent polish or later owner-approved work.
+
 Pre-Slice-5 Activity provenance / Correction storage-shape doc patch status: DOCUMENTATION-ONLY LOCK CONSUMED BY SLICE 5. This patch locked the exact Runtime Slice 5 Activity provenance shape as `provenance: { source: "user" }`, locked Correction persisted fields as `correction_id`, `original_record_id`, `original_record_type`, `correction_types`, `corrected_values`, optional `explanation`, and `created_at`, recorded the stricter Slice 5 multi-plant group invariant, and recorded unknown variety + unknown ripening harvest fallback to the species `mid` fallback window where available. Runtime Slice 5 implementation consumed this lock in commit `8bc630a Implement Runtime Slice 5 activity capture`.
 
 Completed S11 patches:
@@ -192,7 +228,7 @@ Completed S11 patches:
 - `S11.C2 — Usable/default slices 5–9` (`a56fe75 Define S11 usable-default slice plan`)
 - `S11.D — Verification gates, milestones, stop conditions, runtime handoff` (`06feb13 Define S11 verification gates and runtime handoff`)
 
-Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 was then owner-approved and implemented (commit `254448f`). Runtime Slice 3 was then owner-approved and implemented (commit `8fd2571`). Runtime Slice 4 was then owner-approved and implemented (commit `f99e5f6`). Post-Slice-4 adversarial review found and closed the canonical `catalog_v1` import validation blocker before Slice 5 (commit `8a9c4ae`). Focused S3/S4 adversarial review after that fix passed, owner verification accepted the PASS, and the pre-Slice-5 Add Plant date-validation message polish was completed without starting Runtime Slice 5. The `window_def_id` source-of-truth reconciliation then landed (`7dd7141`), the Pre-Slice-5 Action Window Seed prerequisite runtime implementation landed (`df6a7fc`) without starting Runtime Slice 5, owner browser verification and focused adversarial review passed, and plan-template projection hardening landed (`bcaf3a2`). Runtime Slice 5 then landed after owner approval (`8bc630a Implement Runtime Slice 5 activity capture`). The plan-template projection hardening lesson remains active: approved plan templates and plant catalog drive runtime projection; Runtime Slice 6 and all subsequent implementation still require explicit per-slice owner approval.
+Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 was then owner-approved and implemented (commit `254448f`). Runtime Slice 3 was then owner-approved and implemented (commit `8fd2571`). Runtime Slice 4 was then owner-approved and implemented (commit `f99e5f6`). Post-Slice-4 adversarial review found and closed the canonical `catalog_v1` import validation blocker before Slice 5 (commit `8a9c4ae`). Focused S3/S4 adversarial review after that fix passed, owner verification accepted the PASS, and the pre-Slice-5 Add Plant date-validation message polish was completed without starting Runtime Slice 5. The `window_def_id` source-of-truth reconciliation then landed (`7dd7141`), the Pre-Slice-5 Action Window Seed prerequisite runtime implementation landed (`df6a7fc`) without starting Runtime Slice 5, owner browser verification and focused adversarial review passed, and plan-template projection hardening landed (`bcaf3a2`). Runtime Slice 5 then landed after owner approval (`8bc630a Implement Runtime Slice 5 activity capture`). Runtime Slice 6 then landed after owner approval (`99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`). The plan-template projection hardening lesson remains active: approved plan templates and plant catalog drive runtime projection; Runtime Slice 7 and all subsequent implementation still require explicit per-slice owner approval.
 
 §0 monitoring constraints remain locked and authoritative.
 
@@ -1301,7 +1337,7 @@ S11 exit criteria met:
 - owner approved S11.A, S11.B, S11.C1, S11.C2, S11.D
 - runtime implementation may now begin once explicitly opened by owner
 
-Next eligible planning work: Runtime Slice 6 — Active-window snapshot, Pregled, and Kalendar, only after owner approval. Runtime Slice 6 implementation has not started and requires explicit owner approval. Runtime Slice 5 is complete at `8bc630a Implement Runtime Slice 5 activity capture`; `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred as a Slice 6-adjacent polish gap. (Runtime Slice 0 — V2 shell and owner-only entry was completed at `642d0b1 Implement Runtime Slice 0 V2 shell`; Runtime Slice 1 — V2 store boot and empty `vocnjak_v2` initialization was completed at `178cfa8 Implement Runtime Slice 1 V2 store boot`; Runtime Slice 2 — Catalog seed and retained catalog baseline was completed at `254448f Implement Runtime Slice 2 catalog seed`; Runtime Slice 3 — Early V2 export/import safety baseline was completed at `8fd2571 Implement Runtime Slice 3 V2 export/import safety baseline`; Runtime Slice 4 — Plant foundation and Biljke first cut was completed at `f99e5f6 Implement Runtime Slice 4 V2 plant foundation`; Runtime Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction was completed at `8bc630a Implement Runtime Slice 5 activity capture`.)
+Next eligible planning work: Runtime Slice 7 — Plant detail integration, Detalj sezonske radnje, and advisory weather composition, only after owner approval and a fresh consistency check. Runtime Slice 7 implementation has not started and requires explicit owner approval. Runtime Slice 6 is complete at `99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`; `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred as a Slice-6-adjacent polish gap or later owner-approved work. (Runtime Slice 0 — V2 shell and owner-only entry was completed at `642d0b1 Implement Runtime Slice 0 V2 shell`; Runtime Slice 1 — V2 store boot and empty `vocnjak_v2` initialization was completed at `178cfa8 Implement Runtime Slice 1 V2 store boot`; Runtime Slice 2 — Catalog seed and retained catalog baseline was completed at `254448f Implement Runtime Slice 2 catalog seed`; Runtime Slice 3 — Early V2 export/import safety baseline was completed at `8fd2571 Implement Runtime Slice 3 V2 export/import safety baseline`; Runtime Slice 4 — Plant foundation and Biljke first cut was completed at `f99e5f6 Implement Runtime Slice 4 V2 plant foundation`; Runtime Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction was completed at `8bc630a Implement Runtime Slice 5 activity capture`; Runtime Slice 6 — Active-window snapshot, Pregled, and Kalendar was completed at `99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`.)
 
 ---
 
