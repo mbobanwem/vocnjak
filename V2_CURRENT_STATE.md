@@ -16,16 +16,16 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: Runtime implementation continues. Runtime Slice 0, Slice 1, Slice 2, Slice 3, Slice 4, Slice 5, and Slice 6 are complete. Focused S3/S4 adversarial review after the post-Slice-4 safety fix passed and owner verification accepted the PASS. Pre-Slice-5 Add Plant date-validation message polish is complete. Pre-Slice-5 Action Window Seed prerequisite is complete (`df6a7fc Implement Action Window Seed prerequisite`); owner browser verification passed and focused adversarial review passed. Plan-template projection hardening is complete (`bcaf3a2 Harden plan-template projection rules`). Runtime Slice 5 is complete (`8bc630a Implement Runtime Slice 5 activity capture`). Runtime Slice 6 is complete (`99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`).
+Phase: Runtime implementation continues. Runtime Slice 0, Slice 1, Slice 2, Slice 3, Slice 4, Slice 5, and Slice 6 are complete. Focused S3/S4 adversarial review after the post-Slice-4 safety fix passed and owner verification accepted the PASS. Pre-Slice-5 Add Plant date-validation message polish is complete. Pre-Slice-5 Action Window Seed prerequisite is complete (`df6a7fc Implement Action Window Seed prerequisite`); owner browser verification passed and focused adversarial review passed. Plan-template projection hardening is complete (`bcaf3a2 Harden plan-template projection rules`). Runtime Slice 5 is complete (`8bc630a Implement Runtime Slice 5 activity capture`). Runtime Slice 6 is complete (`99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`). Pre-Slice-7 Action Window Notes Projection prerequisite is complete (`ad9a113 Project action-window notes into canonical catalog` and `a1b5307 Clean B1 action-window notes boundary`).
 
 Current goal:
 
-Runtime Slice 6 tracker sync closure is recorded here. Runtime Slice 7 planning is the next eligible planning work, and only after owner approval and a fresh consistency check.
+Pre-Slice-7 Action Window Notes Projection prerequisite tracker sync closure is recorded here. Runtime Slice 7 planning is the next eligible planning work, and only after owner approval and a fresh consistency check.
 
 Current immediate next step:
 
 ```text
-Runtime Slice 7 planning may begin only after owner approval and a fresh source-of-truth consistency check. Runtime Slice 7 implementation has not started and requires explicit owner approval. `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred and requires explicit owner approval if done before Slice 7.
+Runtime Slice 7 planning may begin only after owner approval and a fresh source-of-truth consistency check. Runtime Slice 7 implementation has not started and requires explicit owner approval. Slice 7 may plan against canonical `action_window_definitions[].notes` from the B1/B1.1 prerequisite but must not implement Monitoring/Praćenje, awareness/risk, stage vocabulary, target registry, or symptom registry — those land in B2 before Slice 8. `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred and requires explicit owner approval if done before Slice 7.
 ```
 
 S11 status: DONE.
@@ -219,6 +219,55 @@ Known deferred / next-slice notes after Runtime Slice 6:
 - Runtime Slice 8 must explicitly add Kalendar Praćenje, not only Pregled / Plant detail monitoring.
 - `V2_UX_MODEL.md` §16.7 outside-period disclosure remains not implemented in Slice 6 and remains deferred as Slice-6-adjacent polish or later owner-approved work.
 
+Pre-Slice-7 Action Window Notes Projection prerequisite status: DONE (`ad9a113 Project action-window notes into canonical catalog` and `a1b5307 Clean B1 action-window notes boundary`). The prerequisite is canonical action-window notes projection only. It did not start Runtime Slice 7 and did not implement Monitoring/Praćenje, awareness/risk, stage vocabulary, target/symptom registry, or any new UI surface.
+
+B1 (`ad9a113`) added:
+- optional canonical `action_window_definitions[].notes`
+- canonical / runtime support for projected action-window notes
+- the Croatian shared `spray_safety_notes` constant on canonical `catalog_v1`
+- validator support for `notes` (optional non-empty string when present) and for `spray_safety_notes` (non-empty string array, length and content equal to canonical)
+- canonical drift detection on the new fields via `compareCanonicalCatalogNode`
+- a deterministic refresh path for old `vocnjak_v2` stores that lack B1 notes via `isB1RefreshableCatalogV1` / `normalizeStoreCatalogForCurrentCanonical`, gated on the stored catalog matching canonical minus the B1 projection
+
+B1.1 (`a1b5307`) cleaned the projected note text by removing:
+- monitoring decision prose ("razmatrati samo ako monitoring", "Monitoring/Praćenje pomaže odluci", "praćenje bakterijske paleži", "Pratiti vizualno -")
+- awareness / risk prose (specific pure-frost awareness, pucanje plodova awareness, disease-pressure-history awareness)
+- pathogen / symptom registry prose (`Venturia inaequalis`, `Venturia pirina`, `Taphrina deformans`, `Monilinia laxa`, `Pseudomonas savastanoi`, `šarka`, "vidljiva kovrčavost lista znači…")
+- frost-diagnostic prose (apricot post-frost crop explanation, "POST-MRAZNI ROD", "mraz je razlog")
+- history-coaching prose ("zabilježiti štetu od mraza u povijest", "povijest pomaže razlikovati godine s mrazom od godina s bolešću ili štetnicima", "zabilježiti problem za iduću sezonu")
+
+B1.1 preserved practical seasonal-action guidance: fenofaza / timing cues, safe-execution wording (suho, bez vjetra, ≥5 °C, ne tijekom cvatnje, izvan leta pčela, prema etiketi proizvoda), oil/copper 7–10-day spacing, "ne duplicirati" / "ne automatski" guidance, product-category / label wording, young-tree caveats, thinning / harvest / bird-net practical guidance, the spray-safety constant, and the four owner-approved direct frost-action lines (`trunk_whitewash` purpose, `oil.dormant` "Ne primjenjivati ako je najavljen mraz", olive young-tree agrotekstil ≤−7 °C, pomegranate winter-wrap, quince "Brati prije jačeg mraza" harvest deadline).
+
+B1/B1.1 implementation precision:
+- B1 and B1.1 changed `index.html` only; no other repo files were modified by either commit.
+- canonical `window_def_id`, `label`, `action_type`, `anchor`, and `tolerance` values are unchanged from before B1.
+- `actionWindow()`, `buildActionWindowDefinitions`, `validateActionWindowDefinition`, `validateSpraySafetyNotes`, `validateCatalogV1`, `compareCanonicalCatalogNode`, `catalogDeepEquals`, `catalogWithoutB1Projection`, `hasAnyActionWindowNotes`, `isB1RefreshableCatalogV1`, `normalizeStoreCatalogForCurrentCanonical`, V2 export/import handlers, and Activity / Correction validators are byte-identical to `ad9a113` after B1.1 (B1.1 only edited `STANDARD_ACTION_WINDOW_NOTES`, `SPECIES_ACTION_WINDOW_NOTES`, and `HARVEST_ACTION_WINDOW_NOTES` content).
+- no `window.v2Snapshot` global was introduced.
+- no new globals (`window.<name> = ...`) were introduced.
+- no new `innerHTML`, `outerHTML`, `document.write`, `eval`, or `new Function(` calls were introduced.
+- Slice 6 surfaces are unchanged: `renderPregled`, `renderKalendar`, and the seasonal-action placeholder (`Detalj sezonske radnje stiže u Slice 7.`) are not in either commit.
+- Activity and Correction schemas / validators are unchanged.
+
+B1/B1.1 verification precision:
+- source-inspection / static grep verification was performed against `index.html` after B1.1: no `monitoring|Monitoring|Praćenje|praćenje|klop|trap|scouting`, `Taphrina|Venturia|Monilinia|Erwinia|Pseudomonas|šarka`, or `Cuprablau|Score|Mospilan|Lac Balsam|Bordo|Switch` matches inside the three note-map constants; the four owner-approved frost-action lines remain
+- full browser runtime verification of B1.1 was not performed for the B1.1 commit
+- Cloudflare deployment verification was not performed
+- full import/export UI round-trip was not performed
+- direct protected legacy localStorage byte-dump comparison was not performed; protected legacy isolation was checked by source isolation only
+
+Deferred to B2 before Slice 8 (NOT implemented by B1/B1.1):
+- `monitoring_programs[]`
+- `awareness_definitions[]`
+- `stage_vocabulary{}`
+- `target_registry[]`
+- `symptom_registry[]`
+- Kalendar `Praćenje`
+- Pregled `Praćenje`
+- Plant detail monitoring UI
+- observation capture / observation rows
+
+Slice 7 implementation has not started. Slice 7 may now plan against canonical `action_window_definitions[].notes` exposed by B1/B1.1, but must still not rely on monitoring or awareness content until B2 lands.
+
 Pre-Slice-5 Activity provenance / Correction storage-shape doc patch status: DOCUMENTATION-ONLY LOCK CONSUMED BY SLICE 5. This patch locked the exact Runtime Slice 5 Activity provenance shape as `provenance: { source: "user" }`, locked Correction persisted fields as `correction_id`, `original_record_id`, `original_record_type`, `correction_types`, `corrected_values`, optional `explanation`, and `created_at`, recorded the stricter Slice 5 multi-plant group invariant, and recorded unknown variety + unknown ripening harvest fallback to the species `mid` fallback window where available. Runtime Slice 5 implementation consumed this lock in commit `8bc630a Implement Runtime Slice 5 activity capture`.
 
 Completed S11 patches:
@@ -228,7 +277,7 @@ Completed S11 patches:
 - `S11.C2 — Usable/default slices 5–9` (`a56fe75 Define S11 usable-default slice plan`)
 - `S11.D — Verification gates, milestones, stop conditions, runtime handoff` (`06feb13 Define S11 verification gates and runtime handoff`)
 
-Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 was then owner-approved and implemented (commit `254448f`). Runtime Slice 3 was then owner-approved and implemented (commit `8fd2571`). Runtime Slice 4 was then owner-approved and implemented (commit `f99e5f6`). Post-Slice-4 adversarial review found and closed the canonical `catalog_v1` import validation blocker before Slice 5 (commit `8a9c4ae`). Focused S3/S4 adversarial review after that fix passed, owner verification accepted the PASS, and the pre-Slice-5 Add Plant date-validation message polish was completed without starting Runtime Slice 5. The `window_def_id` source-of-truth reconciliation then landed (`7dd7141`), the Pre-Slice-5 Action Window Seed prerequisite runtime implementation landed (`df6a7fc`) without starting Runtime Slice 5, owner browser verification and focused adversarial review passed, and plan-template projection hardening landed (`bcaf3a2`). Runtime Slice 5 then landed after owner approval (`8bc630a Implement Runtime Slice 5 activity capture`). Runtime Slice 6 then landed after owner approval (`99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`). The plan-template projection hardening lesson remains active: approved plan templates and plant catalog drive runtime projection; Runtime Slice 7 and all subsequent implementation still require explicit per-slice owner approval.
+Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 was then owner-approved and implemented (commit `254448f`). Runtime Slice 3 was then owner-approved and implemented (commit `8fd2571`). Runtime Slice 4 was then owner-approved and implemented (commit `f99e5f6`). Post-Slice-4 adversarial review found and closed the canonical `catalog_v1` import validation blocker before Slice 5 (commit `8a9c4ae`). Focused S3/S4 adversarial review after that fix passed, owner verification accepted the PASS, and the pre-Slice-5 Add Plant date-validation message polish was completed without starting Runtime Slice 5. The `window_def_id` source-of-truth reconciliation then landed (`7dd7141`), the Pre-Slice-5 Action Window Seed prerequisite runtime implementation landed (`df6a7fc`) without starting Runtime Slice 5, owner browser verification and focused adversarial review passed, and plan-template projection hardening landed (`bcaf3a2`). Runtime Slice 5 then landed after owner approval (`8bc630a Implement Runtime Slice 5 activity capture`). Runtime Slice 6 then landed after owner approval (`99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`). The Pre-Slice-7 Action Window Notes Projection prerequisite then landed in two commits after owner approval (`ad9a113 Project action-window notes into canonical catalog` for B1, `a1b5307 Clean B1 action-window notes boundary` for B1.1). The plan-template projection hardening lesson remains active: approved plan templates and plant catalog drive runtime projection; Runtime Slice 7 and all subsequent implementation still require explicit per-slice owner approval.
 
 §0 monitoring constraints remain locked and authoritative.
 
@@ -1337,7 +1386,7 @@ S11 exit criteria met:
 - owner approved S11.A, S11.B, S11.C1, S11.C2, S11.D
 - runtime implementation may now begin once explicitly opened by owner
 
-Next eligible planning work: Runtime Slice 7 — Plant detail integration, Detalj sezonske radnje, and advisory weather composition, only after owner approval and a fresh consistency check. Runtime Slice 7 implementation has not started and requires explicit owner approval. Runtime Slice 6 is complete at `99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`; `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred as a Slice-6-adjacent polish gap or later owner-approved work. (Runtime Slice 0 — V2 shell and owner-only entry was completed at `642d0b1 Implement Runtime Slice 0 V2 shell`; Runtime Slice 1 — V2 store boot and empty `vocnjak_v2` initialization was completed at `178cfa8 Implement Runtime Slice 1 V2 store boot`; Runtime Slice 2 — Catalog seed and retained catalog baseline was completed at `254448f Implement Runtime Slice 2 catalog seed`; Runtime Slice 3 — Early V2 export/import safety baseline was completed at `8fd2571 Implement Runtime Slice 3 V2 export/import safety baseline`; Runtime Slice 4 — Plant foundation and Biljke first cut was completed at `f99e5f6 Implement Runtime Slice 4 V2 plant foundation`; Runtime Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction was completed at `8bc630a Implement Runtime Slice 5 activity capture`; Runtime Slice 6 — Active-window snapshot, Pregled, and Kalendar was completed at `99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`.)
+Next eligible planning work: Runtime Slice 7 — Plant detail integration, Detalj sezonske radnje, and advisory weather composition, only after owner approval and a fresh consistency check. Runtime Slice 7 implementation has not started and requires explicit owner approval. Runtime Slice 6 is complete at `99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`. The Pre-Slice-7 Action Window Notes Projection prerequisite is complete at `ad9a113 Project action-window notes into canonical catalog` (B1) and `a1b5307 Clean B1 action-window notes boundary` (B1.1). `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred as a Slice-6-adjacent polish gap or later owner-approved work. (Runtime Slice 0 — V2 shell and owner-only entry was completed at `642d0b1 Implement Runtime Slice 0 V2 shell`; Runtime Slice 1 — V2 store boot and empty `vocnjak_v2` initialization was completed at `178cfa8 Implement Runtime Slice 1 V2 store boot`; Runtime Slice 2 — Catalog seed and retained catalog baseline was completed at `254448f Implement Runtime Slice 2 catalog seed`; Runtime Slice 3 — Early V2 export/import safety baseline was completed at `8fd2571 Implement Runtime Slice 3 V2 export/import safety baseline`; Runtime Slice 4 — Plant foundation and Biljke first cut was completed at `f99e5f6 Implement Runtime Slice 4 V2 plant foundation`; Runtime Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction was completed at `8bc630a Implement Runtime Slice 5 activity capture`; Runtime Slice 6 — Active-window snapshot, Pregled, and Kalendar was completed at `99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`; Pre-Slice-7 Action Window Notes Projection prerequisite was completed at `ad9a113 Project action-window notes into canonical catalog` (B1) and `a1b5307 Clean B1 action-window notes boundary` (B1.1).)
 
 ---
 

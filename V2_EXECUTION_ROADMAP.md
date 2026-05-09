@@ -777,11 +777,12 @@ S11.C2 does not redefine any of these. S11.C2 only orders runtime slices against
 
 ## 32. Usable/default slice overview
 
-S11.C2 has five usable / default slices, after the completed Pre-Slice-5 Action Window Seed prerequisite:
+S11.C2 has five usable / default slices, after the completed Pre-Slice-5 Action Window Seed prerequisite and the completed Pre-Slice-7 Action Window Notes Projection prerequisite:
 
 - Prerequisite — Pre-Slice-5 Action Window Seed
 - Slice 5 — Activity capture, Activity-only Dnevnik, and Activity correction
 - Slice 6 — Active-window snapshot, Pregled, and Kalendar
+- Prerequisite — Pre-Slice-7 Action Window Notes Projection (B1 + B1.1)
 - Slice 7 — Plant detail integration, Detalj sezonske radnje, and advisory weather composition
 - Slice 8 — Observation capture, stage confirmation, and monitoring / awareness baseline
 - Slice 9 — Observation correction and archive / lifecycle baseline
@@ -878,6 +879,111 @@ Stop conditions:
 - The prerequisite tries to introduce full Slice 6 snapshot / Pregled / Kalendar behavior.
 - The prerequisite introduces `catalog_v2` only to preserve incomplete pre-usable V2 dev history.
 - Any protected legacy key would be read as V2 state, rewritten, deleted, normalized, or migrated.
+
+---
+
+### 32.2 Pre-Slice-7 Action Window Notes Projection prerequisite
+
+Purpose:
+
+Project canonical action-window notes into V2 `catalog_v1` so Runtime Slice 7 Detalj sezonske radnje can render practical seasonal-action guidance from the catalog without owning content authoring. The prerequisite is canonical action-window notes projection only. It does not start Runtime Slice 7 and does not implement Monitoring/Praćenje, awareness/risk, stage vocabulary, target/symptom registry, or any new UI surface.
+
+Status:
+
+- The Pre-Slice-7 Action Window Notes Projection prerequisite has been implemented in two commits.
+- B1 landed as `ad9a113 Project action-window notes into canonical catalog`.
+- B1.1 landed as `a1b5307 Clean B1 action-window notes boundary`.
+- Both commits changed `index.html` only.
+- Runtime Slice 7 implementation has not started and requires explicit owner approval.
+
+B1 added:
+
+- optional canonical `action_window_definitions[].notes` field (string when present, absent otherwise).
+- canonical / runtime support for projected action-window notes via `STANDARD_ACTION_WINDOW_NOTES`, `SPECIES_ACTION_WINDOW_NOTES`, `notesForSpeciesWindow`, and `harvestNotesForSpecies`.
+- the Croatian shared `spray_safety_notes` constant (`ACTION_WINDOW_SPRAY_SAFETY_NOTES_HR`) attached to canonical `catalog_v1` for future Slice 7 Detalj composition.
+- validator support for `notes` (optional non-empty string when present) and for `spray_safety_notes` (non-empty string array, length and content equal to canonical) at both the simple and the detailed `validateForBackup` layers.
+- canonical drift detection on the new fields via `compareCanonicalCatalogNode` so any divergent note string fails closed.
+- a deterministic refresh path for old `vocnjak_v2` stores that lack B1 notes via `isB1RefreshableCatalogV1` / `normalizeStoreCatalogForCurrentCanonical`, gated on the stored catalog matching canonical minus the B1 projection (`spray_safety_notes` and per-window `notes` are stripped before comparison) and on the stored catalog having no `spray_safety_notes` and no per-window `notes` of its own.
+
+B1.1 cleaned the projected note text by removing:
+
+- monitoring decision prose ("razmatrati samo ako monitoring", "Monitoring/Praćenje pomaže odluci", "praćenje bakterijske paleži", "Pratiti vizualno -").
+- awareness / risk prose (specific pure-frost awareness, pucanje plodova awareness, disease-pressure-history awareness).
+- pathogen / symptom registry prose (`Venturia inaequalis`, `Venturia pirina`, `Taphrina deformans`, `Monilinia laxa`, `Pseudomonas savastanoi`, `šarka`, "vidljiva kovrčavost lista znači…").
+- frost-diagnostic prose (apricot post-frost crop explanation, "POST-MRAZNI ROD", "mraz je razlog").
+- history-coaching prose ("zabilježiti štetu od mraza u povijest", "povijest pomaže razlikovati godine s mrazom od godina s bolešću ili štetnicima", "zabilježiti problem za iduću sezonu").
+
+B1.1 preserved practical seasonal-action guidance:
+
+- fenofaza / timing cues, safe-execution wording (suho, bez vjetra, ≥5 °C, ne tijekom cvatnje, izvan leta pčela, prema etiketi proizvoda).
+- oil/copper 7–10-day spacing, "ne duplicirati" / "ne automatski" guidance.
+- product-category / label wording, young-tree caveats.
+- thinning / harvest / bird-net practical guidance.
+- the spray-safety constant.
+- the four owner-approved direct frost-action lines: `trunk_whitewash` purpose, `oil.dormant` "Ne primjenjivati ako je najavljen mraz", olive young-tree agrotekstil ≤−7 °C, pomegranate winter-wrap, and quince "Brati prije jačeg mraza" harvest deadline.
+
+Allowed touch points (used by B1/B1.1 only):
+
+- `index.html` only, inside the V2 region.
+- B1: `actionWindow()` signature and body, `addStandardFruitWindow` / `addSpeciesWindow` / `addHarvestWindow` callers, `STANDARD_ACTION_WINDOW_NOTES` / `SPECIES_ACTION_WINDOW_NOTES` / `HARVEST_ACTION_WINDOW_NOTES` definitions, `notesForSpeciesWindow` / `harvestNotesForSpecies` helpers, `ACTION_WINDOW_SPRAY_SAFETY_NOTES_HR` constant, canonical `CATALOG_V1` shape addition (`spray_safety_notes`), validators (`hasValidActionWindowDefinitions`, `hasValidSpraySafetyNotes`, `hasValidCatalog`, detailed `validateActionWindowDefinition`, `validateSpraySafetyNotes`, `validateCatalogV1`), refresh helpers (`catalogDeepEquals`, `catalogWithoutB1Projection`, `hasAnyActionWindowNotes`, `isB1RefreshableCatalogV1`, `normalizeStoreCatalogForCurrentCanonical`), Slice-2 boot refresh path, V2 export and import paths.
+- B1.1: only the content of `STANDARD_ACTION_WINDOW_NOTES`, `SPECIES_ACTION_WINDOW_NOTES`, and `HARVEST_ACTION_WINDOW_NOTES` was edited.
+
+Must not touch:
+
+- Activity capture, Activity-only Dnevnik, or Activity correction implementation (Slice 5).
+- Snapshot, Pregled, or Kalendar (Slice 6).
+- Plant detail live integration, Detalj sezonske radnje, or weather composition (Slice 7 — not started).
+- Observation, stage confirmation, monitoring programs, awareness definitions, stage vocabulary, target registry, symptom registry (B2 / Slice 8).
+- Observation correction, archive (Slice 9).
+- Plan upgrade review or Za pregledati cues (post-usable).
+- Legacy app logic or protected legacy keys.
+- V2 catalog/template input docs.
+- `manifest.json`, `sw.js`, weather / Supabase / iCal / encryption code.
+
+Implementation precision:
+
+- B1/B1.1 changed `index.html` only. No other repo files were modified by either commit.
+- canonical `window_def_id`, `label`, `action_type`, `anchor`, and `tolerance` values are unchanged from before B1.
+- after B1.1, validators / canonical refresh / `spray_safety_notes` structure / `actionWindow()` / `buildActionWindowDefinitions` / `CATALOG_V1` structure / V2 export / import handlers / Activity / Correction validators are byte-identical to `ad9a113`. B1.1 only edited the three note-map constants.
+- no `window.v2Snapshot` global was introduced.
+- no new globals (`window.<name> = ...`) were introduced by either commit.
+- no new `innerHTML`, `outerHTML`, `document.write`, `eval`, or `new Function(` calls were introduced.
+- Slice 6 surfaces are unchanged: `renderPregled`, `renderKalendar`, and the seasonal-action placeholder (`Detalj sezonske radnje stiže u Slice 7.`) are not in either B1 or B1.1.
+- Activity and Correction schemas / validators are unchanged.
+
+Verification precision:
+
+- source-inspection / static grep verification was performed against `index.html` after B1.1: no `monitoring|Monitoring|Praćenje|praćenje|klop|trap|scouting`, `Taphrina|Venturia|Monilinia|Erwinia|Pseudomonas|šarka`, or `Cuprablau|Score|Mospilan|Lac Balsam|Bordo|Switch` matches inside the three note-map constants. The four owner-approved frost-action lines remain.
+- full browser runtime verification of B1.1 was not performed for the B1.1 commit.
+- Cloudflare deployment verification was not performed.
+- full import/export UI round-trip was not performed.
+- direct protected legacy localStorage byte-dump comparison was not performed; protected legacy isolation was checked by source isolation only.
+
+Deferred to B2 before Slice 8 (NOT implemented by B1/B1.1):
+
+- `monitoring_programs[]`
+- `awareness_definitions[]`
+- `stage_vocabulary{}`
+- `target_registry[]`
+- `symptom_registry[]`
+- Kalendar `Praćenje` content
+- Pregled `Praćenje` content
+- Plant detail monitoring UI
+- observation capture / observation rows
+
+Slice 7 boundary:
+
+- Slice 7 may now plan against canonical `action_window_definitions[].notes` projected by B1/B1.1.
+- Slice 7 must not rely on monitoring or awareness content until B2 lands.
+- Slice 7 is not started and must not begin before owner approval and a fresh source-of-truth consistency check.
+
+Stop conditions:
+
+- A proposed B-prerequisite change would touch validators / canonical refresh / `spray_safety_notes` structure / `actionWindow()` / `buildActionWindowDefinitions` / `CATALOG_V1` structure / V2 export / import handlers / Activity / Correction code / Pregled / Kalendar renderers / seasonal-action placeholder.
+- A proposed B-prerequisite change would add or imply Monitoring / Praćenje, awareness / risk, stage vocabulary, target registry, symptom registry, or any new UI surface.
+- A proposed B-prerequisite change would introduce `window.v2Snapshot`, any new global, or any new `innerHTML` / `eval` / `Function(` / `document.write` call.
+- A proposed B-prerequisite change would change canonical `window_def_id`, `label`, `action_type`, `anchor`, or `tolerance` values.
+- A proposed B-prerequisite change would touch `V2_ORCHARD_PLAN_TEMPLATES.md`, `V2_PLANT_CATALOG.md`, `manifest.json`, `sw.js`, or any legacy / weather / Supabase / iCal / encryption code path.
 
 ---
 
@@ -1053,7 +1159,7 @@ Purpose:
 
 Make V2 deeply visible per plant and per action. Populate Plant detail's live sections from snapshot. Ship Detalj sezonske radnje for per-window deep view. Optionally add advisory weather composition as inline notes if and only if weather data is available through a clearly read-only boundary.
 
-Current tracker note: Runtime Slice 7 is the next planning candidate after Runtime Slice 6 completion, but it has not started. Do not advance to Slice 7 implementation before owner approval and a fresh source-of-truth consistency check. Slice 7 should address Detalj sezonske radnje / richer agronomic action details.
+Current tracker note: Runtime Slice 7 is the next planning candidate after Runtime Slice 6 completion, but it has not started. Do not advance to Slice 7 implementation before owner approval and a fresh source-of-truth consistency check. Slice 7 should address Detalj sezonske radnje / richer agronomic action details. The Pre-Slice-7 Action Window Notes Projection prerequisite (B1 + B1.1) has landed at `ad9a113 Project action-window notes into canonical catalog` and `a1b5307 Clean B1 action-window notes boundary`; Slice 7 may consume canonical `action_window_definitions[].notes` from that prerequisite, but must not rely on monitoring or awareness content until B2 lands before Slice 8.
 
 Allowed touch points:
 
@@ -1410,6 +1516,26 @@ Slice 6 — Snapshot, Pregled, Kalendar:
 - `activity_group_id` is not used as derivation authority
 - `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred as Slice-6-adjacent polish or later owner-approved work
 
+Pre-Slice-7 Action Window Notes Projection prerequisite (B1 + B1.1):
+
+- B1 completed at `ad9a113 Project action-window notes into canonical catalog`
+- B1.1 completed at `a1b5307 Clean B1 action-window notes boundary`
+- both commits changed `index.html` only
+- canonical `action_window_definitions[].notes` is optional and validated as non-empty string when present
+- canonical `spray_safety_notes` constant array is attached to `catalog_v1` and validated to equal canonical
+- canonical drift on the new fields fails closed via `compareCanonicalCatalogNode`
+- pre-B1 stores are deterministically refreshable via `isB1RefreshableCatalogV1` / `normalizeStoreCatalogForCurrentCanonical` only when the stored catalog matches canonical minus the B1 projection and contains no own `notes` or `spray_safety_notes`
+- canonical `window_def_id`, `label`, `action_type`, `anchor`, and `tolerance` values are unchanged from before B1
+- B1.1 only edited the content of `STANDARD_ACTION_WINDOW_NOTES`, `SPECIES_ACTION_WINDOW_NOTES`, and `HARVEST_ACTION_WINDOW_NOTES`; validators / canonical refresh / `spray_safety_notes` structure / `actionWindow()` / `buildActionWindowDefinitions` / `CATALOG_V1` structure / V2 export / import handlers / Activity / Correction validators are byte-identical between B1 and B1.1
+- B1.1 removed monitoring decision prose, awareness/risk prose, pathogen / symptom registry prose, frost-diagnostic prose, and history-coaching prose from the projected note text
+- B1.1 preserved practical seasonal-action guidance: fenofaza / timing cues, safe-execution wording, oil/copper spacing, "ne duplicirati" / "ne automatski" guidance, product-category / label wording, young-tree caveats, thinning / harvest / bird-net practical guidance, the spray-safety constant, and the four owner-approved direct frost-action lines (`trunk_whitewash` purpose, `oil.dormant` "Ne primjenjivati ako je najavljen mraz", olive young-tree agrotekstil ≤−7 °C, pomegranate winter-wrap, quince "Brati prije jačeg mraza" harvest deadline)
+- no `window.v2Snapshot` or new global was introduced
+- no new `innerHTML`, `outerHTML`, `document.write`, `eval`, or `new Function(` calls were introduced
+- Slice 6 surfaces (Pregled / Kalendar / seasonal-action placeholder) are unchanged
+- Activity and Correction schemas / validators are unchanged
+- B2 (`monitoring_programs[]`, `awareness_definitions[]`, `stage_vocabulary{}`, `target_registry[]`, `symptom_registry[]`, Kalendar Praćenje, Pregled Praćenje, Plant detail monitoring, observation capture / observation rows) remains required before Slice 8 and was NOT implemented by B1 or B1.1
+- full browser runtime verification, Cloudflare deployment verification, full import/export UI round-trip, and direct protected legacy localStorage byte-dump comparison were not performed for the B1 or B1.1 commits
+
 Slice 7 — Plant detail, Detalj, optional weather:
 
 - Plant detail and Detalj sezonske radnje render correctly from snapshot
@@ -1597,4 +1723,4 @@ Runtime Slice 0 rules (re-stated for the handoff):
 
 Runtime implementation still requires explicit owner approval after S11 is closed. Even with this roadmap complete, no runtime work begins until the owner explicitly opens runtime Slice 0.
 
-Post-Slice-6 tracker note: Runtime Slices 0–6 are complete. The next eligible planning work is Runtime Slice 7, only after owner approval and a fresh source-of-truth consistency check.
+Post-Slice-6 tracker note: Runtime Slices 0–6 are complete. The Pre-Slice-7 Action Window Notes Projection prerequisite (B1 + B1.1) is also complete at `ad9a113 Project action-window notes into canonical catalog` and `a1b5307 Clean B1 action-window notes boundary`. The next eligible planning work is Runtime Slice 7, only after owner approval and a fresh source-of-truth consistency check. Slice 7 may consume canonical `action_window_definitions[].notes` from B1/B1.1 but must not rely on monitoring or awareness content until B2 lands before Slice 8.
