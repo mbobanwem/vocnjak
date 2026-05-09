@@ -3823,6 +3823,533 @@ if ('serviceWorker' in navigator) {
     mid: 'srednja sorta',
     late: 'kasna sorta'
   };
+
+  function note(lines) {
+    return lines.join('\n');
+  }
+
+  var ACTION_WINDOW_SPRAY_SAFETY_NOTES_HR = [
+    'Bakar i bijelo/mineralno ulje ne primjenjivati isti dan.',
+    'Ostaviti najmanje 7-10 dana razmaka između bakra i bijelog/mineralnog ulja.',
+    'Prskati samo po suhom i mirnom vremenu, bez vjetra, pri temperaturi iznad 5 °C.',
+    'Insekticide ne primjenjivati tijekom cvatnje ni tijekom aktivnog leta pčela.',
+    'Miješanje fungicida i insekticida nije univerzalno sigurno; postupati prema etiketi proizvoda i lokalnim uputama.',
+    'Bakar kod marelice mora biti prije cvatnje.',
+    'Bakar za kovrčavost lista breskve/nektarine mora biti dok su pupovi zatvoreni.'
+  ];
+
+  var STANDARD_ACTION_WINDOW_NOTES = {
+    trunk_whitewash: note([
+      'Zimsko krečenje debla radi zaštite kore od pucanja zbog izmjene mraza i sunca.',
+      'Posebno važno za koštičave vrste i stabla s tankom korom.',
+      'Vapnena boja ili komercijalni bijeli premaz za voćke.',
+      'Primijeniti po suhom vremenu, temperatura iznad 0 °C.',
+      'Preporučeno posebno za mlada ili izložena stabla; primjenu prilagoditi stanju stabla i lokalnim uvjetima.'
+    ]),
+    'oil.dormant': note([
+      'Dormant oil tretman protiv prezimljujućih jaja i oblika štetnika: grinje, lisne uši, štitaste uši.',
+      'Primijeniti u kasnoj dormanciji, što bliže bubrenju pupa, ali prije cvatnje i samo prema etiketi proizvoda.',
+      'Prskati po suhom, bez vjetra, iznad 5 °C. Dobro natopiti grane i koru.',
+      'Ne primjenjivati ako je najavljen mraz, ako je stablo pod stresom ili ako etiketa ne dopušta primjenu u toj fenofazi.',
+      'VAŽNO: minimalni razmak od bakra je 7-10 dana - ne miješati, ne primjenjivati previše blizu.',
+      'Za mlada stabla: primijeniti samo ako postoji stvaran razlog ili stručni/lokalni savjet.'
+    ]),
+    'copper.winter_protection': note([
+      'Registrirani bakreni pripravak prema etiketi proizvoda: zaštita od raka kore, pjegavosti, monilije i srodnih bolesti.',
+      'Primijeniti uz razmak od bijelog ulja najmanje 7-10 dana.',
+      'Prskati po suhom vremenu.',
+      'Za mlada stabla: primijeniti samo ako je prikladno prema stanju stabla, fenofazi i etiketi proizvoda.'
+    ]),
+    'pruning.winter': note([
+      'Ukloniti suhe, bolesne, križajuće i preguste grane.',
+      'Cilj: prozračna krošnja, kontrolirana visina stabla.',
+      'Rezati po suhom vremenu. Alat dezinficirati između stabala.',
+      'Veće rane zaštititi sredstvom za zaštitu rana, ako je prikladno, prema preporuci stručnjaka ili etiketi proizvoda (za rezove iznad 2 cm).',
+      'Za mlada stabla god. 1-2: fokus na formiranje uzgojnog oblika - vaza (koštičave) ili vreteno/spindle (jabuka, kruška). Ne rezati rodno drvo.'
+    ]),
+    'copper.pruning_wounds': note([
+      'Ako je rezidba obavljena u kasnoj dormanciji i registrirani bakreni tretman je prikladan prema etiketi proizvoda, vremenu i lokalnom savjetu, bakar može pokriti svježe rezne rane prije otvaranja pupova.',
+      'Ne tretirati automatski nakon svake rezidbe: procijeniti veličinu rana, povijest bolesti i najavu kiše.',
+      'Registrirani bakreni pripravak koristiti samo prema etiketi proizvoda.',
+      'Ne prskati tijekom cvatnje; poštovati razmak i kompatibilnost s drugim pripravcima prema etiketi.'
+    ]),
+    'fertilization.early_spring': note([
+      'Rana proljetna gnojidba podržava početak vegetacije, umjeren rast mladih stabala i formiranje uroda.',
+      'Primijeniti prema stanju stabla, bujnosti, starosti, analizi tla ako postoji i uputama gnojiva.',
+      'Ne gnojiti automatski ako je stablo već vrlo bujno, ako je tlo dobro opskrbljeno ili ako stručni savjet/analiza tla kaže drukčije.',
+      'Ne pretjerivati s dušikom, posebno kod bujnih stabala ili kasno u sezoni.',
+      'Za mlada stabla: cilj je umjeren rast i razvoj krošnje, ne forsiranje roda.'
+    ]),
+    'pruning.summer': note([
+      'Uklanjanje vodopija i pregustih ljetnih izbojaka.',
+      'Cilj: bolja osvijetljenost krošnje, kontrola bujnosti.',
+      'Rezati kada novi izdanci dosegnu 10-20 cm.',
+      'Ne rezati po ekstremnim vrućinama iznad 30 °C.'
+    ]),
+    irrigation_shutdown: note([
+      'Smanjiti ili završiti navodnjavanje kada vremenski uvjeti i stanje tla to dopuštaju; kod mladih stabala i suše ne prekidati prerano.',
+      'Tumačiti kao orchard management podsjetnik, ne kao obaveznu radnju u svakom scenariju.'
+    ]),
+    winter_inspection: note([
+      'Jesenski pregled stabala pred zimu: stanje debla i rana, vezice (ne smiju rezati koru), zaštita od glodavaca, potpore mladih stabala, mumificirani plodovi na stablu i tlu.',
+      'Ukloniti sve izvore zaraze.',
+      'Posebno važno za mlada stabla i stabla koja su imala stres u sezoni.'
+    ])
+  };
+
+  var SPECIES_ACTION_WINDOW_NOTES = {
+    'apple.fungicide.post_bloom_scab_mildew': note([
+      'Zaštita protiv krastavosti jabuke (Venturia inaequalis) i pepelnice važna je od opadanja latica kroz rani razvoj mladih listova i plodova, osobito nakon kiše i u voćnjacima s poviješću bolesti.',
+      'Koristiti samo registrirani fungicid za jabuku i ciljanu bolest prema etiketi proizvoda.',
+      'Ako je proljeće suho, sorta/nasad nema povijest bolesti i plod nije prioritet, tretman se može smanjiti ili preskočiti.',
+      'Ako su proljeće i krošnja vlažni, ako je bolest bila jaka prethodnih godina ili se vide prve pjege, pratiti kraći interval s etikete i lokalni/stručni savjet.',
+      'Insekticid razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.',
+      'Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela. Poštovati etiketu proizvoda, karencu i lokalne propise.',
+      'Za mlada stabla god. 1-2 bez ploda: zaštita ploda nije prioritet; reagirati samo ako bolest ugrožava zdravlje stabla.'
+    ]),
+    'apple.thinning.fruitlets': note([
+      'Prorjeđivati nakon prirodnog otpadanja plodića, kada su plodići približno veličine klikera.',
+      'Prvo ukloniti oštećene, deformirane, sitne i zbijene plodove.',
+      'Kao osnovno pravilo ostaviti najbolji 1-2 ploda po cvjetnom grozdu ili približno 10-15 cm razmaka između plodova na grani.',
+      'Ako je urod već slab, prorjeđivati minimalno. Ako je mlado ili slabo stablo preopterećeno, ostaviti vrlo malo plodova ili ih ukloniti radi razvoja krošnje.',
+      'Prorjeđivanje poboljšava veličinu i kvalitetu plodova te smanjuje rizik alternativne rodnosti.'
+    ]),
+    'apple.bird_net.pre_harvest': note([
+      'Mreža nije standardna mjera za svaku jabuku; koristiti je kada postoje peckani plodovi, oboren plod ili ponavljani lokalni pritisak ptica.',
+      'Rane sorte i plodovi koji rano dobivaju boju mogu biti izloženiji napadu.',
+      'Postaviti mrežu prije većeg oštećenja, dok plodovi dozrijevaju, i učvrstiti je tako da ptice ne mogu dohvatiti rubne plodove kroz mrežu.',
+      'Ako nema vidljivog pritiska ptica, mrežu preskočiti.',
+      'Za mlada stabla god. 1-2 bez uroda: nije potrebno.'
+    ]),
+    'pear.copper.fire_blight_pre_bloom': note([
+      'Kruška ima specifičan rizik od bakterijske paleži oko cvatnje, zato ova stavka nadopunjuje zajednički blok zimskog bakra i bakra nakon rezidbe.',
+      'Zajednički zimski bakar je opća kasnozimska preventiva i primjenjuje se samo ako fenofaza, vrijeme, razmak od bijelog ulja i etiketa proizvoda to dopuštaju.',
+      'Bakar na rane nakon rezidbe ima smisla samo ako je rezidba stvarno obavljena i ako svježe rane, povijest bolesti ili kišno vrijeme čine zaštitu opravdanom; nije automatski nakon svakog reza.',
+      'Ova kruškina stavka je preventivni podsjetnik za razdoblje oko cvatnje i rizik bakterijske paleži; nije automatski treći bakreni tretman.',
+      'Razmotriti je posebno kada je kruška oko bubrenja pupova ili ruba cvatnje, osobito uz vlažne uvjete, lokalni rizik ili povijest bakterijske paleži, ali samo ako etiketa, vrijeme, fenofaza i razmaci to dopuštaju.',
+      'Ako je kruška već nedavno tretirana bakrom dok su pupovi bubrili, otvarali se ili je cvatnja počinjala, primjerice kroz zimski bakar ili bakar nakon rezidbe, ne ponavljati bakar samo zato što postoji ova stavka.',
+      'Bakar je preventivan i ne liječi vidljive simptome bakterijske paleži.',
+      'NE prskati direktno na otvorene cvjetove - oštećuje cvjetove i pčele.',
+      'Poštovati razmak od bijelog ulja: min. 7-10 dana.',
+      'Prskati samo kada fenofaza, vrijeme i etiketa proizvoda to dopuštaju.',
+      'Koristiti samo registrirani bakreni pripravak prema etiketi proizvoda.',
+      'Vidljive simptome ne pokušavati liječiti ovim prskanjem; za sumnjive simptome koristiti monitoring i lokalni/stručni savjet.'
+    ]),
+    'pear.fungicide.post_bloom_scab': note([
+      'Zaštita od krastavosti kruške (Venturia pirina) i monilije.',
+      'Primijeniti nakon cvatnje.',
+      'Koristiti registrirani fungicid za krastavost kruške i moniliju prema etiketi proizvoda.',
+      'Insekticid razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.',
+      'Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.',
+      'Poštovati etiketu proizvoda, karencu i lokalne propise.',
+      'Za mlada stabla god. 1-2: manje kritično, ali korisno u vlažnim sezonama.'
+    ]),
+    'pear.thinning.fruitlets': note([
+      'Kruška ne zahtijeva agresivno prorjeđivanje kao jabuka.',
+      'Ostaviti 1-2 ploda po grozdu, razmak oko 10 cm.',
+      'Ukloniti oštećene i deformirane plodove.',
+      'Za mlada stabla god. 1-2: nije potrebno.'
+    ]),
+    'pear.bird_net.pre_harvest': note([
+      'Kruška može biti napadnuta pticama pred samu berbu.',
+      'Pratiti vizualno - mreža po potrebi kada plodovi počnu sazrijevati.',
+      'Za mlada stabla bez ploda: nije potrebno.'
+    ]),
+    'quince.copper.fire_blight_pre_bloom': note([
+      'Dunja ima specifičan rizik bakterijske paleži oko cvatnje, zato ova stavka nadopunjuje zajednički blok zimskog bakra i bakra nakon rezidbe.',
+      'Zajednički zimski bakar je opća kasnozimska preventiva i primjenjuje se samo ako fenofaza, vrijeme, razmak od ulja i etiketa proizvoda to dopuštaju.',
+      'Bakar na rane nakon rezidbe ima smisla samo ako je rezidba stvarno obavljena i ako svježe rane, povijest bolesti ili kišno vrijeme čine zaštitu opravdanom; nije automatski nakon svakog reza.',
+      'Ova dunjina stavka je preventivni podsjetnik prije cvatnje i oko rizika bakterijske paleži; nije automatski treći bakreni tretman.',
+      'Razmotriti je posebno kada je dunja oko bubrenja pupova ili ruba cvatnje, osobito uz vlažne uvjete, lokalni rizik ili povijest bakterijske paleži, ali samo ako etiketa, vrijeme, fenofaza i razmaci to dopuštaju.',
+      'Ako je dunja već nedavno tretirana bakrom dok su pupovi bubrili, otvarali se ili je cvatnja počinjala, primjerice kroz zimski bakar ili bakar nakon rezidbe, ne ponavljati bakar samo zato što postoji ova stavka.',
+      'Bakar je preventivan i ne liječi vidljive simptome bakterijske paleži.',
+      'Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.',
+      'Poštovati razmak od bijelog/mineralnog ulja najmanje 7-10 dana ili dulje ako etiketa proizvoda tako traži.',
+      'Prskati samo kada fenofaza, vrijeme i etiketa proizvoda to dopuštaju.',
+      'Koristiti samo registrirani bakreni pripravak prema etiketi proizvoda.',
+      'Vidljive simptome bakterijske paleži ne pokušavati liječiti ovim prskanjem; za sumnjive simptome koristiti praćenje bakterijske paleži i lokalni/stručni savjet.'
+    ]),
+    'quince.thinning.fruit_load_check': note([
+      'Dunja se ne prorjeđuje rutinski kao jabuka.',
+      'Ako je stablo mlado, slabo ili se grane jako savijaju pod teretom plodova, ukloniti dio plodova radi sprječavanja loma grana i boljeg razvoja stabla.',
+      'Za mlada stabla god. 1-2: važniji je razvoj krošnje nego urod.',
+      'Ako je urod normalan i grane nisu opterećene, preskočiti.'
+    ]),
+    'sweet_cherry.thinning.fruitlets': note([
+      'Trešnja nije obavezna za prorjeđivanje - stablo samo regulira broj plodova.',
+      'Kod slabobujnih podloga opterećenje rodom svejedno pratiti.',
+      'Po želji: ukloniti blizance (dva srasla ploda) i sitne zaostale plodove.',
+      'Ostaviti oko 5-8 cm razmaka između plodova u grozdu.',
+      'Znakovi previše: grane vise jako pod težinom, svi plodovi sitni i blijedi.',
+      'Ovo smanjuje broj plodova koji padaju na tlo i štedi leđa pri čišćenju.',
+      'Za mlada stabla god. 1-2: nije potrebno.'
+    ]),
+    'sweet_cherry.bird_net.pre_harvest': note([
+      'Postaviti 2-3 tjedna prije berbe.',
+      'Za Kordiju (berba 20.6.-5.7.): postaviti oko 1.-15.6.',
+      'Za ranije sorte (Burlat, berba od 1.6.): postaviti već kraj svibnja.',
+      'Veličina: min. 4x4 m, preporučeno 5x5 m.',
+      'Tip: s bočnim zipperom za pristup pri berbi bez skidanja mreže.',
+      'Mreža je primarno zaštita od ptica; pucanje plodova zbog kiše prati se kao zaseban predberbeni problem.',
+      'Skinuti odmah nakon berbe.',
+      'Za mlada stabla god. 1-2 bez uroda: nije potrebno.'
+    ]),
+    'sour_cherry.bird_net.pre_harvest': note([
+      'Tlak ptica kod višnje često je manji nego kod slatke trešnje, pa mreža nije obavezna za svaku višnju.',
+      'Mreža i dalje može biti korisna za koncentrirane hobi-sadnje ili mjesta gdje ptice redovito skidaju plod.',
+      'Postaviti oko 2 tjedna prije berbe ako postoji pritisak ptica.',
+      'Za rane sorte poput Oblačinske, s berbom oko 20.6.-5.7., postaviti početkom lipnja ako pritisak ptica postoji.',
+      'Veličina: najmanje 4x4 m, a za malo stablo preporučeno 5x5 m ako se pokriva cijela krošnja.',
+      'Tip s bočnim zipperom koristan je za pristup berbi bez skidanja mreže.',
+      'Rubove učvrstiti tako da ptice ne mogu dohvatiti plod kroz praznine.',
+      'Skinuti odmah nakon berbe.',
+      'Za mlada stabla bez ploda: nije potrebno.'
+    ]),
+    'sour_cherry.thinning.fruitlets': note([
+      'Višnja se uglavnom samoregulira.',
+      'Zabilježeno za korisnike koji žele krupniji plod za preradu.',
+      'Za mlada stabla bez ploda: nije potrebno.'
+    ]),
+    'plum.fungicide.post_bloom_monilia_leaf_spot': note([
+      'Nakon cvatnje.',
+      'Koristiti registrirani fungicid za moniliju i pjegavost lista prema etiketi proizvoda.',
+      'Insekticid za šljivinog savijača razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.',
+      'Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.',
+      'Poštovati etiketu proizvoda, karencu i lokalne propise.',
+      'Za mlada stabla god. 1-2: nije obavezno.'
+    ]),
+    'plum.thinning.fruitlets': note([
+      'Šljiva je sklona prerodu - prorjeđivanje bitno za kvalitetu.',
+      'Ostaviti 1 plod na 8-10 cm grane.',
+      'Ukloniti blizance i oštećene.',
+      'Posebno važno za kasne sorte (Stanley) jer plodovi trebaju dugo rasti.',
+      'Za mlada stabla god. 1-2 bez uroda: nije potrebno.'
+    ]),
+    'plum.bird_net.pre_harvest': note([
+      'Postaviti 1-2 tjedna prije berbe, kada šljiva počne omekšavati.',
+      'Kos i drozd napadaju šljivu agresivno pred berbu.',
+      'Veličina: min. 4x4 m. Tip s bočnim zipperom preporučen.',
+      'Skinuti odmah nakon berbe.',
+      'Za mlada stabla god. 1-2 bez uroda: nije potrebno.'
+    ]),
+    'peach.copper.leaf_curl_buds_closed': note([
+      'KRITIČNO ZA BRESKVU - identično kao kod nektarine, vrlo važan preventivni termin.',
+      'Primijeniti dok su pupovi zatvoreni ili tek počinju bubriti.',
+      'Taphrina deformans: nakon pojave simptoma mogućnosti su ograničene; naglasak je na prevenciji.',
+      'Ako se u proljeće već vide kovrčavi listovi, preventivni termin je propušten; zabilježiti problem za iduću sezonu umjesto kasnog pokušaja popravljanja tog lista.',
+      'Registrirani bakreni pripravak prema etiketi proizvoda.',
+      'U vlažnom proljeću drugi tretman razmotriti prema fenofazi, oborinama, etiketi proizvoda i stručnom/lokalnom savjetu.',
+      'Ovo prskanje je DODATAK zimskom bakru iz shared bloka.',
+      'Razmak od bijelog ulja: min. 7-10 dana.'
+    ]),
+    'peach.fungicide.post_bloom_monilia': note([
+      'Nakon cvatnje.',
+      'Koristiti registrirani fungicid za moniliju (Monilinia laxa) prema etiketi proizvoda.',
+      'Insekticid za breskvinog savijača razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.',
+      'Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.',
+      'Poštovati etiketu proizvoda, karencu i lokalne propise.',
+      'Za mlada stabla god. 1-2: nije obavezno, korisno u vlažnim sezonama.'
+    ]),
+    'peach.thinning.fruitlets': note([
+      'PREPORUČENO - breskva jako prorodi bez prorjeđivanja.',
+      'Ostaviti 1 plod na 10-15 cm grane.',
+      'Ukloniti blizance i oštećene plodove.',
+      'Bez prorjeđivanja: sitni plodovi, lom grana, alternativna rodnost.',
+      'Za mlada stabla god. 1-2 bez uroda: nije potrebno.'
+    ]),
+    'peach.bird_net.pre_harvest': note([
+      'Postaviti kada plodovi počnu mijenjati boju (ružičasto-crvena osnova).',
+      'Kos i drozd napadaju breskvu pred berbu.',
+      'Veličina: min. 4x4 m. Skinuti odmah nakon berbe.',
+      'Za mlada stabla god. 1-2 bez uroda: nije potrebno.'
+    ]),
+    'nectarine.copper.leaf_curl_buds_closed': note([
+      'KRITIČNO ZA NEKTARINU - vrlo važan preventivni termin.',
+      'Primijeniti dok su pupovi nektarine još zatvoreni ili tek počinju bubriti.',
+      'Svrha je spriječiti zarazu kovrčavosti lista unutar pupova prije nego se list otvori.',
+      'Djeluje samo prije otvaranja pupova; kad se list razvije, zaštita više ne može doprijeti do već zaraženog tkiva.',
+      'Ako se primijeni prerano i slijedi puno kiše, zaštita se može isprati pa drugi tretman može biti potreban samo prema stanju pupova/lista, oborinama, etiketi proizvoda i stručnom/lokalnom savjetu.',
+      'Prskanje nakon otvaranja pupova nema učinka na kovrčavost lista.',
+      'Prekasno prskanje može biti bez koristi i može oštetiti osjetljive pupove ili cvjetove.',
+      'Vidljiva kovrčavost lista znači da je preventivni termin propušten: ne prskati sada zbog tog lista, nego zabilježiti problem i bolje planirati tretman prije otvaranja pupova iduće godine.',
+      'Registrirani bakreni pripravak prema etiketi proizvoda.',
+      'Ovo prskanje je DODATAK zimskom bakru iz shared bloka - primijeniti specifično za nektarinu.',
+      'Ako je bakar već primijenjen u zimskom terminu, uzeti u obzir ukupnu sezonsku primjenu bakra i izbjeći nepotrebno ponavljanje.',
+      'Razmak od bijelog ulja: min. 7-10 dana.',
+      'Za mlada stabla: primijeniti - posebno važno u prvim godinama.'
+    ]),
+    'nectarine.fungicide.post_bloom_monilia': note([
+      'Primijeniti nakon opadanja latica, kada nema otvorenih cvjetova i aktivnog leta pčela.',
+      'Svrha je zaštita od monilije nakon faze zaraze cvijeta i mladih grančica te provjera potrebe za reakcijom na rane štetnike poput breskvinog savijača i lisnih ušiju.',
+      'Tretman ima najviše smisla dok je mlado tkivo još osjetljivo, a prozor je otvoren.',
+      'Prerano, dok još ima otvorenih cvjetova, tretman može ugroziti pčele i ometati zametanje plodova.',
+      'Prekasno, zaraza je mogla već nastati i učinak može biti slabiji.',
+      'Koristiti registrirani fungicid za moniliju (Monilinia laxa) prema etiketi proizvoda.',
+      'Insekticid za breskvinog savijača ili lisne uši razmatrati samo ako monitoring, vidljiva svježa šteta ili stručni/lokalni savjet opravdavaju reakciju.',
+      'Monitoring pomaže odluci unutar ovog prozora; ne otvara prozor i ne stvara obvezu tretmana.',
+      'Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.',
+      'Poštovati etiketu proizvoda, karencu i lokalne propise.',
+      'Za mlada stabla god. 1-2: nije obavezno, ali preporučeno u vlažnim sezonama.'
+    ]),
+    'nectarine.thinning.fruitlets': note([
+      'PREPORUČENO za nektarinu - jako prorodi bez prorjeđivanja.',
+      'Ostaviti 1 plod na 10-15 cm grane.',
+      'Ukloniti blizance, sitne i oštećene plodove.',
+      'Bez prorjeđivanja: sitni plodovi, lom grana od težine, iscrpljenost stabla.',
+      'Za mlada stabla god. 1-2 bez uroda: nije potrebno.'
+    ]),
+    'nectarine.bird_net.pre_harvest': note([
+      'Postaviti kada plodovi počnu mijenjati boju (žuto-narančasta osnova vidljiva).',
+      'Kos i drozd napadaju nektarinu agresivno pred berbu.',
+      'Veličina mreže: min. 4x4 m. Tip s bočnim zipperom preporučen.',
+      'Skinuti odmah nakon berbe.',
+      'Za mlada stabla god. 1-2 bez uroda: nije potrebno.'
+    ]),
+    'apricot.copper.pre_bloom': note([
+      'Marelica cvate ranije od većine voćaka, zato je termin bakra raniji.',
+      'Bakar mora biti prije otvorene cvatnje, dok su pupovi zatvoreni ili tek počinju bubriti.',
+      'Svrha je preventivna zaštita prije cvatnje od relevantnih gljivičnih i bakterijskih problema prema etiketi proizvoda.',
+      'Bakar ne liječi šarku ni virusne bolesti.',
+      'Ako se propusti ovaj termin, ne može se u potpunosti nadoknaditi kasnije.',
+      'Nikad ne prskati otvorene cvjetove.',
+      'Ovo je mareličin rani fenološki prozor za bakar.',
+      'Ako je isti fenološki prozor već pokriven zimskim bakrom, ne duplicirati tretman; poštovati razmak, fenofazu i etiketu proizvoda.',
+      'Razmak od bijelog ulja: min. 7-10 dana.'
+    ]),
+    'apricot.fungicide.post_bloom_monilia': note([
+      'Nakon cvatnje / nakon opadanja latica, nikad tijekom otvorene cvatnje.',
+      'Marelica cvate ranije - prilagoditi termin prema stanju stabla.',
+      'Koristiti registrirani fungicid za moniliju (Monilinia laxa) prema etiketi proizvoda.',
+      'Praćenje pomaže odluci unutar ovog prozora.',
+      'Praćenje ne otvara novi prozor i ne stvara obvezu tretmana.',
+      'Ne tretirati tijekom aktivnog leta pčela.',
+      'Poštovati etiketu proizvoda, zaštitu pčela, karencu, lokalna pravila i lokalni savjet.',
+      'Za mlada stabla god. 1-2: nije obavezno, ali može biti važno u vlažnim sezonama.'
+    ]),
+    'apricot.thinning.fruitlets': note([
+      'AKO MRAZ NIJE SMANJIO ROD: marelica može jako preroditi.',
+      'Ostaviti oko 1 plod na 8-10 cm grane.',
+      'Ukloniti blizance i oštećene plodove.',
+      'Bez prorjeđivanja: sitni plodovi, lom grana, iscrpljenost stabla.',
+      'AKO JE MRAZ OŠTETIO CVATNJU I ZAMETANJE JE SLABO: ne prorjeđivati.',
+      'Ostaviti preostale plodove.',
+      'Malo plodova nakon cvatnje često znači štetu od mraza, ne bolest ili štetnika.',
+      'Za mlada stabla god. 1-2 bez uroda: nije potrebno.'
+    ]),
+    'almond.copper.pre_bloom': note([
+      'KRITIČNO za badem - cvate izrazito rano.',
+      'Preventivni bakar je važan termin ako je prikladno prema fenofazi, vremenu i etiketi proizvoda.',
+      'NIKAD na otvorenom cvatu.',
+      'Razmak od bijelog ulja: vidi etiketu proizvoda.',
+      'Ovo je DODATAK zimskom bakru iz shared bloka - primijeniti ranije, prilagođeno bademu.',
+      'Ne duplicirati bakrene tretmane ako je isti fenološki prozor već pokriven; poštovati razmak, fenofazu i etiketu proizvoda.'
+    ]),
+    'almond.copper.leaf_curl_buds_closed': note([
+      'Badem dijeli rizik Taphrina deformans s breskvom/nektarinom; ova stavka je bademov preventivni kontekst za kovrčavost lista.',
+      'Povezana je sa zajedničkim zimskim bakrom i bademovim bakrom prije cvatnje, ali nije automatski dodatni bakreni tretman.',
+      'Ako je isti razvojni period pupova ili ruba cvatnje već pokriven bademovim bakrom prije cvatnje ili zajedničkim zimskim bakrom, ne duplicirati bakar samo zato što postoji ova stavka.',
+      'Bakar je preventivan i ima smisla dok su pupovi još zatvoreni ili prije osjetljivog otvaranja, samo ako etiketa, vrijeme i fenofaza to dopuštaju.',
+      'Vidljiva kovrčavost lista znači da je preventivni termin propušten; već vidljive simptome ne pokušavati "popraviti" bakrom.',
+      'Ne prskati otvorene cvjetove.',
+      'Poštovati razmak od bijelog/mineralnog ulja najmanje 7-10 dana ili dulje ako etiketa proizvoda tako traži.',
+      'Koristiti samo registrirani bakreni pripravak prema etiketi proizvoda.'
+    ]),
+    'olive.pruning.winter': note([
+      'Rezati nakon najhladnijeg dijela zime.',
+      'Ukloniti suhare, vodopije i grane prema unutra krošnje.',
+      'Cilj: otvorena krošnja u obliku vaze, dobra cirkulacija zraka.',
+      'Svake 2-3 godine: jača rezidba za obnovu rodnog drva.',
+      'Mlada stabla god. 1-3: samo formiranje oblika, ne rezati agresivno.',
+      'Veće rane premazati sredstvom za zaštitu rana, ako je prikladno, prema preporuci stručnjaka ili etiketi proizvoda (za rezove iznad 3 cm).'
+    ]),
+    'olive.copper.pruning_wounds': note([
+      'Primijeniti unutar 1-2 dana nakon rezidbe.',
+      'Zaštita od bakterioze masline (Pseudomonas savastanoi - maslinin rak).',
+      'Registrirani bakreni pripravak prema etiketi proizvoda.'
+    ]),
+    'olive.fertilization.spring': note([
+      'NPK gnojivo s povišenim dušikom za poticanje vegetativnog rasta.',
+      'Primijeniti oko stabla, ne direktno na deblo ili korijen.',
+      'Mlada stabla: primjenu prilagoditi dobi stabla i uputama gnojiva.'
+    ]),
+    'olive.pruning.summer_correction': note([
+      'Opcijsko uklanjanje vodopija i pregustih izbojaka.',
+      'Ne rezati agresivno - smanjuje rod tekuće godine.',
+      'Maslina rodi na jednogodišnjem drvu - ljetna rezidba nije obavezna svake godine.'
+    ]),
+    'olive.harvest': note([
+      'Zelene masline za ulje s više polifenola: studeni.',
+      'Crne masline za veći prinos ulja: prosinac-siječanj.',
+      'Za konzumne masline u salamuri: brati zelene, studeni.',
+      'Metode: ručno češljanje, mreža ispod stabla, električni češalj.',
+      'Preraditi u ulje max. 24-48h nakon berbe.'
+    ]),
+    'olive.winter_inspection': note([
+      'Pregledati krošnju: suhe grane, znakovi bolesti.',
+      'Za kontinentalnu klimu: provjeriti prognozu mrazeva.',
+      'Mlada stabla: zaštititi deblo agrotekstilom za mrazeve ispod -7 °C.',
+      'Ukloniti ostatke plodova s tla.'
+    ]),
+    'pomegranate.pruning.winter': note([
+      'Šipak raste kao veliki grm ili malo stablo.',
+      'Ukloniti izdanke (osim kod obnove), suhe grane, unutarnje guste izbojke.',
+      'Oblikovati za prodor sunca.',
+      'Mlada stabla: samo lagano formiranje.'
+    ]),
+    'pomegranate.fertilization.spring': note([
+      'Šipak je nezahtjevan.',
+      'Previše dušika odgađa plodonošenje.',
+      'Umjereno organsko ili mineralno gnojivo u proljeće; primjenu prilagoditi etiketi.'
+    ]),
+    'pomegranate.harvest': note([
+      'Termin: kad je plod potpuno obojen i pri kuckanju zvuči metalno.',
+      'Rezati škarama; ne čupati.',
+      'Čuvanje hladno i suho 1-2 mjeseca.'
+    ]),
+    'pomegranate.winter_protection.young_trees': note([
+      'Šipak podnosi kratkotrajno -10 °C; mlada stabla osjetljivija.',
+      'Omotati deblo agrotekstilom ili slamom prve 2-3 godine u kontinentalnom podneblju.',
+      'Uklanjanje zaštite u proljeće - kad prođe posljednja opasnost od mraza - obavit će se u sljedećoj sezoni.'
+    ]),
+    'walnut.winter_inspection': note([
+      'Pregledati deblo na znakove dosadnika.',
+      'Ukloniti zaražene ili mumificirane kožuhe (smanjenje inokuluma za sljedeću sezonu).',
+      'Za mlada stabla god. 1-3: malčirati bazu protiv glodavaca i provjeriti opću zaštitu debla od glodavaca te sunčanih i zimskih oštećenja kore.'
+    ]),
+    'hazelnut.pruning.winter': note([
+      'Lijeska se uzgaja kao grm.',
+      'Ukloniti 1-2 najstarije izbojnice godišnje, zadržati 6-8 produktivnih.',
+      'Prorijediti unutarnje izbojke za svjetlo.',
+      'Izdanci: ukloniti osim kod obnove grma.',
+      'Za mlade lijeske god. 1-3: fokus je na oblikovanju grma; puna obnova najstarijih izbojnica primjenjuje se tek kada grm razvije stabilnu strukturu.'
+    ]),
+    'hazelnut.winter_inspection': note([
+      'Ukloniti pale bolesne plodove (prezimljenje pipe).',
+      'Pregledati izbojnice na znakove bakterijskog propadanja.',
+      'Za mlade lijeske god. 1-3: malčirati bazu grma protiv glodavaca i provjeriti opću zaštitu baze i donjih izbojnica od glodavaca te sunčanih i zimskih oštećenja kore.'
+    ])
+  };
+
+  var HARVEST_ACTION_WINDOW_NOTES = {
+    apple: note([
+      'Termin berbe ovisi o sorti ili fallback grupi - vidi V2_PLANT_CATALOG.md za harvestWindow.',
+      'Primjeri: Gala (aug 20 - sep 10), Fuji (sep 25 - oct 15), Idared (oct 1 - oct 20).',
+      'Prije berbe provjeriti zrelost na nekoliko plodova: osnovna boja prelazi iz zelene prema žutoj, okus više nije škrobast, sjemenke su smeđe, a plod se lako odvaja laganim podizanjem i zakretanjem.',
+      'Ne brati sve odjednom ako dio plodova još nije zreo; isto stablo može trebati više prolaza.',
+      'Fuji: čekati punu zrelost - prerano ubrana Fuji jabuka nema okusa.',
+      'Brati po suhom, izbjegavati jutarnju rosu.',
+      'Oštećene, trule i mumificirane plodove ukloniti iz krošnje i ispod stabla jer mogu održavati bolesti i štetnike.'
+    ]),
+    pear: note([
+      'Termin berbe ovisi o sorti ili fallback grupi - vidi V2_PLANT_CATALOG.md za harvestWindow.',
+      'KRITIČNO: brati PRIJE potpune konzumne zrelosti - kruška dozrijeva nakon berbe, ne na stablu.',
+      'Test na stablu: plod se lako odvaja zakretanjem, ali još čvrst.',
+      'Dozrijevanje nakon berbe: sobna temperatura 3-7 dana.',
+      'NE čekati da omekša na stablu - bit će brašnasta i neukusna.',
+      'Brati pažljivo - lako dobiva modrice.'
+    ]),
+    quince: note([
+      'Termin ovisi o sorti ili fallback grupi - vidi V2_PLANT_CATALOG.md za harvestWindow.',
+      'Znakovi zrelosti: plod prelazi iz zelene u žutu/zlatnu boju, razvija jak miris i ostaje čvrst.',
+      'Brati prije jačeg mraza; ne čekati da plod omekša na stablu.',
+      'Plodovi su tvrdi, ali se lako nagnječe - brati pažljivo.',
+      'Dunja dozrijeva i nakon skidanja; čuvati hladno i suho 2-4 tjedna prije prerade.'
+    ]),
+    sweet_cherry: note([
+      'Termin ovisi o sorti ili fallback grupi - vidi V2_PLANT_CATALOG.md za harvestWindow.',
+      'Brati sa peteljkom - plod bez peteljke traje znatno kraće (max 1-2 dana).',
+      'Brati po suhom vremenu, u hladnijem dijelu dana (jutro, večer).',
+      'Test zrelosti: puna tamnocrvena boja, čvrstoća uz blag pritisak popušta.',
+      'Ne brati mokre plodove - pucaju i brzo trunu.',
+      'Čuvanje: 3-5 dana na 0-4 °C.',
+      'Ne ostavljati prezrele plodove na stablu - privlače ose, uzrokuju gnilobu.'
+    ]),
+    sour_cherry: note([
+      'Termin ovisi o sorti ili fallback grupi - vidi V2_PLANT_CATALOG.md za harvestWindow.',
+      'Za preradu moguće ostaviti na stablu do veće slatkoće.',
+      'Brati po suhom vremenu.',
+      'Ne ostavljati prezrele plodove - privlače ose.'
+    ]),
+    plum: note([
+      'Termin ovisi o sorti ili fallback grupi - vidi V2_PLANT_CATALOG.md za harvestWindow.',
+      'Brati u više navrata - ne dozrijeva sve odjednom.',
+      'Test: plod omekšao, puna boja, lako se odvaja.',
+      'Ne ostavljati prezrele plodove - privlače ose, uzrokuju moniliju.',
+      'Za sušenje i pekmez: ostaviti dulje na stablu za veći udio šećera.'
+    ]),
+    peach: note([
+      'Termin ovisi o sorti ili fallback grupi - vidi V2_PLANT_CATALOG.md za harvestWindow.',
+      'Više prolaza - plodovi ne dozrijevaju istovremeno.',
+      'Test zrelosti: blago popuštanje pri pritisku, osnovna boja žuto-narančasta.',
+      'Brati pažljivo - dlakava kožica nježnija nego što izgleda.',
+      'Na sobnoj temperaturi dozrijeva 2-3 dana nakon berbe.',
+      'Ne ostavljati prezrele plodove - privlače ose, uzrokuju moniliju.'
+    ]),
+    nectarine: note([
+      'Termin ovisi o sorti ili fallback grupi - vidi V2_PLANT_CATALOG.md za harvestWindow.',
+      'VIŠE PROLAZA - plodovi ne dozrijevaju istovremeno (3-4 prolaza u oko 3 tjedna).',
+      'Test zrelosti: blago popuštanje pri pritisku oko peteljke, osnovna boja žuto-narančasta.',
+      'NE brati prerano - prerano ubrani plodovi ne razvijaju punu aromu i šećer kao plodovi ubrani u odgovarajućoj zrelosti.',
+      'Brati pažljivo - tanka kožica lako se oštećuje.',
+      'Čuvati na 0-4 °C do 2 tjedna.'
+    ]),
+    apricot: note([
+      'Termin ovisi o sorti ili fallback grupi - vidi V2_PLANT_CATALOG.md za harvestWindow.',
+      'Marelica dozrijeva brzo i neravnomjerno - 2-3 prolaza kroz oko 2 tjedna.',
+      'Test zrelosti: narančasta boja s crvenim rumenilom, blago popuštanje pri pritisku.',
+      'Brati pažljivo - lako se oštećuje i brzo trune.',
+      'Rok: 2-3 dana na sobnoj temperaturi, do 1 tjedan na 0-4 °C.',
+      'Ne ostavljati prezrele plodove - privlače ose, uzrokuju moniliju.',
+      'POST-MRAZNI ROD: ako je berba mnogo manja od očekivane, mraz tijekom cvatnje često je razlog.',
+      'Zabilježiti štetu od mraza u povijest.',
+      'Povijest pomaže razlikovati godine s mrazom od godina s bolešću ili štetnicima.'
+    ]),
+    almond: note([
+      'Termin ovisi o sorti ili fallback grupi - vidi V2_PLANT_CATALOG.md za harvestWindow.',
+      'Žetva kad kožuh prirodno puca; stresti stablo ili pustiti da padne na ceradu.',
+      'Sušiti u ljusci 1-2 tjedna.'
+    ]),
+    walnut: note([
+      'Termin ovisi o sorti ili fallback grupi - vidi V2_PLANT_CATALOG.md za harvestWindow.',
+      'Orasi prirodno padaju kad su zreli; kožuh puca.',
+      'Ne brati zelene orahe sa stabla; čekati prirodno otpadanje.',
+      'U vrhuncu otpadanja skupljati često, po mogućnosti svaki dan.',
+      'Dugo stajanje na mokrom tlu povećava rizik od plijesni i privlači životinje.',
+      'Pocrnjele ili pljesnive kožuhe ukloniti odmah; pljesniv materijal ne miješati sa zdravim orasima.',
+      'Sušiti orahe u ljusci u jednom sloju, na suhom i prozračnom mjestu.',
+      'Izbjegavati velike hrpe jer zadržavaju vlagu.',
+      'Ne stavljati orahe u zatvorene vreće ili nepropusne posude prije nego što su potpuno suhi.',
+      'Ljuska i jezgra trebaju biti potpuno suhe prije zatvorenog skladištenja.',
+      'Ako je jezgra mekana, gumasta ili vlažna, nastaviti sušenje.',
+      'Skladištiti na hladnom, suhom i tamnom mjestu.',
+      'Povremeno provjeriti uskladištene orahe zbog vlage ili plijesni.'
+    ]),
+    hazelnut: note([
+      'Termin ovisi o sorti ili fallback grupi - vidi V2_PLANT_CATALOG.md za harvestWindow.',
+      'Plodovi padaju prirodno kad su zreli ili se lako odvajaju.',
+      'Ne brati zelene lješnjake s grma; čekati prirodno otpadanje ili lako otpuštanje.',
+      'U vrhuncu otpadanja skupljati često, po mogućnosti svaki dan.',
+      'Dugo stajanje na mokrom tlu povećava rizik od plijesni i privlači životinje.',
+      'Pocrnjele ili plijesnive kožuhe ukloniti; plijesniv materijal ne miješati sa zdravim lješnjacima.',
+      'Oljuštiti kožuh unutar nekoliko dana.',
+      'Sušiti lješnjake u ljusci u jednom sloju, na suhom i prozračnom mjestu; osnovno sušenje obično traje 1-2 tjedna.',
+      'Izbjegavati velike hrpe jer zadržavaju vlagu.',
+      'Ne stavljati lješnjake u zatvorene vreće ili nepropusne posude prije nego što su potpuno suhi.',
+      'Ljuska i jezgra trebaju biti potpuno suhe prije zatvorenog skladištenja.',
+      'Ako je jezgra mekana, gumasta ili vlažna, nastaviti sušenje.',
+      'Skladištiti na hladnom, suhom i tamnom mjestu.',
+      'Povremeno provjeriti uskladištene lješnjake zbog vlage ili plijesni.'
+    ])
+  };
+
+  function notesForSpeciesWindow(species, suffix) {
+    return SPECIES_ACTION_WINDOW_NOTES[species + '.' + suffix];
+  }
+
+  function harvestNotesForSpecies(species) {
+    return HARVEST_ACTION_WINDOW_NOTES[species];
+  }
+
   var ALLOWED_PLANT_KEYS_FOR_UPGRADE = [
     'plant_id','catalog_version','stable_order','species','variety','ripening_fallback',
     'display_label','rootstock','planted_at','purchased_at',
@@ -3848,8 +4375,8 @@ if ('serviceWorker' in navigator) {
     };
   }
 
-  function actionWindow(windowDefId, label, actionType, monthStart, dayStart, monthEnd, dayEnd) {
-    return {
+  function actionWindow(windowDefId, label, actionType, monthStart, dayStart, monthEnd, dayEnd, notes) {
+    var def = {
       window_def_id: windowDefId,
       catalog_id: CATALOG_ID,
       action_type: actionType,
@@ -3861,6 +4388,8 @@ if ('serviceWorker' in navigator) {
       },
       tolerance: zeroTolerance()
     };
+    if (typeof notes === 'string' && notes.trim().length > 0) def.notes = notes;
+    return def;
   }
 
   function addStandardFruitWindow(defs, suffix, label, actionType, monthStart, dayStart, monthEnd, dayEnd) {
@@ -3873,7 +4402,8 @@ if ('serviceWorker' in navigator) {
         monthStart,
         dayStart,
         monthEnd,
-        dayEnd
+        dayEnd,
+        STANDARD_ACTION_WINDOW_NOTES[suffix]
       ));
     }
   }
@@ -3886,7 +4416,8 @@ if ('serviceWorker' in navigator) {
       monthStart,
       dayStart,
       monthEnd,
-      dayEnd
+      dayEnd,
+      notesForSpeciesWindow(species, suffix)
     ));
   }
 
@@ -3898,7 +4429,8 @@ if ('serviceWorker' in navigator) {
       harvestWindow.monthStart,
       harvestWindow.dayStart,
       harvestWindow.monthEnd,
-      harvestWindow.dayEnd
+      harvestWindow.dayEnd,
+      harvestNotesForSpecies(species)
     ));
   }
 
@@ -4208,6 +4740,7 @@ if ('serviceWorker' in navigator) {
     evidence_source: ACTION_WINDOW_EVIDENCE_SOURCE,
     last_reviewed_on: ACTION_WINDOW_LAST_REVIEWED_ON,
     species: CATALOG_SPECIES,
+    spray_safety_notes: ACTION_WINDOW_SPRAY_SAFETY_NOTES_HR.slice(),
     action_window_definitions: buildActionWindowDefinitions(CATALOG_SPECIES)
   };
 
@@ -4310,6 +4843,7 @@ if ('serviceWorker' in navigator) {
     if (!isKnownActionType(def.action_type)) return false;
     if (def.action_type === 'insecticide' || def.action_type === 'monitoring' || def.action_type === 'irrigation') return false;
     if (typeof def.label !== 'string' || def.label.trim().length === 0) return false;
+    if (hasOwnKey(def, 'notes') && (typeof def.notes !== 'string' || def.notes.trim().length === 0)) return false;
     if (def.label === 'Sezonsko navodnjavanje') return false;
     if (hasOwnKey(FORBIDDEN_ACTION_WINDOW_IDS, def.window_def_id) || def.window_def_id.indexOf('.mixed.') !== -1) return false;
 
@@ -4347,6 +4881,76 @@ if ('serviceWorker' in navigator) {
       if (!validateActionWindowDefinition(c.action_window_definitions[i], c, seenIds)) return false;
     }
     return true;
+  }
+
+  function hasValidSpraySafetyNotes(c) {
+    if (!isPlainObject(c) || !Array.isArray(c.spray_safety_notes)) return false;
+    if (c.spray_safety_notes.length !== ACTION_WINDOW_SPRAY_SAFETY_NOTES_HR.length) return false;
+    for (var i = 0; i < c.spray_safety_notes.length; i++) {
+      if (typeof c.spray_safety_notes[i] !== 'string' || c.spray_safety_notes[i].trim().length === 0) return false;
+    }
+    return true;
+  }
+
+  function catalogDeepEquals(actual, canonical) {
+    if (Array.isArray(actual) || Array.isArray(canonical)) {
+      if (!Array.isArray(actual) || !Array.isArray(canonical)) return false;
+      if (actual.length !== canonical.length) return false;
+      for (var a = 0; a < actual.length; a++) {
+        if (!catalogDeepEquals(actual[a], canonical[a])) return false;
+      }
+      return true;
+    }
+    if (isPlainObject(actual) || isPlainObject(canonical)) {
+      if (!isPlainObject(actual) || !isPlainObject(canonical)) return false;
+      var actualKeys = Object.keys(actual);
+      var canonicalKeys = Object.keys(canonical);
+      if (actualKeys.length !== canonicalKeys.length) return false;
+      for (var i = 0; i < canonicalKeys.length; i++) {
+        var key = canonicalKeys[i];
+        if (!hasOwnKey(actual, key)) return false;
+        if (!catalogDeepEquals(actual[key], canonical[key])) return false;
+      }
+      return true;
+    }
+    return actual === canonical;
+  }
+
+  function catalogWithoutB1Projection(c) {
+    if (Array.isArray(c)) {
+      var arr = [];
+      for (var a = 0; a < c.length; a++) arr.push(catalogWithoutB1Projection(c[a]));
+      return arr;
+    }
+    if (!isPlainObject(c)) return c;
+    var out = {};
+    var keys = Object.keys(c);
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+      if (key === 'spray_safety_notes' || key === 'notes') continue;
+      out[key] = catalogWithoutB1Projection(c[key]);
+    }
+    return out;
+  }
+
+  function hasAnyActionWindowNotes(c) {
+    if (!isPlainObject(c) || !Array.isArray(c.action_window_definitions)) return true;
+    for (var i = 0; i < c.action_window_definitions.length; i++) {
+      if (hasOwnKey(c.action_window_definitions[i], 'notes')) return true;
+    }
+    return false;
+  }
+
+  function isB1RefreshableCatalogV1(c) {
+    if (!hasValidSpeciesCatalog(c)) return false;
+    if (c.catalog_id !== CATALOG_ID) return false;
+    if (c.author !== ACTION_WINDOW_AUTHOR) return false;
+    if (c.evidence_source !== ACTION_WINDOW_EVIDENCE_SOURCE) return false;
+    if (c.last_reviewed_on !== ACTION_WINDOW_LAST_REVIEWED_ON) return false;
+    if (!hasValidActionWindowDefinitions(c)) return false;
+    if (hasOwnKey(c, 'spray_safety_notes')) return false;
+    if (hasAnyActionWindowNotes(c)) return false;
+    return catalogDeepEquals(catalogWithoutB1Projection(c), catalogWithoutB1Projection(CATALOG_V1));
   }
 
   function hasValidSpeciesCatalog(c) {
@@ -4396,7 +5000,9 @@ if ('serviceWorker' in navigator) {
     if (c.author !== ACTION_WINDOW_AUTHOR) return false;
     if (c.evidence_source !== ACTION_WINDOW_EVIDENCE_SOURCE) return false;
     if (c.last_reviewed_on !== ACTION_WINDOW_LAST_REVIEWED_ON) return false;
-    return hasValidActionWindowDefinitions(c);
+    if (!hasValidSpraySafetyNotes(c)) return false;
+    if (!hasValidActionWindowDefinitions(c)) return false;
+    return catalogDeepEquals(c, CATALOG_V1);
   }
 
   function validateStoreShape(parsed) {
@@ -4547,6 +5153,24 @@ if ('serviceWorker' in navigator) {
   ) {
     setCatalogStatus('Slice 2 — katalog je već učitan.');
     console.log('vocnjak: catalog already loaded; active_catalog_version=catalog_v1');
+    return;
+  }
+
+  if (
+    parsed.meta.active_catalog_version === 'catalog_v1' &&
+    parsed.catalogs &&
+    parsed.catalogs.catalog_v1 &&
+    isB1RefreshableCatalogV1(parsed.catalogs.catalog_v1)
+  ) {
+    parsed.catalogs.catalog_v1 = CATALOG_V1;
+    try {
+      localStorage.setItem('vocnjak_v2', JSON.stringify(parsed));
+      setCatalogStatus('Slice 2 — katalog je osvježen B1 bilješkama.');
+      console.log('vocnjak: catalog refreshed with B1 action-window notes; plants=' + parsed.plants.length + '; activities=' + parsed.activities.length + '; corrections=' + parsed.corrections.length);
+    } catch (e) {
+      setCatalogStatus('Slice 2 — katalog nije moguće osvježiti. Vrati se u staru aplikaciju.');
+      console.error('vocnjak: catalog B1 refresh failed:', e && e.message ? e.message : e);
+    }
     return;
   }
 
@@ -4723,6 +5347,75 @@ if ('serviceWorker' in navigator) {
     return [];
   }
 
+  function catalogDeepEquals(actual, canonical) {
+    if (Array.isArray(actual) || Array.isArray(canonical)) {
+      if (!Array.isArray(actual) || !Array.isArray(canonical)) return false;
+      if (actual.length !== canonical.length) return false;
+      for (var a = 0; a < actual.length; a++) {
+        if (!catalogDeepEquals(actual[a], canonical[a])) return false;
+      }
+      return true;
+    }
+    if (isPlainObject(actual) || isPlainObject(canonical)) {
+      if (!isPlainObject(actual) || !isPlainObject(canonical)) return false;
+      var actualKeys = Object.keys(actual);
+      var canonicalKeys = Object.keys(canonical);
+      if (actualKeys.length !== canonicalKeys.length) return false;
+      for (var i = 0; i < canonicalKeys.length; i++) {
+        var key = canonicalKeys[i];
+        if (!hasOwnKey(actual, key)) return false;
+        if (!catalogDeepEquals(actual[key], canonical[key])) return false;
+      }
+      return true;
+    }
+    return actual === canonical;
+  }
+
+  function catalogWithoutB1Projection(c) {
+    if (Array.isArray(c)) {
+      var arr = [];
+      for (var a = 0; a < c.length; a++) arr.push(catalogWithoutB1Projection(c[a]));
+      return arr;
+    }
+    if (!isPlainObject(c)) return c;
+    var out = {};
+    var keys = Object.keys(c);
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+      if (key === 'spray_safety_notes' || key === 'notes') continue;
+      out[key] = catalogWithoutB1Projection(c[key]);
+    }
+    return out;
+  }
+
+  function hasAnyActionWindowNotes(c) {
+    if (!isPlainObject(c) || !Array.isArray(c.action_window_definitions)) return true;
+    for (var i = 0; i < c.action_window_definitions.length; i++) {
+      if (hasOwnKey(c.action_window_definitions[i], 'notes')) return true;
+    }
+    return false;
+  }
+
+  function isB1RefreshableCatalogV1(c) {
+    var canonical = window.v2CanonicalCatalogV1;
+    if (!isPlainObject(canonical) || !isPlainObject(c)) return false;
+    if (hasOwnKey(c, 'spray_safety_notes')) return false;
+    if (hasAnyActionWindowNotes(c)) return false;
+    return catalogDeepEquals(catalogWithoutB1Projection(c), catalogWithoutB1Projection(canonical));
+  }
+
+  function normalizeStoreCatalogForCurrentCanonical(parsed) {
+    if (!isPlainObject(parsed) || !isPlainObject(parsed.catalogs) || !hasOwnKey(parsed.catalogs, 'catalog_v1')) {
+      return { store: parsed, refreshed: false };
+    }
+    if (!isB1RefreshableCatalogV1(parsed.catalogs.catalog_v1)) return { store: parsed, refreshed: false };
+    var normalized = {};
+    var keys = Object.keys(parsed);
+    for (var i = 0; i < keys.length; i++) normalized[keys[i]] = parsed[keys[i]];
+    normalized.catalogs = { catalog_v1: window.v2CanonicalCatalogV1 };
+    return { store: normalized, refreshed: true };
+  }
+
   function validateHarvestWindowNode(v, path) {
     if (!isPlainObject(v)) return [path + ' not a plain object'];
     var expected = ['monthStart','dayStart','monthEnd','dayEnd'];
@@ -4880,6 +5573,7 @@ if ('serviceWorker' in navigator) {
     if (def.action_type === 'monitoring') return [path + '.action_type monitoring deferred for Slice 8'];
     if (def.action_type === 'irrigation') return [path + '.action_type irrigation deferred for this prerequisite'];
     if (typeof def.label !== 'string' || def.label.trim().length === 0) return [path + '.label required'];
+    if (hasOwnKey(def, 'notes') && (typeof def.notes !== 'string' || def.notes.trim().length === 0)) return [path + '.notes must be a non-empty string when present'];
     if (def.label === 'Sezonsko navodnjavanje') return [path + '.label seasonal watering is not an Activity window'];
     if (hasOwnKey(FORBIDDEN_ACTION_WINDOW_IDS, def.window_def_id) || def.window_def_id.indexOf('.mixed.') !== -1) return [path + '.window_def_id is deferred and must not be seeded'];
 
@@ -4956,11 +5650,27 @@ if ('serviceWorker' in navigator) {
     return [];
   }
 
+  function validateSpraySafetyNotes(c, path) {
+    if (!isPlainObject(c)) return [path + ' not a plain object'];
+    if (!Array.isArray(c.spray_safety_notes)) return [path + '.spray_safety_notes required'];
+    if (c.spray_safety_notes.length === 0) return [path + '.spray_safety_notes must not be empty'];
+    for (var i = 0; i < c.spray_safety_notes.length; i++) {
+      if (typeof c.spray_safety_notes[i] !== 'string' || c.spray_safety_notes[i].trim().length === 0) {
+        return [path + '.spray_safety_notes[' + i + '] must be a non-empty string'];
+      }
+    }
+    return [];
+  }
+
   function validateCatalogV1(c) {
     var canonical = window.v2CanonicalCatalogV1;
     if (!isPlainObject(canonical)) return ['canonical catalog_v1 unavailable'];
+    var canonicalSafetyErrs = validateSpraySafetyNotes(canonical, 'canonical catalog_v1');
+    if (canonicalSafetyErrs.length > 0) return canonicalSafetyErrs;
     var canonicalActionWindowErrs = validateActionWindowDefinitions(canonical, 'canonical catalog_v1');
     if (canonicalActionWindowErrs.length > 0) return canonicalActionWindowErrs;
+    var safetyErrs = validateSpraySafetyNotes(c, 'catalog_v1');
+    if (safetyErrs.length > 0) return safetyErrs;
     var actionWindowErrs = validateActionWindowDefinitions(c, 'catalog_v1');
     if (actionWindowErrs.length > 0) return actionWindowErrs;
     return compareCanonicalCatalogNode(c, canonical, 'catalog_v1');
@@ -5270,6 +5980,7 @@ if ('serviceWorker' in navigator) {
     if (!isPlainObject(parsed.catalogs)) return ['catalogs not a plain object'];
     var catKeys = Object.keys(parsed.catalogs);
     if (catKeys.length !== 1 || catKeys[0] !== 'catalog_v1') return ['catalogs keys must equal [catalog_v1]'];
+    parsed = normalizeStoreCatalogForCurrentCanonical(parsed).store;
     var catErrs = validateCatalogV1(parsed.catalogs.catalog_v1);
     if (catErrs.length > 0) return catErrs;
     if (!Array.isArray(parsed.plants)) return ['plants not an array'];
@@ -5315,11 +6026,21 @@ if ('serviceWorker' in navigator) {
       console.error('vocnjak: V2 export parse failed:', e && e.message ? e.message : e);
       return;
     }
+    var normalizedForExport = normalizeStoreCatalogForCurrentCanonical(parsed);
+    parsed = normalizedForExport.store;
     var errors = validateForBackup(parsed);
     if (errors.length > 0) {
       setStatus('Slice 3 — V2 pohrana ne prolazi validaciju: ' + errors[0] + '.');
       console.error('vocnjak: V2 export validation failed:', errors);
       return;
+    }
+    if (normalizedForExport.refreshed) {
+      try {
+        localStorage.setItem('vocnjak_v2', JSON.stringify(parsed));
+        console.log('vocnjak: V2 export refreshed catalog_v1 with B1 notes before backup');
+      } catch (e) {
+        console.warn('vocnjak: V2 export could not persist B1 catalog refresh before backup:', e && e.message ? e.message : e);
+      }
     }
     var iso = new Date().toISOString();
     var stamp = iso.replace(/[:.]/g, '').slice(0, 17);
@@ -5363,6 +6084,8 @@ if ('serviceWorker' in navigator) {
         console.error('vocnjak: V2 import parse failed:', e && e.message ? e.message : e);
         return;
       }
+      var normalizedForImport = normalizeStoreCatalogForCurrentCanonical(parsed);
+      parsed = normalizedForImport.store;
       var errors = validateForBackup(parsed);
       if (errors.length > 0) {
         setStatus('Slice 3 — uvoz nije prošao validaciju: ' + errors[0] + '.');
