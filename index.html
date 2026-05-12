@@ -6623,6 +6623,23 @@ if ('serviceWorker' in navigator) {
     section.appendChild(karton);
     detailView.appendChild(section);
 
+    try {
+      var snapshot = buildSeasonalSnapshot(result.store, result.catalog, localTodayYmd());
+      var currentActions = currentPlantSeasonalOccurrences(snapshot, plant.plant_id, result.catalog);
+      if (currentActions.length > 0) {
+        var seasonal = makeEl('section', 'v2-plants-section');
+        seasonal.appendChild(makeEl('h3', '', 'Trenutne sezonske radnje'));
+        var seasonalList = makeEl('div', 'v2-seasonal-list');
+        for (var i = 0; i < currentActions.length; i++) {
+          appendPlantSeasonalActionCard(seasonalList, currentActions[i], result.catalog);
+        }
+        seasonal.appendChild(seasonalList);
+        detailView.appendChild(seasonal);
+      }
+    } catch (e) {
+      renderSeasonalSnapshotFailure(detailView, e);
+    }
+
     var diary = makeEl('section', 'v2-plants-section');
     diary.appendChild(makeEl('h3', '', 'Dnevnik ove voćke'));
     diary.appendChild(makeEl('p', 'v2-plants-empty', 'Dnevnik ove voćke bit će dostupan u sljedećem koraku.'));
@@ -7570,6 +7587,58 @@ if ('serviceWorker' in navigator) {
     if (stats.open > 0 || stats.closingSoon > 0) return stats.closingSoon > 0 ? 'Pri kraju' : 'Aktualno';
     if (stats.upcoming > 0) return 'Uskoro';
     return '';
+  }
+
+  function plantOccurrenceIsCurrent(snapshot, occurrence) {
+    return occurrence.effective_open <= snapshot.today && occurrence.effective_close >= snapshot.today;
+  }
+
+  function currentPlantSeasonalOccurrences(snapshot, plantId, catalog) {
+    var occurrences = snapshot.occurrences.filter(function (occurrence) {
+      return occurrence.plant_id === plantId && plantOccurrenceIsCurrent(snapshot, occurrence);
+    });
+    occurrences.sort(function (a, b) {
+      if (a.effective_close !== b.effective_close) return a.effective_close.localeCompare(b.effective_close);
+      if (a.effective_open !== b.effective_open) return a.effective_open.localeCompare(b.effective_open);
+      return actionWindowLabel(a.def, catalog).localeCompare(actionWindowLabel(b.def, catalog), 'hr');
+    });
+    return occurrences;
+  }
+
+  function plantOccurrenceStatusLabel(occurrence) {
+    if (occurrence.state === 'open') return 'Aktualno';
+    if (occurrence.state === 'closing-soon') return 'Pri kraju';
+    if (occurrence.state === 'upcoming') return 'Uskoro';
+    if (occurrence.state === 'missed') return 'Prošlo';
+    if (occurrence.state === 'done') return 'Napravljeno';
+    if (occurrence.state === 'done_late') return 'Napravljeno nakon razdoblja';
+    if (occurrence.state === 'skipped') return 'Preskočeno';
+    return '';
+  }
+
+  function plantOccurrenceDateLine(occurrence) {
+    if (occurrence.state === 'closing-soon') return 'Aktualno do ' + formatDateYmd(occurrence.effective_close) + ' - pri kraju.';
+    return formatDateRange(occurrence.effective_open, occurrence.effective_close);
+  }
+
+  function plantOccurrenceEvidenceLine(occurrence) {
+    if (!occurrence.evidence) return 'Nije evidentirano.';
+    var dateText = formatDateYmd(occurrence.evidence.occurred_on);
+    if (occurrence.evidence.status === 'skipped') return 'Preskočeno ' + dateText + '.';
+    if (occurrence.evidence.status === 'done_late') return 'Napravljeno ' + dateText + ' nakon razdoblja.';
+    return 'Napravljeno ' + dateText + '.';
+  }
+
+  function appendPlantSeasonalActionCard(parent, occurrence, catalog) {
+    var node = makeEl('button', 'v2-seasonal-card-button');
+    node.type = 'button';
+    node.addEventListener('click', function () { location.hash = seasonalActionRoute(occurrence); });
+    node.appendChild(makeEl('p', 'v2-seasonal-card-title', actionWindowLabel(occurrence.def, catalog)));
+    var status = plantOccurrenceStatusLabel(occurrence);
+    if (status) node.appendChild(makeEl('span', 'v2-seasonal-status', status));
+    node.appendChild(makeEl('span', 'v2-seasonal-meta', plantOccurrenceDateLine(occurrence)));
+    node.appendChild(makeEl('span', 'v2-seasonal-note', plantOccurrenceEvidenceLine(occurrence)));
+    parent.appendChild(node);
   }
 
   function appendSeasonalNav(parent, active) {
