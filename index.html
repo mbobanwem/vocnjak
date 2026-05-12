@@ -6122,6 +6122,7 @@ if ('serviceWorker' in navigator) {
   var ESTIMATED_MID_FALLBACK_TEXT = 'Procjena: koristi se srednje dozrijevanje jer sorta i vrijeme dozrijevanja nisu poznati.';
   var SEASONAL_SNAPSHOT_ERROR_TEXT = 'V2 sezonski prikaz se ne može izračunati jer katalog sadrži nevaljan period ili vrstu radnje. Podaci nisu promijenjeni.';
   var CLOSING_SOON_THRESHOLD_DAYS = 3;
+  var PLANT_DETAIL_RECENT_DAYS = 21;
   var DEFERRED_SEASONAL_ACTION_TYPES = { insecticide: true, monitoring: true, irrigation: true };
   var MONTH_NAMES_HR = [
     'Siječanj','Veljača','Ožujak','Travanj','Svibanj','Lipanj',
@@ -6336,6 +6337,13 @@ if ('serviceWorker' in navigator) {
       encodeURIComponent(String(group.cycle_year));
   }
 
+  function activityAddRoute(group) {
+    return '#v2/activity/add/' +
+      encodeURIComponent(group.catalog_version) + '/' +
+      encodeURIComponent(group.window_def_id) + '/' +
+      encodeURIComponent(String(group.cycle_year));
+  }
+
   function activityCorrectionRoute(activityId) {
     return '#v2/activity/' + encodeURIComponent(activityId) + '/correct';
   }
@@ -6414,6 +6422,23 @@ if ('serviceWorker' in navigator) {
     if (h === '#v2/add') return { name: 'add' };
     if (h === '#v2/activity/add') return { name: 'activity_add' };
     if (h === '#v2/diary') return { name: 'diary' };
+    var activityAddPrefix = '#v2/activity/add/';
+    if (h.indexOf(activityAddPrefix) === 0) {
+      var activityParts = h.slice(activityAddPrefix.length).split('/');
+      if (activityParts.length === 3) {
+        try {
+          return {
+            name: 'activity_add',
+            catalog_version: decodeURIComponent(activityParts[0]),
+            window_def_id: decodeURIComponent(activityParts[1]),
+            cycle_year: Number(decodeURIComponent(activityParts[2]))
+          };
+        } catch (e) {
+          return { name: 'activity_add' };
+        }
+      }
+      return { name: 'activity_add' };
+    }
     var seasonalPrefix = '#v2/seasonal-action/';
     if (h.indexOf(seasonalPrefix) === 0) {
       var seasonalParts = h.slice(seasonalPrefix.length).split('/');
@@ -6631,7 +6656,7 @@ if ('serviceWorker' in navigator) {
         seasonal.appendChild(makeEl('h3', '', 'Trenutne sezonske radnje'));
         var seasonalList = makeEl('div', 'v2-seasonal-list');
         for (var i = 0; i < currentActions.length; i++) {
-          appendPlantSeasonalActionCard(seasonalList, currentActions[i], result.catalog);
+          appendPlantSeasonalActionCard(seasonalList, currentActions[i], result.catalog, snapshot);
         }
         seasonal.appendChild(seasonalList);
         detailView.appendChild(seasonal);
@@ -7057,7 +7082,35 @@ if ('serviceWorker' in navigator) {
     }
   }
 
-  function renderActivityAdd() {
+  function seasonalActivityContextGroup(route, store, catalog) {
+    if (!route || route.name !== 'activity_add' || !route.window_def_id || !route.catalog_version || !Number.isInteger(route.cycle_year)) return null;
+    var def = findActionWindow(catalog, route.window_def_id);
+    if (!def || def.catalog_id !== route.catalog_version) return null;
+    try {
+      return findSeasonalGroup(buildSeasonalSnapshot(store, catalog, localTodayYmd()), route);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function applyActivityContextSelection(fields, route, store) {
+    var group = seasonalActivityContextGroup(route, store, fields.catalog);
+    if (!group) {
+      refreshActivityPlantChoices(fields);
+      return;
+    }
+    fields.windowSelect.value = group.window_def_id;
+    refreshActivityPlantChoices(fields);
+
+    var scopedPlants = Object.create(null);
+    for (var i = 0; i < group.occurrences.length; i++) scopedPlants[group.occurrences[i].plant_id] = true;
+    for (var p = 0; p < fields.plantInputs.length; p++) {
+      fields.plantInputs[p].checked = hasOwnKey(scopedPlants, fields.plantInputs[p].value);
+    }
+    updateActivitySaveState(fields);
+  }
+
+  function renderActivityAdd(route) {
     setViews('activity_add');
     clearNode(activityForm);
 
@@ -7147,7 +7200,7 @@ if ('serviceWorker' in navigator) {
     windowSelect.addEventListener('change', function () { refreshActivityPlantChoices(currentActivityFields); });
     dateInput.addEventListener('change', function () { refreshActivityDateDisclosure(currentActivityFields); });
     refreshActivityDateDisclosure(currentActivityFields);
-    refreshActivityPlantChoices(currentActivityFields);
+    applyActivityContextSelection(currentActivityFields, route, result.store);
   }
 
   function saveCurrentActivity() {
@@ -7593,12 +7646,36 @@ if ('serviceWorker' in navigator) {
     return occurrence.effective_open <= snapshot.today && occurrence.effective_close >= snapshot.today;
   }
 
+  function plantOccurrenceIsRelevantForDetail(snapshot, occurrence) {
+    if (occurrence.state === 'open' || occurrence.state === 'closing-soon') return true;
+    if (occurrence.state === 'missed') return daysBetweenYmd(occurrence.effective_close, snapshot.today) <= PLANT_DETAIL_RECENT_DAYS;
+    if (occurrence.state === 'done') {
+      if (plantOccurrenceIsCurrent(snapshot, occurrence)) return true;
+      if (occurrence.evidence && daysBetweenYmd(occurrence.evidence.occurred_on, snapshot.today) <= PLANT_DETAIL_RECENT_DAYS) return true;
+      return daysBetweenYmd(occurrence.effective_close, snapshot.today) <= PLANT_DETAIL_RECENT_DAYS;
+    }
+    return false;
+  }
+
+  function plantOccurrenceRelevanceRank(snapshot, occurrence) {
+    if (plantOccurrenceIsCurrent(snapshot, occurrence)) return 0;
+    if (occurrence.state === 'missed') return 1;
+    if (occurrence.state === 'done') return 2;
+    return 3;
+  }
+
   function currentPlantSeasonalOccurrences(snapshot, plantId, catalog) {
     var occurrences = snapshot.occurrences.filter(function (occurrence) {
-      return occurrence.plant_id === plantId && plantOccurrenceIsCurrent(snapshot, occurrence);
+      return occurrence.plant_id === plantId && plantOccurrenceIsRelevantForDetail(snapshot, occurrence);
     });
     occurrences.sort(function (a, b) {
-      if (a.effective_close !== b.effective_close) return a.effective_close.localeCompare(b.effective_close);
+      var rankA = plantOccurrenceRelevanceRank(snapshot, a);
+      var rankB = plantOccurrenceRelevanceRank(snapshot, b);
+      if (rankA !== rankB) return rankA - rankB;
+      if (a.effective_close !== b.effective_close) {
+        if (rankA === 0) return a.effective_close.localeCompare(b.effective_close);
+        return b.effective_close.localeCompare(a.effective_close);
+      }
       if (a.effective_open !== b.effective_open) return a.effective_open.localeCompare(b.effective_open);
       return actionWindowLabel(a.def, catalog).localeCompare(actionWindowLabel(b.def, catalog), 'hr');
     });
@@ -7616,27 +7693,29 @@ if ('serviceWorker' in navigator) {
     return '';
   }
 
-  function plantOccurrenceDateLine(occurrence) {
+  function plantOccurrenceDateLine(occurrence, snapshot) {
     if (occurrence.state === 'closing-soon') return 'Aktualno do ' + formatDateYmd(occurrence.effective_close) + ' - pri kraju.';
+    if (snapshot && plantOccurrenceIsCurrent(snapshot, occurrence)) return 'Aktualno od ' + formatDateYmd(occurrence.effective_open) + ' do ' + formatDateYmd(occurrence.effective_close);
+    if (occurrence.state === 'missed' || occurrence.state === 'done') return 'Bilo je aktualno od ' + formatDateYmd(occurrence.effective_open) + ' do ' + formatDateYmd(occurrence.effective_close);
     return formatDateRange(occurrence.effective_open, occurrence.effective_close);
   }
 
   function plantOccurrenceEvidenceLine(occurrence) {
     if (!occurrence.evidence) return 'Nije evidentirano.';
     var dateText = formatDateYmd(occurrence.evidence.occurred_on);
-    if (occurrence.evidence.status === 'skipped') return 'Preskočeno ' + dateText + '.';
+    if (occurrence.evidence.status === 'skipped') return 'Preskočeno ' + dateText;
     if (occurrence.evidence.status === 'done_late') return 'Napravljeno ' + dateText + ' nakon razdoblja.';
-    return 'Napravljeno ' + dateText + '.';
+    return 'Napravljeno ' + dateText;
   }
 
-  function appendPlantSeasonalActionCard(parent, occurrence, catalog) {
+  function appendPlantSeasonalActionCard(parent, occurrence, catalog, snapshot) {
     var node = makeEl('button', 'v2-seasonal-card-button');
     node.type = 'button';
     node.addEventListener('click', function () { location.hash = seasonalActionRoute(occurrence); });
     node.appendChild(makeEl('p', 'v2-seasonal-card-title', actionWindowLabel(occurrence.def, catalog)));
     var status = plantOccurrenceStatusLabel(occurrence);
     if (status) node.appendChild(makeEl('span', 'v2-seasonal-status', status));
-    node.appendChild(makeEl('span', 'v2-seasonal-meta', plantOccurrenceDateLine(occurrence)));
+    node.appendChild(makeEl('span', 'v2-seasonal-meta', plantOccurrenceDateLine(occurrence, snapshot)));
     node.appendChild(makeEl('span', 'v2-seasonal-note', plantOccurrenceEvidenceLine(occurrence)));
     parent.appendChild(node);
   }
@@ -7695,6 +7774,136 @@ if ('serviceWorker' in navigator) {
       section.appendChild(list);
     }
     parent.appendChild(section);
+  }
+
+  function findSeasonalGroup(snapshot, route) {
+    if (!Number.isInteger(route.cycle_year)) return null;
+    for (var i = 0; i < snapshot.groups.length; i++) {
+      var group = snapshot.groups[i];
+      if (group.catalog_version === route.catalog_version &&
+          group.window_def_id === route.window_def_id &&
+          group.cycle_year === route.cycle_year) {
+        return group;
+      }
+    }
+    return null;
+  }
+
+  function seasonalActionIdentityLine(group) {
+    return group.catalog_version + ' · ' + group.window_def_id + ' · ' + group.cycle_year;
+  }
+
+  function seasonalDetailDateLine(group, today) {
+    if (today < group.effective_open) return 'Počinje ' + formatDateYmd(group.effective_open);
+    if (today <= group.effective_close) {
+      if (daysBetweenYmd(today, group.effective_close) < CLOSING_SOON_THRESHOLD_DAYS) return 'Aktualno do ' + formatDateYmd(group.effective_close) + ' - pri kraju.';
+      return 'Aktualno od ' + formatDateYmd(group.effective_open) + ' do ' + formatDateYmd(group.effective_close);
+    }
+    return 'Bilo je aktualno od ' + formatDateYmd(group.effective_open) + ' do ' + formatDateYmd(group.effective_close);
+  }
+
+  function stateDisplayLabel(state) {
+    if (state === 'open') return 'Aktualno';
+    if (state === 'closing-soon') return 'Pri kraju';
+    if (state === 'upcoming') return 'Uskoro';
+    if (state === 'missed') return 'Bilo je aktualno';
+    if (state === 'done') return 'Napravljeno';
+    if (state === 'done_late') return 'Napravljeno nakon razdoblja';
+    if (state === 'skipped') return 'Preskočeno';
+    return state || '';
+  }
+
+  function seasonalDetailStateLine(group) {
+    var order = ['open','closing-soon','missed','done','done_late','skipped','upcoming'];
+    var present = Object.create(null);
+    for (var i = 0; i < group.occurrences.length; i++) present[group.occurrences[i].state] = true;
+    var labels = [];
+    for (var s = 0; s < order.length; s++) {
+      if (present[order[s]]) labels.push(stateDisplayLabel(order[s]));
+    }
+    return labels.length > 0 ? 'Stanje: ' + labels.join(', ') + '.' : '';
+  }
+
+  function uniformGateState(group) {
+    if (group.occurrences.length === 0) return '';
+    var gate = group.occurrences[0].gate_state;
+    if (!gate) return '';
+    for (var i = 1; i < group.occurrences.length; i++) {
+      if (group.occurrences[i].gate_state !== gate) return '';
+    }
+    return gate;
+  }
+
+  function seasonalDetailPlantScopeLine(group) {
+    if (group.occurrences.length === 1) return 'Primjenjuje se na ' + plantTitle(group.occurrences[0].plant) + '.';
+    return 'Primjenjuje se na ' + plantCountText(group.occurrences.length) + '.';
+  }
+
+  function seasonalDetailEvidenceSummary(group) {
+    var stats = groupStats(group);
+    if (stats.evidenced === 0) {
+      if (stats.missed === stats.total) return 'Nema evidencije za ' + plantCountText(stats.total) + '.';
+      return '';
+    }
+    if (stats.evidenced === stats.total) {
+      if (stats.done === stats.total) return 'Odrađeno za sve voćke.';
+      if (stats.skipped === stats.total) return 'Preskočeno za sve voćke.';
+      return 'Evidentirano za sve voćke.';
+    }
+    if (stats.done === stats.evidenced) return 'Odrađeno za ' + evidenceFraction(stats.done, stats.total) + '.';
+    if (stats.skipped === stats.evidenced) return 'Preskočeno za ' + evidenceFraction(stats.skipped, stats.total) + '.';
+    return 'Evidentirano za ' + evidenceFraction(stats.evidenced, stats.total) + '.';
+  }
+
+  function matchingActivityEntriesForOccurrence(entries, occurrence) {
+    var matches = [];
+    for (var i = 0; i < entries.length; i++) {
+      var effective = entries[i].effective;
+      if (effective.plant_id !== occurrence.plant_id) continue;
+      if (effective.window_def_id !== occurrence.window_def_id) continue;
+      if (effective.catalog_version !== occurrence.catalog_version) continue;
+      if (effective.occurred_on < occurrence.effective_open) continue;
+      if (effective.occurred_on >= occurrence.next_effective_open) continue;
+      matches.push(entries[i]);
+    }
+    return matches.sort(entrySort);
+  }
+
+  function activityEvidenceLine(entry, occurrence) {
+    var effective = entry.effective;
+    var text = effective.status === 'skipped' ? 'Preskočeno ' : 'Evidentirano ';
+    text += formatDateYmd(effective.occurred_on);
+    if (effective.status === 'done' && effective.occurred_on > occurrence.effective_close) text += ' nakon razdoblja';
+    if (entry.corrected) text += ' ispravljeno';
+    if (text.slice(-1) !== '.') text += '.';
+    return text;
+  }
+
+  function noActivityEvidenceLine(occurrence, snapshot) {
+    if (occurrence.state === 'upcoming') return 'Još nije aktualno';
+    if (plantOccurrenceIsCurrent(snapshot, occurrence)) return 'Nije evidentirano';
+    return 'Nema evidencije';
+  }
+
+  function canonicalTextLines(value) {
+    if (typeof value !== 'string') return [];
+    return value.split('\n').map(function (line) { return line.trim(); }).filter(function (line) { return line.length > 0; });
+  }
+
+  function appendCanonicalTextSection(parent, title, lines) {
+    if (lines.length === 0) return;
+    var section = makeEl('section', 'v2-seasonal-section');
+    section.appendChild(makeEl('h3', '', title));
+    var list = document.createElement('ul');
+    for (var i = 0; i < lines.length; i++) {
+      list.appendChild(makeEl('li', '', lines[i]));
+    }
+    section.appendChild(list);
+    parent.appendChild(section);
+  }
+
+  function isSprayActionType(actionType) {
+    return actionType === 'oil' || actionType === 'copper' || actionType === 'fungicide' || actionType === 'insecticide';
   }
 
   function renderSeasonalReadFailure(parent, result) {
@@ -7801,38 +8010,92 @@ if ('serviceWorker' in navigator) {
     }, 0);
   }
 
-  function renderSeasonalActionPlaceholder(route) {
+  function renderSeasonalActionDetail(route) {
     setViews('seasonal_action');
     clearNode(seasonalActionView);
-    appendSeasonalHeader(seasonalActionView, 'Sezonska radnja', 'kalendar');
+
+    var result = readValidStore();
+    if (!result.ok) {
+      appendSeasonalHeader(seasonalActionView, 'Sezonska radnja', 'kalendar');
+      renderSeasonalReadFailure(seasonalActionView, result);
+      return;
+    }
+    var snapshot;
+    var found;
+    try {
+      snapshot = buildSeasonalSnapshot(result.store, result.catalog, localTodayYmd());
+      found = findSeasonalGroup(snapshot, route);
+    } catch (e) {
+      appendSeasonalHeader(seasonalActionView, 'Sezonska radnja', 'kalendar');
+      renderSeasonalSnapshotFailure(seasonalActionView, e);
+      return;
+    }
+    if (!found) {
+      appendSeasonalHeader(seasonalActionView, 'Sezonska radnja', 'kalendar');
+      seasonalActionView.appendChild(makeEl('p', 'v2-plants-empty', 'Sezonska radnja nije pronađena.'));
+      return;
+    }
+
+    appendSeasonalHeader(seasonalActionView, found.def.label, 'kalendar', seasonalActionIdentityLine(found));
     var back = makeEl('button', 'v2-plants-secondary', 'Natrag na Kalendar');
     back.type = 'button';
     back.addEventListener('click', function () { location.hash = '#v2/kalendar'; });
     seasonalActionView.appendChild(back);
 
-    var result = readValidStore();
-    if (!result.ok) {
-      renderSeasonalReadFailure(seasonalActionView, result);
-      return;
+    var summary = makeEl('article', 'v2-seasonal-card');
+    summary.appendChild(makeEl('span', 'v2-seasonal-meta', seasonalDetailDateLine(found, snapshot.today)));
+    var stateLine = seasonalDetailStateLine(found);
+    if (stateLine) summary.appendChild(makeEl('span', 'v2-seasonal-meta', stateLine));
+    summary.appendChild(makeEl('span', 'v2-seasonal-meta', seasonalDetailPlantScopeLine(found)));
+    var evidenceSummary = seasonalDetailEvidenceSummary(found);
+    if (evidenceSummary) summary.appendChild(makeEl('span', 'v2-seasonal-note', evidenceSummary));
+    var gate = uniformGateState(found);
+    if (gate) summary.appendChild(makeEl('span', 'v2-seasonal-note', 'Uvjet: ' + gate + '.'));
+    var capture = makeEl('button', 'v2-plants-primary', 'Dodaj evidenciju');
+    capture.type = 'button';
+    capture.addEventListener('click', function () { location.hash = activityAddRoute(found); });
+    summary.appendChild(capture);
+    seasonalActionView.appendChild(summary);
+
+    appendCanonicalTextSection(seasonalActionView, 'Napomene', canonicalTextLines(found.def.notes));
+    if (isSprayActionType(found.def.action_type) && Array.isArray(result.catalog.spray_safety_notes)) {
+      appendCanonicalTextSection(seasonalActionView, 'Sigurnost prskanja', result.catalog.spray_safety_notes.slice());
     }
-    try {
-      var snapshot = buildSeasonalSnapshot(result.store, result.catalog, localTodayYmd());
-      var found = null;
-      for (var i = 0; i < snapshot.groups.length; i++) {
-        var group = snapshot.groups[i];
-        if (group.catalog_version === route.catalog_version &&
-            group.window_def_id === route.window_def_id &&
-            group.cycle_year === route.cycle_year) {
-          found = group;
-          break;
+
+    var entries = effectiveActivityEntries(result.store, result.catalog);
+    var evidence = makeEl('section', 'v2-seasonal-section');
+    evidence.appendChild(makeEl('h3', '', 'Evidencija po voćkama'));
+    var list = makeEl('div', 'v2-seasonal-list');
+    for (var i = 0; i < found.occurrences.length; i++) {
+      var occurrence = found.occurrences[i];
+      var card = makeEl('article', 'v2-seasonal-card');
+      card.appendChild(makeEl('p', 'v2-seasonal-card-title', plantTitle(occurrence.plant)));
+      card.appendChild(makeEl('span', 'v2-seasonal-status', stateDisplayLabel(occurrence.state)));
+      card.appendChild(makeEl('span', 'v2-seasonal-meta', seasonalDetailDateLine(found, snapshot.today)));
+      if (occurrence.gate_state) card.appendChild(makeEl('span', 'v2-seasonal-note', 'Uvjet: ' + occurrence.gate_state + '.'));
+      var matchingEntries = matchingActivityEntriesForOccurrence(entries, occurrence);
+      if (matchingEntries.length === 0) {
+        card.appendChild(makeEl('span', 'v2-seasonal-note', noActivityEvidenceLine(occurrence, snapshot)));
+      } else {
+        for (var e = 0; e < matchingEntries.length; e++) {
+          card.appendChild(makeEl('span', 'v2-seasonal-note', activityEvidenceLine(matchingEntries[e], occurrence)));
+          if (hasOwnKey(matchingEntries[e].effective, 'notes')) {
+            card.appendChild(makeEl('span', 'v2-seasonal-note', 'Bilješka: ' + matchingEntries[e].effective.notes));
+          }
         }
       }
-      if (found) seasonalActionView.appendChild(makeEl('p', 'v2-seasonal-card-title', actionWindowLabel(found.def, found.catalog)));
-    } catch (e) {
-      renderSeasonalSnapshotFailure(seasonalActionView, e);
-      return;
+      list.appendChild(card);
     }
-    seasonalActionView.appendChild(makeEl('p', 'v2-plants-empty', 'Detalj sezonske radnje stiže u Slice 7.'));
+    evidence.appendChild(list);
+    seasonalActionView.appendChild(evidence);
+
+    var diary = makeEl('section', 'v2-seasonal-section');
+    diary.appendChild(makeEl('h3', '', 'Dnevnik'));
+    var diaryLink = makeEl('button', 'v2-plants-secondary', 'Otvori u Dnevniku voćnjaka');
+    diaryLink.type = 'button';
+    diaryLink.addEventListener('click', function () { location.hash = '#v2/diary'; });
+    diary.appendChild(diaryLink);
+    seasonalActionView.appendChild(diary);
   }
 
   function diaryGroupKey(entry) {
@@ -8173,9 +8436,9 @@ if ('serviceWorker' in navigator) {
     var route = getRoute();
     if (route.name === 'pregled') renderPregled();
     else if (route.name === 'kalendar') renderKalendar();
-    else if (route.name === 'seasonal_action') renderSeasonalActionPlaceholder(route);
+    else if (route.name === 'seasonal_action') renderSeasonalActionDetail(route);
     else if (route.name === 'add') renderAdd();
-    else if (route.name === 'activity_add') renderActivityAdd();
+    else if (route.name === 'activity_add') renderActivityAdd(route);
     else if (route.name === 'diary') renderDiary();
     else if (route.name === 'correction') renderCorrection(route);
     else if (route.name === 'detail') renderDetail(route);
