@@ -6330,6 +6330,10 @@ if ('serviceWorker' in navigator) {
     return '#v2/plant/' + encodeURIComponent(plantId);
   }
 
+  function plantDiaryRoute(plantId) {
+    return '#v2/diary/plant/' + encodeURIComponent(plantId);
+  }
+
   function seasonalActionRoute(group) {
     return '#v2/seasonal-action/' +
       encodeURIComponent(group.catalog_version) + '/' +
@@ -6422,6 +6426,18 @@ if ('serviceWorker' in navigator) {
     if (h === '#v2/add') return { name: 'add' };
     if (h === '#v2/activity/add') return { name: 'activity_add' };
     if (h === '#v2/diary') return { name: 'diary' };
+    var plantDiaryPrefix = '#v2/diary/plant/';
+    if (h.indexOf(plantDiaryPrefix) === 0) {
+      var plantDiaryRaw = h.slice(plantDiaryPrefix.length);
+      var plantDiaryId;
+      try {
+        plantDiaryId = decodeURIComponent(plantDiaryRaw);
+      } catch (e) {
+        return { name: 'plant_diary', malformed: true };
+      }
+      if (!PLANT_ID_RE.test(plantDiaryId)) return { name: 'plant_diary', plant_id: plantDiaryId, malformed: true };
+      return { name: 'plant_diary', plant_id: plantDiaryId };
+    }
     var activityAddPrefix = '#v2/activity/add/';
     if (h.indexOf(activityAddPrefix) === 0) {
       var activityParts = h.slice(activityAddPrefix.length).split('/');
@@ -6667,7 +6683,19 @@ if ('serviceWorker' in navigator) {
 
     var diary = makeEl('section', 'v2-plants-section');
     diary.appendChild(makeEl('h3', '', 'Dnevnik ove voćke'));
-    diary.appendChild(makeEl('p', 'v2-plants-empty', 'Dnevnik ove voćke bit će dostupan u sljedećem koraku.'));
+    var plantEntries = activityEntriesForPlant(effectiveActivityEntries(result.store, result.catalog), plant.plant_id);
+    var plantGroups = groupDiaryEntries(plantEntries).slice(0, 5);
+    if (plantGroups.length === 0) {
+      diary.appendChild(makeEl('p', 'v2-plants-empty', 'Još nema evidentiranih aktivnosti za ovu voćku.'));
+    } else {
+      var preview = makeEl('div', 'v2-diary-list');
+      appendDiaryGroups(preview, plantGroups, result, { showCorrectionActions: false });
+      diary.appendChild(preview);
+    }
+    var fullDiary = makeEl('button', 'v2-plants-secondary', 'Prikaži cijeli dnevnik voćke');
+    fullDiary.type = 'button';
+    fullDiary.addEventListener('click', function () { location.hash = plantDiaryRoute(plant.plant_id); });
+    diary.appendChild(fullDiary);
     detailView.appendChild(diary);
   }
 
@@ -8105,34 +8133,13 @@ if ('serviceWorker' in navigator) {
     return [groupId, e.window_def_id, e.catalog_version, e.action_type, e.occurred_on, e.status, notes].join('|');
   }
 
-  function renderDiary() {
-    setViews('diary');
-    clearNode(diaryView);
+  function activityEntriesForPlant(entries, plantId) {
+    return entries.filter(function (entry) {
+      return entry.effective.plant_id === plantId;
+    });
+  }
 
-    var topbar = makeEl('div', 'v2-plants-topbar');
-    topbar.appendChild(makeEl('h2', '', 'Dnevnik'));
-    var actions = makeEl('div', 'v2-plants-actions');
-    var back = makeEl('button', 'v2-plants-secondary', 'Natrag na popis');
-    back.type = 'button';
-    back.addEventListener('click', function () { location.hash = '#v2'; });
-    actions.appendChild(back);
-    topbar.appendChild(actions);
-    diaryView.appendChild(topbar);
-    if (pendingDiaryStatus) {
-      diaryView.appendChild(makeEl('p', 'v2-plants-status', pendingDiaryStatus));
-      pendingDiaryStatus = '';
-    }
-
-    var result = readValidStore();
-    if (!result.ok) {
-      diaryView.appendChild(makeEl('p', 'v2-plants-error', result.error));
-      return;
-    }
-    if (result.store.activities.length === 0) {
-      diaryView.appendChild(makeEl('p', 'v2-plants-empty', 'Još nema zapisa u Dnevniku.'));
-      return;
-    }
-    var entries = effectiveActivityEntries(result.store, result.catalog);
+  function groupDiaryEntries(entries) {
     var groups = Object.create(null);
     for (var i = 0; i < entries.length; i++) {
       var key = diaryGroupKey(entries[i]);
@@ -8146,29 +8153,31 @@ if ('serviceWorker' in navigator) {
       if (ae.occurred_on !== be.occurred_on) return be.occurred_on.localeCompare(ae.occurred_on);
       return be.recorded_at.localeCompare(ae.recorded_at);
     });
+    return groupList;
+  }
 
-    var list = makeEl('div', 'v2-diary-list');
-    for (var g = 0; g < groupList.length; g++) {
-      var group = groupList[g];
-      var sample = group[0].effective;
-      var def = findActionWindow(result.catalog, sample.window_def_id);
-      var card = makeEl('article', 'v2-diary-card');
-      var title = makeEl('p', 'v2-diary-title', formatDateYmd(sample.occurred_on) + ' · ' + actionWindowLabel(def, result.catalog));
-      if (group.some(function (entry) { return entry.corrected; })) title.appendChild(makeEl('span', 'v2-diary-corrected', 'ispravljeno'));
-      card.appendChild(title);
-      var plantNames = group.map(function (entry) {
-        var plant = findPlant(result.store.plants, entry.effective.plant_id);
-        return plant ? plantTitle(plant) : entry.effective.plant_id;
-      });
-      var plantMeta = group.length === 1 ? plantNames[0] : plantCountText(group.length);
-      card.appendChild(makeEl('span', 'v2-diary-meta', statusLabel(sample.status) + ' · ' + plantMeta));
-      if (hasOwnKey(sample, 'notes')) card.appendChild(makeEl('span', 'v2-diary-note', 'Bilješka: ' + sample.notes));
-      var estimated = group.some(function (entry) {
-        var plant = findPlant(result.store.plants, entry.effective.plant_id);
-        var activityDef = findActionWindow(result.catalog, entry.effective.window_def_id);
-        return plant && activityDef && usesEstimatedMidFallback(plant, activityDef, result.catalog);
-      });
-      if (estimated) card.appendChild(makeEl('small', 'v2-diary-meta', ESTIMATED_MID_FALLBACK_TEXT));
+  function appendDiaryGroupCard(parent, group, result, options) {
+    var showCorrectionActions = !options || options.showCorrectionActions !== false;
+    var sample = group[0].effective;
+    var def = findActionWindow(result.catalog, sample.window_def_id);
+    var card = makeEl('article', 'v2-diary-card');
+    var title = makeEl('p', 'v2-diary-title', formatDateYmd(sample.occurred_on) + ' · ' + actionWindowLabel(def, result.catalog));
+    if (group.some(function (entry) { return entry.corrected; })) title.appendChild(makeEl('span', 'v2-diary-corrected', 'ispravljeno'));
+    card.appendChild(title);
+    var plantNames = group.map(function (entry) {
+      var plant = findPlant(result.store.plants, entry.effective.plant_id);
+      return plant ? plantTitle(plant) : entry.effective.plant_id;
+    });
+    var plantMeta = group.length === 1 ? plantNames[0] : plantCountText(group.length);
+    card.appendChild(makeEl('span', 'v2-diary-meta', statusLabel(sample.status) + ' · ' + plantMeta));
+    if (hasOwnKey(sample, 'notes')) card.appendChild(makeEl('span', 'v2-diary-note', 'Bilješka: ' + sample.notes));
+    var estimated = group.some(function (entry) {
+      var plant = findPlant(result.store.plants, entry.effective.plant_id);
+      var activityDef = findActionWindow(result.catalog, entry.effective.window_def_id);
+      return plant && activityDef && usesEstimatedMidFallback(plant, activityDef, result.catalog);
+    });
+    if (estimated) card.appendChild(makeEl('small', 'v2-diary-meta', ESTIMATED_MID_FALLBACK_TEXT));
+    if (showCorrectionActions) {
       var correctionActions = makeEl('div', 'v2-diary-plant-actions');
       for (var p = 0; p < group.length; p++) {
         var button = makeEl('button', 'v2-plants-secondary', group.length > 1 ? 'Ispravi — ' + plantNames[p] : 'Ispravi zapis');
@@ -8180,8 +8189,59 @@ if ('serviceWorker' in navigator) {
         correctionActions.appendChild(button);
       }
       card.appendChild(correctionActions);
-      list.appendChild(card);
     }
+    parent.appendChild(card);
+  }
+
+  function appendDiaryGroups(parent, groupList, result, options) {
+    for (var g = 0; g < groupList.length; g++) {
+      appendDiaryGroupCard(parent, groupList[g], result, options);
+    }
+  }
+
+  function renderDiary(route) {
+    route = route || { name: 'diary' };
+    var plantScoped = route.name === 'plant_diary';
+    setViews('diary');
+    clearNode(diaryView);
+
+    var topbar = makeEl('div', 'v2-plants-topbar');
+    topbar.appendChild(makeEl('h2', '', plantScoped ? 'Dnevnik ove voćke' : 'Dnevnik'));
+    var actions = makeEl('div', 'v2-plants-actions');
+    var back = makeEl('button', 'v2-plants-secondary', plantScoped ? 'Natrag na voćku' : 'Natrag na popis');
+    back.type = 'button';
+    back.addEventListener('click', function () { location.hash = plantScoped && route.plant_id ? plantDetailRoute(route.plant_id) : '#v2'; });
+    actions.appendChild(back);
+    topbar.appendChild(actions);
+    diaryView.appendChild(topbar);
+    if (pendingDiaryStatus) {
+      diaryView.appendChild(makeEl('p', 'v2-plants-status', pendingDiaryStatus));
+      pendingDiaryStatus = '';
+    }
+
+    var result = readValidStore();
+    if (!result.ok) {
+      diaryView.appendChild(makeEl('p', 'v2-plants-error', result.error));
+      return;
+    }
+    if (plantScoped) {
+      var scopedPlant = !route.malformed && route.plant_id ? findPlant(result.store.plants, route.plant_id) : null;
+      if (!scopedPlant) {
+        diaryView.appendChild(makeEl('p', 'v2-plants-empty', 'Voćka nije pronađena.'));
+        return;
+      }
+      diaryView.appendChild(makeEl('p', 'v2-diary-meta', plantTitle(scopedPlant)));
+    }
+    var entries = effectiveActivityEntries(result.store, result.catalog);
+    if (plantScoped) entries = activityEntriesForPlant(entries, route.plant_id);
+    if (entries.length === 0) {
+      diaryView.appendChild(makeEl('p', 'v2-plants-empty', plantScoped ? 'Još nema evidentiranih aktivnosti za ovu voćku.' : 'Još nema zapisa u Dnevniku.'));
+      return;
+    }
+    var groupList = groupDiaryEntries(entries);
+
+    var list = makeEl('div', 'v2-diary-list');
+    appendDiaryGroups(list, groupList, result, { showCorrectionActions: true });
     diaryView.appendChild(list);
   }
 
@@ -8439,7 +8499,7 @@ if ('serviceWorker' in navigator) {
     else if (route.name === 'seasonal_action') renderSeasonalActionDetail(route);
     else if (route.name === 'add') renderAdd();
     else if (route.name === 'activity_add') renderActivityAdd(route);
-    else if (route.name === 'diary') renderDiary();
+    else if (route.name === 'diary' || route.name === 'plant_diary') renderDiary(route);
     else if (route.name === 'correction') renderCorrection(route);
     else if (route.name === 'detail') renderDetail(route);
     else renderList();
