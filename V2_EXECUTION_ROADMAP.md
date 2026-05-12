@@ -933,7 +933,7 @@ Must not touch:
 - Activity capture, Activity-only Dnevnik, or Activity correction implementation (Slice 5).
 - Snapshot, Pregled, or Kalendar (Slice 6).
 - Plant detail live integration, Detalj sezonske radnje, or weather composition (Slice 7 — not started).
-- Observation, stage confirmation, monitoring programs, awareness definitions, stage vocabulary, target registry, symptom registry (B2 / Slice 8).
+- Observation, stage confirmation, monitoring programs, B2 source-map projection grouping, risk-awareness rendering, minimal generic stage vocabulary or stage-write deferral/restriction (B2 / Slice 8); the current B2 projection does not add `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`.
 - Observation correction, archive (Slice 9).
 - Plan upgrade review or Za pregledati cues (post-usable).
 - Legacy app logic or protected legacy keys.
@@ -962,14 +962,13 @@ Verification precision:
 Deferred to B2 before Slice 8 (NOT implemented by B1/B1.1):
 
 - `monitoring_programs[]`
-- `awareness_definitions[]`
-- `stage_vocabulary{}`
-- `target_registry[]`
-- `symptom_registry[]`
-- Kalendar `Praćenje` content
+- source-map projection grouping by stable ids: `monitoring_track` / `risk_awareness_track`
+- minimal generic MVP `stage_vocabulary[]`, or Slice 8 stage confirmation writes deferred/restricted until vocabulary exists
+- Kalendar `Praćenje` content: §2.11 monitoring cards and §2.12 risk-awareness cards
 - Pregled `Praćenje` content
-- Plant detail monitoring UI
+- Plant detail §4.10 monitoring UI and §4.9 Sezonski rizici feed
 - observation capture / observation rows
+- no `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]` in the current B2 projection
 
 Slice 7 boundary:
 
@@ -1242,7 +1241,7 @@ Depends on:
 
 - Slice 7 (Plant detail §4.10 monitoring section ready for fill; Detalj per-plant evidence summary ready to extend with observation rows).
 - Slice 6 (snapshot §4.11 stage observation effects, §4.12 monitoring program state projection, §4.13 free-standing observation boundary).
-- Catalog seed extension with monitoring program declarations and stage vocabulary.
+- Catalog seed extension with monitoring program declarations, stable-id source-map projection grouping, and minimal generic MVP stage vocabulary or stage-write deferral/restriction.
 
 Produces:
 
@@ -1250,8 +1249,12 @@ Produces:
 - Free-standing observation per §0.6a + §1.7.4 FS-INV: `program_id` absent is legal; observation is first-class plant-history entry, permanently disjoint from any monitoring program.
 - Monitoring capture flow per V2_UX_MODEL.md §10: program-context (§10.3), free-standing (§10.4), trap check (§10.5), visual scouting (§10.6), date behavior (§10.7), out-of-season behavior (§10.8), multi-plant monitoring boundary (§10.9 — separate observations per plant, not single multi-plant observation), treatment-advice boundary (§10.10).
 - Stage confirmation flow per V2_UX_MODEL.md §11: one-screen (§11.3), MVP stage labels (§11.4), uncertainty (§11.5), date behavior (§11.6), plan-impact copy (§11.7), Dnevnik / history (§11.9). Stage-code correction deferred to Slice 9 per §11.11.
-- Monitoring / Awareness baseline rendering per V2_UX_MODEL.md §15 + V2_ARCHITECTURE.md §4.12–§4.13: Plant detail §4.10 monitoring section populated; Pregled §1.8 Praćenje surface populated; Kalendar §2.11 Praćenje subgroup/items populated; Detalj per-plant evidence summary extended with observation rows; Dnevnik §3.13 / §3.14 free-standing and monitoring rows visible.
-- Awareness / risk monitoring per §0 + §10: pest / disease vs awareness / risk distinction maintained in copy; absence of records remains neutral.
+- B2 projection boundary: B2 currently resolves the owner-accepted 41-entry source working set into 36 projected B2 items: 30 štetnici/bolesti monitoring items and 6 promatranje/rizik/stanje items. This is the current resolved projection from the source map, not immutable final catalog truth. Composite split/combine decisions stay in this current resolved projection and must preserve source-map traceability.
+- Rendering separation per V2_UX_MODEL.md §15 + V2_ARCHITECTURE.md §4.12–§4.13: `monitoring_track` stable ids feed štetnici/bolesti monitoring surfaces; `risk_awareness_track` stable ids feed promatranje/rizik/stanje surfaces. This is audit/projection metadata only, not new canonical runtime schema, not a new user data model, and not a registry. Runtime must not infer the track from Croatian label pattern-matching.
+- Surface feed: štetnici/bolesti items feed Plant detail §4.10 monitoring section, Pregled §1.8 Praćenje, and Kalendar §2.11 monitoring cards/items; promatranje/rizik/stanje items feed Plant detail §4.9 Sezonski rizici and Kalendar §2.12 risk-awareness cards. Detalj per-plant evidence summary is extended with observation rows; Dnevnik §3.13 / §3.14 free-standing and monitoring rows remain visible.
+- UX examples: trešnjina muha = trap monitoring with records/counts/`Bez zapisa`; pucanje plodova = seasonal risk/awareness card with free-standing observation capture; mraz u cvatnji = seasonal risk/awareness; lisne uši = scouting monitoring.
+- Stage vocabulary rule: B2 must seed a minimal generic MVP `stage_vocabulary[]` using only `dormant`, `bud_swell`, `bloom`, `fruit_set`, `ripening`, and `leaf_drop` if that does not invent species-specific phenology, BBCH, timing, ordering, or plan effects. If any §11 label cannot be safely mapped to that generic vocabulary, Slice 8 stage confirmation writes for the unmapped label stay deferred/restricted until vocabulary exists.
+- Absence of monitoring or risk-awareness records remains neutral.
 
 Manual verification:
 
@@ -1533,7 +1536,7 @@ Pre-Slice-7 Action Window Notes Projection prerequisite (B1 + B1.1):
 - no new `innerHTML`, `outerHTML`, `document.write`, `eval`, or `new Function(` calls were introduced
 - Slice 6 surfaces (Pregled / Kalendar / seasonal-action placeholder) are unchanged
 - Activity and Correction schemas / validators are unchanged
-- B2 (`monitoring_programs[]`, `awareness_definitions[]`, `stage_vocabulary{}`, `target_registry[]`, `symptom_registry[]`, Kalendar Praćenje, Pregled Praćenje, Plant detail monitoring, observation capture / observation rows) remains required before Slice 8 and was NOT implemented by B1 or B1.1
+- B2 (`monitoring_programs[]`, stable-id source-map projection grouping, minimal generic `stage_vocabulary[]` or stage-write deferral/restriction, Kalendar §2.11 / §2.12 Praćenje, Pregled Praćenje, Plant detail §4.10 monitoring and §4.9 Sezonski rizici feeds, observation capture / observation rows) remains required before Slice 8 and was NOT implemented by B1 or B1.1. The current B2 projection does not add `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`.
 - full browser runtime verification, Cloudflare deployment verification, full import/export UI round-trip, and direct protected legacy localStorage byte-dump comparison were not performed for the B1 or B1.1 commits
 
 Slice 7 — Plant detail, Detalj, optional weather:

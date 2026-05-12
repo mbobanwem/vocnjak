@@ -3352,7 +3352,8 @@ Rules:
 - Current §11 does not define full BBCH modeling.
 - Current §11 does not define per-species phenology modeling.
 - Future catalog/content work may refine labels per species later.
-- S8/S9 may later decide storage ids and mapping from these labels to persisted stage references.
+- B2/S8 storage mapping must use catalog `stage_vocabulary[]` entries; it must not invent species-specific phenology, BBCH, timing, ordering, or plan effects.
+- The current generic MVP vocabulary may use only `dormant`, `bud_swell`, `bloom`, `fruit_set`, `ripening`, and `leaf_drop`. Any §11 label that cannot be safely mapped to that vocabulary remains display-only until vocabulary exists or Slice 8 stage confirmation writes for that label are explicitly deferred/restricted.
 
 ### 11.5 Uncertainty behavior
 

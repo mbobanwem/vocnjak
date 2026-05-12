@@ -25,7 +25,7 @@ Pre-Slice-7 Action Window Notes Projection prerequisite tracker sync closure is 
 Current immediate next step:
 
 ```text
-Runtime Slice 7 planning may begin only after owner approval and a fresh source-of-truth consistency check. Runtime Slice 7 implementation has not started and requires explicit owner approval. Slice 7 may plan against canonical `action_window_definitions[].notes` from the B1/B1.1 prerequisite but must not implement Monitoring/Praćenje, awareness/risk, stage vocabulary, target registry, or symptom registry — those land in B2 before Slice 8. `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred and requires explicit owner approval if done before Slice 7.
+Runtime Slice 7 planning may begin only after owner approval and a fresh source-of-truth consistency check. Runtime Slice 7 implementation has not started and requires explicit owner approval. Slice 7 may plan against canonical `action_window_definitions[].notes` from the B1/B1.1 prerequisite but must not implement Monitoring/Praćenje, B2 source-map projection grouping, risk-awareness rendering, stage vocabulary, or observation rows — those land in B2 before Slice 8. The current B2 projection does not add `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`. `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred and requires explicit owner approval if done before Slice 7.
 ```
 
 S11 status: DONE.
@@ -257,14 +257,13 @@ B1/B1.1 verification precision:
 
 Deferred to B2 before Slice 8 (NOT implemented by B1/B1.1):
 - `monitoring_programs[]`
-- `awareness_definitions[]`
-- `stage_vocabulary{}`
-- `target_registry[]`
-- `symptom_registry[]`
-- Kalendar `Praćenje`
+- source-map projection grouping by stable ids: `monitoring_track` / `risk_awareness_track`
+- minimal generic MVP `stage_vocabulary[]`, or Slice 8 stage confirmation writes deferred/restricted until vocabulary exists
+- Kalendar `Praćenje`: §2.11 monitoring cards and §2.12 risk-awareness cards
 - Pregled `Praćenje`
-- Plant detail monitoring UI
+- Plant detail §4.10 monitoring UI and §4.9 Sezonski rizici feed
 - observation capture / observation rows
+- no `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]` in the current B2 projection
 
 Slice 7 implementation has not started. Slice 7 may now plan against canonical `action_window_definitions[].notes` exposed by B1/B1.1, but must still not rely on monitoring or awareness content until B2 lands.
 
