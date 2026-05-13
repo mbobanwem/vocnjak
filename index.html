@@ -7744,6 +7744,8 @@ if ('serviceWorker' in navigator) {
     var status = plantOccurrenceStatusLabel(occurrence);
     if (status) node.appendChild(makeEl('span', 'v2-seasonal-status', status));
     node.appendChild(makeEl('span', 'v2-seasonal-meta', plantOccurrenceDateLine(occurrence, snapshot)));
+    var cue = purposeCue(occurrence.def);
+    if (cue) node.appendChild(makeEl('span', 'v2-seasonal-note', cue));
     node.appendChild(makeEl('span', 'v2-seasonal-note', plantOccurrenceEvidenceLine(occurrence)));
     parent.appendChild(node);
   }
@@ -7854,12 +7856,18 @@ if ('serviceWorker' in navigator) {
 
   function uniformGateState(group) {
     if (group.occurrences.length === 0) return '';
-    var gate = group.occurrences[0].gate_state;
+    var gate = gateStateForDisplay(group.def, group.occurrences[0].gate_state);
     if (!gate) return '';
     for (var i = 1; i < group.occurrences.length; i++) {
-      if (group.occurrences[i].gate_state !== gate) return '';
+      if (gateStateForDisplay(group.occurrences[i].def, group.occurrences[i].gate_state) !== gate) return '';
     }
     return gate;
+  }
+
+  function gateStateForDisplay(def, gateState) {
+    if (!isPlainObject(def) || !hasOwnKey(def, 'open_condition')) return '';
+    if (!gateState || gateState === 'ne primjenjuje se') return '';
+    return gateState;
   }
 
   function seasonalDetailPlantScopeLine(group) {
@@ -8064,7 +8072,7 @@ if ('serviceWorker' in navigator) {
       return;
     }
 
-    appendSeasonalHeader(seasonalActionView, found.def.label, 'kalendar', seasonalActionIdentityLine(found));
+    appendSeasonalHeader(seasonalActionView, actionWindowLabel(found.def, result.catalog), 'kalendar');
     var back = makeEl('button', 'v2-plants-secondary', 'Natrag na Kalendar');
     back.type = 'button';
     back.addEventListener('click', function () { location.hash = '#v2/kalendar'; });
@@ -8100,7 +8108,8 @@ if ('serviceWorker' in navigator) {
       card.appendChild(makeEl('p', 'v2-seasonal-card-title', plantTitle(occurrence.plant)));
       card.appendChild(makeEl('span', 'v2-seasonal-status', stateDisplayLabel(occurrence.state)));
       card.appendChild(makeEl('span', 'v2-seasonal-meta', seasonalDetailDateLine(found, snapshot.today)));
-      if (occurrence.gate_state) card.appendChild(makeEl('span', 'v2-seasonal-note', 'Uvjet: ' + occurrence.gate_state + '.'));
+      var occurrenceGate = gateStateForDisplay(occurrence.def, occurrence.gate_state);
+      if (occurrenceGate) card.appendChild(makeEl('span', 'v2-seasonal-note', 'Uvjet: ' + occurrenceGate + '.'));
       var matchingEntries = matchingActivityEntriesForOccurrence(entries, occurrence);
       if (matchingEntries.length === 0) {
         card.appendChild(makeEl('span', 'v2-seasonal-note', noActivityEvidenceLine(occurrence, snapshot)));
