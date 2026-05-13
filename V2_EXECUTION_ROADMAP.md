@@ -1,6 +1,6 @@
 # V2 Execution Roadmap
 
-**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation is underway; Runtime Slices 0–7 are complete through S7.4. B2 remains required before Runtime Slice 8 and has not started.
+**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation is underway; Runtime Slices 0–7 are complete through S7.4. B2 metadata-only projection boundary is complete; Runtime Slice 8 has not started.
 
 This document converts the completed V2 specification stack (S6–S10) into an implementation execution roadmap. It is bound by the locked core documents and does not authorize runtime implementation by itself.
 
@@ -798,7 +798,7 @@ Cross-cutting rules that bind every S11.C2 slice (in addition to §22):
 - Monitoring absence is neutral. No warning, no overdue badge, no compliance copy on missing observations or unconfirmed stages.
 - Single capture path. Each capture surface (Activity, Observation, stage confirmation) has exactly one write boundary; no surface re-implements capture.
 - Same Correction record shape across Activity (Slice 5) and Observation (Slice 9). Per S8 §1.24 handoff: one Correction storage shape.
-- Catalog seed extension only from already-approved V2 catalog / template docs and without catalog re-authoring (per §30). Pre-Slice-5 Action Window Seed supplied real action-window definitions before Slice 5; Slice 6 still owns snapshot / Pregled / Kalendar, not the first action-window seed. B2 must resolve source-map/projection grouping before Runtime Slice 8. Slice 8 consumes only B2-approved boundaries and must not independently introduce monitoring declarations, risk-awareness UI, new registries, or stage vocabulary. The current boundary adds no `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`.
+- Catalog seed extension only from already-approved V2 catalog / template docs and without catalog re-authoring (per §30). Pre-Slice-5 Action Window Seed supplied real action-window definitions before Slice 5; Slice 6 still owns snapshot / Pregled / Kalendar, not the first action-window seed. B2 has resolved source-map/projection grouping as metadata only before Runtime Slice 8. Slice 8 consumes only B2-approved boundaries and must not independently introduce monitoring declarations, risk-awareness UI, new registries, or stage vocabulary. The current boundary adds no `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`.
 - Verification of legacy non-disturbance asserts that legacy key VALUES are unchanged, NOT that legacy keys are never written-to (per §28).
 
 ---
@@ -933,7 +933,7 @@ Must not touch:
 - Activity capture, Activity-only Dnevnik, or Activity correction implementation (Slice 5).
 - Snapshot, Pregled, or Kalendar (Slice 6).
 - Plant detail live integration, Detalj sezonske radnje, or weather composition (completed later through S7.4; not touched by B1/B1.1).
-- Observation, stage confirmation, monitoring programs, B2 source-map projection grouping, risk-awareness rendering, minimal generic stage vocabulary or stage-write deferral/restriction (B2 / Slice 8); the current B2 projection does not add `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`.
+- Observation, stage confirmation, monitoring programs, risk-awareness rendering, minimal generic stage vocabulary or stage-write deferral/restriction (Slice 8); B2 source-map projection grouping is complete as private metadata only and does not add `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`.
 - Observation correction, archive (Slice 9).
 - Plan upgrade review or Za pregledati cues (post-usable).
 - Legacy app logic or protected legacy keys.
@@ -959,11 +959,11 @@ Verification precision:
 - full import/export UI round-trip was not performed.
 - direct protected legacy localStorage byte-dump comparison was not performed; protected legacy isolation was checked by source isolation only.
 
-Deferred to B2 before Slice 8 (NOT implemented by B1/B1.1):
+B2 / Slice 8 boundary after B2 metadata-only implementation (NOT implemented by B1/B1.1):
 
-- `monitoring_programs[]`
-- source-map projection grouping by stable ids: `monitoring_track` / `risk_awareness_track`
-- minimal generic MVP `stage_vocabulary[]`, or Slice 8 stage confirmation writes deferred/restricted until vocabulary exists
+- source-map projection grouping by stable ids: `monitoring_track` / `risk_awareness_track` is complete as private metadata only
+- `monitoring_programs[]` remains unimplemented until an owner-approved Slice 8 boundary consumes B2 metadata
+- minimal generic MVP `stage_vocabulary[]`, or Slice 8 stage confirmation writes deferred/restricted until vocabulary exists, remains unimplemented
 - Kalendar `Praćenje` content: §2.11 monitoring cards and §2.12 risk-awareness cards
 - Pregled `Praćenje` content
 - Plant detail §4.10 monitoring UI and §4.9 Sezonski rizici feed
@@ -973,7 +973,7 @@ Deferred to B2 before Slice 8 (NOT implemented by B1/B1.1):
 Slice 7 boundary:
 
 - Slice 7 later consumed canonical `action_window_definitions[].notes` projected by B1/B1.1 inside completed S7 detail surfaces.
-- Slice 7 did not rely on monitoring or awareness content; B2 remains required before Runtime Slice 8.
+- Slice 7 did not rely on monitoring or awareness content; B2 metadata-only projection boundary is complete and Runtime Slice 8 is the first allowed consumer.
 - Slice 7 is complete through S7.4.
 
 Stop conditions:
@@ -1160,7 +1160,7 @@ Make V2 deeply visible per plant and per action. Populate Plant detail's live se
 
 Status: COMPLETE — Runtime Slice 7 landed through S7.4 in `index.html` only. S7.1 added Plant detail seasonal action cards, S7.2 added Detalj sezonske radnje, S7.3 added Plant detail Dnevnik preview / plant-scoped diary integration, and S7.4 hardened seasonal-action display.
 
-Current tracker note: S7.4 was a display-only hardening slice. It removed technical seasonal-action identity leakage, suppressed `Uvjet: ne primjenjuje se.` when no `open_condition` exists, aligned seasonal detail titles with user-facing card wording, and reused existing `Namjena:` purpose cues on Plant detail seasonal cards. It did not change action windows, evidence matching, multi-plant logging, the history model, schema, persistence, monitoring, observations, weather logic, or snapshot persistence. The seasonal snapshot remains private, read-time, derived, and non-persisted. B2 remains required before Runtime Slice 8 and has not started.
+Current tracker note: S7.4 was a display-only hardening slice. It removed technical seasonal-action identity leakage, suppressed `Uvjet: ne primjenjuje se.` when no `open_condition` exists, aligned seasonal detail titles with user-facing card wording, and reused existing `Namjena:` purpose cues on Plant detail seasonal cards. It did not change action windows, evidence matching, multi-plant logging, the history model, schema, persistence, monitoring, observations, weather logic, or snapshot persistence. The seasonal snapshot remains private, read-time, derived, and non-persisted. B2 metadata-only projection boundary is complete; Runtime Slice 8 has not started.
 
 Allowed touch points:
 
@@ -1228,7 +1228,7 @@ Make V2 useful for monitoring and stage observation. Land Observation write (fre
 
 Allowed touch points:
 
-- `index.html` only, inside the V2 region. Observation capture flows (program-context, free-standing, trap, scouting), stage confirmation one-screen flow, monitoring program rendering, awareness rendering. Catalog seed extension with monitoring program declarations and stage vocabulary if not already present (only from already-approved V2 catalog / template docs).
+- `index.html` only, inside the V2 region. Observation capture flows (program-context, free-standing, trap, scouting), stage confirmation one-screen flow, monitoring program rendering, awareness rendering. Slice 8 must consume the B2-approved metadata boundary and must not independently add monitoring declarations, new registries, or stage vocabulary without owner approval.
 
 Must not touch:
 
@@ -1243,7 +1243,7 @@ Depends on:
 
 - Slice 7 (Plant detail §4.10 monitoring section ready for fill; Detalj per-plant evidence summary ready to extend with observation rows).
 - Slice 6 (snapshot §4.11 stage observation effects, §4.12 monitoring program state projection, §4.13 free-standing observation boundary).
-- Catalog seed extension with monitoring program declarations, stable-id source-map projection grouping, and minimal generic MVP stage vocabulary or stage-write deferral/restriction.
+- B2 metadata-only projection boundary for stable-id source-map grouping; minimal generic MVP stage vocabulary remains a Slice 8 owner decision or stage-write deferral/restriction.
 
 Produces:
 
@@ -1251,11 +1251,11 @@ Produces:
 - Free-standing observation per §0.6a + §1.7.4 FS-INV: `program_id` absent is legal; observation is first-class plant-history entry, permanently disjoint from any monitoring program.
 - Monitoring capture flow per V2_UX_MODEL.md §10: program-context (§10.3), free-standing (§10.4), trap check (§10.5), visual scouting (§10.6), date behavior (§10.7), out-of-season behavior (§10.8), multi-plant monitoring boundary (§10.9 — separate observations per plant, not single multi-plant observation), treatment-advice boundary (§10.10).
 - Stage confirmation flow per V2_UX_MODEL.md §11: one-screen (§11.3), MVP stage labels (§11.4), uncertainty (§11.5), date behavior (§11.6), plan-impact copy (§11.7), Dnevnik / history (§11.9). Stage-code correction deferred to Slice 9 per §11.11.
-- B2 projection boundary: B2 currently resolves the owner-accepted 41-entry source working set into 36 projected B2 items: 30 štetnici/bolesti monitoring items and 6 promatranje/rizik/stanje items. This is the current resolved projection from the source map, not immutable final catalog truth. Composite split/combine decisions stay in this current resolved projection and must preserve source-map traceability.
+- B2 projection boundary: B2 metadata-only implementation resolves the owner-accepted 41-entry source working set into 36 projected B2 items with 5 merge groups. This is the current resolved projection from the source map, not immutable final catalog truth. Composite split/combine decisions stay in this current resolved projection and must preserve source-map traceability.
 - Rendering separation per V2_UX_MODEL.md §15 + V2_ARCHITECTURE.md §4.12–§4.13: `monitoring_track` stable ids feed štetnici/bolesti monitoring surfaces; `risk_awareness_track` stable ids feed promatranje/rizik/stanje surfaces. This is audit/projection metadata only, not new canonical runtime schema, not a new user data model, and not a registry. Runtime must not infer the track from Croatian label pattern-matching.
 - Surface feed: štetnici/bolesti items feed Plant detail §4.10 monitoring section, Pregled §1.8 Praćenje, and Kalendar §2.11 monitoring cards/items; promatranje/rizik/stanje items feed Plant detail §4.9 Sezonski rizici and Kalendar §2.12 risk-awareness cards. Detalj per-plant evidence summary is extended with observation rows; Dnevnik §3.13 / §3.14 free-standing and monitoring rows remain visible.
 - UX examples: trešnjina muha = trap monitoring with records/counts/`Bez zapisa`; pucanje plodova = seasonal risk/awareness card with free-standing observation capture; mraz u cvatnji = seasonal risk/awareness; lisne uši = scouting monitoring.
-- Stage vocabulary rule: B2 must seed a minimal generic MVP `stage_vocabulary[]` using only `dormant`, `bud_swell`, `bloom`, `fruit_set`, `ripening`, and `leaf_drop` if that does not invent species-specific phenology, BBCH, timing, ordering, or plan effects. If any §11 label cannot be safely mapped to that generic vocabulary, Slice 8 stage confirmation writes for the unmapped label stay deferred/restricted until vocabulary exists.
+- Stage vocabulary rule: B2 did not add `stage_vocabulary[]`. Slice 8 must either get explicit owner approval for a minimal generic MVP vocabulary or keep stage confirmation writes deferred/restricted until vocabulary exists.
 - Absence of monitoring or risk-awareness records remains neutral.
 
 Manual verification:
@@ -1538,7 +1538,7 @@ Pre-Slice-7 Action Window Notes Projection prerequisite (B1 + B1.1):
 - no new `innerHTML`, `outerHTML`, `document.write`, `eval`, or `new Function(` calls were introduced
 - Slice 6 surfaces (Pregled / Kalendar / seasonal-action placeholder) are unchanged
 - Activity and Correction schemas / validators are unchanged
-- B2 (`monitoring_programs[]`, stable-id source-map projection grouping, minimal generic `stage_vocabulary[]` or stage-write deferral/restriction, Kalendar §2.11 / §2.12 Praćenje, Pregled Praćenje, Plant detail §4.10 monitoring and §4.9 Sezonski rizici feeds, observation capture / observation rows) remains required before Slice 8 and was NOT implemented by B1 or B1.1. The current B2 projection does not add `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`.
+- B2 stable-id source-map projection grouping is complete as metadata only and was NOT implemented by B1 or B1.1. `monitoring_programs[]`, minimal generic `stage_vocabulary[]` or stage-write deferral/restriction, Kalendar §2.11 / §2.12 Praćenje, Pregled Praćenje, Plant detail §4.10 monitoring and §4.9 Sezonski rizici feeds, observation capture / observation rows remain Slice 8 work. The current B2 projection does not add `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`.
 - full browser runtime verification, Cloudflare deployment verification, full import/export UI round-trip, and direct protected legacy localStorage byte-dump comparison were not performed for the B1 or B1.1 commits
 
 Slice 7 — Plant detail, Detalj, optional weather:
@@ -1728,4 +1728,4 @@ Runtime Slice 0 rules (re-stated for the handoff):
 
 Runtime implementation still requires explicit owner approval after S11 is closed. Even with this roadmap complete, no runtime work begins until the owner explicitly opens runtime Slice 0.
 
-Post-S7.4 tracker note: Runtime Slices 0–7 are complete through `d61cc90 Harden S7 seasonal action detail display`. S7.4 was display-only hardening: no action-window, evidence-matching, multi-plant logging, history-model, schema, persistence, monitoring, observation, weather, routing-architecture, or snapshot-persistence changes landed. The seasonal snapshot remains private, read-time, derived, and non-persisted. B2 remains required before Runtime Slice 8 and has not started.
+Post-B2 tracker note: Runtime Slices 0–7 are complete through `d61cc90 Harden S7 seasonal action detail display`, and B2 metadata-only projection boundary is complete. S7.4 was display-only hardening: no action-window, evidence-matching, multi-plant logging, history-model, schema, persistence, monitoring, observation, weather, routing-architecture, or snapshot-persistence changes landed. The seasonal snapshot remains private, read-time, derived, and non-persisted. Runtime Slice 8 has not started.

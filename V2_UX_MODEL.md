@@ -1,6 +1,6 @@
 # V2_UX_MODEL
 
-**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain future flow contracts and placeholders. Runtime Slice 7 is complete through S7.4; B2 and Runtime Slice 8 have not started. This document defines UX guidance only; no runtime/schema implementation is defined here.
+**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain future flow contracts and placeholders. Runtime Slice 7 is complete through S7.4; B2 metadata-only projection boundary is complete; Runtime Slice 8 has not started. This document defines UX guidance only; no runtime/schema implementation is defined here.
 
 ---
 
@@ -797,7 +797,7 @@ Free-standing observations belong to plant history / Dnevnik context, not monito
 
 ### 2.12 Risk-awareness items
 
-Risk-awareness / monitoring presentation is not implemented in S6/S7 runtime. B2 owns the source-map/projection grouping decision before any runtime surface consumes these items. Runtime Slice 8 must not implement monitoring or risk-awareness surfaces until B2 is resolved. `V2_UX_MODEL.md` §0 remains authoritative for monitoring hard constraints.
+Risk-awareness / monitoring presentation is not implemented in S6/S7/B2 runtime. B2 has resolved the source-map/projection grouping as metadata only, separate from seasonal snapshot and hidden until Slice 8. Runtime Slice 8 is the first allowed consumer and must not implement monitoring or risk-awareness surfaces outside the B2-approved boundary. `V2_UX_MODEL.md` §0 remains authoritative for monitoring hard constraints.
 
 They must be textually distinct from pest/disease monitoring.
 

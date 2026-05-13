@@ -3722,6 +3722,579 @@ if ('serviceWorker' in navigator) {
     'aw.olive.insecticide.olive_fly_if_needed': true,
     'aw.olive.pruning.post_harvest': true
   };
+  var B2_PROJECTION_SOURCE_FILE = 'V2_ORCHARD_PLAN_TEMPLATES.md';
+  var B2_PROJECTION_VISIBILITY = 'hidden_until_slice_8';
+  var B2_PROJECTION_BOUNDARY = deepFreezeB2Projection({
+    projection_version: 'b2_metadata_only_v1',
+    runtime_visibility: B2_PROJECTION_VISIBILITY,
+    tracks: {
+      monitoring_track: {
+        track_id: 'monitoring_track',
+        intent: 'Evidence-only monitoring projection metadata for future Slice 8 consumption.'
+      },
+      risk_awareness_track: {
+        track_id: 'risk_awareness_track',
+        intent: 'Calm seasonal risk-awareness projection metadata for future Slice 8 consumption.'
+      }
+    },
+    projected_items: [
+      {
+        projected_id: 'apple_codling_moth_trap_monitoring',
+        track: 'monitoring_track',
+        species: ['apple'],
+        method_kind: 'trap',
+        label_hr_draft: 'Jabučni savijač — feromonska klopka',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(337, 'Jabučni savijač — feromonska klopka')]
+      },
+      {
+        projected_id: 'pear_fire_blight_symptom_scouting',
+        track: 'monitoring_track',
+        species: ['pear'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Bakterijska palež kruške — opažanje simptoma',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(446, 'Bakterijska palež kruške — opažanje simptoma')]
+      },
+      {
+        projected_id: 'pear_psylla_scouting',
+        track: 'monitoring_track',
+        species: ['pear'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Kruškina buha — vizualni pregled',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(484, 'Kruškina buha — vizualni pregled')]
+      },
+      {
+        projected_id: 'pear_fruit_moth_monitoring',
+        track: 'monitoring_track',
+        species: ['pear'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Savijač ploda kruške — pregled štete/ulova',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(516, 'Savijač ploda kruške — pregled štete/ulova')],
+        notes: 'Trap mention remains optional; B2 adds no setup action-window.'
+      },
+      {
+        projected_id: 'cherry_fly_sticky_trap_monitoring',
+        track: 'monitoring_track',
+        species: ['sweet_cherry', 'sour_cherry'],
+        method_kind: 'trap',
+        label_hr_draft: 'Trešnjina muha — žute ljepljive ploče',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [
+          b2ProjectionSourceRef(654, 'Trešnjina muha — žute ljepljive ploče'),
+          b2ProjectionSourceRef(860, 'Trešnjina muha — žute ljepljive ploče')
+        ],
+        merge_group_id: 'M1'
+      },
+      {
+        projected_id: 'cherry_monilia_symptom_scouting',
+        track: 'monitoring_track',
+        species: ['sweet_cherry', 'sour_cherry'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Monilija / smeđa trulež trešnje i višnje',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [
+          b2ProjectionSourceRef(747, 'Monilija / smeđa trulež trešnje i višnje'),
+          b2ProjectionSourceRef(918, 'Monilija / smeđa trulež trešnje i višnje')
+        ],
+        merge_group_id: 'M2'
+      },
+      {
+        projected_id: 'sweet_cherry_fruit_cracking_awareness',
+        track: 'risk_awareness_track',
+        species: ['sweet_cherry'],
+        method_kind: 'awareness',
+        label_hr_draft: 'Rizik pucanja plodova trešnje nakon kiše',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(796, 'Rizik pucanja plodova trešnje nakon kiše')]
+      },
+      {
+        projected_id: 'peach_nectarine_aphid_scouting',
+        track: 'monitoring_track',
+        species: ['peach', 'nectarine'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Lisne uši breskve/nektarine',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [
+          b2ProjectionSourceRef(1049, 'Lisne uši breskve/nektarine'),
+          b2ProjectionSourceRef(1213, 'Lisne uši breskve/nektarine')
+        ],
+        merge_group_id: 'M3'
+      },
+      {
+        projected_id: 'peach_nectarine_fruit_moth_monitoring',
+        track: 'monitoring_track',
+        species: ['peach', 'nectarine'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Breskvin savijač — znakovi ili ulov ako postoji',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [
+          b2ProjectionSourceRef(1064, 'Breskvin savijač — znakovi ili ulov ako postoji'),
+          b2ProjectionSourceRef(1228, 'Breskvin savijač — znakovi ili ulov ako postoji')
+        ],
+        merge_group_id: 'M4',
+        notes: 'Method ambiguity retained; B2 adds no setup action-window.'
+      },
+      {
+        projected_id: 'peach_nectarine_disease_symptom_scouting',
+        track: 'monitoring_track',
+        species: ['peach', 'nectarine'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Bolesti i simptomi breskve/nektarine',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [
+          b2ProjectionSourceRef(1079, 'Bolesti i simptomi breskve/nektarine'),
+          b2ProjectionSourceRef(1243, 'Bolesti i simptomi breskve/nektarine')
+        ],
+        merge_group_id: 'M5',
+        notes: 'Broad evidence row; B2 adds no structured symptom list.'
+      },
+      {
+        projected_id: 'apricot_bloom_frost_awareness',
+        track: 'risk_awareness_track',
+        species: ['apricot'],
+        method_kind: 'awareness',
+        label_hr_draft: 'Rizik mraza u cvatnji marelice',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(1375, 'Rizik mraza u cvatnji marelice')]
+      },
+      {
+        projected_id: 'apricot_aphid_scouting',
+        track: 'monitoring_track',
+        species: ['apricot'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Lisne uši marelice',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(1418, 'Lisne uši marelice')]
+      },
+      {
+        projected_id: 'apricot_sharka_symptom_scouting',
+        track: 'monitoring_track',
+        species: ['apricot'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Šarka marelice — opažanje simptoma',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(1443, 'Šarka marelice — opažanje simptoma')]
+      },
+      {
+        projected_id: 'apricot_monilia_symptom_scouting',
+        track: 'monitoring_track',
+        species: ['apricot'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Monilija marelice — opažanje simptoma',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(1481, 'Monilija marelice — opažanje simptoma')]
+      },
+      {
+        projected_id: 'plum_moth_spring_trap_monitoring',
+        track: 'monitoring_track',
+        species: ['plum'],
+        method_kind: 'trap',
+        label_hr_draft: 'Šljivin savijač — proljetni let',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(1596, 'Šljivin savijač — proljetni let')]
+      },
+      {
+        projected_id: 'plum_moth_summer_trap_monitoring',
+        track: 'monitoring_track',
+        species: ['plum'],
+        method_kind: 'trap',
+        label_hr_draft: 'Šljivin savijač — ljetni let i predberba',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(1643, 'Šljivin savijač — ljetni let i predberba')]
+      },
+      {
+        projected_id: 'plum_sharka_symptom_scouting',
+        track: 'monitoring_track',
+        species: ['plum'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Šarka šljive — opažanje simptoma',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(1694, 'Šarka šljive — opažanje simptoma')]
+      },
+      {
+        projected_id: 'plum_aphid_scouting',
+        track: 'monitoring_track',
+        species: ['plum'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Lisne uši šljive',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(1732, 'Lisne uši šljive')]
+      },
+      {
+        projected_id: 'plum_monilia_symptom_scouting',
+        track: 'monitoring_track',
+        species: ['plum'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Monilija šljive — opažanje simptoma',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(1757, 'Monilija šljive — opažanje simptoma')]
+      },
+      {
+        projected_id: 'plum_fruit_drop_awareness',
+        track: 'risk_awareness_track',
+        species: ['plum'],
+        method_kind: 'awareness',
+        label_hr_draft: 'Opadanje plodova šljive — sezonska napomena',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(1809, 'Opadanje plodova šljive — sezonska napomena')]
+      },
+      {
+        projected_id: 'quince_fire_blight_symptom_scouting',
+        track: 'monitoring_track',
+        species: ['quince'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Bakterijska palež dunje — opažanje simptoma',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(1931, 'Bakterijska palež dunje — opažanje simptoma')]
+      },
+      {
+        projected_id: 'quince_leaf_fruit_disease_scouting',
+        track: 'monitoring_track',
+        species: ['quince'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Bolesti lista i ploda dunje',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(1969, 'Bolesti lista i ploda dunje')]
+      },
+      {
+        projected_id: 'quince_fruit_moth_scouting',
+        track: 'monitoring_track',
+        species: ['quince'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Savijač dunje — pregled ploda',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(2004, 'Savijač dunje — pregled ploda')],
+        notes: 'No trap confirmation in B2.'
+      },
+      {
+        projected_id: 'almond_bloom_frost_awareness',
+        track: 'risk_awareness_track',
+        species: ['almond'],
+        method_kind: 'awareness',
+        label_hr_draft: 'Rizik mraza u cvatnji badema',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(2132, 'Rizik mraza u cvatnji badema')]
+      },
+      {
+        projected_id: 'almond_disease_symptom_scouting',
+        track: 'monitoring_track',
+        species: ['almond'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Bolesti badema — opažanje simptoma',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(2182, 'Bolesti badema — opažanje simptoma')]
+      },
+      {
+        projected_id: 'almond_pest_scouting',
+        track: 'monitoring_track',
+        species: ['almond'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Štetnici badema — vizualni pregled',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(2227, 'Štetnici badema — vizualni pregled')]
+      },
+      {
+        projected_id: 'olive_peacock_spot_scouting',
+        track: 'monitoring_track',
+        species: ['olive'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Paunovo oko masline — opažanje simptoma',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(2429, 'Paunovo oko masline — opažanje simptoma')]
+      },
+      {
+        projected_id: 'olive_moth_scouting',
+        track: 'monitoring_track',
+        species: ['olive'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Maslinov moljac — opažanje',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(2440, 'Maslinov moljac — opažanje')]
+      },
+      {
+        projected_id: 'olive_fly_sticky_trap_monitoring',
+        track: 'monitoring_track',
+        species: ['olive'],
+        method_kind: 'trap',
+        label_hr_draft: 'Maslinova muha — žute ploče / atraktant',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(2455, 'Maslinova muha — žute ploče / atraktant')]
+      },
+      {
+        projected_id: 'pomegranate_pest_scouting',
+        track: 'monitoring_track',
+        species: ['pomegranate'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Štetnici šipka — vizualni pregled',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(2779, 'Štetnici šipka — vizualni pregled')]
+      },
+      {
+        projected_id: 'pomegranate_fruit_cracking_awareness',
+        track: 'risk_awareness_track',
+        species: ['pomegranate'],
+        method_kind: 'awareness',
+        label_hr_draft: 'Rizik pucanja ploda šipka',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(2795, 'Rizik pucanja ploda šipka')]
+      },
+      {
+        projected_id: 'walnut_fly_sticky_trap_monitoring',
+        track: 'monitoring_track',
+        species: ['walnut'],
+        method_kind: 'trap',
+        label_hr_draft: 'Orahova muha — žute ploče',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(2949, 'Orahova muha — žute ploče')]
+      },
+      {
+        projected_id: 'walnut_codling_moth_trap_monitoring',
+        track: 'monitoring_track',
+        species: ['walnut'],
+        method_kind: 'trap',
+        label_hr_draft: 'Jabučni savijač na orahu — feromonska klopka',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(2977, 'Jabučni savijač na orahu — feromonska klopka')]
+      },
+      {
+        projected_id: 'hazelnut_bloom_frost_awareness',
+        track: 'risk_awareness_track',
+        species: ['hazelnut'],
+        method_kind: 'awareness',
+        label_hr_draft: 'Rizik mraza u cvatnji lijeske',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(3089, 'Rizik mraza u cvatnji lijeske')]
+      },
+      {
+        projected_id: 'hazelnut_weevil_scouting',
+        track: 'monitoring_track',
+        species: ['hazelnut'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Ljeskova pipa — vizualni pregled',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(3160, 'Ljeskova pipa — vizualni pregled')]
+      },
+      {
+        projected_id: 'hazelnut_bud_mite_scouting',
+        track: 'monitoring_track',
+        species: ['hazelnut'],
+        method_kind: 'scouting',
+        label_hr_draft: 'Pupoljkova grinja lijeske — pregled pupova',
+        runtime_visibility: B2_PROJECTION_VISIBILITY,
+        source_refs: [b2ProjectionSourceRef(3188, 'Pupoljkova grinja lijeske — pregled pupova')]
+      }
+    ],
+    source_entries: [
+      b2ProjectionSourceEntry(337, 'apple_codling_moth_trap_monitoring', 'Jabučni savijač — feromonska klopka', ['apple']),
+      b2ProjectionSourceEntry(446, 'pear_fire_blight_symptom_scouting', 'Bakterijska palež kruške — opažanje simptoma', ['pear']),
+      b2ProjectionSourceEntry(484, 'pear_psylla_scouting', 'Kruškina buha — vizualni pregled', ['pear']),
+      b2ProjectionSourceEntry(516, 'pear_fruit_moth_monitoring', 'Savijač ploda kruške — pregled štete/ulova', ['pear']),
+      b2ProjectionSourceEntry(654, 'cherry_fly_sticky_trap_monitoring', 'Trešnjina muha — žute ljepljive ploče', ['sweet_cherry'], 'M1'),
+      b2ProjectionSourceEntry(747, 'cherry_monilia_symptom_scouting', 'Monilija / smeđa trulež trešnje i višnje', ['sweet_cherry'], 'M2'),
+      b2ProjectionSourceEntry(796, 'sweet_cherry_fruit_cracking_awareness', 'Rizik pucanja plodova trešnje nakon kiše', ['sweet_cherry']),
+      b2ProjectionSourceEntry(860, 'cherry_fly_sticky_trap_monitoring', 'Trešnjina muha — žute ljepljive ploče', ['sour_cherry'], 'M1'),
+      b2ProjectionSourceEntry(918, 'cherry_monilia_symptom_scouting', 'Monilija / smeđa trulež trešnje i višnje', ['sour_cherry'], 'M2'),
+      b2ProjectionSourceEntry(1049, 'peach_nectarine_aphid_scouting', 'Lisne uši breskve/nektarine', ['peach'], 'M3'),
+      b2ProjectionSourceEntry(1064, 'peach_nectarine_fruit_moth_monitoring', 'Breskvin savijač — znakovi ili ulov ako postoji', ['peach'], 'M4'),
+      b2ProjectionSourceEntry(1079, 'peach_nectarine_disease_symptom_scouting', 'Bolesti i simptomi breskve/nektarine', ['peach'], 'M5'),
+      b2ProjectionSourceEntry(1213, 'peach_nectarine_aphid_scouting', 'Lisne uši breskve/nektarine', ['nectarine'], 'M3'),
+      b2ProjectionSourceEntry(1228, 'peach_nectarine_fruit_moth_monitoring', 'Breskvin savijač — znakovi ili ulov ako postoji', ['nectarine'], 'M4'),
+      b2ProjectionSourceEntry(1243, 'peach_nectarine_disease_symptom_scouting', 'Bolesti i simptomi breskve/nektarine', ['nectarine'], 'M5'),
+      b2ProjectionSourceEntry(1375, 'apricot_bloom_frost_awareness', 'Rizik mraza u cvatnji marelice', ['apricot']),
+      b2ProjectionSourceEntry(1418, 'apricot_aphid_scouting', 'Lisne uši marelice', ['apricot']),
+      b2ProjectionSourceEntry(1443, 'apricot_sharka_symptom_scouting', 'Šarka marelice — opažanje simptoma', ['apricot']),
+      b2ProjectionSourceEntry(1481, 'apricot_monilia_symptom_scouting', 'Monilija marelice — opažanje simptoma', ['apricot']),
+      b2ProjectionSourceEntry(1596, 'plum_moth_spring_trap_monitoring', 'Šljivin savijač — proljetni let', ['plum']),
+      b2ProjectionSourceEntry(1643, 'plum_moth_summer_trap_monitoring', 'Šljivin savijač — ljetni let i predberba', ['plum']),
+      b2ProjectionSourceEntry(1694, 'plum_sharka_symptom_scouting', 'Šarka šljive — opažanje simptoma', ['plum']),
+      b2ProjectionSourceEntry(1732, 'plum_aphid_scouting', 'Lisne uši šljive', ['plum']),
+      b2ProjectionSourceEntry(1757, 'plum_monilia_symptom_scouting', 'Monilija šljive — opažanje simptoma', ['plum']),
+      b2ProjectionSourceEntry(1809, 'plum_fruit_drop_awareness', 'Opadanje plodova šljive — sezonska napomena', ['plum']),
+      b2ProjectionSourceEntry(1931, 'quince_fire_blight_symptom_scouting', 'Bakterijska palež dunje — opažanje simptoma', ['quince']),
+      b2ProjectionSourceEntry(1969, 'quince_leaf_fruit_disease_scouting', 'Bolesti lista i ploda dunje', ['quince']),
+      b2ProjectionSourceEntry(2004, 'quince_fruit_moth_scouting', 'Savijač dunje — pregled ploda', ['quince']),
+      b2ProjectionSourceEntry(2132, 'almond_bloom_frost_awareness', 'Rizik mraza u cvatnji badema', ['almond']),
+      b2ProjectionSourceEntry(2182, 'almond_disease_symptom_scouting', 'Bolesti badema — opažanje simptoma', ['almond']),
+      b2ProjectionSourceEntry(2227, 'almond_pest_scouting', 'Štetnici badema — vizualni pregled', ['almond']),
+      b2ProjectionSourceEntry(2429, 'olive_peacock_spot_scouting', 'Paunovo oko masline — opažanje simptoma', ['olive']),
+      b2ProjectionSourceEntry(2440, 'olive_moth_scouting', 'Maslinov moljac — opažanje', ['olive']),
+      b2ProjectionSourceEntry(2455, 'olive_fly_sticky_trap_monitoring', 'Maslinova muha — žute ploče / atraktant', ['olive']),
+      b2ProjectionSourceEntry(2779, 'pomegranate_pest_scouting', 'Štetnici šipka — vizualni pregled', ['pomegranate']),
+      b2ProjectionSourceEntry(2795, 'pomegranate_fruit_cracking_awareness', 'Rizik pucanja ploda šipka', ['pomegranate']),
+      b2ProjectionSourceEntry(2949, 'walnut_fly_sticky_trap_monitoring', 'Orahova muha — žute ploče', ['walnut']),
+      b2ProjectionSourceEntry(2977, 'walnut_codling_moth_trap_monitoring', 'Jabučni savijač na orahu — feromonska klopka', ['walnut']),
+      b2ProjectionSourceEntry(3089, 'hazelnut_bloom_frost_awareness', 'Rizik mraza u cvatnji lijeske', ['hazelnut']),
+      b2ProjectionSourceEntry(3160, 'hazelnut_weevil_scouting', 'Ljeskova pipa — vizualni pregled', ['hazelnut']),
+      b2ProjectionSourceEntry(3188, 'hazelnut_bud_mite_scouting', 'Pupoljkova grinja lijeske — pregled pupova', ['hazelnut'])
+    ],
+    merge_groups: [
+      {
+        merge_group_id: 'M1',
+        projected_id: 'cherry_fly_sticky_trap_monitoring',
+        source_rows: [654, 860],
+        reason: 'Same pest and sticky-trap behavior across sweet cherry and sour cherry.'
+      },
+      {
+        merge_group_id: 'M2',
+        projected_id: 'cherry_monilia_symptom_scouting',
+        source_rows: [747, 918],
+        reason: 'Same monilia/brown-rot symptom scouting pattern across sweet cherry and sour cherry.'
+      },
+      {
+        merge_group_id: 'M3',
+        projected_id: 'peach_nectarine_aphid_scouting',
+        source_rows: [1049, 1213],
+        reason: 'Same aphid visual scouting pattern across peach and nectarine.'
+      },
+      {
+        merge_group_id: 'M4',
+        projected_id: 'peach_nectarine_fruit_moth_monitoring',
+        source_rows: [1064, 1228],
+        reason: 'Same peach/nectarine moth monitoring pattern; method ambiguity remains explicit.'
+      },
+      {
+        merge_group_id: 'M5',
+        projected_id: 'peach_nectarine_disease_symptom_scouting',
+        source_rows: [1079, 1243],
+        reason: 'Same broad disease/symptom scouting pattern across peach and nectarine.'
+      }
+    ]
+  });
+  var B2_PROJECTION_VALIDATION_ERRORS = validateB2ProjectionBoundary(B2_PROJECTION_BOUNDARY);
+  if (B2_PROJECTION_VALIDATION_ERRORS.length && window.console && typeof window.console.error === 'function') {
+    window.console.error('Vocnjak V2 B2 projection metadata validation failed.', B2_PROJECTION_VALIDATION_ERRORS);
+  }
+
+  function b2ProjectionSourceRef(row, label) {
+    return {
+      source_file: B2_PROJECTION_SOURCE_FILE,
+      source_row: row,
+      source_label: label
+    };
+  }
+
+  function b2ProjectionSourceEntry(row, projectedId, label, species, mergeGroupId) {
+    var sourceEntry = {
+      source_file: B2_PROJECTION_SOURCE_FILE,
+      source_row: row,
+      source_label: label,
+      species: species,
+      projected_id: projectedId
+    };
+    if (mergeGroupId) sourceEntry.merge_group_id = mergeGroupId;
+    return sourceEntry;
+  }
+
+  function deepFreezeB2Projection(value) {
+    if (!value || typeof value !== 'object' || Object.isFrozen(value)) return value;
+    Object.keys(value).forEach(function (key) {
+      deepFreezeB2Projection(value[key]);
+    });
+    return Object.freeze(value);
+  }
+
+  function validateB2ProjectionBoundary(boundary) {
+    var errors = [];
+    var allowedTracks = { monitoring_track: true, risk_awareness_track: true };
+    var allowedMethodKinds = { trap: true, scouting: true, awareness: true };
+    var forbiddenRegistryNames = [
+      'awareness' + '_definitions',
+      'target' + '_registry',
+      'symptom' + '_registry'
+    ];
+    var itemIds = {};
+    var mergeGroups = {};
+    var serializedBoundary;
+
+    if (!isPlainObject(boundary)) return ['Boundary must be a plain object.'];
+    if (boundary.projection_version !== 'b2_metadata_only_v1') errors.push('Unexpected projection version.');
+    if (boundary.runtime_visibility !== B2_PROJECTION_VISIBILITY) errors.push('Unexpected boundary visibility.');
+    if (!Array.isArray(boundary.projected_items) || boundary.projected_items.length !== 36) {
+      errors.push('Expected exactly 36 projected items.');
+    }
+    if (!Array.isArray(boundary.source_entries) || boundary.source_entries.length !== 41) {
+      errors.push('Expected exactly 41 source entries.');
+    }
+    if (!Array.isArray(boundary.merge_groups) || boundary.merge_groups.length !== 5) {
+      errors.push('Expected exactly 5 merge groups.');
+    }
+    if (!isPlainObject(boundary.tracks) || Object.keys(boundary.tracks).length !== 2) {
+      errors.push('Expected exactly 2 track metadata entries.');
+    } else {
+      Object.keys(boundary.tracks).forEach(function (trackId) {
+        if (!allowedTracks[trackId]) errors.push('Unexpected track metadata: ' + trackId);
+      });
+    }
+
+    (boundary.projected_items || []).forEach(function (item) {
+      if (!item || typeof item.projected_id !== 'string') {
+        errors.push('Projected item without stable ID.');
+        return;
+      }
+      if (itemIds[item.projected_id]) errors.push('Duplicate projected ID: ' + item.projected_id);
+      itemIds[item.projected_id] = true;
+      if (!allowedTracks[item.track]) errors.push('Unexpected track for ' + item.projected_id);
+      if (!allowedMethodKinds[item.method_kind]) errors.push('Unexpected method kind for ' + item.projected_id);
+      if (item.runtime_visibility !== B2_PROJECTION_VISIBILITY) errors.push('Unexpected visibility for ' + item.projected_id);
+      if (!Array.isArray(item.species) || !item.species.length) errors.push('Missing species for ' + item.projected_id);
+      if (!Array.isArray(item.source_refs) || !item.source_refs.length) errors.push('Missing source refs for ' + item.projected_id);
+      (item.source_refs || []).forEach(function (ref) {
+        if (!ref || ref.source_file !== B2_PROJECTION_SOURCE_FILE || typeof ref.source_row !== 'number') {
+          errors.push('Invalid source ref for ' + item.projected_id);
+        }
+      });
+    });
+
+    (boundary.merge_groups || []).forEach(function (group) {
+      if (!group || typeof group.merge_group_id !== 'string') {
+        errors.push('Merge group without stable ID.');
+        return;
+      }
+      mergeGroups[group.merge_group_id] = group;
+      if (!itemIds[group.projected_id]) errors.push('Merge group target missing: ' + group.merge_group_id);
+      if (!Array.isArray(group.source_rows) || !group.source_rows.length) {
+        errors.push('Missing source rows for merge group: ' + group.merge_group_id);
+      }
+    });
+
+    (boundary.source_entries || []).forEach(function (sourceEntry) {
+      if (!sourceEntry || sourceEntry.source_file !== B2_PROJECTION_SOURCE_FILE || typeof sourceEntry.source_row !== 'number') {
+        errors.push('Invalid source entry.');
+        return;
+      }
+      if (!itemIds[sourceEntry.projected_id]) errors.push('Source entry target missing at row ' + sourceEntry.source_row);
+      if (sourceEntry.merge_group_id) {
+        if (!mergeGroups[sourceEntry.merge_group_id]) {
+          errors.push('Source entry merge group missing at row ' + sourceEntry.source_row);
+        } else if (mergeGroups[sourceEntry.merge_group_id].projected_id !== sourceEntry.projected_id) {
+          errors.push('Source entry merge group target mismatch at row ' + sourceEntry.source_row);
+        } else if (mergeGroups[sourceEntry.merge_group_id].source_rows.indexOf(sourceEntry.source_row) === -1) {
+          errors.push('Source entry row missing from merge group: ' + sourceEntry.source_row);
+        }
+      }
+    });
+
+    (boundary.projected_items || []).forEach(function (item) {
+      if (item.merge_group_id && !mergeGroups[item.merge_group_id]) {
+        errors.push('Projected item merge group missing: ' + item.projected_id);
+      }
+      if (item.merge_group_id && mergeGroups[item.merge_group_id] && mergeGroups[item.merge_group_id].projected_id !== item.projected_id) {
+        errors.push('Projected item merge group target mismatch: ' + item.projected_id);
+      }
+    });
+
+    serializedBoundary = JSON.stringify(boundary);
+    forbiddenRegistryNames.forEach(function (registryName) {
+      if (serializedBoundary.indexOf(registryName) !== -1) {
+        errors.push('Forbidden registry name present in B2 projection metadata.');
+      }
+    });
+
+    return errors;
+  }
   var HARVEST_VARIETY_LABELS = {
     apple: {
       gala: 'Gala',
