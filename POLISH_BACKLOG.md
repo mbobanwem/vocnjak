@@ -4,6 +4,8 @@ Small UX / UI / copy issues.
 Do NOT implement individually.
 Resolve only in batch sessions.
 
+Provenance note: this file is a parking lot for future polish, UX, UXR, and visual-design work. Entries may come from V1/legacy app observations, current review observations, or Claude Design recommendations for future V2 design sessions. They may describe old, current, placeholder, proposed, or future surfaces; they do not prove that equivalent V2 runtime UI currently exists and do not authorize implementation outside the current roadmap/session. Future UXR/design recommendations must wait for dedicated UXR/visual refresh sessions. B2/S8 monitoring and risk behavior remains governed by `V2_UX_MODEL.md` §0, `V2_DOMAIN_MODEL.md`, `V2_CURRENT_STATE.md`, and `V2_EXECUTION_ROADMAP.md`.
+
 ---
 
 ## RULE
@@ -75,6 +77,8 @@ Out of scope now: no runtime change, no schema change, no Settings implementatio
 
 # 🟡 V2 Monitoring & UX Polish
 
+Provenance: V1/legacy UX observation and/or future UXR backlog, not current V2 runtime state.
+
 ## Monitoring / Plant detail
 
 - Monitoring section prikazuje sve KPI kartice odmah nakon dodavanja biljke → djeluje preopterećeno i zbunjujuće  
@@ -100,6 +104,8 @@ Out of scope now: no runtime change, no schema change, no Settings implementatio
 
 # 🎨 V2 Visual UX Refresh (FUTURE — NOT NOW)
 
+Provenance: Claude Design recommendation backlog for future UXR/visual refresh sessions, not approved current-slice implementation scope.
+
 Future visual design slice for V2.
 
 This section is **documentation only**. It is NOT a session, NOT a current backlog item, and NOT eligible for implementation until the prerequisites below are met.
@@ -110,12 +116,11 @@ This section is **documentation only**. It is NOT a session, NOT a current backl
 
 - **Not active.** This is a future direction, not in-flight work.
 - **Sequencing prerequisite:** must come AFTER S7, B2, S8, and V2 stabilization.
-- Current priority order is unchanged:
-  1. finish Runtime Slice 7 (Detalj sezonske radnje)
-  2. implement B2 (monitoring / risk projection)
-  3. implement Runtime Slice 8 (Monitoring UI: Kalendar Praćenje, Pregled Praćenje, Plant detail monitoring, stage confirmation)
-  4. stabilize V2 baseline (default cutover, regression pass)
-  5. THEN open this visual refresh as a dedicated session
+- Current remaining priority order is unchanged:
+  1. complete B2 (monitoring / risk projection)
+  2. implement Runtime Slice 8 (Monitoring UI: Kalendar Praćenje, Pregled Praćenje, Plant detail monitoring, stage confirmation)
+  3. stabilize V2 baseline (default cutover, regression pass)
+  4. THEN open this visual refresh as a dedicated session
 - No agent may begin visual-refresh implementation work without explicit per-session owner approval after the above is complete.
 
 ---

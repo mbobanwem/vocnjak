@@ -798,7 +798,7 @@ Cross-cutting rules that bind every S11.C2 slice (in addition to §22):
 - Monitoring absence is neutral. No warning, no overdue badge, no compliance copy on missing observations or unconfirmed stages.
 - Single capture path. Each capture surface (Activity, Observation, stage confirmation) has exactly one write boundary; no surface re-implements capture.
 - Same Correction record shape across Activity (Slice 5) and Observation (Slice 9). Per S8 §1.24 handoff: one Correction storage shape.
-- Catalog seed extension only from already-approved V2 catalog / template docs and without catalog re-authoring (per §30). Pre-Slice-5 Action Window Seed supplied real action-window definitions before Slice 5; Slice 6 still owns snapshot / Pregled / Kalendar, not the first action-window seed. Slice 8 may extend with monitoring program declarations and stage vocabulary.
+- Catalog seed extension only from already-approved V2 catalog / template docs and without catalog re-authoring (per §30). Pre-Slice-5 Action Window Seed supplied real action-window definitions before Slice 5; Slice 6 still owns snapshot / Pregled / Kalendar, not the first action-window seed. B2 must resolve source-map/projection grouping before Runtime Slice 8. Slice 8 consumes only B2-approved boundaries and must not independently introduce monitoring declarations, risk-awareness UI, new registries, or stage vocabulary. The current boundary adds no `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`.
 - Verification of legacy non-disturbance asserts that legacy key VALUES are unchanged, NOT that legacy keys are never written-to (per §28).
 
 ---
