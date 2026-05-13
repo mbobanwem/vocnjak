@@ -1,6 +1,6 @@
 # V2 Execution Roadmap
 
-**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation pending explicit owner approval.
+**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation is underway; Runtime Slices 0–7 are complete through S7.4. B2 remains required before Runtime Slice 8 and has not started.
 
 This document converts the completed V2 specification stack (S6–S10) into an implementation execution roadmap. It is bound by the locked core documents and does not authorize runtime implementation by itself.
 
@@ -894,7 +894,7 @@ Status:
 - B1 landed as `ad9a113 Project action-window notes into canonical catalog`.
 - B1.1 landed as `a1b5307 Clean B1 action-window notes boundary`.
 - Both commits changed `index.html` only.
-- Runtime Slice 7 implementation has not started and requires explicit owner approval.
+- At B1/B1.1 closure, Runtime Slice 7 had not started; it has since completed through S7.4.
 
 B1 added:
 
@@ -932,7 +932,7 @@ Must not touch:
 
 - Activity capture, Activity-only Dnevnik, or Activity correction implementation (Slice 5).
 - Snapshot, Pregled, or Kalendar (Slice 6).
-- Plant detail live integration, Detalj sezonske radnje, or weather composition (Slice 7 — not started).
+- Plant detail live integration, Detalj sezonske radnje, or weather composition (completed later through S7.4; not touched by B1/B1.1).
 - Observation, stage confirmation, monitoring programs, B2 source-map projection grouping, risk-awareness rendering, minimal generic stage vocabulary or stage-write deferral/restriction (B2 / Slice 8); the current B2 projection does not add `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`.
 - Observation correction, archive (Slice 9).
 - Plan upgrade review or Za pregledati cues (post-usable).
@@ -972,9 +972,9 @@ Deferred to B2 before Slice 8 (NOT implemented by B1/B1.1):
 
 Slice 7 boundary:
 
-- Slice 7 may now plan against canonical `action_window_definitions[].notes` projected by B1/B1.1.
-- Slice 7 must not rely on monitoring or awareness content until B2 lands.
-- Slice 7 is not started and must not begin before owner approval and a fresh source-of-truth consistency check.
+- Slice 7 later consumed canonical `action_window_definitions[].notes` projected by B1/B1.1 inside completed S7 detail surfaces.
+- Slice 7 did not rely on monitoring or awareness content; B2 remains required before Runtime Slice 8.
+- Slice 7 is complete through S7.4.
 
 Stop conditions:
 
@@ -1133,7 +1133,7 @@ Manual verification:
 
 Deferred / next-slice notes:
 
-- Runtime Slice 7 must handle richer user-facing agronomic detail in Detalj sezonske radnje. Owner-observed example: Kalendar card `Trešnja — Prorjeđivanje trešnje` currently shows only a short purpose such as `Namjena: uravnoteženje roda.` Practical guidance from `V2_ORCHARD_PLAN_TEMPLATES.md`, such as thinning context and what to check, belongs in Slice 7 detail, not in Slice 6 cards.
+- Runtime Slice 7 is complete through S7.4; Plant detail seasonal cards, Detalj sezonske radnje, Plant detail diary preview, and display hardening landed.
 - Monitoring/Praćenje remains product-critical and must later appear in Kalendar/Pregled, but visible Monitoring UI is not part of Slice 6.
 - Runtime Slice 8 must explicitly add Kalendar Praćenje, not only Pregled / Plant detail monitoring.
 
@@ -1158,7 +1158,9 @@ Purpose:
 
 Make V2 deeply visible per plant and per action. Populate Plant detail's live sections from snapshot. Ship Detalj sezonske radnje for per-window deep view. Optionally add advisory weather composition as inline notes if and only if weather data is available through a clearly read-only boundary.
 
-Current tracker note: Runtime Slice 7 is the next planning candidate after Runtime Slice 6 completion, but it has not started. Do not advance to Slice 7 implementation before owner approval and a fresh source-of-truth consistency check. Slice 7 should address Detalj sezonske radnje / richer agronomic action details. The Pre-Slice-7 Action Window Notes Projection prerequisite (B1 + B1.1) has landed at `ad9a113 Project action-window notes into canonical catalog` and `a1b5307 Clean B1 action-window notes boundary`; Slice 7 may consume canonical `action_window_definitions[].notes` from that prerequisite, but must not rely on monitoring or awareness content until B2 lands before Slice 8.
+Status: COMPLETE — Runtime Slice 7 landed through S7.4 in `index.html` only. S7.1 added Plant detail seasonal action cards, S7.2 added Detalj sezonske radnje, S7.3 added Plant detail Dnevnik preview / plant-scoped diary integration, and S7.4 hardened seasonal-action display.
+
+Current tracker note: S7.4 was a display-only hardening slice. It removed technical seasonal-action identity leakage, suppressed `Uvjet: ne primjenjuje se.` when no `open_condition` exists, aligned seasonal detail titles with user-facing card wording, and reused existing `Namjena:` purpose cues on Plant detail seasonal cards. It did not change action windows, evidence matching, multi-plant logging, the history model, schema, persistence, monitoring, observations, weather logic, or snapshot persistence. The seasonal snapshot remains private, read-time, derived, and non-persisted. B2 remains required before Runtime Slice 8 and has not started.
 
 Allowed touch points:
 
@@ -1726,4 +1728,4 @@ Runtime Slice 0 rules (re-stated for the handoff):
 
 Runtime implementation still requires explicit owner approval after S11 is closed. Even with this roadmap complete, no runtime work begins until the owner explicitly opens runtime Slice 0.
 
-Post-Slice-6 tracker note: Runtime Slices 0–6 are complete. The Pre-Slice-7 Action Window Notes Projection prerequisite (B1 + B1.1) is also complete at `ad9a113 Project action-window notes into canonical catalog` and `a1b5307 Clean B1 action-window notes boundary`. The next eligible planning work is Runtime Slice 7, only after owner approval and a fresh source-of-truth consistency check. Slice 7 may consume canonical `action_window_definitions[].notes` from B1/B1.1 but must not rely on monitoring or awareness content until B2 lands before Slice 8.
+Post-S7.4 tracker note: Runtime Slices 0–7 are complete through `d61cc90 Harden S7 seasonal action detail display`. S7.4 was display-only hardening: no action-window, evidence-matching, multi-plant logging, history-model, schema, persistence, monitoring, observation, weather, routing-architecture, or snapshot-persistence changes landed. The seasonal snapshot remains private, read-time, derived, and non-persisted. B2 remains required before Runtime Slice 8 and has not started.
