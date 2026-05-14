@@ -4168,6 +4168,38 @@ if ('serviceWorker' in navigator) {
     window.console.error('Vocnjak V2 B2 projection metadata validation failed.', B2_PROJECTION_VALIDATION_ERRORS);
   }
 
+  function b2PlantDetailMethodText(methodKind) {
+    if (methodKind === 'trap') return 'Feromonska ili ljepljiva klopka, ako postoji u praksi.';
+    if (methodKind === 'scouting') return 'Vizualno opažanje.';
+    if (methodKind === 'awareness') return 'Sezonski kontekst.';
+    return '';
+  }
+
+  function b2PlantDetailNoteText(track) {
+    if (track === 'risk_awareness_track') return 'Informativna sezonska napomena, nije zadatak.';
+    return 'Opažanje / evidencija, ne obaveza.';
+  }
+
+  function b2PlantDetailPreview(plant) {
+    var preview = { monitoring: [], riskAwareness: [] };
+    if (!plant || typeof plant.species !== 'string') return preview;
+    if (B2_PROJECTION_VALIDATION_ERRORS.length > 0) return preview;
+    var items = B2_PROJECTION_BOUNDARY.projected_items || [];
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      if (!item || !Array.isArray(item.species) || item.species.indexOf(plant.species) === -1) continue;
+      if (typeof item.label_hr_draft !== 'string' || !item.label_hr_draft.trim()) continue;
+      var row = {
+        label: item.label_hr_draft,
+        method: b2PlantDetailMethodText(item.method_kind),
+        note: b2PlantDetailNoteText(item.track)
+      };
+      if (item.track === 'monitoring_track') preview.monitoring.push(row);
+      if (item.track === 'risk_awareness_track') preview.riskAwareness.push(row);
+    }
+    return preview;
+  }
+
   function b2ProjectionSourceRef(row, label) {
     return {
       source_file: B2_PROJECTION_SOURCE_FILE,
@@ -7182,6 +7214,22 @@ if ('serviceWorker' in navigator) {
     parent.appendChild(row);
   }
 
+  function appendPlantDetailB2Section(parent, title, items) {
+    if (!items.length) return;
+    var section = makeEl('section', 'v2-plants-section');
+    section.appendChild(makeEl('h3', '', title));
+    var list = makeEl('div', 'v2-seasonal-list');
+    for (var i = 0; i < items.length; i++) {
+      var card = makeEl('article', 'v2-seasonal-card');
+      card.appendChild(makeEl('p', 'v2-seasonal-card-title', items[i].label));
+      if (items[i].method) card.appendChild(makeEl('span', 'v2-seasonal-meta', items[i].method));
+      card.appendChild(makeEl('span', 'v2-seasonal-note', items[i].note));
+      list.appendChild(card);
+    }
+    section.appendChild(list);
+    parent.appendChild(section);
+  }
+
   function renderNotFound() {
     setViews('detail');
     clearNode(detailView);
@@ -7253,6 +7301,10 @@ if ('serviceWorker' in navigator) {
     } catch (e) {
       renderSeasonalSnapshotFailure(detailView, e);
     }
+
+    var b2Preview = b2PlantDetailPreview(plant);
+    appendPlantDetailB2Section(detailView, 'Praćenje', b2Preview.monitoring);
+    appendPlantDetailB2Section(detailView, 'Sezonske napomene', b2Preview.riskAwareness);
 
     var diary = makeEl('section', 'v2-plants-section');
     diary.appendChild(makeEl('h3', '', 'Dnevnik ove voćke'));

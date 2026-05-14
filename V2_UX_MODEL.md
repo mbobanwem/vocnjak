@@ -1,6 +1,6 @@
 # V2_UX_MODEL
 
-**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain future flow contracts and placeholders. Runtime Slice 7 is complete through S7.4; B2 metadata-only projection boundary is complete; Runtime Slice 8 has not started. This document defines UX guidance only; no runtime/schema implementation is defined here.
+**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain future flow contracts and placeholders. Runtime Slice 7 is complete through S7.4; B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 Plant detail read-only B2 preview is complete. Later Slice 8 monitoring/risk, observation capture, and stage-confirmation steps remain deferred until owner-approved. This document defines UX guidance only; no runtime/schema implementation is defined here.
 
 ---
 
@@ -112,6 +112,8 @@ Violations caught after implementation are corrected at the earliest opportunity
 ### 0.8 Runtime Slice 8 first implementation boundary
 
 Owner-approved boundary for the first S8 runtime consumer of B2 metadata:
+
+Status: implemented for Plant detail read-only preview in Runtime Slice 8 Step 1. The remaining bullets continue to bind later Slice 8 work unless the owner explicitly opens and changes scope.
 
 - First S8 UI consumption of B2 metadata is Plant detail only.
 - The first step is read-only: calm labels, factual seasonal context, no implied obligation.

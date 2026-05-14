@@ -1,6 +1,6 @@
 # V2 Execution Roadmap
 
-**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation is underway; Runtime Slices 0–7 are complete through S7.4. B2 metadata-only projection boundary is complete; Runtime Slice 8 has not started.
+**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation is underway; Runtime Slices 0–7 are complete through S7.4. B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 is complete and later Slice 8 steps remain deferred.
 
 This document converts the completed V2 specification stack (S6–S10) into an implementation execution roadmap. It is bound by the locked core documents and does not authorize runtime implementation by itself.
 
@@ -1135,7 +1135,7 @@ Deferred / next-slice notes:
 
 - Runtime Slice 7 is complete through S7.4; Plant detail seasonal cards, Detalj sezonske radnje, Plant detail diary preview, and display hardening landed.
 - Monitoring/Praćenje remains product-critical and must later appear in Kalendar/Pregled, but visible Monitoring UI is not part of Slice 6.
-- Runtime Slice 8 first implementation is Plant detail read-only B2 monitoring/risk preview only; Pregled/Kalendar integration is deferred until timing/display semantics are owner-approved.
+- Runtime Slice 8 first implementation is complete: Plant detail read-only B2 monitoring/risk preview only; Pregled/Kalendar integration is deferred until timing/display semantics are owner-approved.
 
 Stop conditions:
 
@@ -1160,7 +1160,7 @@ Make V2 deeply visible per plant and per action. Populate Plant detail's live se
 
 Status: COMPLETE — Runtime Slice 7 landed through S7.4 in `index.html` only. S7.1 added Plant detail seasonal action cards, S7.2 added Detalj sezonske radnje, S7.3 added Plant detail Dnevnik preview / plant-scoped diary integration, and S7.4 hardened seasonal-action display.
 
-Current tracker note: S7.4 was a display-only hardening slice. It removed technical seasonal-action identity leakage, suppressed `Uvjet: ne primjenjuje se.` when no `open_condition` exists, aligned seasonal detail titles with user-facing card wording, and reused existing `Namjena:` purpose cues on Plant detail seasonal cards. It did not change action windows, evidence matching, multi-plant logging, the history model, schema, persistence, monitoring, observations, weather logic, or snapshot persistence. The seasonal snapshot remains private, read-time, derived, and non-persisted. B2 metadata-only projection boundary is complete; Runtime Slice 8 has not started.
+Current tracker note: S7.4 was a display-only hardening slice. It removed technical seasonal-action identity leakage, suppressed `Uvjet: ne primjenjuje se.` when no `open_condition` exists, aligned seasonal detail titles with user-facing card wording, and reused existing `Namjena:` purpose cues on Plant detail seasonal cards. It did not change action windows, evidence matching, multi-plant logging, the history model, schema, persistence, monitoring, observations, weather logic, or snapshot persistence. The seasonal snapshot remains private, read-time, derived, and non-persisted. B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 is complete as Plant detail-only read-only preview.
 
 Allowed touch points:
 
@@ -1222,7 +1222,7 @@ Parallelization notes:
 
 ## 36. Slice 8 — Plant detail B2 preview first, then observations/stage
 
-Status: APPROVED PLAN RECORDED — Runtime Slice 8 has not started.
+Status: STEP 1 COMPLETE — Plant detail read-only B2 preview is implemented; later Slice 8 steps remain deferred.
 
 Purpose:
 
@@ -1230,7 +1230,7 @@ Make V2 start consuming B2 monitoring/risk metadata safely without turning monit
 
 Approved decomposition:
 
-1. First implementation — Plant detail read-only B2 monitoring/risk preview.
+1. First implementation — Plant detail read-only B2 monitoring/risk preview. **Complete.**
    - Consumes B2 metadata through an explicit S8 read path.
    - Shows plant-specific monitoring and risk-awareness context only on Plant detail.
    - Keeps monitoring items and risk-awareness items visually/textually separated.
@@ -1273,8 +1273,8 @@ Depends on:
 
 Produces:
 
-- First step: a calm read-only Plant detail preview of B2 monitoring/risk metadata.
-- First step: separated Monitoring and Risk-awareness sections if both are shown on Plant detail.
+- First step: a calm read-only Plant detail preview of B2 monitoring/risk metadata is implemented.
+- First step: separated Monitoring and Risk-awareness sections if both are shown on Plant detail are implemented.
 - First step: no record-status copy such as `Bez zapisa` because observation capture does not exist yet.
 - B2 projection boundary remains unchanged: B2 metadata-only implementation resolves the owner-accepted 41-entry source working set into 36 projected B2 items with 5 merge groups. This is the current resolved projection from the source map, not immutable final catalog truth. Composite split/combine decisions stay in this current resolved projection and must preserve source-map traceability.
 - Rendering separation per V2_UX_MODEL.md §15 + V2_ARCHITECTURE.md §4.12–§4.13: `monitoring_track` stable ids feed štetnici/bolesti monitoring surfaces; `risk_awareness_track` stable ids feed promatranje/rizik/stanje surfaces. This is audit/projection metadata only, not new canonical runtime schema, not a new user data model, and not a registry. Runtime must not infer the track from Croatian label pattern-matching.
@@ -1576,7 +1576,7 @@ Slice 7 — Plant detail, Detalj, optional weather:
 
 Slice 8 — Plant detail B2 preview first, then observations/stage:
 
-- first implementation is Plant detail read-only B2 monitoring/risk preview only
+- first implementation is complete: Plant detail read-only B2 monitoring/risk preview only
 - monitoring and risk-awareness are separated if both appear on Plant detail
 - Pregled/Kalendar integration waits for owner-approved timing/display semantics
 - observation capture/Dnevnik evidence and stage confirmation remain later steps
@@ -1754,4 +1754,4 @@ Runtime Slice 0 rules (re-stated for the handoff):
 
 Runtime implementation still requires explicit owner approval after S11 is closed. Even with this roadmap complete, no runtime work begins until the owner explicitly opens runtime Slice 0.
 
-Post-B2 tracker note: Runtime Slices 0–7 are complete through `d61cc90 Harden S7 seasonal action detail display`, and B2 metadata-only projection boundary is complete. S7.4 was display-only hardening: no action-window, evidence-matching, multi-plant logging, history-model, schema, persistence, monitoring, observation, weather, routing-architecture, or snapshot-persistence changes landed. The seasonal snapshot remains private, read-time, derived, and non-persisted. Runtime Slice 8 has not started.
+Post-S8 Step 1 tracker note: Runtime Slices 0–7 are complete through `d61cc90 Harden S7 seasonal action detail display`, B2 metadata-only projection boundary is complete, and Runtime Slice 8 Step 1 is complete as Plant detail-only read-only B2 monitoring/risk preview. S7.4 was display-only hardening: no action-window, evidence-matching, multi-plant logging, history-model, schema, persistence, monitoring, observation, weather, routing-architecture, or snapshot-persistence changes landed. The seasonal snapshot remains private, read-time, derived, and non-persisted. Later Slice 8 steps remain deferred until owner-approved.
