@@ -20,12 +20,12 @@ Phase: Runtime implementation continues. Runtime Slice 0, Slice 1, Slice 2, Slic
 
 Current goal:
 
-Post-B2 / Pre-S8. B2 metadata-only projection boundary is complete after S7.4. Runtime Slice 8 has not started and requires explicit owner approval plus a fresh consistency check.
+Post-B2 / Pre-S8. B2 metadata-only projection boundary is complete after S7.4. Runtime Slice 8 has not started. The owner-approved first S8 implementation step is Plant detail read-only B2 monitoring/risk preview only.
 
 Current immediate next step:
 
 ```text
-B2 metadata-only projection boundary is complete. It added a private/read-only source-map projection boundary in `index.html`: 36 projected items, 41 source-entry mappings, 5 merge groups, `monitoring_track` / `risk_awareness_track`, and `hidden_until_slice_8` visibility. It did not add monitoring UI, risk-awareness UI, observation UI/writes, `monitoring_programs[]`, `stage_vocabulary[]`, schema changes, persistence, global exposure, or seasonal snapshot metadata. Runtime Slice 8 is the next work and first allowed consumer of the B2 metadata after explicit owner approval. `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred and requires explicit owner approval.
+B2 metadata-only projection boundary is complete. It added a private/read-only source-map projection boundary in `index.html`: 36 projected items, 41 source-entry mappings, 5 merge groups, `monitoring_track` / `risk_awareness_track`, and `hidden_until_slice_8` visibility. It did not add monitoring UI, risk-awareness UI, observation UI/writes, `monitoring_programs[]`, `stage_vocabulary[]`, schema changes, persistence, global exposure, or seasonal snapshot metadata. Runtime Slice 8 is the next work and first allowed consumer of the B2 metadata, but the approved first step is Plant detail read-only monitoring/risk preview only through an explicit S8 read path. First step must not touch Pregled or Kalendar, add observation writes, add Dnevnik observation rows, add routes/CTAs, show `Bez zapisa`, or change `buildSeasonalSnapshot(...).monitoring`. Monitoring and risk-awareness may both appear on Plant detail only if visually/textually separated. Deferred: Pregled/Kalendar integration until timing/display semantics are owner-approved, observation capture plus Dnevnik evidence, and stage confirmation until minimal stage vocabulary is owner-approved. `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred and requires explicit owner approval.
 ```
 
 S11 status: DONE.
@@ -215,8 +215,8 @@ Runtime Slice 6 verification precision:
 
 Known deferred / next-slice notes after Runtime Slice 6:
 - Runtime Slice 7 is complete through S7.4; Plant detail seasonal cards, Detalj sezonske radnje, Plant detail diary preview, and display hardening landed.
-- Monitoring/Praćenje remains product-critical and must later appear in Kalendar/Pregled, but visible Monitoring UI is not part of Slice 6.
-- Runtime Slice 8 must explicitly add Kalendar Praćenje, not only Pregled / Plant detail monitoring.
+- Monitoring/Praćenje remains product-critical and may later appear in Kalendar/Pregled, but visible Monitoring UI is not part of Slice 6 and the first approved Slice 8 implementation is Plant detail only.
+- Pregled/Kalendar monitoring integration is deferred until Plant detail behavior is proven and timing/display semantics are owner-approved.
 - `V2_UX_MODEL.md` §16.7 outside-period disclosure remains not implemented in Slice 6 and remains deferred as Slice-6-adjacent polish or later owner-approved work.
 
 Pre-Slice-7 Action Window Notes Projection prerequisite status: DONE (`ad9a113 Project action-window notes into canonical catalog` and `a1b5307 Clean B1 action-window notes boundary`). The prerequisite is canonical action-window notes projection only. It did not start Runtime Slice 7 and did not implement Monitoring/Praćenje, awareness/risk, stage vocabulary, target/symptom registry, or any new UI surface.
@@ -259,10 +259,9 @@ Updated after B2 metadata-only implementation (NOT implemented by B1/B1.1):
 - source-map projection grouping by stable ids: `monitoring_track` / `risk_awareness_track` is complete as private metadata only
 - `monitoring_programs[]` remains unimplemented until an owner-approved Slice 8 boundary consumes B2 metadata
 - minimal generic MVP `stage_vocabulary[]`, or Slice 8 stage confirmation writes deferred/restricted until vocabulary exists, remains unimplemented
-- Kalendar `Praćenje`: §2.11 monitoring cards and §2.12 risk-awareness cards
-- Pregled `Praćenje`
-- Plant detail §4.10 monitoring UI and §4.9 Sezonski rizici feed
-- observation capture / observation rows
+- approved first S8 implementation: Plant detail §4.10 monitoring and §4.9 Sezonski rizici read-only B2 preview only
+- Kalendar `Praćenje` (§2.11 monitoring cards and §2.12 risk-awareness cards) and Pregled `Praćenje` are deferred until Plant detail behavior is proven and timing/display semantics are owner-approved
+- observation capture / observation rows remain deferred to a later Slice 8 step
 - no `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]` in the current B2 projection
 
 Runtime Slice 7 is complete through S7.4. It did not rely on monitoring or awareness content. B2 metadata-only projection boundary is complete; Runtime Slice 8 is the first allowed consumer of that metadata.
@@ -276,7 +275,7 @@ Completed S11 patches:
 - `S11.C2 — Usable/default slices 5–9` (`a56fe75 Define S11 usable-default slice plan`)
 - `S11.D — Verification gates, milestones, stop conditions, runtime handoff` (`06feb13 Define S11 verification gates and runtime handoff`)
 
-Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 was then owner-approved and implemented (commit `254448f`). Runtime Slice 3 was then owner-approved and implemented (commit `8fd2571`). Runtime Slice 4 was then owner-approved and implemented (commit `f99e5f6`). Post-Slice-4 adversarial review found and closed the canonical `catalog_v1` import validation blocker before Slice 5 (commit `8a9c4ae`). Focused S3/S4 adversarial review after that fix passed, owner verification accepted the PASS, and the pre-Slice-5 Add Plant date-validation message polish was completed without starting Runtime Slice 5. The `window_def_id` source-of-truth reconciliation then landed (`7dd7141`), the Pre-Slice-5 Action Window Seed prerequisite runtime implementation landed (`df6a7fc`) without starting Runtime Slice 5, owner browser verification and focused adversarial review passed, and plan-template projection hardening landed (`bcaf3a2`). Runtime Slice 5 then landed after owner approval (`8bc630a Implement Runtime Slice 5 activity capture`). Runtime Slice 6 then landed after owner approval (`99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`). The Pre-Slice-7 Action Window Notes Projection prerequisite then landed in two commits after owner approval (`ad9a113 Project action-window notes into canonical catalog` for B1, `a1b5307 Clean B1 action-window notes boundary` for B1.1). Runtime Slice 7 then landed through S7.4 after owner approval (`d61cc90 Harden S7 seasonal action detail display`). The plan-template projection hardening lesson remains active: approved plan templates and plant catalog drive runtime projection; B2 and Runtime Slice 8 still require explicit owner approval.
+Implementation was forbidden through S11 documentation. After explicit owner approval, Runtime Slice 0 was implemented and verified (commit `642d0b1`). Runtime Slice 1 was then owner-approved and implemented (commit `178cfa8`). Runtime Slice 2 was then owner-approved and implemented (commit `254448f`). Runtime Slice 3 was then owner-approved and implemented (commit `8fd2571`). Runtime Slice 4 was then owner-approved and implemented (commit `f99e5f6`). Post-Slice-4 adversarial review found and closed the canonical `catalog_v1` import validation blocker before Slice 5 (commit `8a9c4ae`). Focused S3/S4 adversarial review after that fix passed, owner verification accepted the PASS, and the pre-Slice-5 Add Plant date-validation message polish was completed without starting Runtime Slice 5. The `window_def_id` source-of-truth reconciliation then landed (`7dd7141`), the Pre-Slice-5 Action Window Seed prerequisite runtime implementation landed (`df6a7fc`) without starting Runtime Slice 5, owner browser verification and focused adversarial review passed, and plan-template projection hardening landed (`bcaf3a2`). Runtime Slice 5 then landed after owner approval (`8bc630a Implement Runtime Slice 5 activity capture`). Runtime Slice 6 then landed after owner approval (`99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`). The Pre-Slice-7 Action Window Notes Projection prerequisite then landed in two commits after owner approval (`ad9a113 Project action-window notes into canonical catalog` for B1, `a1b5307 Clean B1 action-window notes boundary` for B1.1). Runtime Slice 7 then landed through S7.4 after owner approval (`d61cc90 Harden S7 seasonal action detail display`). The plan-template projection hardening lesson remains active: approved plan templates and plant catalog drive runtime projection; B2 is complete, and Runtime Slice 8 has an approved Plant detail-only first implementation scope.
 
 §0 monitoring constraints remain locked and authoritative.
 

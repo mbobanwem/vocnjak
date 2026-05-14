@@ -784,7 +784,7 @@ S11.C2 has five usable / default slices, after the completed Pre-Slice-5 Action 
 - Slice 6 — Active-window snapshot, Pregled, and Kalendar
 - Prerequisite — Pre-Slice-7 Action Window Notes Projection (B1 + B1.1)
 - Slice 7 — Plant detail integration, Detalj sezonske radnje, and advisory weather composition
-- Slice 8 — Observation capture, stage confirmation, and monitoring / awareness baseline
+- Slice 8 — Plant detail B2 preview first, then observations/stage
 - Slice 9 — Observation correction and archive / lifecycle baseline
 
 All five slices land inside `index.html` in a clearly demarcated V2 region. No slice may interleave with or refactor legacy code paths. Naming overlap with the legacy app (Pregled, Kalendar, Dnevnik, Aktivnost) is intentional; code-path overlap is not.
@@ -1135,7 +1135,7 @@ Deferred / next-slice notes:
 
 - Runtime Slice 7 is complete through S7.4; Plant detail seasonal cards, Detalj sezonske radnje, Plant detail diary preview, and display hardening landed.
 - Monitoring/Praćenje remains product-critical and must later appear in Kalendar/Pregled, but visible Monitoring UI is not part of Slice 6.
-- Runtime Slice 8 must explicitly add Kalendar Praćenje, not only Pregled / Plant detail monitoring.
+- Runtime Slice 8 first implementation is Plant detail read-only B2 monitoring/risk preview only; Pregled/Kalendar integration is deferred until timing/display semantics are owner-approved.
 
 Stop conditions:
 
@@ -1220,18 +1220,44 @@ Parallelization notes:
 
 ---
 
-## 36. Slice 8 — Observation capture, stage confirmation, and monitoring/awareness baseline
+## 36. Slice 8 — Plant detail B2 preview first, then observations/stage
+
+Status: APPROVED PLAN RECORDED — Runtime Slice 8 has not started.
 
 Purpose:
 
-Make V2 useful for monitoring and stage observation. Land Observation write (free-standing + program-context), one-screen stage confirmation flow, and monitoring / awareness display.
+Make V2 start consuming B2 monitoring/risk metadata safely without turning monitoring into a task manager, warning system, treatment recommender, or diagnosis engine. Slice 8 starts with a narrow Plant detail read-only preview, then later adds broader surfaces and writes only after the owner approves their semantics.
 
-Allowed touch points:
+Approved decomposition:
 
-- `index.html` only, inside the V2 region. Observation capture flows (program-context, free-standing, trap, scouting), stage confirmation one-screen flow, monitoring program rendering, awareness rendering. Slice 8 must consume the B2-approved metadata boundary and must not independently add monitoring declarations, new registries, or stage vocabulary without owner approval.
+1. First implementation — Plant detail read-only B2 monitoring/risk preview.
+   - Consumes B2 metadata through an explicit S8 read path.
+   - Shows plant-specific monitoring and risk-awareness context only on Plant detail.
+   - Keeps monitoring items and risk-awareness items visually/textually separated.
+   - Does not add persistence, observation writes, Dnevnik observation rows, new routes, tap-through detail, CTAs, Pregled, Kalendar, or `Bez zapisa`.
+   - Does not change `buildSeasonalSnapshot(...).monitoring`; it remains empty.
+   - Keeps B2 metadata private, non-global, non-persisted, and separate from snapshot.
+2. Later read-only Pregled/Kalendar integration.
+   - Deferred until Plant detail behavior is proven and timing/display semantics are owner-approved.
+   - Must not derive urgency, overdue state, compliance, or scheduled-work pressure from B2 metadata.
+3. Later observation capture plus Dnevnik evidence.
+   - Deferred because it adds write paths, persistence consequences, correction complexity, and Dnevnik rendering.
+   - Only this later step may introduce observation-record states such as neutral `Bez zapisa` where §0 permits them.
+4. Later stage confirmation.
+   - Deferred until the owner approves minimal stage vocabulary.
+   - Stage confirmation must remain optional and non-blocking.
+
+Allowed first-step touch points:
+
+- `index.html` only when implementation begins, inside the V2 region and limited to Plant detail rendering plus the explicit S8 B2 read path.
+- Docs/trackers that record the approved owner scope.
 
 Must not touch:
 
+- Pregled or Kalendar in the first implementation step.
+- Observation writes, Dnevnik observation rows, Activity capture, correction, archive, or persistence in the first implementation step.
+- New routes, tap-through detail, or CTAs such as `Dodaj opažanje` in the first implementation step.
+- `buildSeasonalSnapshot(...).monitoring`; it remains empty.
 - Observation correction, archive (Slice 9).
 - Treatment / diagnosis / dose / brand recommendation (forbidden per §10.10 + §0).
 - Plan upgrade review (post-usable).
@@ -1241,46 +1267,46 @@ Must not touch:
 
 Depends on:
 
-- Slice 7 (Plant detail §4.10 monitoring section ready for fill; Detalj per-plant evidence summary ready to extend with observation rows).
-- Slice 6 (snapshot §4.11 stage observation effects, §4.12 monitoring program state projection, §4.13 free-standing observation boundary).
+- Slice 7 (Plant detail §4.10 monitoring section ready for read-only fill; Plant detail already has plant context).
+- Slice 6 (Pregled/Kalendar/snapshot exist but are explicitly out of the first S8 implementation).
 - B2 metadata-only projection boundary for stable-id source-map grouping; minimal generic MVP stage vocabulary remains a Slice 8 owner decision or stage-write deferral/restriction.
 
 Produces:
 
-- Observation write per V2_DOMAIN_MODEL.md §0.6a: `plant_id`, `catalog_version`, `kind` ∈ {trap, scouting, stage_obs, symptom}, `observed_on`, `recorded_at`, `payload` (per kind §3.2), optional `program_id`, optional `observation_group_id`, `provenance`. Catalog-version pinning per write-time invariant.
-- Free-standing observation per §0.6a + §1.7.4 FS-INV: `program_id` absent is legal; observation is first-class plant-history entry, permanently disjoint from any monitoring program.
-- Monitoring capture flow per V2_UX_MODEL.md §10: program-context (§10.3), free-standing (§10.4), trap check (§10.5), visual scouting (§10.6), date behavior (§10.7), out-of-season behavior (§10.8), multi-plant monitoring boundary (§10.9 — separate observations per plant, not single multi-plant observation), treatment-advice boundary (§10.10).
-- Stage confirmation flow per V2_UX_MODEL.md §11: one-screen (§11.3), MVP stage labels (§11.4), uncertainty (§11.5), date behavior (§11.6), plan-impact copy (§11.7), Dnevnik / history (§11.9). Stage-code correction deferred to Slice 9 per §11.11.
-- B2 projection boundary: B2 metadata-only implementation resolves the owner-accepted 41-entry source working set into 36 projected B2 items with 5 merge groups. This is the current resolved projection from the source map, not immutable final catalog truth. Composite split/combine decisions stay in this current resolved projection and must preserve source-map traceability.
+- First step: a calm read-only Plant detail preview of B2 monitoring/risk metadata.
+- First step: separated Monitoring and Risk-awareness sections if both are shown on Plant detail.
+- First step: no record-status copy such as `Bez zapisa` because observation capture does not exist yet.
+- B2 projection boundary remains unchanged: B2 metadata-only implementation resolves the owner-accepted 41-entry source working set into 36 projected B2 items with 5 merge groups. This is the current resolved projection from the source map, not immutable final catalog truth. Composite split/combine decisions stay in this current resolved projection and must preserve source-map traceability.
 - Rendering separation per V2_UX_MODEL.md §15 + V2_ARCHITECTURE.md §4.12–§4.13: `monitoring_track` stable ids feed štetnici/bolesti monitoring surfaces; `risk_awareness_track` stable ids feed promatranje/rizik/stanje surfaces. This is audit/projection metadata only, not new canonical runtime schema, not a new user data model, and not a registry. Runtime must not infer the track from Croatian label pattern-matching.
-- Surface feed: štetnici/bolesti items feed Plant detail §4.10 monitoring section, Pregled §1.8 Praćenje, and Kalendar §2.11 monitoring cards/items; promatranje/rizik/stanje items feed Plant detail §4.9 Sezonski rizici and Kalendar §2.12 risk-awareness cards. Detalj per-plant evidence summary is extended with observation rows; Dnevnik §3.13 / §3.14 free-standing and monitoring rows remain visible.
-- UX examples: trešnjina muha = trap monitoring with records/counts/`Bez zapisa`; pucanje plodova = seasonal risk/awareness card with free-standing observation capture; mraz u cvatnji = seasonal risk/awareness; lisne uši = scouting monitoring.
-- Stage vocabulary rule: B2 did not add `stage_vocabulary[]`. Slice 8 must either get explicit owner approval for a minimal generic MVP vocabulary or keep stage confirmation writes deferred/restricted until vocabulary exists.
-- Absence of monitoring or risk-awareness records remains neutral.
+- First-step examples: `Praćenje šljivinog savijača — proljetni let` and `Sezonska napomena: postoji rizik pucanja plodova nakon jače kiše`.
+- Later only: Pregled §1.8 Praćenje, Kalendar §2.11 monitoring, Kalendar §2.12 risk-awareness, observation capture, Dnevnik observation rows, record displays, and stage confirmation.
+- Stage vocabulary rule: B2 did not add `stage_vocabulary[]`. Stage confirmation stays deferred until the owner approves a minimal generic MVP vocabulary or an explicit stage-write deferral/restriction.
 
 Manual verification:
 
-- Capture a free-standing observation on a plant → Observation record written with `program_id` absent; appears in plant Dnevnik (§3.13) and per-plant evidence summary.
-- Capture a program-context observation → Observation record written with `program_id` set; monitoring program state in Pregled / Plant detail / Detalj reflects it per §4.12.
-- Confirm a stage on a plant → Stage observation written; snapshot reflects stage effect per §4.11; gate-state updates where applicable.
-- Try a future-dated observation → write rejected per §0.6a temporal-order rule.
-- Try a multi-plant single observation → not allowed; separate Observation records written per plant per §10.9.
-- Monitoring program with no observations remains neutral (no warning, no overdue badge).
+- First step: open Plant detail for plants with relevant B2 metadata → read-only monitoring/risk preview appears only there, with monitoring and risk-awareness separated.
+- First step: Pregled and Kalendar show no monitoring/risk content.
+- First step: no `Dodaj opažanje`, no `Dodaj zapis o praćenju`, no tap-through detail, and no new route.
+- First step: no `Bez zapisa` copy because observation capture is not available yet.
+- First step: `buildSeasonalSnapshot(...).monitoring` remains empty and no snapshot output is persisted or exposed globally.
+- Monitoring/risk copy remains neutral, factual, and non-pressuring.
 - Legacy `vocnjak_v4` VALUE byte-equal across session.
 
 Stop conditions:
 
+- First implementation touches Pregled or Kalendar.
+- First implementation adds observation writes, Dnevnik observation rows, routes, CTAs, or `Bez zapisa`.
+- First implementation changes snapshot monitoring output or persists/exposes B2 metadata globally.
 - Observation capture would derive stale / overdue state from missing observations.
 - Stage missing would generate a cue or task.
 - Monitoring would auto-recommend treatment, dose, brand, or product.
 - Multi-plant single observation would be allowed.
-- Stage confirmation would be more than one screen.
 - Slice 8 would require Observation correction logic (defer to Slice 9).
 - Slice 8 would require plan upgrade review or Za pregledati cues.
 
 Parallelization notes:
 
-- Within Slice 8, Observation capture must land first; stage confirmation and monitoring rendering may then be drafted in parallel but commit serially. Not parallelizable with Slice 9.
+- Do not parallelize the first Slice 8 implementation across Pregled/Kalendar/Plant detail. Land Plant detail read-only preview first, then review before approving later S8 steps.
 
 ---
 
@@ -1538,7 +1564,7 @@ Pre-Slice-7 Action Window Notes Projection prerequisite (B1 + B1.1):
 - no new `innerHTML`, `outerHTML`, `document.write`, `eval`, or `new Function(` calls were introduced
 - Slice 6 surfaces (Pregled / Kalendar / seasonal-action placeholder) are unchanged
 - Activity and Correction schemas / validators are unchanged
-- B2 stable-id source-map projection grouping is complete as metadata only and was NOT implemented by B1 or B1.1. `monitoring_programs[]`, minimal generic `stage_vocabulary[]` or stage-write deferral/restriction, Kalendar §2.11 / §2.12 Praćenje, Pregled Praćenje, Plant detail §4.10 monitoring and §4.9 Sezonski rizici feeds, observation capture / observation rows remain Slice 8 work. The current B2 projection does not add `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`.
+- B2 stable-id source-map projection grouping is complete as metadata only and was NOT implemented by B1 or B1.1. The approved first Slice 8 implementation is Plant detail read-only B2 monitoring/risk preview only. `monitoring_programs[]`, minimal generic `stage_vocabulary[]` or stage-write deferral/restriction, Kalendar §2.11 / §2.12 Praćenje, Pregled Praćenje, observation capture / observation rows, and broader monitoring/risk runtime integration remain later owner-approved Slice 8 work. The current B2 projection does not add `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`.
 - full browser runtime verification, Cloudflare deployment verification, full import/export UI round-trip, and direct protected legacy localStorage byte-dump comparison were not performed for the B1 or B1.1 commits
 
 Slice 7 — Plant detail, Detalj, optional weather:
@@ -1548,12 +1574,12 @@ Slice 7 — Plant detail, Detalj, optional weather:
 - weather, when present, never gates, reorders, blocks, or reschedules
 - the legacy weather widget continues to render in legacy DOM unchanged
 
-Slice 8 — Observation, stage confirmation, monitoring / awareness:
+Slice 8 — Plant detail B2 preview first, then observations/stage:
 
-- a free-standing Observation has `program_id` absent and remains permanently program-disjoint
-- a program-context Observation links to a valid `program_id` and resolves against the pinned `catalog_version`
-- a monitoring program with no observations renders neutrally; no warning, no overdue badge
-- the stage confirmation flow is one screen per §11.3
+- first implementation is Plant detail read-only B2 monitoring/risk preview only
+- monitoring and risk-awareness are separated if both appear on Plant detail
+- Pregled/Kalendar integration waits for owner-approved timing/display semantics
+- observation capture/Dnevnik evidence and stage confirmation remain later steps
 
 Slice 9 — Observation correction, archive / lifecycle:
 

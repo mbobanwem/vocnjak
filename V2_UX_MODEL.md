@@ -109,6 +109,19 @@ Every UX proposal (mockup, flow, copy sample) touching monitoring MUST be checke
 
 Violations caught after implementation are corrected at the earliest opportunity; there is no grace period for neutrality breaches.
 
+### 0.8 Runtime Slice 8 first implementation boundary
+
+Owner-approved boundary for the first S8 runtime consumer of B2 metadata:
+
+- First S8 UI consumption of B2 metadata is Plant detail only.
+- The first step is read-only: calm labels, factual seasonal context, no implied obligation.
+- Monitoring items and risk-awareness items may both appear in the first Plant detail slice only if they are visually/textually separated.
+- Do not show `Bez zapisa` before observation capture exists. Although §0 permits neutral `Bez zapisa` in monitoring record contexts, the first read-only Plant detail preview has no observation write path and must not present record-status absence.
+- Do not add CTAs, tap-through detail, new routes, observation writes, or Dnevnik observation rows in the first step.
+- Do not render monitoring/risk on Pregled or Kalendar in the first step.
+- `buildSeasonalSnapshot(...).monitoring` remains empty; B2 metadata remains private, non-persisted, non-global, and separate from snapshot.
+- §0.1–§0.7 remain authoritative for all later monitoring UX.
+
 ---
 
 ## 1. Pregled (home)
