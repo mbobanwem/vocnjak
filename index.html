@@ -4199,6 +4199,7 @@ if ('serviceWorker' in navigator) {
     }
     return preview;
   }
+  window.v2B2PlantDetailPreview = b2PlantDetailPreview;
 
   function b2ProjectionSourceRef(row, label) {
     return {
@@ -5804,7 +5805,7 @@ if ('serviceWorker' in navigator) {
 
   var EXPECTED_ROOT_KEYS = ['meta','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
   var EXPECTED_META_KEYS = ['store_format_version','active_catalog_version'];
-  var EMPTY_ARRAY_KEYS = ['plan_instances','plan_overlays','observations'];
+  var EMPTY_ARRAY_KEYS = ['plan_instances','plan_overlays'];
   var MAX_FILE_SIZE = 1024 * 1024;
   var ALLOWED_PLANT_KEYS = [
     'plant_id','catalog_version','stable_order','species','variety','ripening_fallback',
@@ -5828,6 +5829,14 @@ if ('serviceWorker' in navigator) {
   ];
   var SHARED_GROUP_ACTIVITY_KEYS = ['window_def_id','catalog_version','action_type','occurred_on','recorded_at','status'];
   var ACTIVITY_STATUSES = { done: true, skipped: true };
+  var ALLOWED_OBSERVATION_KEYS = [
+    'observation_id','plant_id','catalog_version','kind','observed_on',
+    'recorded_at','payload','program_id','provenance'
+  ];
+  var REQUIRED_OBSERVATION_KEYS = [
+    'observation_id','plant_id','catalog_version','kind','observed_on',
+    'recorded_at','payload','program_id','provenance'
+  ];
   var ALLOWED_CORRECTION_KEYS = [
     'correction_id','original_record_id','original_record_type','correction_types',
     'corrected_values','explanation','created_at'
@@ -6404,6 +6413,55 @@ if ('serviceWorker' in navigator) {
     return [];
   }
 
+  function validateNoteObservationPayload(payload, path) {
+    if (!isPlainObject(payload)) return [path + '.payload not a plain object'];
+    var keys = Object.keys(payload);
+    if (keys.length !== 1 || keys[0] !== 'text') return [path + '.payload keys must equal [text]'];
+    if (typeof payload.text !== 'string') return [path + '.payload.text must be a string'];
+    if (payload.text !== payload.text.trim()) return [path + '.payload.text must be stored trimmed'];
+    if (payload.text.length < 1) return [path + '.payload.text required'];
+    if (payload.text.length > 1000) return [path + '.payload.text must be 1000 characters or less'];
+    return [];
+  }
+
+  function validateObservation(observation, parsed, catalog, path) {
+    if (!isPlainObject(observation)) return [path + ' not a plain object'];
+    var keys = Object.keys(observation);
+    for (var i = 0; i < keys.length; i++) {
+      if (ALLOWED_OBSERVATION_KEYS.indexOf(keys[i]) === -1) return [path + ' unexpected key: ' + keys[i]];
+    }
+    for (var j = 0; j < REQUIRED_OBSERVATION_KEYS.length; j++) {
+      if (keys.indexOf(REQUIRED_OBSERVATION_KEYS[j]) === -1) return [path + ' missing key: ' + REQUIRED_OBSERVATION_KEYS[j]];
+    }
+    if (typeof observation.observation_id !== 'string' || observation.observation_id.trim().length === 0) return [path + '.observation_id required'];
+    if (typeof observation.plant_id !== 'string' || observation.plant_id.trim().length === 0) return [path + '.plant_id required'];
+    if (!findPlantById(parsed.plants, observation.plant_id)) return [path + '.plant_id must reference an existing plant'];
+    if (observation.catalog_version !== parsed.meta.active_catalog_version || observation.catalog_version !== 'catalog_v1') return [path + '.catalog_version must match active catalog'];
+    if (observation.kind !== 'note') return [path + '.kind unsupported'];
+    var dateErr = checkDate(observation.observed_on);
+    if (dateErr) return [path + '.observed_on ' + dateErr];
+    if (!isIsoUtcTimestamp(observation.recorded_at)) return [path + '.recorded_at must be an ISO UTC timestamp'];
+    var recordedOn = localDateFromIsoUtc(observation.recorded_at);
+    if (recordedOn < observation.observed_on) return [path + '.observed_on must be on or before recorded_at local calendar date'];
+    if (observation.program_id !== null) return [path + '.program_id must be null for note Observations'];
+    if (!isPlainObject(observation.provenance) || Object.keys(observation.provenance).length !== 1 || observation.provenance.source !== 'user') return [path + '.provenance must be exactly {source:"user"}'];
+    return validateNoteObservationPayload(observation.payload, path);
+  }
+
+  function validateAllObservations(observations, parsed, catalog) {
+    if (!Array.isArray(observations)) return ['observations not an array'];
+    var seenIds = Object.create(null);
+    for (var i = 0; i < observations.length; i++) {
+      var path = 'observations[' + i + ']';
+      var errs = validateObservation(observations[i], parsed, catalog, path);
+      if (errs.length > 0) return errs;
+      var observationId = observations[i].observation_id;
+      if (seenIds[observationId]) return ['duplicate observation_id: ' + observationId];
+      seenIds[observationId] = true;
+    }
+    return [];
+  }
+
   function correctionSort(a, b) {
     if (a.created_at < b.created_at) return -1;
     if (a.created_at > b.created_at) return 1;
@@ -6567,6 +6625,9 @@ if ('serviceWorker' in navigator) {
     if (!Array.isArray(parsed.activities)) return ['activities not an array'];
     var activityErrs = validateAllActivities(parsed.activities, parsed, parsed.catalogs.catalog_v1);
     if (activityErrs.length > 0) return activityErrs;
+    if (!Array.isArray(parsed.observations)) return ['observations not an array'];
+    var observationErrs = validateAllObservations(parsed.observations, parsed, parsed.catalogs.catalog_v1);
+    if (observationErrs.length > 0) return observationErrs;
     if (!Array.isArray(parsed.corrections)) return ['corrections not an array'];
     var correctionErrs = validateAllCorrections(parsed.corrections, parsed, parsed.catalogs.catalog_v1);
     if (correctionErrs.length > 0) return correctionErrs;
@@ -6735,6 +6796,7 @@ if ('serviceWorker' in navigator) {
   ];
   var hasOwn = Object.prototype.hasOwnProperty;
   var activityHelpers = window.v2ActivityHelpers;
+  var b2PlantDetailPreview = window.v2B2PlantDetailPreview;
   var currentFormFields = null;
   var currentActivityFields = null;
   var currentCorrectionFields = null;
@@ -7230,6 +7292,67 @@ if ('serviceWorker' in navigator) {
     parent.appendChild(section);
   }
 
+  function appendNoteObservationCaptureSection(parent, plant) {
+    var section = makeEl('section', 'v2-plants-section');
+    section.appendChild(makeEl('h3', '', 'Opažanja'));
+
+    var opener = makeEl('button', 'v2-plants-primary', 'Dodaj opažanje');
+    opener.type = 'button';
+    section.appendChild(opener);
+
+    var form = document.createElement('form');
+    form.className = 'v2-plants-form';
+    form.noValidate = true;
+    form.hidden = true;
+
+    var message = makeEl('p', 'v2-plants-error');
+    message.hidden = true;
+    form.appendChild(message);
+
+    var dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.value = localTodayYmd();
+    appendField(form, 'v2NoteObservedOn', 'Datum', dateInput);
+
+    var text = document.createElement('textarea');
+    appendField(form, 'v2NoteObservationText', 'Opažanje', text, 'Slobodno opažanje. Neće biti vezano uz program praćenja.');
+
+    var actions = makeEl('div', 'v2-plants-actions');
+    var save = makeEl('button', 'v2-plants-primary', 'Spremi opažanje');
+    save.type = 'submit';
+    var cancel = makeEl('button', 'v2-plants-secondary', 'Odustani');
+    cancel.type = 'button';
+    actions.appendChild(save);
+    actions.appendChild(cancel);
+    form.appendChild(actions);
+
+    opener.addEventListener('click', function () {
+      opener.hidden = true;
+      form.hidden = false;
+      dateInput.value = localTodayYmd();
+      text.focus();
+    });
+    cancel.addEventListener('click', function () {
+      form.reset();
+      dateInput.value = localTodayYmd();
+      message.hidden = true;
+      form.hidden = true;
+      opener.hidden = false;
+    });
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      saveNoteObservation(plant.plant_id, {
+        dateInput: dateInput,
+        text: text,
+        message: message,
+        form: form
+      });
+    });
+
+    section.appendChild(form);
+    parent.appendChild(section);
+  }
+
   function renderNotFound() {
     setViews('detail');
     clearNode(detailView);
@@ -7302,19 +7425,19 @@ if ('serviceWorker' in navigator) {
       renderSeasonalSnapshotFailure(detailView, e);
     }
 
-    var b2Preview = b2PlantDetailPreview(plant);
+    var b2Preview = typeof b2PlantDetailPreview === 'function' ? b2PlantDetailPreview(plant) : { monitoring: [], riskAwareness: [] };
     appendPlantDetailB2Section(detailView, 'Praćenje', b2Preview.monitoring);
     appendPlantDetailB2Section(detailView, 'Sezonske napomene', b2Preview.riskAwareness);
+    appendNoteObservationCaptureSection(detailView, plant);
 
     var diary = makeEl('section', 'v2-plants-section');
     diary.appendChild(makeEl('h3', '', 'Dnevnik ove voćke'));
-    var plantEntries = activityEntriesForPlant(effectiveActivityEntries(result.store, result.catalog), plant.plant_id);
-    var plantGroups = groupDiaryEntries(plantEntries).slice(0, 5);
-    if (plantGroups.length === 0) {
-      diary.appendChild(makeEl('p', 'v2-plants-empty', 'Još nema evidentiranih aktivnosti za ovu voćku.'));
+    var plantDiaryItems = diaryItemsForResult(result, plant.plant_id).slice(0, 5);
+    if (plantDiaryItems.length === 0) {
+      diary.appendChild(makeEl('p', 'v2-plants-empty', 'Još nema zapisa u dnevniku ove voćke.'));
     } else {
       var preview = makeEl('div', 'v2-diary-list');
-      appendDiaryGroups(preview, plantGroups, result, { showCorrectionActions: false });
+      appendDiaryItems(preview, plantDiaryItems, result, { showCorrectionActions: false });
       diary.appendChild(preview);
     }
     var fullDiary = makeEl('button', 'v2-plants-secondary', 'Prikaži cijeli dnevnik voćke');
@@ -7687,6 +7810,89 @@ if ('serviceWorker' in navigator) {
       corrections: nextCorrections,
       review_state: current.store.review_state
     };
+  }
+
+  function noteObservationValidationMessage(error) {
+    if (error.indexOf('.observed_on in the future') !== -1) return 'datum opažanja ne može biti u budućnosti';
+    if (error.indexOf('.observed_on invalid format') !== -1 || error.indexOf('.observed_on not a real date') !== -1) return 'datum opažanja nije valjan';
+    if (error.indexOf('.payload.text required') !== -1) return 'tekst opažanja je obavezan';
+    if (error.indexOf('.payload.text must be 1000 characters or less') !== -1) return 'tekst opažanja može imati najviše 1000 znakova';
+    if (error.indexOf('.program_id must be null') !== -1) return 'opažanje ne smije biti vezano uz program praćenja';
+    return error;
+  }
+
+  function noteObservationStoreCandidate(current, nextObservations) {
+    return {
+      meta: current.store.meta,
+      catalogs: current.store.catalogs,
+      plants: current.store.plants,
+      plan_instances: current.store.plan_instances,
+      plan_overlays: current.store.plan_overlays,
+      activities: current.store.activities,
+      observations: nextObservations,
+      corrections: current.store.corrections,
+      review_state: current.store.review_state
+    };
+  }
+
+  function buildNoteObservation(current, plantId, fields) {
+    var plant = findPlant(current.store.plants, plantId);
+    if (!plant) return { ok: false, error: 'Voćka nije pronađena.' };
+    if (!fields.dateInput.value) return { ok: false, error: 'Datum opažanja je obavezan.' };
+    if (fields.dateInput.value > localTodayYmd()) return { ok: false, error: 'Datum ne može biti u budućnosti.' };
+    var text = fields.text.value.trim();
+    if (!text) return { ok: false, error: 'Tekst opažanja je obavezan.' };
+    if (text.length > 1000) return { ok: false, error: 'Tekst opažanja može imati najviše 1000 znakova.' };
+    var observationId = nextUniqueId('observation', current.store.observations, 'observation_id');
+    if (!observationId) return { ok: false, error: 'Greška pri generaciji identifikatora.' };
+    return {
+      ok: true,
+      observation: {
+        observation_id: observationId,
+        plant_id: plant.plant_id,
+        catalog_version: current.store.meta.active_catalog_version,
+        kind: 'note',
+        observed_on: fields.dateInput.value,
+        recorded_at: new Date().toISOString(),
+        payload: { text: text },
+        program_id: null,
+        provenance: { source: 'user' }
+      }
+    };
+  }
+
+  function saveNoteObservation(plantId, fields) {
+    fields.message.hidden = true;
+    var current = readValidStore();
+    if (!current.ok) {
+      fields.message.textContent = current.error;
+      fields.message.hidden = false;
+      return;
+    }
+    var built = buildNoteObservation(current, plantId, fields);
+    if (!built.ok) {
+      fields.message.textContent = built.error;
+      fields.message.hidden = false;
+      return;
+    }
+    var nextStore = noteObservationStoreCandidate(current, current.store.observations.concat([built.observation]));
+    var errors = window.v2ValidateForBackup(nextStore);
+    if (errors.length > 0) {
+      fields.message.textContent = 'Opažanje nije spremljeno: ' + noteObservationValidationMessage(errors[0]) + '.';
+      fields.message.hidden = false;
+      return;
+    }
+    try {
+      localStorage.setItem('vocnjak_v2', JSON.stringify(nextStore));
+    } catch (e) {
+      fields.message.textContent = 'Pohranu nije moguće zapisati.';
+      fields.message.hidden = false;
+      return;
+    }
+    fields.form.reset();
+    pendingDetailStatus = 'Opažanje spremljeno.';
+    if (location.hash === plantDetailRoute(plantId)) render();
+    else location.hash = plantDetailRoute(plantId);
   }
 
   function updateActivitySaveState(fields) {
@@ -8833,6 +9039,61 @@ if ('serviceWorker' in navigator) {
     }
   }
 
+  function noteObservationsForPlant(observations, plantId) {
+    return observations.filter(function (observation) {
+      return observation.kind === 'note' && (!plantId || observation.plant_id === plantId);
+    });
+  }
+
+  function diaryItemsForResult(result, plantId) {
+    var entries = effectiveActivityEntries(result.store, result.catalog);
+    if (plantId) entries = activityEntriesForPlant(entries, plantId);
+    var groups = groupDiaryEntries(entries);
+    var items = groups.map(function (group) {
+      var sample = group[0].effective;
+      return {
+        type: 'activity_group',
+        date: sample.occurred_on,
+        recorded_at: sample.recorded_at,
+        id: hasOwnKey(sample, 'activity_group_id') ? sample.activity_group_id : sample.activity_id,
+        group: group
+      };
+    });
+    var observations = noteObservationsForPlant(result.store.observations, plantId);
+    for (var i = 0; i < observations.length; i++) {
+      items.push({
+        type: 'note_observation',
+        date: observations[i].observed_on,
+        recorded_at: observations[i].recorded_at,
+        id: observations[i].observation_id,
+        observation: observations[i]
+      });
+    }
+    items.sort(function (a, b) {
+      if (a.date !== b.date) return b.date.localeCompare(a.date);
+      if (a.recorded_at !== b.recorded_at) return b.recorded_at.localeCompare(a.recorded_at);
+      return b.id.localeCompare(a.id);
+    });
+    return items;
+  }
+
+  function appendNoteObservationCard(parent, observation, result) {
+    var plant = findPlant(result.store.plants, observation.plant_id);
+    var plantLabel = plant ? plantTitle(plant) : observation.plant_id;
+    var card = makeEl('article', 'v2-diary-card');
+    card.appendChild(makeEl('p', 'v2-diary-title', formatDateYmd(observation.observed_on) + ' · Opažanje'));
+    card.appendChild(makeEl('span', 'v2-diary-meta', 'Opažanja'));
+    card.appendChild(makeEl('span', 'v2-diary-note', plantLabel + ' — ' + observation.payload.text));
+    parent.appendChild(card);
+  }
+
+  function appendDiaryItems(parent, items, result, options) {
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].type === 'activity_group') appendDiaryGroupCard(parent, items[i].group, result, options);
+      else if (items[i].type === 'note_observation') appendNoteObservationCard(parent, items[i].observation, result);
+    }
+  }
+
   function renderDiary(route) {
     route = route || { name: 'diary' };
     var plantScoped = route.name === 'plant_diary';
@@ -8866,16 +9127,14 @@ if ('serviceWorker' in navigator) {
       }
       diaryView.appendChild(makeEl('p', 'v2-diary-meta', plantTitle(scopedPlant)));
     }
-    var entries = effectiveActivityEntries(result.store, result.catalog);
-    if (plantScoped) entries = activityEntriesForPlant(entries, route.plant_id);
-    if (entries.length === 0) {
-      diaryView.appendChild(makeEl('p', 'v2-plants-empty', plantScoped ? 'Još nema evidentiranih aktivnosti za ovu voćku.' : 'Još nema zapisa u Dnevniku.'));
+    var diaryItems = diaryItemsForResult(result, plantScoped ? route.plant_id : null);
+    if (diaryItems.length === 0) {
+      diaryView.appendChild(makeEl('p', 'v2-plants-empty', plantScoped ? 'Još nema zapisa za ovu voćku.' : 'Još nema zapisa u Dnevniku.'));
       return;
     }
-    var groupList = groupDiaryEntries(entries);
 
     var list = makeEl('div', 'v2-diary-list');
-    appendDiaryGroups(list, groupList, result, { showCorrectionActions: true });
+    appendDiaryItems(list, diaryItems, result, { showCorrectionActions: true });
     diaryView.appendChild(list);
   }
 

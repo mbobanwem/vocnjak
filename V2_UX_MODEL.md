@@ -1,6 +1,6 @@
 # V2_UX_MODEL
 
-**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain future flow contracts and placeholders. Runtime Slice 7 is complete through S7.4; B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 Plant detail read-only B2 preview is complete. S8 Step 2 note Observation shape is documented for later Plant detail capture + Dnevnik evidence implementation; runtime capture is not implemented yet. Later Pregled/Kalendar monitoring/risk integration, structured observation capture, and stage-confirmation steps remain deferred until owner-approved. This document defines UX guidance only; no runtime/schema implementation is defined here.
+**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain future flow contracts and placeholders. Runtime Slice 7 is complete through S7.4; B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 Plant detail read-only B2 preview is complete. S8 Step 2 Plant detail note Observation capture + Dnevnik evidence is complete. Later Pregled/Kalendar monitoring/risk integration, structured observation capture, and stage-confirmation steps remain deferred until owner-approved. Full Runtime Slice 8 is not complete. This document defines UX guidance only; no runtime/schema implementation is defined here.
 
 ---
 
@@ -124,12 +124,13 @@ Status: implemented for Plant detail read-only preview in Runtime Slice 8 Step 1
 - `buildSeasonalSnapshot(...).monitoring` remains empty; B2 metadata remains private, non-persisted, non-global, and separate from snapshot.
 - §0.1–§0.7 remain authoritative for all later monitoring UX.
 
-S8 Step 2 documented boundary:
+S8 Step 2 implemented boundary:
 
 - Plant detail only.
 - Free-standing note Observation capture only: `kind = "note"` with `payload.text`.
 - The capture entry point is `Dodaj opažanje`.
 - The helper copy is `Slobodno opažanje. Neće biti vezano uz program praćenja.`
+- Saved note Observations render as factual plant history / Dnevnik rows under `Opažanja`, not `Praćenje`.
 - S8 Step 2 does not open monitoring record contexts; `Bez zapisa` and `Zadnji zapis` remain deferred for monitoring contexts until monitoring capture/display semantics are owner-approved.
 - Pregled/Kalendar monitoring/risk UI remains deferred.
 - Program-attached observation capture, structured trap/scouting/symptom/stage capture, registries/vocabularies, correction, diagnosis/treatment, and snapshot changes remain deferred.
@@ -2951,7 +2952,7 @@ Current S8 Step 2 subset:
 
 - Plant detail free-standing note Observation capture only.
 - One free-text shape only: `kind = "note"` with `payload.text`.
-- No program-context capture, no structured trap/scouting/symptom/stage capture, no registries/vocabularies, no correction, no Pregled/Kalendar entry, and no Dnevnik/global entry in S8 Step 2.
+- No program-context capture, no structured trap/scouting/symptom/stage capture, no registries/vocabularies, no correction, no Pregled/Kalendar entry, and no Dnevnik/global capture entry in S8 Step 2.
 
 Cancel behavior:
 
