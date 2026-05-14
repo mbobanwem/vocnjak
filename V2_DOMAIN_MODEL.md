@@ -19,7 +19,7 @@
 5. **Activity record** — immutable captured real-world event.
    - `activity_id`, `plant_id`, `window_def_id`, `catalog_version`, `action_type`, `activity_group_id?`, `status` ∈ {done, skipped}, `occurred_on`, `recorded_at`, `notes?`, `provenance`
 6. **Observation** — immutable structured observation event.
-   - `observation_id`, `plant_id`, `catalog_version`, `kind` ∈ {trap, scouting, stage_obs, symptom}, `observed_on`, `recorded_at`, `payload` (schema per `kind` deferred to S2.4), `program_id?`, `observation_group_id?`, `provenance`
+   - `observation_id`, `plant_id`, `catalog_version`, `kind` ∈ {trap, scouting, stage_obs, symptom, note}, `observed_on`, `recorded_at`, `payload` (schema per `kind` in §3), `program_id?`, `observation_group_id?`, `provenance`
    - `catalog_version` — required. Pinned at write-time to the plant's then-current pinned `catalog_version`. Every catalog-backed reference on this Observation (`program_id` against §1.7; `payload.stage_code` against §2.2; `payload.symptom_code` against the catalog's symptom registry once declared) is resolved against this pinned version, not against the plant's current pinning. Immutable like all other Observation fields.
    - `program_id?` — optional link to a declared `monitoring_program` (§1.7). When present, attaches the Observation to that program's history and its `cycle_year` per §6.8. When absent, the Observation is **free-standing** and is a first-class plant-history entry that is permanently disjoint from any monitoring program (§1.7.7). Immutable like all other Observation fields.
 7. **Monitoring program** — catalog-authored declaration of a season-long informational campaign per target per plant. Child collection of the catalog template, defined in §1.7. State (`pre_season`, `active`, `ended`) is derived per `(plant_id, program_id, cycle_year)` per §6.8; no state is stored. Absence of observations during any program state is neutral (§1.7.6).
@@ -225,7 +225,7 @@ Rules:
 
 - A window definition may declare an `open_condition` with exactly one of two closed kinds:
   - `requires_prior_activity { prior_action_type, within_days }` — satisfied when any activity for the same plant with `action_type = prior_action_type`, `status = done`, and `occurred_on` within `within_days` of the evaluation date exists. The gate references the `action_type` category (§1.2), not a specific prior window; no cross-window identity is introduced.
-  - `requires_observation { observation_type, state, within_days }` — satisfied when an Observation with `kind = observation_type` and the given `state` exists for the plant with `observed_on` within `within_days` of the evaluation date. **`observation_type` is narrowed to `{stage_obs, symptom}` only** (S2.8). Trap and scouting observations are NOT valid `observation_type` values and are NOT formal gate inputs (see DS below).
+  - `requires_observation { observation_type, state, within_days }` — satisfied when an Observation with `kind = observation_type` and the given `state` exists for the plant with `observed_on` within `within_days` of the evaluation date. **`observation_type` is narrowed to `{stage_obs, symptom}` only** (S2.8). Trap, scouting, and note observations are NOT valid `observation_type` values and are NOT formal gate inputs (see DS below).
 - `open_condition` is advisory state. It is computed for display as `gate_state` (§0.5); it MUST NOT affect `effective_open` or `effective_close`. Calendar position is governed exclusively by anchor + tolerance + `calendar_bound` (§1.3).
 - **Non-blocking rule (lock):** `open_condition` MUST NOT be consulted by any write path. Activity logging and observation logging MUST succeed regardless of gate state. Gate state is recomputed on read.
 - If `open_condition` is absent, `gate_state = ne primjenjuje se`.
@@ -234,10 +234,11 @@ Rules:
 
 **Decision-support scope (DS) — S2.8:**
 
-- **DS1.** `open_condition` is the ONLY structural gate mechanism in the model. It admits exactly `requires_prior_activity` and `requires_observation({stage_obs | symptom}, state, within_days)`. Both shapes produce a deterministic boolean from catalog-defined predicates over recorded evidence.
+- **DS1.** `open_condition` is the ONLY structural gate mechanism in the model. It admits exactly `requires_prior_activity` and `requires_observation({stage_obs | symptom}, state, within_days)`. Both shapes produce a deterministic boolean from catalog-defined predicates over recorded evidence. `kind = note` is never a valid `open_condition.requires_observation.observation_type`.
 - **DS2.** `open_condition` does NOT cover, and MUST NOT be extended to cover:
   - **Trap counts** (`observation.kind = trap`). No `state` enum exists on `trap` payload; no threshold DSL exists; `requires_observation(trap, ...)` is forbidden.
   - **Scouting findings** (`observation.kind = scouting`). No threshold DSL; `requires_observation(scouting, ...)` is forbidden.
+  - **Free-standing notes** (`observation.kind = note`). Notes have only `payload.text`; they are not formal gate evidence and `requires_observation(note, ...)` is forbidden.
   - **Trend or rate-of-change** across observations. Not a formal gate.
   - **Composite conditions.** No AND/OR across observation types; at most one `requires_observation` and at most one `requires_prior_activity` per window definition.
   - **Weather-derived gates.** Weather is advisory per Principle 3 and MUST NOT become a gate input.
@@ -254,6 +255,7 @@ Rules:
 - Both paths produce records of the same entity: `Observation`.
 - `kind = trap | scouting | stage_obs` represent monitoring.
 - `kind = symptom` represents user-initiated problem observation.
+- `kind = note` represents a minimal free-standing text observation. It is not monitoring, not symptom/problem registry data, not stage evidence, and not treatment advice.
 - The system MUST NOT require any monitoring observation as a prerequisite for handling a symptom. Symptom records surface relevant action windows immediately.
 - Neither path authors recommendations. Both deterministically surface windows; the user decides.
 
@@ -308,7 +310,7 @@ Activity records (§0.1 item 5) and Observation records (§0.1 item 6) each carr
 
 6. **Minimum group invariants — Observation group.** All Observation records sharing an `observation_group_id` MUST share:
    - `observed_on` (one capture event on one date).
-   - `kind` (all trap, all scouting, all stage_obs, or all symptom — never mixed).
+   - `kind` (all trap, all scouting, all stage_obs, all symptom, or all note — never mixed).
    - `program_id` (same value across all members; the all-`null` case — every member free-standing — is legal).
 
    They MAY differ on:
@@ -469,6 +471,7 @@ Programs exist because monitoring is **evidence gathering**, not task completion
 
 - **L1.** `program_id` on an Observation (§0.1) is a user-asserted field set at capture time. The model MUST NOT derive or infer `program_id` from `payload.target_pest_code`, `payload.target_code`, the plant's declared programs, or any heuristic.
 - **L2.** `program_id` is OPTIONAL on every Observation. When capture UI presents the observation as attached to a specific program (grower taps "Log check" on a program card), UI discipline sets `program_id`. The model does not enforce the coupling; ad-hoc observations legitimately omit `program_id` and are free-standing.
+- **L2a.** `kind = note` is an explicit exception to optional attachment: note Observations are free-standing-only and MUST store `program_id = null`.
 - **L3.** When present, `program_id` MUST:
   - resolve to a `program_id` declared in the plant's pinned catalog's monitoring programs,
   - match the Observation's `kind` to the program's `method.kind` (`kind = trap` ↔ `method.kind = "trap"`; `kind = scouting` ↔ `method.kind = "scouting"`),
@@ -671,6 +674,36 @@ No other fields. The date the stage was reached is `observation.observed_on` (S2
 | `symptom_code`  | string identifier                                                             | required    | Catalog-declared symptom identifier. Opaque in S2.4.                                |
 | `affected_part` | enum ∈ {`leaf`, `fruit`, `flower`, `trunk`, `branch`, `root`, `whole_plant`}  | optional    | Plant part on which the symptom is observed. Categorical observation, not severity. |
 
+#### 3.2.5 `note`
+
+Runtime Slice 8 Step 2 adds one minimal free-standing Observation kind:
+
+```text
+kind = "note"
+payload = { text: string }
+```
+
+Rules:
+
+- `payload.text` is required.
+- `payload.text` MUST be trimmed non-empty.
+- `payload.text` maximum length is 1000 characters after trim.
+- Unknown payload fields are invalid.
+- Note Observations are one-plant only.
+- Note Observations are free-standing only.
+- `program_id` MUST be `null` for note Observations.
+- `observation_group_id` is not used in S8 Step 2.
+- `observed_on` is required.
+- Future `observed_on` is invalid; past dates are allowed.
+- `recorded_at` is system-generated ISO UTC.
+- Provenance for user-entered note Observations is exactly:
+
+```json
+{ "source": "user" }
+```
+
+A note Observation is not monitoring-program evidence, not attachable to monitoring programs, not retroactively attachable to monitoring programs, not a gate input, not used for `open_condition`, not diagnosis, not symptom registry, not target registry, not stage vocabulary, not treatment advice, not weather automation, and not pressure/severity/threshold logic.
+
 ### 3.3 Cross-cutting rules
 
 - The payload shape MUST match `observation.kind`. A trap-shaped payload on a `stage_obs` record is invalid.
@@ -704,7 +737,19 @@ No other fields. The date the stage was reached is `observation.observed_on` (S2
 - `symptom_code` absent or empty.
 - `affected_part` is present and not in the closed enum listed in §3.2.4.
 
-#### 3.4.5 Cross-cutting — invalid if
+#### 3.4.5 `note` payload — invalid if
+
+- `payload.text` absent.
+- `payload.text` after trim has length 0.
+- `payload.text` after trim has length greater than 1000 characters.
+- payload contains any field other than `text`.
+- `program_id` is not `null`.
+- `observation_group_id` is present in S8 Step 2.
+- `observed_on` is absent or in the future.
+- `recorded_at` is absent, not system-generated ISO UTC, or earlier than `observed_on`.
+- `provenance` is not exactly `{ "source": "user" }`.
+
+#### 3.4.6 Cross-cutting — invalid if
 
 **Timing.** Payload validation is a write-time invariant per §0.9.5; once written, an Observation's payload-integrity status is frozen against its own `catalog_version`.
 

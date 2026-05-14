@@ -1,6 +1,6 @@
 # V2_UX_MODEL
 
-**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain future flow contracts and placeholders. Runtime Slice 7 is complete through S7.4; B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 Plant detail read-only B2 preview is complete. Later Slice 8 monitoring/risk, observation capture, and stage-confirmation steps remain deferred until owner-approved. This document defines UX guidance only; no runtime/schema implementation is defined here.
+**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain future flow contracts and placeholders. Runtime Slice 7 is complete through S7.4; B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 Plant detail read-only B2 preview is complete. S8 Step 2 note Observation shape is documented for later Plant detail capture + Dnevnik evidence implementation; runtime capture is not implemented yet. Later Pregled/Kalendar monitoring/risk integration, structured observation capture, and stage-confirmation steps remain deferred until owner-approved. This document defines UX guidance only; no runtime/schema implementation is defined here.
 
 ---
 
@@ -123,6 +123,16 @@ Status: implemented for Plant detail read-only preview in Runtime Slice 8 Step 1
 - Do not render monitoring/risk on Pregled or Kalendar in the first step.
 - `buildSeasonalSnapshot(...).monitoring` remains empty; B2 metadata remains private, non-persisted, non-global, and separate from snapshot.
 - §0.1–§0.7 remain authoritative for all later monitoring UX.
+
+S8 Step 2 documented boundary:
+
+- Plant detail only.
+- Free-standing note Observation capture only: `kind = "note"` with `payload.text`.
+- The capture entry point is `Dodaj opažanje`.
+- The helper copy is `Slobodno opažanje. Neće biti vezano uz program praćenja.`
+- S8 Step 2 does not open monitoring record contexts; `Bez zapisa` and `Zadnji zapis` remain deferred for monitoring contexts until monitoring capture/display semantics are owner-approved.
+- Pregled/Kalendar monitoring/risk UI remains deferred.
+- Program-attached observation capture, structured trap/scouting/symptom/stage capture, registries/vocabularies, correction, diagnosis/treatment, and snapshot changes remain deferred.
 
 ---
 
@@ -1249,7 +1259,7 @@ Mapping:
 ```text
 Sezonske radnje → Activity records
 Praćenje → program-attached monitoring observations
-Opažanja → free-standing observations, symptoms, phenology/stage observations
+Opažanja → free-standing observations including note Observations, symptoms, phenology/stage observations
 ```
 
 Rules:
@@ -1408,6 +1418,8 @@ Free-standing observation:
 Trešnja Kordia — slabo zametanje plodova
 ```
 
+For S8 Step 2 `kind = "note"`, the row text is the saved `payload.text`.
+
 Expanded free-standing observation may show:
 
 ```text
@@ -1467,8 +1479,9 @@ Rules:
 
 - free-standing observations are first-class history records
 - they appear under `Opažanja`, not `Praćenje`
+- `kind = "note"` Observations render under `Opažanja`, not under `Praćenje`
 - do not downgrade or alarm-style them
-- marker `nije vezano uz program praćenja` appears in expansion by default; inline only when needed to avoid confusion
+- marker `nije vezano uz program praćenja` appears in expansion/detail by default; it is not required inline unless needed to avoid confusion
 - free-standing observations must not be shown as missing monitoring evidence
 - no attach-to-program flow
 
@@ -2934,6 +2947,12 @@ This is distinct from §16 Activity evidence capture, which records:
 - media/photo storage
 - schema/runtime implementation
 
+Current S8 Step 2 subset:
+
+- Plant detail free-standing note Observation capture only.
+- One free-text shape only: `kind = "note"` with `payload.text`.
+- No program-context capture, no structured trap/scouting/symptom/stage capture, no registries/vocabularies, no correction, no Pregled/Kalendar entry, and no Dnevnik/global entry in S8 Step 2.
+
 Cancel behavior:
 
 - cancel/close exits capture without saving
@@ -2991,6 +3010,13 @@ Zapis spremljen.
 
 Free-standing observation capture is available from Plant detail / `Karton voćke`.
 
+S8 Step 2 implements only the note subset:
+
+```text
+kind = "note"
+payload = { text: string }
+```
+
 Title:
 
 ```text
@@ -3002,6 +3028,12 @@ UX rules:
 - plant is preselected from Plant detail
 - the record is not attached to a monitoring program
 - the user records a notable plant observation, not a daily "nothing unusual" habit
+- one free-text shape only in S8 Step 2
+- `observed_on` defaults to today
+- past dates are allowed
+- future dates are rejected
+- text is required and must be trimmed non-empty
+- text max length is 1000 characters after trim
 
 User-facing helper:
 
@@ -3009,17 +3041,18 @@ User-facing helper:
 Slobodno opažanje. Neće biti vezano uz program praćenja.
 ```
 
-Use these capture choices:
+S8 Step 2 form fields:
 
 ```text
-Vidim simptom / promjenu
-Bilješka
+date
+text
 ```
 
-Do not use:
+Do not use in S8 Step 2:
 
 - `Drugo`
 - free-standing `Ne vidim ništa neuobičajeno` in current §10
+- separate `Vidim simptom / promjenu` vs `Bilješka` choices when they imply different persisted types
 
 Primary save copy:
 
@@ -3032,6 +3065,11 @@ After save, show only:
 ```text
 Opažanje spremljeno.
 ```
+
+Future concepts:
+
+- `Vidim simptom / promjenu` remains deferred until structured `kind = "symptom"` capture and symptom registry are owner-approved.
+- `Bilješka` as a separate choice remains deferred if it would imply a second persisted shape; S8 Step 2 persists only `kind = "note"`.
 
 ### 10.5 Trap check UX
 

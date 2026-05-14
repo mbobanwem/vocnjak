@@ -1220,9 +1220,9 @@ Parallelization notes:
 
 ---
 
-## 36. Slice 8 — Plant detail B2 preview first, then observations/stage
+## 36. Slice 8 — Plant detail B2 preview first, then note observations
 
-Status: STEP 1 COMPLETE — Plant detail read-only B2 preview is implemented; later Slice 8 steps remain deferred.
+Status: STEP 1 COMPLETE — Plant detail read-only B2 preview is implemented. S8 Step 2 note Observation shape is now documented; runtime implementation has not started and still requires a separate owner-approved implementation prompt.
 
 Purpose:
 
@@ -1237,13 +1237,21 @@ Approved decomposition:
    - Does not add persistence, observation writes, Dnevnik observation rows, new routes, tap-through detail, CTAs, Pregled, Kalendar, or `Bez zapisa`.
    - Does not change `buildSeasonalSnapshot(...).monitoring`; it remains empty.
    - Keeps B2 metadata private, non-global, non-persisted, and separate from snapshot.
-2. Later read-only Pregled/Kalendar integration.
-   - Deferred until Plant detail behavior is proven and timing/display semantics are owner-approved.
+2. Next approved/doc-shaped step — S8 Step 2: Plant detail free-standing note Observation capture + Dnevnik evidence.
+   - Uses `kind = "note"` with `payload = { text: string }`.
+   - Plant detail only.
+   - Captures one free-standing one-plant note Observation with `program_id = null`.
+   - Renders saved note Observations in Dnevnik under `Opažanja`, not `Praćenje`.
+   - Comes before Pregled/Kalendar monitoring integration.
+   - Runtime implementation requires a separate implementation prompt after this documentation patch.
+3. Later read-only Pregled/Kalendar monitoring/risk visibility.
+   - Deferred until after note capture and timing/display semantics are owner-approved.
    - Must not derive urgency, overdue state, compliance, or scheduled-work pressure from B2 metadata.
-3. Later observation capture plus Dnevnik evidence.
-   - Deferred because it adds write paths, persistence consequences, correction complexity, and Dnevnik rendering.
-   - Only this later step may introduce observation-record states such as neutral `Bez zapisa` where §0 permits them.
-4. Later stage confirmation.
+4. Later structured observation capture.
+   - Deferred until registries/vocabularies are owner-approved.
+   - Includes `trap` capture, `scouting` capture with `target_code`, `symptom` capture with `symptom_code`, `stage_obs` capture with `stage_code`, program-attached observations, target/pest registry, symptom registry, stage vocabulary, monitoring program declarations, multi-plant observation capture, and observation correction.
+   - Only later monitoring-context steps may introduce observation-record states such as neutral `Bez zapisa` / `Zadnji zapis` where §0 permits them.
+5. Later stage confirmation.
    - Deferred until the owner approves minimal stage vocabulary.
    - Stage confirmation must remain optional and non-blocking.
 
@@ -1279,7 +1287,8 @@ Produces:
 - B2 projection boundary remains unchanged: B2 metadata-only implementation resolves the owner-accepted 41-entry source working set into 36 projected B2 items with 5 merge groups. This is the current resolved projection from the source map, not immutable final catalog truth. Composite split/combine decisions stay in this current resolved projection and must preserve source-map traceability.
 - Rendering separation per V2_UX_MODEL.md §15 + V2_ARCHITECTURE.md §4.12–§4.13: `monitoring_track` stable ids feed štetnici/bolesti monitoring surfaces; `risk_awareness_track` stable ids feed promatranje/rizik/stanje surfaces. This is audit/projection metadata only, not new canonical runtime schema, not a new user data model, and not a registry. Runtime must not infer the track from Croatian label pattern-matching.
 - First-step examples: `Praćenje šljivinog savijača — proljetni let` and `Sezonska napomena: postoji rizik pucanja plodova nakon jače kiše`.
-- Later only: Pregled §1.8 Praćenje, Kalendar §2.11 monitoring, Kalendar §2.12 risk-awareness, observation capture, Dnevnik observation rows, record displays, and stage confirmation.
+- S8 Step 2 documentation: the next allowed runtime shape is Plant detail `kind = "note"` capture + Dnevnik evidence, with no program attachment and no structured observation registry dependency.
+- Later only: Pregled §1.8 Praćenje, Kalendar §2.11 monitoring, Kalendar §2.12 risk-awareness, program-attached observation capture, structured trap/scouting/symptom/stage capture, monitoring-context record displays, `Bez zapisa`, `Zadnji zapis`, and stage confirmation.
 - Stage vocabulary rule: B2 did not add `stage_vocabulary[]`. Stage confirmation stays deferred until the owner approves a minimal generic MVP vocabulary or an explicit stage-write deferral/restriction.
 
 Manual verification:
@@ -1297,6 +1306,8 @@ Stop conditions:
 - First implementation touches Pregled or Kalendar.
 - First implementation adds observation writes, Dnevnik observation rows, routes, CTAs, or `Bez zapisa`.
 - First implementation changes snapshot monitoring output or persists/exposes B2 metadata globally.
+- S8 Step 2 implementation uses `trap`, `scouting`, `symptom`, or `stage_obs` instead of the approved `kind = "note"` shape.
+- S8 Step 2 implementation attaches notes to monitoring programs, creates registries/vocabularies, adds Pregled/Kalendar monitoring/risk UI, adds `Bez zapisa` / `Zadnji zapis`, or changes snapshot output.
 - Observation capture would derive stale / overdue state from missing observations.
 - Stage missing would generate a cue or task.
 - Monitoring would auto-recommend treatment, dose, brand, or product.

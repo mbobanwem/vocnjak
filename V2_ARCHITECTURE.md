@@ -248,7 +248,7 @@ Stored categories:
 - recorded timestamp
 - `kind`
 - kind-specific payload
-- notes, stored outside payload when supported by UX
+- top-level Observation notes are not used for this MVP; note Observation text lives in `payload.text`
 - catalog/version references needed for historical resolution
 - `program_id` or `null`
 - program cycle-year resolution if retained for historical query support
@@ -263,6 +263,7 @@ Observation kinds align with the locked domain:
 | `scouting` | visual scouting observation |
 | `stage_obs` | observed plant development stage |
 | `symptom` | user-initiated symptom/problem observation |
+| `note` | free-standing one-plant text observation with `payload = { text: string }` |
 
 Rules:
 
@@ -271,8 +272,14 @@ Rules:
 - Corrections are separate additive records.
 - Free-standing observations have `program_id = null`.
 - Free-standing observations remain permanently disjoint from monitoring programs.
+- After S8 Step 2 implementation, `observations[]` may contain valid `kind = "note"` records.
+- A note Observation stores only one payload field: `payload.text` after trim, length 1..1000.
+- Note Observations are free-standing-only, one-plant-only, and store `program_id = null`.
+- S8 Step 2 does not use `observation_group_id` for note Observations.
+- User-entered note provenance is exactly `{ "source": "user" }`.
 - No retroactive attach-to-program behavior exists.
 - No threshold result, pressure, severity, diagnosis, or treatment recommendation is stored.
+- `kind = "note"` does not participate in snapshot, monitoring program state, `open_condition`, weather, or treatment logic.
 
 ### 1.12 Monitoring program observation storage
 
@@ -468,6 +475,7 @@ S8 write paths validate durable facts and references at the moment they are writ
 | Activity | Activity has Plant, date, status, action context, and catalog/version reference. | `V2_DOMAIN_MODEL.md` §0.6 / S8 | A required field is missing, status is outside `done`/`skipped`, the Plant is missing, the catalog version is missing, or the event date is invalid. |
 | Activity group | Multi-plant Activity group writes are atomic per capture batch. | `V2_DOMAIN_MODEL.md` §0.11 / S8 | Only part of a grouped write validates or group invariants fail. |
 | Observation | Observation has Plant, observed date, kind, payload, and catalog/version reference. | `V2_DOMAIN_MODEL.md` §0.6a, §3 / S8 | A required field is missing, kind is invalid, payload does not match kind, the Plant is missing, the catalog version is missing, or the observed date is invalid. |
+| Note Observation | `kind = "note"` has `payload.text` only, trimmed length 1..1000, `program_id = null`, no `observation_group_id` in S8 Step 2, and user provenance `{ "source": "user" }`. | `V2_DOMAIN_MODEL.md` §3.2.5 / S8 Step 2 | Text is missing/empty/too long, unknown payload fields exist, program attachment is attempted, grouping is attempted in S8 Step 2, provenance differs, or future `observed_on` is supplied. |
 | Monitoring observation | `program_id`, when present, is valid at write time and immutable after write. | `V2_DOMAIN_MODEL.md` §1.7 / S8 | Program context is invalid for the record or a later write tries to mutate `program_id`. |
 | Free-standing observation | Free-standing Observation stores `program_id = null`. | `V2_DOMAIN_MODEL.md` §1.7.4 / S8 | A write or import tries to attach, infer, or relink it to a monitoring program. |
 | Stage observation | Stage Observation has stage reference or mapped MVP label with retained catalog/version context. | `V2_DOMAIN_MODEL.md` §3.2.3, `V2_UX_MODEL.md` §11 / S8 | Stage reference cannot be resolved or mapped as a history-preserving stage observation. |
@@ -498,6 +506,7 @@ Export rules:
 - Export does not rewrite historical Activity, Observation, or Correction records.
 - Export does not drop archived Plants.
 - Export does not drop free-standing Observations.
+- Export/import must preserve valid `kind = "note"` Observations exactly, including `payload.text`, `program_id = null`, `observed_on`, `recorded_at`, catalog/version context, and provenance.
 - S8 does not define a final JSON schema or runtime code for export.
 
 ### 1.22 Import validation shape
@@ -512,6 +521,7 @@ Validation boundary:
 - no merge import in S8
 - no auto-fix of missing required references
 - no free-standing Observation relinking
+- malformed `kind = "note"` Observations fail closed
 - no catalog-version substitution
 - no duplicate suppression
 - no destructive history cleanup
@@ -529,6 +539,7 @@ Validation must fail when:
 - record references a missing Plant
 - Correction references a missing original Activity or Observation
 - Observation payload is invalid for its `kind`
+- `kind = "note"` is malformed, has unknown payload fields, has empty/too-long `payload.text`, carries `program_id`, carries `observation_group_id` in S8 Step 2, has future `observed_on`, or has provenance other than `{ "source": "user" }`
 - Activity group is partially present or violates group invariants
 - archive state would imply deletion
 - import tries to attach a free-standing Observation to a monitoring program
@@ -1186,6 +1197,7 @@ Rules:
 - Free-standing Observations are not auto-related to awareness/risk detail.
 - Free-standing Observations are not retroactively attached, relinked, moved, or counted into program context.
 - Payload similarity, date proximity, target match, or later catalog changes do not change this boundary.
+- `kind = "note"` is a free-standing Observation shape only; it is ignored by snapshot derivation, monitoring program state, `open_condition`, weather composition, treatment logic, pressure/severity/threshold logic, and awareness/risk matching.
 
 ### 4.14 Za pregledati cue projection
 
@@ -1456,6 +1468,7 @@ S10 defines no automatic conversion from pre-V2 records into V2 records.
 - no migration-time `activity_group_id` or `observation_group_id` creation
 - no migration-time `program_id` attachment
 - no migration-time catalog-version or `window_def_id` fabrication
+- no migration from legacy/V1/V4 data into `kind = "note"` Observations
 
 This follows the V2 rule that Activity and Observation records are immutable real-world facts with write-time catalog and reference context. Legacy data may be useful to read, but it is not automatically authoritative enough to become V2 history.
 
