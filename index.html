@@ -3690,6 +3690,8 @@ if ('serviceWorker' in navigator) {
 })();
 // END V2 STORE — Slice 1
 
+const V2_B2_PRIVATE = Object.create(null);
+
 // BEGIN V2 CATALOG — Slice 2
 (function () {
   if (!document.documentElement.classList.contains('v2-active')) return;
@@ -4199,7 +4201,7 @@ if ('serviceWorker' in navigator) {
     }
     return preview;
   }
-  window.v2B2PlantDetailPreview = b2PlantDetailPreview;
+  V2_B2_PRIVATE.plantDetailPreview = b2PlantDetailPreview;
 
   function b2ProjectionSourceRef(row, label) {
     return {
@@ -6796,7 +6798,7 @@ if ('serviceWorker' in navigator) {
   ];
   var hasOwn = Object.prototype.hasOwnProperty;
   var activityHelpers = window.v2ActivityHelpers;
-  var b2PlantDetailPreview = window.v2B2PlantDetailPreview;
+  var b2PlantDetailPreview = V2_B2_PRIVATE.plantDetailPreview;
   var currentFormFields = null;
   var currentActivityFields = null;
   var currentCorrectionFields = null;
