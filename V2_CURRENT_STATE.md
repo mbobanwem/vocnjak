@@ -16,16 +16,16 @@ This document should be updated after relevant documentation/session commits.
 
 ## Current phase
 
-Phase: Runtime implementation continues. Runtime Slice 0, Slice 1, Slice 2, Slice 3, Slice 4, Slice 5, Slice 6, and Runtime Slice 7 through S7.4 are complete. Focused S3/S4 adversarial review after the post-Slice-4 safety fix passed and owner verification accepted the PASS. Pre-Slice-5 Add Plant date-validation message polish is complete. Pre-Slice-5 Action Window Seed prerequisite is complete (`df6a7fc Implement Action Window Seed prerequisite`); owner browser verification passed and focused adversarial review passed. Plan-template projection hardening is complete (`bcaf3a2 Harden plan-template projection rules`). Runtime Slice 5 is complete (`8bc630a Implement Runtime Slice 5 activity capture`). Runtime Slice 6 is complete (`99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`). Pre-Slice-7 Action Window Notes Projection prerequisite is complete (`ad9a113 Project action-window notes into canonical catalog` and `a1b5307 Clean B1 action-window notes boundary`). Runtime Slice 7 is complete through S7.4 (`d61cc90 Harden S7 seasonal action detail display`). B2 metadata-only projection boundary is complete. Runtime Slice 8 Step 1, Step 2, Step 3, and Step 4a are runtime-complete. Full Runtime Slice 8 is not complete.
+Phase: Runtime implementation continues. Runtime Slice 0, Slice 1, Slice 2, Slice 3, Slice 4, Slice 5, Slice 6, and Runtime Slice 7 through S7.4 are complete. Focused S3/S4 adversarial review after the post-Slice-4 safety fix passed and owner verification accepted the PASS. Pre-Slice-5 Add Plant date-validation message polish is complete. Pre-Slice-5 Action Window Seed prerequisite is complete (`df6a7fc Implement Action Window Seed prerequisite`); owner browser verification passed and focused adversarial review passed. Plan-template projection hardening is complete (`bcaf3a2 Harden plan-template projection rules`). Runtime Slice 5 is complete (`8bc630a Implement Runtime Slice 5 activity capture`). Runtime Slice 6 is complete (`99e76c8 Implement Runtime Slice 6 snapshot and calendar surfaces`). Pre-Slice-7 Action Window Notes Projection prerequisite is complete (`ad9a113 Project action-window notes into canonical catalog` and `a1b5307 Clean B1 action-window notes boundary`). Runtime Slice 7 is complete through S7.4 (`d61cc90 Harden S7 seasonal action detail display`). B2 metadata-only projection boundary is complete. Runtime Slice 8 Step 1, Step 2, Step 3, and Step 4a are runtime-complete. S8 Step 5a minimal stage diary observation is doc-locked; Step 5a runtime remains deferred until separately owner-approved. Full Runtime Slice 8 is not complete.
 
 Current goal:
 
-Post-S8 Step 4a runtime implementation. B2 metadata-only projection boundary is complete after S7.4. Runtime Slice 8 Step 1 added Plant detail read-only B2 monitoring/risk preview only. Runtime Slice 8 Step 2 added Plant detail free-standing `kind = "note"` capture with `payload.text` and Dnevnik / plant-history evidence under `Opažanja`. Runtime Slice 8 Step 3 added read-only Pregled/Kalendar B2 monitoring/risk visibility. S8 Step 4a added Plant-detail-only, one-plant, free-standing `kind = "trap"` factual count capture from the bounded private `trap_capture_sources[]` source map.
+Post-S8 Step 4a runtime implementation. B2 metadata-only projection boundary is complete after S7.4. Runtime Slice 8 Step 1 added Plant detail read-only B2 monitoring/risk preview only. Runtime Slice 8 Step 2 added Plant detail free-standing `kind = "note"` capture with `payload.text` and Dnevnik / plant-history evidence under `Opažanja`. Runtime Slice 8 Step 3 added read-only Pregled/Kalendar B2 monitoring/risk visibility. S8 Step 4a added Plant-detail-only, one-plant, free-standing `kind = "trap"` factual count capture from the bounded private `trap_capture_sources[]` source map. S8 Step 5a documentation now adds a minimal free-standing diary `kind = "stage_obs"` capture path against the bounded `stage_diary_vocabulary[]`; the runtime is not implemented in this patch.
 
 Current immediate next step:
 
 ```text
-Runtime Slice 8 Step 1, Step 2, Step 3, and Step 4a are runtime-complete. Plant detail consumes the private B2 source-map projection boundary through a narrow S8 preview bridge and renders calm read-only monitoring/risk preview sections only for matching plant species. Step 2 adds only Plant detail free-standing `kind = "note"` capture with `payload.text`, `program_id = null`, no `observation_group_id`, and factual Dnevnik / plant-history rendering under `Opažanja`. Step 3 adds only read-only Pregled/Kalendar B2 monitoring/risk visibility: Pregled shows current overlapping context, Kalendar shows B2 date ranges under `Praćenje`, and both remain non-capture, non-diagnostic, non-prescriptive, non-compliance, non-persisted, and separate from `buildSeasonalSnapshot(...).monitoring`. Step 4a adds only Plant-detail one-plant free-standing `kind = "trap"` count capture with `program_id = null`, source-backed trap choices from the bounded eight-row map, exact validator support, and factual Dnevnik rendering under `Opažanja`. Broader structured capture beyond Step 4a remains tracked, not abandoned; see the S8 deferred return map below. `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred and requires explicit owner approval.
+Runtime Slice 8 Step 1, Step 2, Step 3, and Step 4a are runtime-complete. Plant detail consumes the private B2 source-map projection boundary through a narrow S8 preview bridge and renders calm read-only monitoring/risk preview sections only for matching plant species. Step 2 adds only Plant detail free-standing `kind = "note"` capture with `payload.text`, `program_id = null`, no `observation_group_id`, and factual Dnevnik / plant-history rendering under `Opažanja`. Step 3 adds only read-only Pregled/Kalendar B2 monitoring/risk visibility: Pregled shows current overlapping context, Kalendar shows B2 date ranges under `Praćenje`, and both remain non-capture, non-diagnostic, non-prescriptive, non-compliance, non-persisted, and separate from `buildSeasonalSnapshot(...).monitoring`. Step 4a adds only Plant-detail one-plant free-standing `kind = "trap"` count capture with `program_id = null`, source-backed trap choices from the bounded eight-row map, exact validator support, and factual Dnevnik rendering under `Opažanja`. S8 Step 5a is documentation-only: it locks the minimal free-standing diary `kind = "stage_obs"` capture path with `program_id = null`, bounded `stage_diary_vocabulary[]`, exact validator/import/export shapes, Plant detail entry point `Dodaj fazu razvoja`, save toast `Opažanje spremljeno.`, and Dnevnik factual row `Faza razvoja — <label_hr>`. The Step 5a runtime is not implemented here. Broader structured capture beyond Step 4a/Step 5a remains tracked, not abandoned; see the S8 deferred return map below. `V2_UX_MODEL.md` §16.7 outside-period disclosure remains deferred and requires explicit owner approval.
 ```
 
 ### S8 Deferred But Tracked Return Map
@@ -35,7 +35,9 @@ Deferred means not in the current runtime slice, not abandoned. Agents must not 
 - S8 Step 4a runtime implementation — COMPLETE; deferred return map remains intact for later S8 work beyond trap-only Step 4a.
 - Scouting capture — return condition: after trap-only Step 4a runtime is accepted and owner approves bounded scouting source-map / target identifier semantics.
 - Symptom capture — return condition: after owner-approved symptom source-map/registry and UX copy that avoids diagnosis.
-- Stage observation / stage confirmation — return condition: Step 5 only, after owner-approved minimal stage vocabulary.
+- S8 Step 5a documentation — COMPLETE; documents minimal free-standing diary `kind = "stage_obs"` against the bounded `stage_diary_vocabulary[]`.
+- S8 Step 5a runtime implementation — return condition: separate owner approval for runtime, preserving Plant detail one-plant free-standing boundary and `stage_diary_vocabulary[]` scoping.
+- Broader phenology-aware stage confirmation (§11) — return condition: separate owner-approved session for a broader phenology vocabulary, plan-effect semantics, or BBCH mapping.
 - Program-attached observations — return condition: after free-standing capture is stable and owner approves program attachment semantics.
 - Multi-plant structured capture — return condition: after one-plant trap capture is accepted and group identity rules are approved.
 - Observation correction — return condition: separate correction session; not a substitute for S8 Step 4 structured capture.
@@ -1209,6 +1211,45 @@ Explicitly out of scope for first Step 4a:
 - multi-plant structured capture;
 - note or Observation correction;
 - thresholds, diagnosis, treatment recommendations, pressure/severity scoring, weather automation, Pregled/Kalendar changes, and missing-record/compliance UX.
+
+#### S8 Step 5a owner decision — minimal stage diary observation
+
+Status: DOC-LOCK COMPLETE; runtime deferred.
+
+Decision:
+
+- Step 5a is minimal free-standing diary `kind = "stage_obs"` capture only.
+- Step 5a is Plant-detail-only, one-plant-only, and always stores `program_id = null`.
+- Step 5a uses a bounded `stage_diary_vocabulary[]` of nine owner-approved diary entries; the source map is closed-list and exists only for S8 Step 5a diary `stage_obs` validation/display.
+- `stage_code` resolves only inside `stage_diary_vocabulary[]` for Step 5a; display labels resolve from the same map.
+- Step 5a does not create or imply a phenology engine, BBCH model, per-species phenology, plan recalculation, action unlocking/blocking, diagnosis target registry, symptom registry, broader stage registry, or replacement of catalog `stage_vocabulary[]`.
+- Step 5a does not change Pregled, Kalendar, monitoring program state, snapshot output, weather logic, or compliance UX.
+
+Approved first Step 5a diary entries:
+
+- `dormant` — Mirovanje.
+- `bud_swell` — Pupovi bubre.
+- `bloom_started` — Cvatnja počela.
+- `bloom_finished` — Cvatnja završila.
+- `fruit_set` — Formiranje ploda.
+- `color_change` — Plod mijenja boju.
+- `ripening` — Dozrijevanje.
+- `harvest` — Berba.
+- `leaf_fall` — Opadanje lista.
+
+Explicitly out of scope for Step 5a:
+
+- BBCH and any per-species phenology modeling;
+- broader catalog `stage_vocabulary[]` writes (deferred phenology-aware §11 path);
+- plan recalculation, plan shifting, scheduling automation;
+- action unlocking, action blocking, action completion driven by stage;
+- diagnosis, treatment recommendation, dose/brand suggestion;
+- weather/stage automation, pressure/severity/threshold logic;
+- multi-plant structured stage capture;
+- program-attached stage capture;
+- observation correction for stage diary records (deferred correction session);
+- Pregled/Kalendar capture entry, `Bez zapisa`, `Zadnji zapis`;
+- optional free-text note field on stage diary records unless separately approved later.
 
 #### S4 owner decision — Awareness / risk monitoring
 

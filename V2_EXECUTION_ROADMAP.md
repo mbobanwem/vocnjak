@@ -1,6 +1,6 @@
 # V2 Execution Roadmap
 
-**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation is underway; Runtime Slices 0–7 are complete through S7.4. B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1, Step 2, Step 3, and Step 4a are runtime-complete. Full Runtime Slice 8 is not complete.
+**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation is underway; Runtime Slices 0–7 are complete through S7.4. B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1, Step 2, Step 3, and Step 4a are runtime-complete. S8 Step 5a minimal stage diary observation is doc-locked; Step 5a runtime remains deferred until separately owner-approved. Full Runtime Slice 8 is not complete.
 
 This document converts the completed V2 specification stack (S6–S10) into an implementation execution roadmap. It is bound by the locked core documents and does not authorize runtime implementation by itself.
 
@@ -1222,7 +1222,7 @@ Parallelization notes:
 
 ## 36. Slice 8 — Plant detail B2 preview, notes, then read-only Pregled/Kalendar visibility
 
-Status: STEP 1 + STEP 2 + STEP 3 + STEP 4A RUNTIME COMPLETE — Plant detail read-only B2 preview is implemented, Plant detail free-standing note Observation capture + Dnevnik evidence is implemented, read-only Pregled/Kalendar B2 monitoring/risk visibility is implemented, and Plant-detail-only free-standing trap count capture + Dnevnik evidence is implemented. Full Runtime Slice 8 is not complete; broader deferred S8 work remains tracked in the return map below.
+Status: STEP 1 + STEP 2 + STEP 3 + STEP 4A RUNTIME COMPLETE; STEP 5A DOC-LOCKED — Plant detail read-only B2 preview is implemented, Plant detail free-standing note Observation capture + Dnevnik evidence is implemented, read-only Pregled/Kalendar B2 monitoring/risk visibility is implemented, Plant-detail-only free-standing trap count capture + Dnevnik evidence is implemented, and minimal free-standing stage diary `kind = "stage_obs"` capture is documented for a later runtime implementation. Full Runtime Slice 8 is not complete; broader deferred S8 work remains tracked in the return map below.
 
 Purpose:
 
@@ -1258,22 +1258,31 @@ Approved decomposition:
    - Does not use B2 `projected_id` values as pest/target identifiers; `projected_id` remains traceability/display metadata only.
    - Approved first runtime source rows are `337`, `654`, `860`, `1596`, `1643`, `2455`, `2949`, and `2977`.
    - Rows `516`, `1064`, and `1228` remain out of scope because their source text/B2 handling keeps trap-vs-scouting ambiguity.
-5. Later structured observation capture beyond Step 4a.
+5. S8 Step 5a documentation decision — minimal stage diary observation. **Doc-lock complete; runtime deferred.**
+   - Documents a minimal `kind = "stage_obs"` diary path for Plant-detail-only, one-plant-only, free-standing factual stage capture with `program_id = null` and user provenance.
+   - Uses only a closed, owner-approved `stage_diary_vocabulary[]` of nine entries (`dormant`, `bud_swell`, `bloom_started`, `bloom_finished`, `fruit_set`, `color_change`, `ripening`, `harvest`, `leaf_fall`) documented in `V2_DOMAIN_MODEL.md §3.2.3a`.
+   - Defines the write-time invariant, fail-closed validation, and export/import preservation shapes in `V2_ARCHITECTURE.md §1.11, §1.20, §1.21, §1.22, §1.23`.
+   - Defines the Plant detail entry point `Dodaj fazu razvoja`, the save copy `Spremi fazu razvoja`, the save toast `Opažanje spremljeno.`, and the Dnevnik factual row shape `Faza razvoja — <label_hr>` in `V2_UX_MODEL.md §0.8, §3.13, §10.5a, §10.12`.
+   - Does not introduce a phenology engine, BBCH, per-species phenology, plan recalculation, action unlocking/blocking, diagnosis, treatment advice, weather/stage automation, pressure/severity scoring, compliance UX, multi-plant stage capture, program-attached stage capture, observation correction for stage diary, or any broader stage registry.
+   - Runtime implementation of Step 5a remains deferred until separately owner-approved.
+6. Later structured observation capture beyond Step 4a / Step 5a.
    - Deferred until the relevant source maps, registries, or vocabularies are owner-approved.
-   - Includes `scouting` capture with `target_code`, `symptom` capture with `symptom_code`, `stage_obs` capture with `stage_code`, program-attached observations, broad target/pest registry if ever approved, symptom registry, stage vocabulary, monitoring program declarations, multi-plant observation capture, and observation correction.
+   - Includes `scouting` capture with `target_code`, `symptom` capture with `symptom_code`, the broader phenology-aware `stage_obs` capture against catalog `stage_vocabulary[]`, program-attached observations, broad target/pest registry if ever approved, symptom registry, full stage vocabulary, monitoring program declarations, multi-plant observation capture, and observation correction.
    - Only later monitoring-context steps may introduce observation-record states such as neutral `Bez zapisa` / `Zadnji zapis` where §0 permits them.
-6. Later stage confirmation.
-   - Deferred until the owner approves minimal stage vocabulary.
+7. Later broader stage confirmation flow (§11).
+   - Deferred until the owner approves a broader phenology-aware vocabulary beyond the Step 5a diary list.
    - Stage confirmation must remain optional and non-blocking.
 
 S8 deferred return map:
 
-Deferred means not in the current runtime slice, not abandoned. Each deferred item has a return condition, and agents must not use deferred wording to skip owner-approved S8 work. Step 4a runtime is complete; remaining deferred items require later owner approval.
+Deferred means not in the current runtime slice, not abandoned. Each deferred item has a return condition, and agents must not use deferred wording to skip owner-approved S8 work. Step 4a runtime is complete; Step 5a documentation is complete and its runtime remains the next deferred step; broader deferred items require later owner approval.
 
 - S8 Step 4a runtime implementation — COMPLETE; implemented bounded `trap_capture_sources[]` and trap Observation runtime in `index.html`.
 - Scouting capture — return condition: after trap-only Step 4a runtime is accepted and owner approves bounded scouting source-map / target identifier semantics.
 - Symptom capture — return condition: after owner-approved symptom source-map/registry and UX copy that avoids diagnosis.
-- Stage observation / stage confirmation — return condition: Step 5 only, after owner-approved minimal stage vocabulary.
+- S8 Step 5a documentation — COMPLETE; documents minimal free-standing diary `kind = "stage_obs"` against the bounded `stage_diary_vocabulary[]`.
+- S8 Step 5a runtime implementation — return condition: separate owner approval for runtime; preserves Plant detail one-plant free-standing boundary and `stage_diary_vocabulary[]` scoping.
+- Broader phenology-aware stage confirmation (§11) — return condition: separate owner-approved session for a broader phenology vocabulary, plan-effect semantics, or BBCH mapping. Explicitly out of scope for Step 5a.
 - Program-attached observations — return condition: after free-standing capture is stable and owner approves program attachment semantics.
 - Multi-plant structured capture — return condition: after one-plant trap capture is accepted and group identity rules are approved.
 - Observation correction — return condition: separate correction session; not a substitute for S8 Step 4 structured capture.
@@ -1316,7 +1325,8 @@ Produces:
 - S8 Step 3 runtime: Pregled §1.8 Praćenje plus Kalendar §2.11 monitoring / §2.12 risk-awareness visibility are implemented read-only, without capture or record-status semantics.
 - S8 Step 4a runtime: bounded `trap_capture_sources[]` trap count capture is implemented as Plant-detail-only, one-plant-only, free-standing `kind = "trap"` Observations with `program_id = null`, factual Dnevnik / plant-history evidence, and validator/import-path support for valid trap records.
 - Later only: program-attached observation capture, structured scouting/symptom/stage capture, monitoring-context record displays, and stage confirmation.
-- Stage vocabulary rule: B2 did not add `stage_vocabulary[]`. Stage confirmation stays deferred until the owner approves a minimal generic MVP vocabulary or an explicit stage-write deferral/restriction.
+- Stage vocabulary rule: B2 did not add `stage_vocabulary[]`. S8 Step 5a documentation introduces a bounded `stage_diary_vocabulary[]` for the diary path only; broader phenology-aware stage confirmation stays deferred until the owner approves a broader vocabulary or an explicit stage-write deferral/restriction.
+- S8 Step 5a documentation: bounded `stage_diary_vocabulary[]` and the free-standing diary `kind = "stage_obs"` capture path are documented for a later runtime implementation, with no runtime change in this patch.
 
 Manual verification:
 

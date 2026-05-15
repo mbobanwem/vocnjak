@@ -1,6 +1,6 @@
 # V2_UX_MODEL
 
-**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain future flow contracts and placeholders. Runtime Slice 7 is complete through S7.4; B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 Plant detail read-only B2 preview is complete. S8 Step 2 Plant detail note Observation capture + Dnevnik evidence is complete. Runtime Slice 8 Step 3 Pregled/Kalendar read-only monitoring/risk visibility is complete. S8 Step 4a bounded free-standing trap capture is documented for a later runtime implementation, but not implemented here. Structured scouting/symptom/stage capture and stage-confirmation steps remain deferred until owner-approved. Full Runtime Slice 8 is not complete. This document defines UX guidance only; no runtime/schema implementation is defined here.
+**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain future flow contracts and placeholders. Runtime Slice 7 is complete through S7.4; B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 Plant detail read-only B2 preview is complete. S8 Step 2 Plant detail note Observation capture + Dnevnik evidence is complete. Runtime Slice 8 Step 3 Pregled/Kalendar read-only monitoring/risk visibility is complete. S8 Step 4a bounded free-standing trap capture is documented for a later runtime implementation, but not implemented here. S8 Step 5a minimal stage diary observation is documented for a later runtime implementation, but not implemented here. Structured scouting/symptom capture and the broader phenology-aware stage-confirmation flow remain deferred until owner-approved. Full Runtime Slice 8 is not complete. This document defines UX guidance only; no runtime/schema implementation is defined here.
 
 ---
 
@@ -134,6 +134,18 @@ S8 Step 2 implemented boundary:
 - S8 Step 2 does not open monitoring record contexts; `Bez zapisa` and `Zadnji zapis` remain deferred for monitoring contexts until monitoring capture/display semantics are owner-approved.
 - Pregled/Kalendar monitoring/risk UI remains deferred.
 - Program-attached observation capture, structured trap/scouting/symptom/stage capture, registries/vocabularies, correction, diagnosis/treatment, and snapshot changes remain deferred.
+
+S8 Step 5a documented boundary (doc-lock only — not implemented here):
+
+- Plant detail only.
+- Free-standing diary `stage_obs` capture only: `kind = "stage_obs"` with `payload.stage_code`.
+- The capture entry point is `Dodaj fazu razvoja`.
+- One plant only, `program_id = null`, user provenance.
+- `stage_code` is chosen from the bounded `stage_diary_vocabulary[]` (`V2_DOMAIN_MODEL.md §3.2.3a`).
+- Saved diary stage Observations render as factual plant history / Dnevnik rows under `Opažanja`, not `Praćenje`.
+- Step 5a does not introduce a phenology engine, BBCH, per-species vocabulary, plan recalculation, automatic action generation, stage-based unlocking/blocking, diagnosis, treatment advice, weather automation, or compliance UX.
+- Pregled/Kalendar surfaces are unchanged. `Bez zapisa` and `Zadnji zapis` remain deferred.
+- Step 5a runtime implementation, multi-plant stage capture, observation correction for stage diary, program-attached stage capture, and any broader stage registry remain deferred until separately owner-approved.
 
 ---
 
@@ -1483,6 +1495,8 @@ Rules:
 - `kind = "note"` Observations render under `Opažanja`, not under `Praćenje`
 - S8 Step 4a free-standing `kind = "trap"` Observations also render under `Opažanja`, not under `Praćenje`
 - Step 4a trap rows show factual trap evidence only: date, plant, source-backed target label, and count
+- S8 Step 5a free-standing diary `kind = "stage_obs"` Observations also render under `Opažanja`, not under `Praćenje`
+- Step 5a diary stage rows show factual evidence only: date, plant, and the resolved `label_hr` from `stage_diary_vocabulary[]`, rendered as `Faza razvoja — <label_hr>` (for example `Faza razvoja — Cvatnja počela`)
 - do not downgrade or alarm-style them
 - marker `nije vezano uz program praćenja` appears in expansion/detail by default; it is not required inline unless needed to avoid confusion
 - free-standing observations must not be shown as missing monitoring evidence
@@ -3147,6 +3161,90 @@ Trap capture must not include:
 - persisted `target_label` payload
 - optional note field unless separately approved later
 
+### 10.5a Minimal stage diary observation (S8 Step 5a)
+
+For S8 Step 5a, stage capture is free-standing rather than program-context. It may be offered only from Plant detail for one selected plant, using the bounded `stage_diary_vocabulary[]` documented in `V2_DOMAIN_MODEL.md §3.2.3a`.
+
+Entry point title:
+
+```text
+Dodaj fazu razvoja
+```
+
+Step 5a allowed stage choices (Croatian labels resolved from `stage_diary_vocabulary[]`):
+
+- `dormant` — Mirovanje
+- `bud_swell` — Pupovi bubre
+- `bloom_started` — Cvatnja počela
+- `bloom_finished` — Cvatnja završila
+- `fruit_set` — Formiranje ploda
+- `color_change` — Plod mijenja boju
+- `ripening` — Dozrijevanje
+- `harvest` — Berba
+- `leaf_fall` — Opadanje lista
+
+UX rules:
+
+- plant is preselected from Plant detail
+- the record is not attached to a monitoring program
+- one plant only
+- the user records what they currently see, not a planned or predicted stage
+- `observed_on` defaults to today
+- past dates are allowed
+- future dates are rejected (use the §10.7 error copy)
+- one stage label is selected before save is enabled
+
+User-facing helper:
+
+```text
+Bilježi samo onu fazu koju jasno vidiš. Ovo je dnevnički zapis, ne mijenja plan radova.
+```
+
+Step 5a form fields:
+
+```text
+date
+stage_code
+```
+
+Primary save copy:
+
+```text
+Spremi fazu razvoja
+```
+
+After save, show only:
+
+```text
+Opažanje spremljeno.
+```
+
+Dnevnik / plant history factual row example:
+
+```text
+Faza razvoja — Cvatnja počela
+```
+
+Step 5a capture must not include:
+
+- BBCH codes or raw `stage_code` in user-facing copy
+- per-species phenology branching
+- plan recalculation, plan shifting, or scheduling promises
+- "radnja je sada dostupna", "moraš", "kasni", "preporuka", "tretirati", "prskati", or any compliance/reminder/nudge phrasing
+- diagnosis, treatment advice, dose/brand recommendation
+- weather/stage automation
+- pressure score, severity score, threshold interpretation
+- "Bez zapisa" / "Zadnji zapis" on stage diary surfaces
+- multi-plant capture
+- program attachment
+- optional free-text note field unless separately approved later
+- persisted `label_hr` or other display label in payload
+- stage labels invented outside `stage_diary_vocabulary[]`
+
+Step 5a is a diary record only. It does not unlock, block, schedule, complete, or modify any plan item, action availability, monitoring program state, or seasonal cue.
+
+§11 (Stage confirmation) remains a future phenology-aware flow placeholder; it is separate from this §10.5a diary path. If a future owner-approved session opens §11, it may refine or replace `stage_diary_vocabulary[]` and its mapping to catalog `stage_vocabulary[]`. Until then, Step 5a writes go only through `stage_diary_vocabulary[]`.
+
 ### 10.6 Visual scouting UX
 
 For visual scouting, use:
@@ -3271,6 +3369,7 @@ Dependency notes for S8/S9 or later:
 - observation persistence shape
 - payload per method
 - Step 4a bounded `trap_capture_sources[]` target resolution for free-standing trap capture
+- Step 5a bounded `stage_diary_vocabulary[]` resolution for free-standing diary stage capture
 - program/cycle write resolution, governed by domain and implemented later
 - overlap prompt mechanics
 - symptom registry/target resolution

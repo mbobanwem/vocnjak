@@ -739,9 +739,78 @@ provenance = { source: "user" }
 
 | Field        | Type              | Cardinality | Semantics                                                                                          |
 |--------------|-------------------|-------------|----------------------------------------------------------------------------------------------------|
-| `stage_code` | string identifier | required    | Phenological stage reached. MUST resolve in the plant's pinned catalog `stage_vocabulary` (S2.3).  |
+| `stage_code` | string identifier | required    | Phenological stage reached. MUST resolve in the plant's pinned catalog `stage_vocabulary` (S2.3) for the future phenology-aware path, OR in the bounded Step 5a `stage_diary_vocabulary[]` (§3.2.3a) for S8 Step 5a free-standing diary capture. |
 
 No other fields. The date the stage was reached is `observation.observed_on` (S2.1 §0.1), not a payload field.
+
+#### 3.2.3a S8 Step 5a minimal stage diary observation
+
+Runtime Slice 8 Step 5a clarifies a minimal future stage diary capture path only. It is documentation-only until separately implemented.
+
+Step 5a diary stage Observations are:
+
+- one-plant only;
+- Plant-detail-only;
+- free-standing only;
+- stored with `program_id = null`;
+- factual diary evidence only;
+- not phenology-engine evidence;
+- not BBCH evidence;
+- not per-species phenology;
+- not a plan recalculation trigger;
+- not a stage registry;
+- not a diagnosis, treatment recommendation, threshold result, pressure score, severity score, weather automation input, compliance signal, or automatic action trigger.
+
+Step 5a uses a bounded diary vocabulary:
+
+```text
+stage_diary_vocabulary[]
+```
+
+`stage_diary_vocabulary[]` is a closed, owner-approved list used only for S8 Step 5a diary `stage_obs` validation/display. It is not a broad stage registry, not a BBCH model, not a per-species phenology model, not the catalog `stage_vocabulary[]` of §2.3, and not a plan-template stage source. It does not auto-promote diary entries into reusable catalog stages.
+
+Each entry has:
+
+```text
+stage_code
+label_hr
+```
+
+Rules:
+
+- `stage_code` is the durable diary identifier.
+- `label_hr` is the Croatian display label rendered by Dnevnik / plant history.
+- `stage_code` for a Step 5a diary Observation MUST equal one entry's `stage_code` in `stage_diary_vocabulary[]`.
+- Unknown `stage_code` values fail closed.
+- Display labels are resolved from `stage_diary_vocabulary[]`; Step 5a Observations MUST NOT persist `label_hr` or any other label in payload.
+- Optional note text is out of scope unless explicitly added in a later owner-approved patch.
+
+Approved Step 5a diary entries:
+
+| `stage_code` | `label_hr` |
+|---|---|
+| `dormant` | Mirovanje |
+| `bud_swell` | Pupovi bubre |
+| `bloom_started` | Cvatnja počela |
+| `bloom_finished` | Cvatnja završila |
+| `fruit_set` | Formiranje ploda |
+| `color_change` | Plod mijenja boju |
+| `ripening` | Dozrijevanje |
+| `harvest` | Berba |
+| `leaf_fall` | Opadanje lista |
+
+This list is a Step 5a diary vocabulary only. It is not BBCH, not species-specific, not a plan recalculation vocabulary, and does not update, reschedule, unlock, block, or complete any plan item. A future owner-approved session may refine, replace, or extend this vocabulary.
+
+Step 5a payload shape:
+
+```text
+kind = "stage_obs"
+program_id = null
+payload = {
+  stage_code: string
+}
+provenance = { source: "user" }
+```
 
 #### 3.2.4 `symptom`
 
@@ -809,7 +878,10 @@ A note Observation is not monitoring-program evidence, not attachable to monitor
 #### 3.4.3 `stage_obs` payload — invalid if
 
 - `stage_code` absent or empty.
-- `stage_code` is not equal to the `stage_code` of any entry in the `stage_vocabulary` of the catalog at the Observation's own `catalog_version` (referential integrity into §2.3, resolved against the record's pinned version — not the plant's current pinned version).
+- For S8 Step 5a free-standing diary `stage_obs` (`program_id = null`, `provenance.source = "user"`), `stage_code` is not equal to any entry's `stage_code` in `stage_diary_vocabulary[]` (§3.2.3a).
+- For any non-diary `stage_obs` path, `stage_code` is not equal to the `stage_code` of any entry in the `stage_vocabulary` of the catalog at the Observation's own `catalog_version` (referential integrity into §2.3, resolved against the record's pinned version — not the plant's current pinned version). The non-diary path remains deferred and is not implemented by Step 5a.
+- Unknown payload fields are invalid.
+- `program_id` is not `null` for a Step 5a diary `stage_obs`.
 
 #### 3.4.4 `symptom` payload — invalid if
 
