@@ -1,6 +1,6 @@
 # V2 Execution Roadmap
 
-**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation is underway; Runtime Slices 0–7 are complete through S7.4. B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1, Step 2, and Step 3 are runtime-complete. S8 Step 4a documentation clarification is complete, but Step 4a runtime implementation remains separate and is not complete. Full Runtime Slice 8 is not complete.
+**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation is underway; Runtime Slices 0–7 are complete through S7.4. B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1, Step 2, Step 3, and Step 4a are runtime-complete. Full Runtime Slice 8 is not complete.
 
 This document converts the completed V2 specification stack (S6–S10) into an implementation execution roadmap. It is bound by the locked core documents and does not authorize runtime implementation by itself.
 
@@ -1222,7 +1222,7 @@ Parallelization notes:
 
 ## 36. Slice 8 — Plant detail B2 preview, notes, then read-only Pregled/Kalendar visibility
 
-Status: STEP 1 + STEP 2 + STEP 3 RUNTIME COMPLETE; STEP 4A DOCS COMPLETE — Plant detail read-only B2 preview is implemented, Plant detail free-standing note Observation capture + Dnevnik evidence is implemented, and read-only Pregled/Kalendar B2 monitoring/risk visibility is implemented. S8 Step 4a documentation clarification is complete, but Step 4a runtime implementation is not complete. Full Runtime Slice 8 is not complete. Step 4a runtime is next unless blocked; broader deferred S8 work remains tracked in the return map below.
+Status: STEP 1 + STEP 2 + STEP 3 + STEP 4A RUNTIME COMPLETE — Plant detail read-only B2 preview is implemented, Plant detail free-standing note Observation capture + Dnevnik evidence is implemented, read-only Pregled/Kalendar B2 monitoring/risk visibility is implemented, and Plant-detail-only free-standing trap count capture + Dnevnik evidence is implemented. Full Runtime Slice 8 is not complete; broader deferred S8 work remains tracked in the return map below.
 
 Purpose:
 
@@ -1250,8 +1250,8 @@ Approved decomposition:
    - Kalendar shows B2 monitoring/risk date ranges under `Praćenje` for overlapped months.
    - Does not derive urgency, compliance, or scheduled-work pressure from B2 metadata.
    - Does not add capture, program attachment, structured observation kinds, observation correction, snapshot monitoring output, storage shape changes, validators, registries, global B2 exposure, diagnosis, or treatment advice.
-4. S8 Step 4a documentation clarification — bounded free-standing trap capture. **Complete as docs only.**
-   - Defines a future minimal `kind = "trap"` path for Plant-detail-only, one-plant-only, free-standing factual count capture with `program_id = null`.
+4. S8 Step 4a runtime implementation — bounded free-standing trap capture. **Complete.**
+   - Implements the minimal `kind = "trap"` path for Plant-detail-only, one-plant-only, free-standing factual count capture with `program_id = null`.
    - Uses only a closed, plan-template-backed `trap_capture_sources[]` map for validation/display.
    - Does not implement runtime, UI, storage, validators, Pregled/Kalendar changes, monitoring-program attachment, or import/export code in this patch.
    - Does not add a broad target/pest registry, symptom registry, stage vocabulary, diagnosis target registry, pest ontology, or plan-template replacement.
@@ -1268,9 +1268,9 @@ Approved decomposition:
 
 S8 deferred return map:
 
-Deferred means not in the current runtime slice, not abandoned. Each deferred item has a return condition, and agents must not use deferred wording to skip S8 work. Step 4a runtime is next unless blocked.
+Deferred means not in the current runtime slice, not abandoned. Each deferred item has a return condition, and agents must not use deferred wording to skip owner-approved S8 work. Step 4a runtime is complete; remaining deferred items require later owner approval.
 
-- S8 Step 4a runtime implementation — return condition: after this tracker patch; implement bounded `trap_capture_sources[]` and trap Observation runtime in `index.html`.
+- S8 Step 4a runtime implementation — COMPLETE; implemented bounded `trap_capture_sources[]` and trap Observation runtime in `index.html`.
 - Scouting capture — return condition: after trap-only Step 4a runtime is accepted and owner approves bounded scouting source-map / target identifier semantics.
 - Symptom capture — return condition: after owner-approved symptom source-map/registry and UX copy that avoids diagnosis.
 - Stage observation / stage confirmation — return condition: Step 5 only, after owner-approved minimal stage vocabulary.
@@ -1622,10 +1622,10 @@ Slice 8 — Plant detail B2 preview first, then observations/stage:
 - Step 1 complete: Plant detail read-only B2 monitoring/risk preview, with monitoring and risk-awareness separated if both appear on Plant detail
 - Step 2 complete: Plant detail free-standing note Observation capture + Dnevnik evidence under `Opažanja`
 - Step 3 complete: read-only Pregled/Kalendar B2 monitoring/risk visibility under neutral seasonal copy
-- Step 4a documentation clarification complete: bounded future free-standing trap count capture may use only approved trap source rows `337`, `654`, `860`, `1596`, `1643`, `2455`, `2949`, and `2977`; no runtime implementation exists yet
+- Step 4a runtime complete: bounded free-standing trap count capture uses only approved trap source rows `337`, `654`, `860`, `1596`, `1643`, `2455`, `2949`, and `2977`
 - Full Runtime Slice 8 is not complete
-- Still deferred: runtime implementation of Step 4a, structured scouting/symptom/stage capture, program-attached observations, observation correction, monitoring-context record-status copy, diagnosis/treatment logic, and stage confirmation
-- Next work is S8 Step 4a runtime implementation from the bounded trap source-map docs unless a blocker is found
+- Still deferred: structured scouting/symptom/stage capture, program-attached observations, observation correction, monitoring-context record-status copy, diagnosis/treatment logic, and stage confirmation
+- Next S8 work beyond Step 4a requires explicit owner approval and must preserve the deferred return map
 
 Slice 9 — Observation correction, archive / lifecycle:
 
@@ -1800,4 +1800,4 @@ Runtime Slice 0 rules (re-stated for the handoff):
 
 Runtime implementation still requires explicit owner approval after S11 is closed. Even with this roadmap complete, no runtime work begins until the owner explicitly opens runtime Slice 0.
 
-Post-S8 Step 4a documentation tracker note: Runtime Slices 0–7 are complete through `d61cc90 Harden S7 seasonal action detail display`, B2 metadata-only projection boundary is complete, Runtime Slice 8 Step 1 is complete as Plant detail-only read-only B2 monitoring/risk preview, Runtime Slice 8 Step 2 is complete as Plant detail free-standing note Observation capture plus Dnevnik / plant-history evidence under `Opažanja`, and Runtime Slice 8 Step 3 is complete as read-only Pregled/Kalendar B2 monitoring/risk visibility. S8 Step 4a documentation clarification is complete, but Step 4a runtime implementation is not complete. Full Runtime Slice 8 is not complete. The seasonal snapshot remains private, read-time, derived, and non-persisted. Deferred S8 items remain tracked with return conditions; Step 4a runtime is next unless blocked.
+Post-S8 Step 4a runtime tracker note: Runtime Slices 0–7 are complete through `d61cc90 Harden S7 seasonal action detail display`, B2 metadata-only projection boundary is complete, Runtime Slice 8 Step 1 is complete as Plant detail-only read-only B2 monitoring/risk preview, Runtime Slice 8 Step 2 is complete as Plant detail free-standing note Observation capture plus Dnevnik / plant-history evidence under `Opažanja`, Runtime Slice 8 Step 3 is complete as read-only Pregled/Kalendar B2 monitoring/risk visibility, and Runtime Slice 8 Step 4a is complete as Plant-detail-only free-standing trap count capture plus Dnevnik / plant-history evidence under `Opažanja`. Full Runtime Slice 8 is not complete. The seasonal snapshot remains private, read-time, derived, and non-persisted. Deferred S8 items remain tracked with return conditions beyond trap-only Step 4a.

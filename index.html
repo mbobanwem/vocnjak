@@ -4216,6 +4216,16 @@ const V2_B2_PRIVATE = Object.create(null);
   if (B2_DISPLAY_VALIDATION_ERRORS.length && window.console && typeof window.console.error === 'function') {
     window.console.error('Vocnjak V2 B2 display metadata validation failed.', B2_DISPLAY_VALIDATION_ERRORS);
   }
+  var TRAP_CAPTURE_SOURCES = deepFreezeB2Projection([
+    trapCaptureSource('trap_source_337', 337, 'apple', 'apple_codling_moth_trap_monitoring', 'Jabučni savijač (Cydia pomonella)', 'trap_source_337_target'),
+    trapCaptureSource('trap_source_654', 654, 'sweet_cherry', 'cherry_fly_sticky_trap_monitoring', 'Trešnjina muha', 'trap_source_654_target'),
+    trapCaptureSource('trap_source_860', 860, 'sour_cherry', 'cherry_fly_sticky_trap_monitoring', 'Trešnjina muha (Rhagoletis cerasi)', 'trap_source_860_target'),
+    trapCaptureSource('trap_source_1596', 1596, 'plum', 'plum_moth_spring_trap_monitoring', 'Šljivin savijač / Cydia funebrana', 'trap_source_1596_target'),
+    trapCaptureSource('trap_source_1643', 1643, 'plum', 'plum_moth_summer_trap_monitoring', 'Šljivin savijač', 'trap_source_1643_target'),
+    trapCaptureSource('trap_source_2455', 2455, 'olive', 'olive_fly_sticky_trap_monitoring', 'Maslinova muha (Bactrocera oleae)', 'trap_source_2455_target'),
+    trapCaptureSource('trap_source_2949', 2949, 'walnut', 'walnut_fly_sticky_trap_monitoring', 'Orahova muha (Rhagoletis completa)', 'trap_source_2949_target'),
+    trapCaptureSource('trap_source_2977', 2977, 'walnut', 'walnut_codling_moth_trap_monitoring', 'Jabučni savijač na orahu (Cydia pomonella)', 'trap_source_2977_target')
+  ]);
 
   function b2PlantDetailMethodText(methodKind) {
     if (methodKind === 'trap') return 'Feromonska ili ljepljiva klopka, ako postoji u praksi.';
@@ -4430,6 +4440,36 @@ const V2_B2_PRIVATE = Object.create(null);
     if (mergeGroupId) sourceEntry.merge_group_id = mergeGroupId;
     return sourceEntry;
   }
+
+  function trapCaptureSource(sourceEntryId, sourceRow, species, projectedId, targetLabelHr, localTrapTargetCode) {
+    return {
+      source_entry_id: sourceEntryId,
+      source_row: sourceRow,
+      species: species,
+      projected_id: projectedId,
+      method_kind: 'trap',
+      target_label_hr: targetLabelHr,
+      local_trap_target_code: localTrapTargetCode,
+      window: B2_PROJECTION_SOURCE_WINDOWS[sourceRow]
+    };
+  }
+
+  function trapCaptureSourceById(sourceEntryId) {
+    for (var i = 0; i < TRAP_CAPTURE_SOURCES.length; i++) {
+      if (TRAP_CAPTURE_SOURCES[i].source_entry_id === sourceEntryId) return TRAP_CAPTURE_SOURCES[i];
+    }
+    return null;
+  }
+
+  function trapCaptureSourcesForSpecies(species) {
+    var out = [];
+    for (var i = 0; i < TRAP_CAPTURE_SOURCES.length; i++) {
+      if (TRAP_CAPTURE_SOURCES[i].species === species) out.push(TRAP_CAPTURE_SOURCES[i]);
+    }
+    return out;
+  }
+  V2_B2_PRIVATE.trapCaptureSourceById = trapCaptureSourceById;
+  V2_B2_PRIVATE.trapCaptureSourcesForSpecies = trapCaptureSourcesForSpecies;
 
   function deepFreezeB2Projection(value) {
     if (!value || typeof value !== 'object' || Object.isFrozen(value)) return value;
@@ -6063,6 +6103,7 @@ const V2_B2_PRIVATE = Object.create(null);
     status: ['status'],
     notes: ['notes']
   };
+  var trapCaptureSourceById = V2_B2_PRIVATE.trapCaptureSourceById;
   var ACTION_TYPES = {
     oil: true,
     copper: true,
@@ -6634,6 +6675,27 @@ const V2_B2_PRIVATE = Object.create(null);
     return [];
   }
 
+  function validateTrapObservationPayload(payload, plant, path) {
+    if (!isPlainObject(payload)) return [path + '.payload not a plain object'];
+    var keys = Object.keys(payload);
+    var expected = ['source_entry_id','target_pest_code','count'];
+    for (var i = 0; i < keys.length; i++) {
+      if (expected.indexOf(keys[i]) === -1) return [path + '.payload unexpected key: ' + keys[i]];
+    }
+    for (var j = 0; j < expected.length; j++) {
+      if (keys.indexOf(expected[j]) === -1) return [path + '.payload missing key: ' + expected[j]];
+    }
+    if (typeof payload.source_entry_id !== 'string' || payload.source_entry_id.trim().length === 0) return [path + '.payload.source_entry_id required'];
+    var source = typeof trapCaptureSourceById === 'function' ? trapCaptureSourceById(payload.source_entry_id) : null;
+    if (!source) return [path + '.payload.source_entry_id unknown'];
+    if (source.method_kind !== 'trap') return [path + '.payload.source_entry_id must resolve to trap source'];
+    if (!plant || source.species !== plant.species) return [path + '.payload.source_entry_id not valid for plant species'];
+    if (payload.target_pest_code !== source.local_trap_target_code) return [path + '.payload.target_pest_code must match source_entry_id'];
+    if (typeof payload.count !== 'number' || !isFinite(payload.count) || Math.floor(payload.count) !== payload.count) return [path + '.payload.count must be an integer'];
+    if (payload.count < 0) return [path + '.payload.count must be non-negative'];
+    return [];
+  }
+
   function validateObservation(observation, parsed, catalog, path) {
     if (!isPlainObject(observation)) return [path + ' not a plain object'];
     var keys = Object.keys(observation);
@@ -6645,17 +6707,19 @@ const V2_B2_PRIVATE = Object.create(null);
     }
     if (typeof observation.observation_id !== 'string' || observation.observation_id.trim().length === 0) return [path + '.observation_id required'];
     if (typeof observation.plant_id !== 'string' || observation.plant_id.trim().length === 0) return [path + '.plant_id required'];
-    if (!findPlantById(parsed.plants, observation.plant_id)) return [path + '.plant_id must reference an existing plant'];
+    var plant = findPlantById(parsed.plants, observation.plant_id);
+    if (!plant) return [path + '.plant_id must reference an existing plant'];
     if (observation.catalog_version !== parsed.meta.active_catalog_version || observation.catalog_version !== 'catalog_v1') return [path + '.catalog_version must match active catalog'];
-    if (observation.kind !== 'note') return [path + '.kind unsupported'];
+    if (observation.kind !== 'note' && observation.kind !== 'trap') return [path + '.kind unsupported'];
     var dateErr = checkDate(observation.observed_on);
     if (dateErr) return [path + '.observed_on ' + dateErr];
     if (!isIsoUtcTimestamp(observation.recorded_at)) return [path + '.recorded_at must be an ISO UTC timestamp'];
     var recordedOn = localDateFromIsoUtc(observation.recorded_at);
     if (recordedOn < observation.observed_on) return [path + '.observed_on must be on or before recorded_at local calendar date'];
-    if (observation.program_id !== null) return [path + '.program_id must be null for note Observations'];
+    if (observation.program_id !== null) return [path + '.program_id must be null for free-standing Observations'];
     if (!isPlainObject(observation.provenance) || Object.keys(observation.provenance).length !== 1 || observation.provenance.source !== 'user') return [path + '.provenance must be exactly {source:"user"}'];
-    return validateNoteObservationPayload(observation.payload, path);
+    if (observation.kind === 'note') return validateNoteObservationPayload(observation.payload, path);
+    return validateTrapObservationPayload(observation.payload, plant, path);
   }
 
   function validateAllObservations(observations, parsed, catalog) {
@@ -7012,6 +7076,8 @@ const V2_B2_PRIVATE = Object.create(null);
   var activityHelpers = window.v2ActivityHelpers;
   var b2PlantDetailPreview = V2_B2_PRIVATE.plantDetailPreview;
   var b2SeasonalVisibility = V2_B2_PRIVATE.seasonalVisibility;
+  var trapCaptureSourceById = V2_B2_PRIVATE.trapCaptureSourceById;
+  var trapCaptureSourcesForSpecies = V2_B2_PRIVATE.trapCaptureSourcesForSpecies;
   var currentFormFields = null;
   var currentActivityFields = null;
   var currentCorrectionFields = null;
@@ -7565,7 +7631,117 @@ const V2_B2_PRIVATE = Object.create(null);
     });
 
     section.appendChild(form);
+
+    appendTrapObservationCaptureControls(section, plant);
     parent.appendChild(section);
+  }
+
+  function appendTrapObservationCaptureControls(section, plant) {
+    var sources = typeof trapCaptureSourcesForSpecies === 'function' ? trapCaptureSourcesForSpecies(plant.species) : [];
+    if (!sources.length) return;
+
+    var opener = makeEl('button', 'v2-plants-secondary', 'Dodaj ulov iz klopke');
+    opener.type = 'button';
+    section.appendChild(opener);
+
+    var form = document.createElement('form');
+    form.className = 'v2-plants-form';
+    form.noValidate = true;
+    form.hidden = true;
+
+    var message = makeEl('p', 'v2-plants-error');
+    message.hidden = true;
+    form.appendChild(message);
+
+    var dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.value = localTodayYmd();
+    appendField(form, 'v2TrapObservedOn', 'Datum', dateInput);
+
+    var sourceSelect = document.createElement('select');
+    for (var i = 0; i < sources.length; i++) {
+      sourceSelect.appendChild(makeOption(sources[i].source_entry_id, sources[i].target_label_hr));
+    }
+    appendField(form, 'v2TrapSourceEntry', 'Klopka', sourceSelect, 'Broj ulova spremamo u povijest. Aplikacija ga ne tumači.');
+
+    var zeroChoice = makeEl('label', 'v2-plants-check');
+    var zeroRadio = document.createElement('input');
+    zeroRadio.type = 'radio';
+    zeroRadio.name = 'v2TrapCountMode_' + plant.plant_id;
+    zeroRadio.value = 'zero';
+    zeroChoice.appendChild(zeroRadio);
+    zeroChoice.appendChild(document.createTextNode('Bez ulova'));
+    form.appendChild(zeroChoice);
+
+    var countChoice = makeEl('label', 'v2-plants-check');
+    var countRadio = document.createElement('input');
+    countRadio.type = 'radio';
+    countRadio.name = zeroRadio.name;
+    countRadio.value = 'count';
+    countChoice.appendChild(countRadio);
+    countChoice.appendChild(document.createTextNode('Broj ulova'));
+    form.appendChild(countChoice);
+
+    var countInput = document.createElement('input');
+    countInput.type = 'number';
+    countInput.min = '0';
+    countInput.step = '1';
+    countInput.inputMode = 'numeric';
+    countInput.disabled = true;
+    appendField(form, 'v2TrapCount', 'Ulov', countInput);
+
+    var actions = makeEl('div', 'v2-plants-actions');
+    var save = makeEl('button', 'v2-plants-primary', 'Spremi opažanje');
+    save.type = 'submit';
+    save.disabled = true;
+    var cancel = makeEl('button', 'v2-plants-secondary', 'Odustani');
+    cancel.type = 'button';
+    actions.appendChild(save);
+    actions.appendChild(cancel);
+    form.appendChild(actions);
+
+    function refreshTrapCountState() {
+      countInput.disabled = !countRadio.checked;
+      if (!countRadio.checked) countInput.value = '';
+      save.disabled = !(zeroRadio.checked || (countRadio.checked && /^[0-9]+$/.test(countInput.value)));
+    }
+
+    opener.addEventListener('click', function () {
+      opener.hidden = true;
+      form.hidden = false;
+      dateInput.value = localTodayYmd();
+      sourceSelect.value = sources[0].source_entry_id;
+      refreshTrapCountState();
+    });
+    cancel.addEventListener('click', function () {
+      form.reset();
+      dateInput.value = localTodayYmd();
+      sourceSelect.value = sources[0].source_entry_id;
+      message.hidden = true;
+      form.hidden = true;
+      opener.hidden = false;
+      refreshTrapCountState();
+    });
+    zeroRadio.addEventListener('change', refreshTrapCountState);
+    countRadio.addEventListener('change', function () {
+      refreshTrapCountState();
+      if (countRadio.checked) countInput.focus();
+    });
+    countInput.addEventListener('input', refreshTrapCountState);
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      saveTrapObservation(plant.plant_id, {
+        dateInput: dateInput,
+        sourceSelect: sourceSelect,
+        zeroRadio: zeroRadio,
+        countRadio: countRadio,
+        countInput: countInput,
+        message: message,
+        form: form
+      });
+    });
+
+    section.appendChild(form);
   }
 
   function renderNotFound() {
@@ -8036,6 +8212,16 @@ const V2_B2_PRIVATE = Object.create(null);
     return error;
   }
 
+  function trapObservationValidationMessage(error) {
+    if (error.indexOf('.observed_on in the future') !== -1) return 'datum opažanja ne može biti u budućnosti';
+    if (error.indexOf('.observed_on invalid format') !== -1 || error.indexOf('.observed_on not a real date') !== -1) return 'datum opažanja nije valjan';
+    if (error.indexOf('.payload.source_entry_id') !== -1) return 'odabrana klopka nije valjana za ovu voćku';
+    if (error.indexOf('.payload.target_pest_code') !== -1) return 'odabrana klopka nije valjana';
+    if (error.indexOf('.payload.count') !== -1) return 'broj ulova mora biti cijeli broj 0 ili veći';
+    if (error.indexOf('.program_id must be null') !== -1) return 'opažanje ne smije biti vezano uz program praćenja';
+    return error;
+  }
+
   function noteObservationStoreCandidate(current, nextObservations) {
     return {
       meta: current.store.meta,
@@ -8094,6 +8280,78 @@ const V2_B2_PRIVATE = Object.create(null);
     var errors = window.v2ValidateForBackup(nextStore);
     if (errors.length > 0) {
       fields.message.textContent = 'Opažanje nije spremljeno: ' + noteObservationValidationMessage(errors[0]) + '.';
+      fields.message.hidden = false;
+      return;
+    }
+    try {
+      localStorage.setItem('vocnjak_v2', JSON.stringify(nextStore));
+    } catch (e) {
+      fields.message.textContent = 'Pohranu nije moguće zapisati.';
+      fields.message.hidden = false;
+      return;
+    }
+    fields.form.reset();
+    pendingDetailStatus = 'Opažanje spremljeno.';
+    if (location.hash === plantDetailRoute(plantId)) render();
+    else location.hash = plantDetailRoute(plantId);
+  }
+
+  function buildTrapObservation(current, plantId, fields) {
+    var plant = findPlant(current.store.plants, plantId);
+    if (!plant) return { ok: false, error: 'Voćka nije pronađena.' };
+    if (!fields.dateInput.value) return { ok: false, error: 'Datum opažanja je obavezan.' };
+    if (fields.dateInput.value > localTodayYmd()) return { ok: false, error: 'Datum ne može biti u budućnosti.' };
+    var source = typeof trapCaptureSourceById === 'function' ? trapCaptureSourceById(fields.sourceSelect.value) : null;
+    if (!source || source.species !== plant.species) return { ok: false, error: 'Odabrana klopka nije valjana za ovu voćku.' };
+    var count;
+    if (fields.zeroRadio.checked) {
+      count = 0;
+    } else if (fields.countRadio.checked) {
+      if (!/^[0-9]+$/.test(fields.countInput.value)) return { ok: false, error: 'Broj ulova mora biti cijeli broj 0 ili veći.' };
+      count = Number(fields.countInput.value);
+    } else {
+      return { ok: false, error: 'Odaberi Bez ulova ili upiši broj ulova.' };
+    }
+    var observationId = nextUniqueId('observation', current.store.observations, 'observation_id');
+    if (!observationId) return { ok: false, error: 'Greška pri generaciji identifikatora.' };
+    return {
+      ok: true,
+      observation: {
+        observation_id: observationId,
+        plant_id: plant.plant_id,
+        catalog_version: current.store.meta.active_catalog_version,
+        kind: 'trap',
+        observed_on: fields.dateInput.value,
+        recorded_at: new Date().toISOString(),
+        payload: {
+          source_entry_id: source.source_entry_id,
+          target_pest_code: source.local_trap_target_code,
+          count: count
+        },
+        program_id: null,
+        provenance: { source: 'user' }
+      }
+    };
+  }
+
+  function saveTrapObservation(plantId, fields) {
+    fields.message.hidden = true;
+    var current = readValidStore();
+    if (!current.ok) {
+      fields.message.textContent = current.error;
+      fields.message.hidden = false;
+      return;
+    }
+    var built = buildTrapObservation(current, plantId, fields);
+    if (!built.ok) {
+      fields.message.textContent = built.error;
+      fields.message.hidden = false;
+      return;
+    }
+    var nextStore = noteObservationStoreCandidate(current, current.store.observations.concat([built.observation]));
+    var errors = window.v2ValidateForBackup(nextStore);
+    if (errors.length > 0) {
+      fields.message.textContent = 'Opažanje nije spremljeno: ' + trapObservationValidationMessage(errors[0]) + '.';
       fields.message.hidden = false;
       return;
     }
@@ -9357,9 +9615,9 @@ const V2_B2_PRIVATE = Object.create(null);
     }
   }
 
-  function noteObservationsForPlant(observations, plantId) {
+  function historyObservationsForPlant(observations, plantId) {
     return observations.filter(function (observation) {
-      return observation.kind === 'note' && (!plantId || observation.plant_id === plantId);
+      return (observation.kind === 'note' || observation.kind === 'trap') && (!plantId || observation.plant_id === plantId);
     });
   }
 
@@ -9377,10 +9635,10 @@ const V2_B2_PRIVATE = Object.create(null);
         group: group
       };
     });
-    var observations = noteObservationsForPlant(result.store.observations, plantId);
+    var observations = historyObservationsForPlant(result.store.observations, plantId);
     for (var i = 0; i < observations.length; i++) {
       items.push({
-        type: 'note_observation',
+        type: observations[i].kind === 'trap' ? 'trap_observation' : 'note_observation',
         date: observations[i].observed_on,
         recorded_at: observations[i].recorded_at,
         id: observations[i].observation_id,
@@ -9405,10 +9663,23 @@ const V2_B2_PRIVATE = Object.create(null);
     parent.appendChild(card);
   }
 
+  function appendTrapObservationCard(parent, observation, result) {
+    var plant = findPlant(result.store.plants, observation.plant_id);
+    var plantLabel = plant ? plantTitle(plant) : observation.plant_id;
+    var source = typeof trapCaptureSourceById === 'function' ? trapCaptureSourceById(observation.payload.source_entry_id) : null;
+    var targetLabel = source ? source.target_label_hr : observation.payload.source_entry_id;
+    var card = makeEl('article', 'v2-diary-card');
+    card.appendChild(makeEl('p', 'v2-diary-title', formatDateYmd(observation.observed_on) + ' · Klopka — ' + targetLabel));
+    card.appendChild(makeEl('span', 'v2-diary-meta', 'Opažanja · ' + plantLabel));
+    card.appendChild(makeEl('span', 'v2-diary-note', 'Ulov: ' + observation.payload.count));
+    parent.appendChild(card);
+  }
+
   function appendDiaryItems(parent, items, result, options) {
     for (var i = 0; i < items.length; i++) {
       if (items[i].type === 'activity_group') appendDiaryGroupCard(parent, items[i].group, result, options);
       else if (items[i].type === 'note_observation') appendNoteObservationCard(parent, items[i].observation, result);
+      else if (items[i].type === 'trap_observation') appendTrapObservationCard(parent, items[i].observation, result);
     }
   }
 
