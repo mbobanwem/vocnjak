@@ -1253,7 +1253,7 @@ Approved decomposition:
 4. S8 Step 4a runtime implementation — bounded free-standing trap capture. **Complete.**
    - Implements the minimal `kind = "trap"` path for Plant-detail-only, one-plant-only, free-standing factual count capture with `program_id = null`.
    - Uses only a closed, plan-template-backed `trap_capture_sources[]` map for validation/display.
-   - Does not implement runtime, UI, storage, validators, Pregled/Kalendar changes, monitoring-program attachment, or import/export code in this patch.
+   - Runtime validation/import paths support valid trap Observations for this bounded capture path, without adding Pregled/Kalendar changes, monitoring-program attachment, broad import/export behavior, or wider observation scope.
    - Does not add a broad target/pest registry, symptom registry, stage vocabulary, diagnosis target registry, pest ontology, or plan-template replacement.
    - Does not use B2 `projected_id` values as pest/target identifiers; `projected_id` remains traceability/display metadata only.
    - Approved first runtime source rows are `337`, `654`, `860`, `1596`, `1643`, `2455`, `2949`, and `2977`.
@@ -1314,7 +1314,7 @@ Produces:
 - First-step examples: `Praćenje šljivinog savijača — proljetni let` and `Sezonska napomena: postoji rizik pucanja plodova nakon jače kiše`.
 - S8 Step 2 runtime: Plant detail `kind = "note"` capture + Dnevnik evidence is implemented, with no program attachment and no structured observation registry dependency.
 - S8 Step 3 runtime: Pregled §1.8 Praćenje plus Kalendar §2.11 monitoring / §2.12 risk-awareness visibility are implemented read-only, without capture or record-status semantics.
-- S8 Step 4a docs: bounded `trap_capture_sources[]` source-map rules are documented for later minimal free-standing trap count capture; no runtime implementation is added by this documentation patch.
+- S8 Step 4a runtime: bounded `trap_capture_sources[]` trap count capture is implemented as Plant-detail-only, one-plant-only, free-standing `kind = "trap"` Observations with `program_id = null`, factual Dnevnik / plant-history evidence, and validator/import-path support for valid trap records.
 - Later only: program-attached observation capture, structured scouting/symptom/stage capture, monitoring-context record displays, and stage confirmation.
 - Stage vocabulary rule: B2 did not add `stage_vocabulary[]`. Stage confirmation stays deferred until the owner approves a minimal generic MVP vocabulary or an explicit stage-write deferral/restriction.
 
@@ -1329,7 +1329,7 @@ Manual verification:
 - Step 2: saved note Observations appear under `Opažanja` in Dnevnik and in the plant-specific history preview.
 - Step 2: Activity capture, Activity correction, and Activity Dnevnik rows still work.
 - Step 2: Pregled and Kalendar still show no note Observation entry point or `Opažanja` UI.
-- Step 4a future runtime verification, when implementation is separately approved: Plant detail saves only one-plant free-standing trap Observations from approved trap source rows, rejects unknown source/target combinations, negative or non-integer counts, future dates, non-user provenance, and any `program_id` other than `null`, and renders factual trap evidence under `Opažanja` only.
+- Step 4a runtime verification: Plant detail saves only one-plant free-standing trap Observations from approved trap source rows, rejects unknown source/target combinations, negative or non-integer counts, future dates, non-user provenance, and any `program_id` other than `null`, and renders factual trap evidence under `Opažanja` only.
 - Monitoring/risk copy remains neutral, factual, and non-pressuring.
 - Legacy `vocnjak_v4` VALUE byte-equal across session.
 
