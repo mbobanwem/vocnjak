@@ -1,6 +1,6 @@
 # V2_UX_MODEL
 
-**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain future flow contracts and placeholders. Runtime Slice 7 is complete through S7.4; B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 Plant detail read-only B2 preview is complete. S8 Step 2 Plant detail note Observation capture + Dnevnik evidence is complete. Later Pregled/Kalendar monitoring/risk integration, structured observation capture, and stage-confirmation steps remain deferred until owner-approved. Full Runtime Slice 8 is not complete. This document defines UX guidance only; no runtime/schema implementation is defined here.
+**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain future flow contracts and placeholders. Runtime Slice 7 is complete through S7.4; B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 Plant detail read-only B2 preview is complete. S8 Step 2 Plant detail note Observation capture + Dnevnik evidence is complete. Runtime Slice 8 Step 3 Pregled/Kalendar read-only monitoring/risk visibility is complete. S8 Step 4a bounded free-standing trap capture is documented for a later runtime implementation, but not implemented here. Structured scouting/symptom/stage capture and stage-confirmation steps remain deferred until owner-approved. Full Runtime Slice 8 is not complete. This document defines UX guidance only; no runtime/schema implementation is defined here.
 
 ---
 
@@ -1481,6 +1481,8 @@ Rules:
 - free-standing observations are first-class history records
 - they appear under `Opažanja`, not `Praćenje`
 - `kind = "note"` Observations render under `Opažanja`, not under `Praćenje`
+- S8 Step 4a free-standing `kind = "trap"` Observations also render under `Opažanja`, not under `Praćenje`
+- Step 4a trap rows show factual trap evidence only: date, plant, source-backed target label, and count
 - do not downgrade or alarm-style them
 - marker `nije vezano uz program praćenja` appears in expansion/detail by default; it is not required inline unless needed to avoid confusion
 - free-standing observations must not be shown as missing monitoring evidence
@@ -2954,6 +2956,24 @@ Current S8 Step 2 subset:
 - One free-text shape only: `kind = "note"` with `payload.text`.
 - No program-context capture, no structured trap/scouting/symptom/stage capture, no registries/vocabularies, no correction, no Pregled/Kalendar entry, and no Dnevnik/global capture entry in S8 Step 2.
 
+S8 Step 4a documented subset for later runtime implementation:
+
+- Plant detail free-standing trap Observation capture only.
+- One plant only.
+- Source-backed trap choice only for the selected plant's species.
+- `kind = "trap"` with `payload.source_entry_id`, `payload.target_pest_code`, and `payload.count`.
+- `program_id = null`.
+- Factual count only.
+- Count is integer `>= 0`.
+- Past dates are allowed.
+- Future dates are rejected.
+- Dnevnik / plant history factual evidence only, under `Opažanja`.
+- No Pregled/Kalendar capture entry points.
+- No monitoring-program card attachment.
+- No `Bez zapisa`.
+- No `Zadnji zapis`.
+- No threshold interpretation, diagnosis, treatment recommendation, pressure/severity score, weather automation, or compliance UX.
+
 Cancel behavior:
 
 - cancel/close exits capture without saving
@@ -3076,6 +3096,21 @@ Future concepts:
 
 When the program method is trap-based, the UI must be fast and touch-friendly.
 
+For S8 Step 4a, trap capture is free-standing rather than program-context. It may be offered only from Plant detail for one selected plant, using the bounded `trap_capture_sources[]` source map documented in `V2_DOMAIN_MODEL.md §3.2.1a`.
+
+Step 4a allowed source rows:
+
+- `337` apple codling moth trap monitoring.
+- `654` sweet cherry fly sticky trap monitoring.
+- `860` sour cherry fly sticky trap monitoring.
+- `1596` plum moth spring trap monitoring.
+- `1643` plum moth summer trap monitoring.
+- `2455` olive fly sticky trap monitoring.
+- `2949` walnut fly sticky trap monitoring.
+- `2977` walnut codling moth trap monitoring.
+
+Rows `516`, `1064`, and `1228` are not valid first Step 4a choices because their source text keeps trap/scouting ambiguity. Scouting, symptom, stage, program-attached, and multi-plant capture remain out of scope.
+
 The capture UI offers two obvious quick paths:
 
 ```text
@@ -3096,12 +3131,21 @@ Helper copy:
 Broj ulova spremamo u povijest. Aplikacija ga ne tumači.
 ```
 
+Step 4a after-save copy:
+
+```text
+Opažanje spremljeno.
+```
+
 Trap capture must not include:
 
 - threshold interpretation
 - treatment recommendation
 - pressure score
 - severity score
+- source labels invented outside the retained source map
+- persisted `target_label` payload
+- optional note field unless separately approved later
 
 ### 10.6 Visual scouting UX
 
@@ -3226,6 +3270,7 @@ Dependency notes for S8/S9 or later:
 
 - observation persistence shape
 - payload per method
+- Step 4a bounded `trap_capture_sources[]` target resolution for free-standing trap capture
 - program/cycle write resolution, governed by domain and implemented later
 - overlap prompt mechanics
 - symptom registry/target resolution

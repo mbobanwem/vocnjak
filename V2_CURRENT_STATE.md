@@ -265,10 +265,12 @@ Updated after B2 metadata-only implementation (NOT implemented by B1/B1.1):
 - completed first S8 implementation: Plant detail §4.10 monitoring and §4.9 Sezonski rizici read-only B2 preview only
 - completed second S8 implementation: Plant detail note Observation capture and Dnevnik / plant-history `Opažanja` rows only
 - completed third S8 implementation: Kalendar `Praćenje` (§2.11 monitoring cards and §2.12 risk-awareness cards) and Pregled current-season `Praćenje` visibility only
-- structured or program-attached observation capture / monitoring rows remain deferred to a later Slice 8 step
-- no `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]` in the current B2 projection
+- completed S8 Step 4a documentation clarification: later runtime may implement minimal Plant-detail-only, one-plant, free-standing trap count capture from the bounded `trap_capture_sources[]` source map for source rows 337, 654, 860, 1596, 1643, 2455, 2949, and 2977 only
+- S8 Step 4a documentation does not implement runtime, UI, storage, validator, Pregled/Kalendar, program attachment, broad target/pest registry, symptom registry, stage vocabulary, diagnosis, treatment advice, pressure/severity scoring, weather automation, or compliance behavior
+- structured scouting/symptom/stage capture, program-attached observation capture, observation correction, and monitoring rows beyond this bounded trap-only path remain deferred to later owner-approved Slice 8 steps
+- no `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]` in the current B2 projection or S8 Step 4a source-map clarification
 
-Runtime Slice 7 is complete through S7.4. It did not rely on monitoring or awareness content. B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 is the first runtime consumer of that metadata and is limited to Plant detail read-only preview. Runtime Slice 8 Step 2 adds Plant detail free-standing note Observation capture and factual Dnevnik evidence only. Runtime Slice 8 Step 3 adds read-only Pregled/Kalendar monitoring/risk visibility only.
+Runtime Slice 7 is complete through S7.4. It did not rely on monitoring or awareness content. B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 is the first runtime consumer of that metadata and is limited to Plant detail read-only preview. Runtime Slice 8 Step 2 adds Plant detail free-standing note Observation capture and factual Dnevnik evidence only. Runtime Slice 8 Step 3 adds read-only Pregled/Kalendar monitoring/risk visibility only. S8 Step 4a is documentation-only clarification for bounded future trap capture; no runtime implementation exists yet.
 
 Pre-Slice-5 Activity provenance / Correction storage-shape doc patch status: DOCUMENTATION-ONLY LOCK CONSUMED BY SLICE 5. This patch locked the exact Runtime Slice 5 Activity provenance shape as `provenance: { source: "user" }`, locked Correction persisted fields as `correction_id`, `original_record_id`, `original_record_type`, `correction_types`, `corrected_values`, optional `explanation`, and `created_at`, recorded the stricter Slice 5 multi-plant group invariant, and recorded unknown variety + unknown ripening harvest fallback to the species `mid` fallback window where available. Runtime Slice 5 implementation consumed this lock in commit `8bc630a Implement Runtime Slice 5 activity capture`.
 
@@ -1156,6 +1158,43 @@ Disposition:
 - `V2_S3_AUDIT_CONSOLIDATION.md` records the S4 owner decision for S5 application.
 - `V2_CATALOG_AUDIT.md` records the curator guidance.
 - S5 must apply this rule consistently across supported species.
+
+#### S8 Step 4a owner decision — bounded trap capture source map
+
+Status: DOCUMENTED — implementation not started.
+
+Decision:
+
+- Step 4a is minimal free-standing trap Observation capture only.
+- Step 4a is Plant-detail-only, one-plant-only, and always stores `program_id = null`.
+- Step 4a uses a bounded `trap_capture_sources[]` source map backed by explicit trap rows in `V2_ORCHARD_PLAN_TEMPLATES.md`.
+- The source map is closed-list and exists only for S8 Step 4a trap capture validation/display.
+- `source_entry_id` is the primary plan-template traceability key.
+- `projected_id` may be retained only for B2 display/source traceability; it is not the pest or target identifier.
+- `target_pest_code` resolves only against the bounded Step 4a `trap_capture_sources[]` entry through `local_trap_target_code`.
+- Step 4a does not create or imply a broad target/pest registry, symptom registry, stage vocabulary, diagnosis target registry, pest ontology, or plan-template replacement.
+
+Approved first Step 4a source rows:
+
+- `337` apple codling moth trap monitoring.
+- `654` sweet cherry fly sticky trap monitoring.
+- `860` sour cherry fly sticky trap monitoring.
+- `1596` plum moth spring trap monitoring.
+- `1643` plum moth summer trap monitoring.
+- `2455` olive fly sticky trap monitoring.
+- `2949` walnut fly sticky trap monitoring.
+- `2977` walnut codling moth trap monitoring.
+
+Explicitly out of scope for first Step 4a:
+
+- optional trap/scouting ambiguity rows `516`, `1064`, and `1228`;
+- all scouting rows;
+- all symptom rows;
+- all stage observations;
+- program-attached observations;
+- multi-plant structured capture;
+- note or Observation correction;
+- thresholds, diagnosis, treatment recommendations, pressure/severity scoring, weather automation, Pregled/Kalendar changes, and missing-record/compliance UX.
 
 #### S4 owner decision — Awareness / risk monitoring
 

@@ -1250,11 +1250,19 @@ Approved decomposition:
    - Kalendar shows B2 monitoring/risk date ranges under `Praćenje` for overlapped months.
    - Does not derive urgency, compliance, or scheduled-work pressure from B2 metadata.
    - Does not add capture, program attachment, structured observation kinds, observation correction, snapshot monitoring output, storage shape changes, validators, registries, global B2 exposure, diagnosis, or treatment advice.
-4. Later structured observation capture.
-   - Deferred until registries/vocabularies are owner-approved.
-   - Includes `trap` capture, `scouting` capture with `target_code`, `symptom` capture with `symptom_code`, `stage_obs` capture with `stage_code`, program-attached observations, target/pest registry, symptom registry, stage vocabulary, monitoring program declarations, multi-plant observation capture, and observation correction.
+4. S8 Step 4a documentation clarification — bounded free-standing trap capture. **Complete as docs only.**
+   - Defines a future minimal `kind = "trap"` path for Plant-detail-only, one-plant-only, free-standing factual count capture with `program_id = null`.
+   - Uses only a closed, plan-template-backed `trap_capture_sources[]` map for validation/display.
+   - Does not implement runtime, UI, storage, validators, Pregled/Kalendar changes, monitoring-program attachment, or import/export code in this patch.
+   - Does not add a broad target/pest registry, symptom registry, stage vocabulary, diagnosis target registry, pest ontology, or plan-template replacement.
+   - Does not use B2 `projected_id` values as pest/target identifiers; `projected_id` remains traceability/display metadata only.
+   - Approved first runtime source rows are `337`, `654`, `860`, `1596`, `1643`, `2455`, `2949`, and `2977`.
+   - Rows `516`, `1064`, and `1228` remain out of scope because their source text/B2 handling keeps trap-vs-scouting ambiguity.
+5. Later structured observation capture beyond Step 4a.
+   - Deferred until the relevant source maps, registries, or vocabularies are owner-approved.
+   - Includes `scouting` capture with `target_code`, `symptom` capture with `symptom_code`, `stage_obs` capture with `stage_code`, program-attached observations, broad target/pest registry if ever approved, symptom registry, stage vocabulary, monitoring program declarations, multi-plant observation capture, and observation correction.
    - Only later monitoring-context steps may introduce observation-record states such as neutral `Bez zapisa` / `Zadnji zapis` where §0 permits them.
-5. Later stage confirmation.
+6. Later stage confirmation.
    - Deferred until the owner approves minimal stage vocabulary.
    - Stage confirmation must remain optional and non-blocking.
 
@@ -1292,7 +1300,8 @@ Produces:
 - First-step examples: `Praćenje šljivinog savijača — proljetni let` and `Sezonska napomena: postoji rizik pucanja plodova nakon jače kiše`.
 - S8 Step 2 runtime: Plant detail `kind = "note"` capture + Dnevnik evidence is implemented, with no program attachment and no structured observation registry dependency.
 - S8 Step 3 runtime: Pregled §1.8 Praćenje plus Kalendar §2.11 monitoring / §2.12 risk-awareness visibility are implemented read-only, without capture or record-status semantics.
-- Later only: program-attached observation capture, structured trap/scouting/symptom/stage capture, monitoring-context record displays, and stage confirmation.
+- S8 Step 4a docs: bounded `trap_capture_sources[]` source-map rules are documented for later minimal free-standing trap count capture; no runtime implementation is added by this documentation patch.
+- Later only: program-attached observation capture, structured scouting/symptom/stage capture, monitoring-context record displays, and stage confirmation.
 - Stage vocabulary rule: B2 did not add `stage_vocabulary[]`. Stage confirmation stays deferred until the owner approves a minimal generic MVP vocabulary or an explicit stage-write deferral/restriction.
 
 Manual verification:
@@ -1306,6 +1315,7 @@ Manual verification:
 - Step 2: saved note Observations appear under `Opažanja` in Dnevnik and in the plant-specific history preview.
 - Step 2: Activity capture, Activity correction, and Activity Dnevnik rows still work.
 - Step 2: Pregled and Kalendar still show no note Observation entry point or `Opažanja` UI.
+- Step 4a future runtime verification, when implementation is separately approved: Plant detail saves only one-plant free-standing trap Observations from approved trap source rows, rejects unknown source/target combinations, negative or non-integer counts, future dates, non-user provenance, and any `program_id` other than `null`, and renders factual trap evidence under `Opažanja` only.
 - Monitoring/risk copy remains neutral, factual, and non-pressuring.
 - Legacy `vocnjak_v4` VALUE byte-equal across session.
 
@@ -1598,9 +1608,10 @@ Slice 8 — Plant detail B2 preview first, then observations/stage:
 - Step 1 complete: Plant detail read-only B2 monitoring/risk preview, with monitoring and risk-awareness separated if both appear on Plant detail
 - Step 2 complete: Plant detail free-standing note Observation capture + Dnevnik evidence under `Opažanja`
 - Step 3 complete: read-only Pregled/Kalendar B2 monitoring/risk visibility under neutral seasonal copy
+- Step 4a documentation clarification complete: bounded future free-standing trap count capture may use only approved trap source rows `337`, `654`, `860`, `1596`, `1643`, `2455`, `2949`, and `2977`; no runtime implementation exists yet
 - Full Runtime Slice 8 is not complete
-- Still deferred: structured trap/scouting/symptom/stage capture, program-attached observations, observation correction, monitoring-context record-status copy, diagnosis/treatment logic, and stage confirmation
-- Next work is planning/approval for the next S8 step
+- Still deferred: runtime implementation of Step 4a, structured scouting/symptom/stage capture, program-attached observations, observation correction, monitoring-context record-status copy, diagnosis/treatment logic, and stage confirmation
+- Next work is separate owner approval for the Step 4a runtime implementation
 
 Slice 9 — Observation correction, archive / lifecycle:
 

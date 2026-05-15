@@ -647,10 +647,86 @@ Rules that cross into §1.1 catalog fields or §1.2 window fields live in §1.6.
 
 | Field              | Type              | Cardinality | Semantics                                                                   |
 |--------------------|-------------------|-------------|-----------------------------------------------------------------------------|
+| `source_entry_id`  | string identifier | required for S8 Step 4a free-standing trap capture | Resolves to one entry in bounded `trap_capture_sources[]` (§3.2.1a). |
 | `target_pest_code` | string identifier | required    | Pest the trap targets. Opaque in S2.4 (catalog registry deferred).          |
 | `count`            | integer ≥ 0       | required    | Number of captures found at this observation.                               |
 
 `trap_id` is intentionally not included in S2.4 — the Trap entity lifecycle is deferred. A trap reference field can be added additively when the Trap entity is locked.
+
+#### 3.2.1a S8 Step 4a free-standing trap capture source map
+
+Runtime Slice 8 Step 4a clarifies a minimal future trap capture path only. It is documentation-only until separately implemented.
+
+Step 4a trap Observations are:
+
+- one-plant only;
+- Plant-detail-only;
+- free-standing only;
+- stored with `program_id = null`;
+- factual count evidence only;
+- not monitoring-program evidence;
+- not a diagnosis, treatment recommendation, threshold result, pressure score, severity score, weather automation input, compliance signal, or automatic action trigger.
+
+Step 4a uses a bounded source map:
+
+```text
+trap_capture_sources[]
+```
+
+`trap_capture_sources[]` is sourced from `V2_ORCHARD_PLAN_TEMPLATES.md`, limited to explicitly trap-backed rows, and used only for S8 Step 4a trap Observation validation/display. It is a closed list, not a broad target/pest registry, not a pest ontology, not a diagnosis target registry, not a symptom registry, not a stage vocabulary, and not a replacement for plan templates. It does not auto-promote plan-template targets into reusable catalog vocabulary.
+
+Each source-map entry has:
+
+```text
+source_entry_id
+source_row
+species
+projected_id
+method_kind = "trap"
+target_label_hr
+local_trap_target_code
+window, if source-backed
+```
+
+Rules:
+
+- `source_entry_id` is the primary plan-template traceability key.
+- `projected_id` may be retained only for B2 display/source traceability.
+- `projected_id` is NOT the pest/target identifier.
+- `target_pest_code` in a Step 4a trap Observation MUST equal the selected source entry's `local_trap_target_code`.
+- `target_pest_code` resolves only inside `trap_capture_sources[]` for Step 4a.
+- Unknown `source_entry_id` values fail closed.
+- Mismatched `source_entry_id` / `target_pest_code` pairs fail closed.
+- Display labels are resolved from retained source-map context; Step 4a Observations MUST NOT persist `target_label` in payload.
+- Optional note text is out of scope unless explicitly added in a later owner-approved patch.
+
+Approved initial Step 4a source entries:
+
+| `source_entry_id` | Source row | Species | `projected_id` traceability | `local_trap_target_code` | `target_label_hr` | Source-backed window |
+|---|---:|---|---|---|---|---|
+| `trap_source_337` | 337 | `apple` | `apple_codling_moth_trap_monitoring` | `trap_source_337_target` | `Jabučni savijač (Cydia pomonella)` | 4/25-8/15 |
+| `trap_source_654` | 654 | `sweet_cherry` | `cherry_fly_sticky_trap_monitoring` | `trap_source_654_target` | `Trešnjina muha` | 4/25-6/20 |
+| `trap_source_860` | 860 | `sour_cherry` | `cherry_fly_sticky_trap_monitoring` | `trap_source_860_target` | `Trešnjina muha (Rhagoletis cerasi)` | 4/25-7/10 |
+| `trap_source_1596` | 1596 | `plum` | `plum_moth_spring_trap_monitoring` | `trap_source_1596_target` | `Šljivin savijač / Cydia funebrana` | 4/25-6/15 |
+| `trap_source_1643` | 1643 | `plum` | `plum_moth_summer_trap_monitoring` | `trap_source_1643_target` | `Šljivin savijač` | 6/15-8/31 |
+| `trap_source_2455` | 2455 | `olive` | `olive_fly_sticky_trap_monitoring` | `trap_source_2455_target` | `Maslinova muha (Bactrocera oleae)` | 6/1-9/30 |
+| `trap_source_2949` | 2949 | `walnut` | `walnut_fly_sticky_trap_monitoring` | `trap_source_2949_target` | `Orahova muha (Rhagoletis completa)` | 7/1-9/15 |
+| `trap_source_2977` | 2977 | `walnut` | `walnut_codling_moth_trap_monitoring` | `trap_source_2977_target` | `Jabučni savijač na orahu (Cydia pomonella)` | 5/1-8/15 |
+
+Rows `516`, `1064`, and `1228` remain out of scope for first Step 4a because their source text and current B2 handling preserve trap/scouting ambiguity. All scouting rows, symptom rows, stage observations, program-attached observations, and multi-plant structured capture are out of scope.
+
+Step 4a payload shape:
+
+```text
+kind = "trap"
+program_id = null
+payload = {
+  source_entry_id: string,
+  target_pest_code: string,
+  count: number
+}
+provenance = { source: "user" }
+```
 
 #### 3.2.2 `scouting`
 
@@ -715,7 +791,10 @@ A note Observation is not monitoring-program evidence, not attachable to monitor
 
 #### 3.4.1 `trap` payload — invalid if
 
+- `source_entry_id` absent or empty for S8 Step 4a free-standing trap capture.
+- `source_entry_id` does not resolve in `trap_capture_sources[]`.
 - `target_pest_code` absent or empty.
+- `target_pest_code` does not equal the resolved source entry's `local_trap_target_code` for S8 Step 4a.
 - `count` absent.
 - `count` is not an integer ≥ 0.
 

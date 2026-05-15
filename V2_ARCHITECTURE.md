@@ -277,6 +277,9 @@ Rules:
 - Note Observations are free-standing-only, one-plant-only, and store `program_id = null`.
 - S8 Step 2 does not use `observation_group_id` for note Observations.
 - User-entered note provenance is exactly `{ "source": "user" }`.
+- S8 Step 4a may later add valid free-standing `kind = "trap"` records only from the bounded `trap_capture_sources[]` source map documented in `V2_DOMAIN_MODEL.md §3.2.1a`.
+- Step 4a trap Observations store `program_id = null`, `payload.source_entry_id`, `payload.target_pest_code`, and `payload.count`.
+- Step 4a trap Observations do not store display labels; labels resolve from retained source-map context.
 - No retroactive attach-to-program behavior exists.
 - No threshold result, pressure, severity, diagnosis, or treatment recommendation is stored.
 - `kind = "note"` does not participate in snapshot, monitoring program state, `open_condition`, weather, or treatment logic.
@@ -476,6 +479,7 @@ S8 write paths validate durable facts and references at the moment they are writ
 | Activity group | Multi-plant Activity group writes are atomic per capture batch. | `V2_DOMAIN_MODEL.md` §0.11 / S8 | Only part of a grouped write validates or group invariants fail. |
 | Observation | Observation has Plant, observed date, kind, payload, and catalog/version reference. | `V2_DOMAIN_MODEL.md` §0.6a, §3 / S8 | A required field is missing, kind is invalid, payload does not match kind, the Plant is missing, the catalog version is missing, or the observed date is invalid. |
 | Note Observation | `kind = "note"` has `payload.text` only, trimmed length 1..1000, `program_id = null`, no `observation_group_id` in S8 Step 2, and user provenance `{ "source": "user" }`. | `V2_DOMAIN_MODEL.md` §3.2.5 / S8 Step 2 | Text is missing/empty/too long, unknown payload fields exist, program attachment is attempted, grouping is attempted in S8 Step 2, provenance differs, or future `observed_on` is supplied. |
+| Step 4a trap Observation | `kind = "trap"` has `payload.source_entry_id`, `payload.target_pest_code`, and integer `payload.count >= 0`; `source_entry_id` resolves inside bounded `trap_capture_sources[]`; `target_pest_code` matches the source entry's `local_trap_target_code`; `program_id = null`; provenance is `{ "source": "user" }`. | `V2_DOMAIN_MODEL.md` §3.2.1a / S8 Step 4a | Source is unknown, source species does not match the Plant, target code mismatches the source entry, count is missing/non-integer/negative, future `observed_on` is supplied, program attachment is attempted, provenance differs, or unknown payload fields exist. |
 | Monitoring observation | `program_id`, when present, is valid at write time and immutable after write. | `V2_DOMAIN_MODEL.md` §1.7 / S8 | Program context is invalid for the record or a later write tries to mutate `program_id`. |
 | Free-standing observation | Free-standing Observation stores `program_id = null`. | `V2_DOMAIN_MODEL.md` §1.7.4 / S8 | A write or import tries to attach, infer, or relink it to a monitoring program. |
 | Stage observation | Stage Observation has stage reference or mapped MVP label with retained catalog/version context. | `V2_DOMAIN_MODEL.md` §3.2.3, `V2_UX_MODEL.md` §11 / S8 | Stage reference cannot be resolved or mapped as a history-preserving stage observation. |
@@ -507,6 +511,8 @@ Export rules:
 - Export does not drop archived Plants.
 - Export does not drop free-standing Observations.
 - Export/import must preserve valid `kind = "note"` Observations exactly, including `payload.text`, `program_id = null`, `observed_on`, `recorded_at`, catalog/version context, and provenance.
+- Export/import must preserve valid Step 4a `kind = "trap"` Observations exactly, including `payload.source_entry_id`, `payload.target_pest_code`, `payload.count`, `program_id = null`, `observed_on`, `recorded_at`, catalog/version context, and provenance.
+- Export/import must retain enough source-map version context to resolve Step 4a trap labels later; display labels are not copied into the Observation payload.
 - S8 does not define a final JSON schema or runtime code for export.
 
 ### 1.22 Import validation shape
@@ -522,6 +528,7 @@ Validation boundary:
 - no auto-fix of missing required references
 - no free-standing Observation relinking
 - malformed `kind = "note"` Observations fail closed
+- malformed Step 4a `kind = "trap"` Observations fail closed after Step 4a runtime is implemented
 - no catalog-version substitution
 - no duplicate suppression
 - no destructive history cleanup
@@ -540,6 +547,7 @@ Validation must fail when:
 - Correction references a missing original Activity or Observation
 - Observation payload is invalid for its `kind`
 - `kind = "note"` is malformed, has unknown payload fields, has empty/too-long `payload.text`, carries `program_id`, carries `observation_group_id` in S8 Step 2, has future `observed_on`, or has provenance other than `{ "source": "user" }`
+- Step 4a `kind = "trap"` is malformed, has unknown payload fields, has unknown `payload.source_entry_id`, has a mismatched `payload.target_pest_code`, has missing/non-integer/negative `payload.count`, carries `program_id` other than `null`, has future `observed_on`, or has provenance other than `{ "source": "user" }`
 - Activity group is partially present or violates group invariants
 - archive state would imply deletion
 - import tries to attach a free-standing Observation to a monitoring program
@@ -1198,6 +1206,7 @@ Rules:
 - Free-standing Observations are not retroactively attached, relinked, moved, or counted into program context.
 - Payload similarity, date proximity, target match, or later catalog changes do not change this boundary.
 - `kind = "note"` is a free-standing Observation shape only; it is ignored by snapshot derivation, monitoring program state, `open_condition`, weather composition, treatment logic, pressure/severity/threshold logic, and awareness/risk matching.
+- S8 Step 4a `kind = "trap"` with `program_id = null` is also free-standing only; its count is factual history evidence and is ignored by snapshot derivation, monitoring program state, `open_condition`, weather composition, treatment logic, pressure/severity/threshold logic, and awareness/risk matching.
 
 ### 4.14 Za pregledati cue projection
 
