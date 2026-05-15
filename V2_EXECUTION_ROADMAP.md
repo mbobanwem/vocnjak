@@ -1,6 +1,6 @@
 # V2 Execution Roadmap
 
-**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation is underway; Runtime Slices 0–7 are complete through S7.4. B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1, Step 2, Step 3, and Step 4a are runtime-complete. S8 Step 5a minimal stage diary observation is doc-locked; Step 5a runtime remains deferred until separately owner-approved. Full Runtime Slice 8 is not complete.
+**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation is underway; Runtime Slices 0–7 are complete through S7.4. B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1, Step 2, Step 3, Step 4a, and Step 5a are runtime-complete. Full Runtime Slice 8 is not complete; broader phenology-aware stage confirmation remains deferred until separately owner-approved.
 
 This document converts the completed V2 specification stack (S6–S10) into an implementation execution roadmap. It is bound by the locked core documents and does not authorize runtime implementation by itself.
 
@@ -1258,13 +1258,13 @@ Approved decomposition:
    - Does not use B2 `projected_id` values as pest/target identifiers; `projected_id` remains traceability/display metadata only.
    - Approved first runtime source rows are `337`, `654`, `860`, `1596`, `1643`, `2455`, `2949`, and `2977`.
    - Rows `516`, `1064`, and `1228` remain out of scope because their source text/B2 handling keeps trap-vs-scouting ambiguity.
-5. S8 Step 5a documentation decision — minimal stage diary observation. **Doc-lock complete; runtime deferred.**
-   - Documents a minimal `kind = "stage_obs"` diary path for Plant-detail-only, one-plant-only, free-standing factual stage capture with `program_id = null` and user provenance.
+5. S8 Step 5a — minimal stage diary observation. **Doc-lock complete; runtime complete.**
+   - Documents and implements a minimal `kind = "stage_obs"` diary path for Plant-detail-only, one-plant-only, free-standing factual stage capture with `program_id = null` and user provenance.
    - Uses only a closed, owner-approved `stage_diary_vocabulary[]` of nine entries (`dormant`, `bud_swell`, `bloom_started`, `bloom_finished`, `fruit_set`, `color_change`, `ripening`, `harvest`, `leaf_fall`) documented in `V2_DOMAIN_MODEL.md §3.2.3a`.
    - Defines the write-time invariant, fail-closed validation, and export/import preservation shapes in `V2_ARCHITECTURE.md §1.11, §1.20, §1.21, §1.22, §1.23`.
    - Defines the Plant detail entry point `Dodaj fazu razvoja`, the save copy `Spremi fazu razvoja`, the save toast `Opažanje spremljeno.`, and the Dnevnik factual row shape `Faza razvoja — <label_hr>` in `V2_UX_MODEL.md §0.8, §3.13, §10.5a, §10.12`.
    - Does not introduce a phenology engine, BBCH, per-species phenology, plan recalculation, action unlocking/blocking, diagnosis, treatment advice, weather/stage automation, pressure/severity scoring, compliance UX, multi-plant stage capture, program-attached stage capture, observation correction for stage diary, or any broader stage registry.
-   - Runtime implementation of Step 5a remains deferred until separately owner-approved.
+   - Runtime implementation of Step 5a is complete in `index.html`; broader phenology-aware stage confirmation (§11) remains deferred until separately owner-approved.
 6. Later structured observation capture beyond Step 4a / Step 5a.
    - Deferred until the relevant source maps, registries, or vocabularies are owner-approved.
    - Includes `scouting` capture with `target_code`, `symptom` capture with `symptom_code`, the broader phenology-aware `stage_obs` capture against catalog `stage_vocabulary[]`, program-attached observations, broad target/pest registry if ever approved, symptom registry, full stage vocabulary, monitoring program declarations, multi-plant observation capture, and observation correction.
@@ -1281,7 +1281,7 @@ Deferred means not in the current runtime slice, not abandoned. Each deferred it
 - Scouting capture — return condition: after trap-only Step 4a runtime is accepted and owner approves bounded scouting source-map / target identifier semantics.
 - Symptom capture — return condition: after owner-approved symptom source-map/registry and UX copy that avoids diagnosis.
 - S8 Step 5a documentation — COMPLETE; documents minimal free-standing diary `kind = "stage_obs"` against the bounded `stage_diary_vocabulary[]`.
-- S8 Step 5a runtime implementation — return condition: separate owner approval for runtime; preserves Plant detail one-plant free-standing boundary and `stage_diary_vocabulary[]` scoping.
+- S8 Step 5a runtime implementation — COMPLETE; implemented bounded `stage_diary_vocabulary[]` and stage_obs Observation runtime in `index.html`.
 - Broader phenology-aware stage confirmation (§11) — return condition: separate owner-approved session for a broader phenology vocabulary, plan-effect semantics, or BBCH mapping. Explicitly out of scope for Step 5a.
 - Program-attached observations — return condition: after free-standing capture is stable and owner approves program attachment semantics.
 - Multi-plant structured capture — return condition: after one-plant trap capture is accepted and group identity rules are approved.

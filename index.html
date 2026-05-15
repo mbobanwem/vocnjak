@@ -3691,6 +3691,7 @@ if ('serviceWorker' in navigator) {
 // END V2 STORE — Slice 1
 
 const V2_B2_PRIVATE = Object.create(null);
+const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
 // BEGIN V2 CATALOG — Slice 2
 (function () {
@@ -4470,6 +4471,32 @@ const V2_B2_PRIVATE = Object.create(null);
   }
   V2_B2_PRIVATE.trapCaptureSourceById = trapCaptureSourceById;
   V2_B2_PRIVATE.trapCaptureSourcesForSpecies = trapCaptureSourcesForSpecies;
+
+  var STAGE_DIARY_VOCABULARY = deepFreezeB2Projection([
+    { stage_code: 'dormant', label_hr: 'Mirovanje' },
+    { stage_code: 'bud_swell', label_hr: 'Pupovi bubre' },
+    { stage_code: 'bloom_started', label_hr: 'Cvatnja počela' },
+    { stage_code: 'bloom_finished', label_hr: 'Cvatnja završila' },
+    { stage_code: 'fruit_set', label_hr: 'Formiranje ploda' },
+    { stage_code: 'color_change', label_hr: 'Plod mijenja boju' },
+    { stage_code: 'ripening', label_hr: 'Dozrijevanje' },
+    { stage_code: 'harvest', label_hr: 'Berba' },
+    { stage_code: 'leaf_fall', label_hr: 'Opadanje lista' }
+  ]);
+
+  function stageDiaryEntryByCode(stageCode) {
+    for (var i = 0; i < STAGE_DIARY_VOCABULARY.length; i++) {
+      if (STAGE_DIARY_VOCABULARY[i].stage_code === stageCode) return STAGE_DIARY_VOCABULARY[i];
+    }
+    return null;
+  }
+
+  function stageDiaryEntries() {
+    return STAGE_DIARY_VOCABULARY;
+  }
+
+  V2_STAGE_DIARY_PRIVATE.stageDiaryEntryByCode = stageDiaryEntryByCode;
+  V2_STAGE_DIARY_PRIVATE.stageDiaryEntries = stageDiaryEntries;
 
   function deepFreezeB2Projection(value) {
     if (!value || typeof value !== 'object' || Object.isFrozen(value)) return value;
@@ -6104,6 +6131,7 @@ const V2_B2_PRIVATE = Object.create(null);
     notes: ['notes']
   };
   var trapCaptureSourceById = V2_B2_PRIVATE.trapCaptureSourceById;
+  var stageDiaryEntryByCode = V2_STAGE_DIARY_PRIVATE.stageDiaryEntryByCode;
   var ACTION_TYPES = {
     oil: true,
     copper: true,
@@ -6696,6 +6724,16 @@ const V2_B2_PRIVATE = Object.create(null);
     return [];
   }
 
+  function validateStageObservationPayload(payload, path) {
+    if (!isPlainObject(payload)) return [path + '.payload not a plain object'];
+    var keys = Object.keys(payload);
+    if (keys.length !== 1 || keys[0] !== 'stage_code') return [path + '.payload keys must equal [stage_code]'];
+    if (typeof payload.stage_code !== 'string' || payload.stage_code.trim().length === 0) return [path + '.payload.stage_code required'];
+    var entry = typeof stageDiaryEntryByCode === 'function' ? stageDiaryEntryByCode(payload.stage_code) : null;
+    if (!entry) return [path + '.payload.stage_code unknown'];
+    return [];
+  }
+
   function validateObservation(observation, parsed, catalog, path) {
     if (!isPlainObject(observation)) return [path + ' not a plain object'];
     var keys = Object.keys(observation);
@@ -6710,7 +6748,7 @@ const V2_B2_PRIVATE = Object.create(null);
     var plant = findPlantById(parsed.plants, observation.plant_id);
     if (!plant) return [path + '.plant_id must reference an existing plant'];
     if (observation.catalog_version !== parsed.meta.active_catalog_version || observation.catalog_version !== 'catalog_v1') return [path + '.catalog_version must match active catalog'];
-    if (observation.kind !== 'note' && observation.kind !== 'trap') return [path + '.kind unsupported'];
+    if (observation.kind !== 'note' && observation.kind !== 'trap' && observation.kind !== 'stage_obs') return [path + '.kind unsupported'];
     var dateErr = checkDate(observation.observed_on);
     if (dateErr) return [path + '.observed_on ' + dateErr];
     if (!isIsoUtcTimestamp(observation.recorded_at)) return [path + '.recorded_at must be an ISO UTC timestamp'];
@@ -6719,7 +6757,8 @@ const V2_B2_PRIVATE = Object.create(null);
     if (observation.program_id !== null) return [path + '.program_id must be null for free-standing Observations'];
     if (!isPlainObject(observation.provenance) || Object.keys(observation.provenance).length !== 1 || observation.provenance.source !== 'user') return [path + '.provenance must be exactly {source:"user"}'];
     if (observation.kind === 'note') return validateNoteObservationPayload(observation.payload, path);
-    return validateTrapObservationPayload(observation.payload, plant, path);
+    if (observation.kind === 'trap') return validateTrapObservationPayload(observation.payload, plant, path);
+    return validateStageObservationPayload(observation.payload, path);
   }
 
   function validateAllObservations(observations, parsed, catalog) {
@@ -7078,6 +7117,8 @@ const V2_B2_PRIVATE = Object.create(null);
   var b2SeasonalVisibility = V2_B2_PRIVATE.seasonalVisibility;
   var trapCaptureSourceById = V2_B2_PRIVATE.trapCaptureSourceById;
   var trapCaptureSourcesForSpecies = V2_B2_PRIVATE.trapCaptureSourcesForSpecies;
+  var stageDiaryEntryByCode = V2_STAGE_DIARY_PRIVATE.stageDiaryEntryByCode;
+  var stageDiaryEntries = V2_STAGE_DIARY_PRIVATE.stageDiaryEntries;
   var currentFormFields = null;
   var currentActivityFields = null;
   var currentCorrectionFields = null;
@@ -7633,6 +7674,7 @@ const V2_B2_PRIVATE = Object.create(null);
     section.appendChild(form);
 
     appendTrapObservationCaptureControls(section, plant);
+    appendStageObservationCaptureControls(section, plant);
     parent.appendChild(section);
   }
 
@@ -7736,6 +7778,70 @@ const V2_B2_PRIVATE = Object.create(null);
         zeroRadio: zeroRadio,
         countRadio: countRadio,
         countInput: countInput,
+        message: message,
+        form: form
+      });
+    });
+
+    section.appendChild(form);
+  }
+
+  function appendStageObservationCaptureControls(section, plant) {
+    var entries = typeof stageDiaryEntries === 'function' ? stageDiaryEntries() : [];
+    if (!entries.length) return;
+
+    var opener = makeEl('button', 'v2-plants-secondary', 'Dodaj fazu razvoja');
+    opener.type = 'button';
+    section.appendChild(opener);
+
+    var form = document.createElement('form');
+    form.className = 'v2-plants-form';
+    form.noValidate = true;
+    form.hidden = true;
+
+    var message = makeEl('p', 'v2-plants-error');
+    message.hidden = true;
+    form.appendChild(message);
+
+    var dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.value = localTodayYmd();
+    appendField(form, 'v2StageObservedOn', 'Datum', dateInput);
+
+    var stageSelect = document.createElement('select');
+    for (var i = 0; i < entries.length; i++) {
+      stageSelect.appendChild(makeOption(entries[i].stage_code, entries[i].label_hr));
+    }
+    appendField(form, 'v2StageObservationCode', 'Faza razvoja', stageSelect, 'Bilježi samo onu fazu koju jasno vidiš. Ovo je dnevnički zapis, ne mijenja plan radova.');
+
+    var actions = makeEl('div', 'v2-plants-actions');
+    var save = makeEl('button', 'v2-plants-primary', 'Spremi fazu razvoja');
+    save.type = 'submit';
+    var cancel = makeEl('button', 'v2-plants-secondary', 'Odustani');
+    cancel.type = 'button';
+    actions.appendChild(save);
+    actions.appendChild(cancel);
+    form.appendChild(actions);
+
+    opener.addEventListener('click', function () {
+      opener.hidden = true;
+      form.hidden = false;
+      dateInput.value = localTodayYmd();
+      stageSelect.value = entries[0].stage_code;
+    });
+    cancel.addEventListener('click', function () {
+      form.reset();
+      dateInput.value = localTodayYmd();
+      stageSelect.value = entries[0].stage_code;
+      message.hidden = true;
+      form.hidden = true;
+      opener.hidden = false;
+    });
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      saveStageObservation(plant.plant_id, {
+        dateInput: dateInput,
+        stageSelect: stageSelect,
         message: message,
         form: form
       });
@@ -8222,6 +8328,16 @@ const V2_B2_PRIVATE = Object.create(null);
     return error;
   }
 
+  function stageObservationValidationMessage(error) {
+    if (error.indexOf('.observed_on in the future') !== -1) return 'datum opažanja ne može biti u budućnosti';
+    if (error.indexOf('.observed_on invalid format') !== -1 || error.indexOf('.observed_on not a real date') !== -1) return 'datum opažanja nije valjan';
+    if (error.indexOf('.payload.stage_code required') !== -1) return 'faza razvoja je obavezna';
+    if (error.indexOf('.payload.stage_code unknown') !== -1) return 'odabrana faza razvoja nije valjana';
+    if (error.indexOf('.payload keys must equal [stage_code]') !== -1) return 'nevažeći podaci za fazu razvoja';
+    if (error.indexOf('.program_id must be null') !== -1) return 'opažanje ne smije biti vezano uz program praćenja';
+    return error;
+  }
+
   function noteObservationStoreCandidate(current, nextObservations) {
     return {
       meta: current.store.meta,
@@ -8352,6 +8468,67 @@ const V2_B2_PRIVATE = Object.create(null);
     var errors = window.v2ValidateForBackup(nextStore);
     if (errors.length > 0) {
       fields.message.textContent = 'Opažanje nije spremljeno: ' + trapObservationValidationMessage(errors[0]) + '.';
+      fields.message.hidden = false;
+      return;
+    }
+    try {
+      localStorage.setItem('vocnjak_v2', JSON.stringify(nextStore));
+    } catch (e) {
+      fields.message.textContent = 'Pohranu nije moguće zapisati.';
+      fields.message.hidden = false;
+      return;
+    }
+    fields.form.reset();
+    pendingDetailStatus = 'Opažanje spremljeno.';
+    if (location.hash === plantDetailRoute(plantId)) render();
+    else location.hash = plantDetailRoute(plantId);
+  }
+
+  function buildStageObservation(current, plantId, fields) {
+    var plant = findPlant(current.store.plants, plantId);
+    if (!plant) return { ok: false, error: 'Voćka nije pronađena.' };
+    if (!fields.dateInput.value) return { ok: false, error: 'Datum opažanja je obavezan.' };
+    if (fields.dateInput.value > localTodayYmd()) return { ok: false, error: 'Datum ne može biti u budućnosti.' };
+    var stageCode = fields.stageSelect.value;
+    if (typeof stageCode !== 'string' || stageCode.length === 0) return { ok: false, error: 'Faza razvoja je obavezna.' };
+    var entry = typeof stageDiaryEntryByCode === 'function' ? stageDiaryEntryByCode(stageCode) : null;
+    if (!entry) return { ok: false, error: 'Odabrana faza razvoja nije valjana.' };
+    var observationId = nextUniqueId('observation', current.store.observations, 'observation_id');
+    if (!observationId) return { ok: false, error: 'Greška pri generaciji identifikatora.' };
+    return {
+      ok: true,
+      observation: {
+        observation_id: observationId,
+        plant_id: plant.plant_id,
+        catalog_version: current.store.meta.active_catalog_version,
+        kind: 'stage_obs',
+        observed_on: fields.dateInput.value,
+        recorded_at: new Date().toISOString(),
+        payload: { stage_code: stageCode },
+        program_id: null,
+        provenance: { source: 'user' }
+      }
+    };
+  }
+
+  function saveStageObservation(plantId, fields) {
+    fields.message.hidden = true;
+    var current = readValidStore();
+    if (!current.ok) {
+      fields.message.textContent = current.error;
+      fields.message.hidden = false;
+      return;
+    }
+    var built = buildStageObservation(current, plantId, fields);
+    if (!built.ok) {
+      fields.message.textContent = built.error;
+      fields.message.hidden = false;
+      return;
+    }
+    var nextStore = noteObservationStoreCandidate(current, current.store.observations.concat([built.observation]));
+    var errors = window.v2ValidateForBackup(nextStore);
+    if (errors.length > 0) {
+      fields.message.textContent = 'Opažanje nije spremljeno: ' + stageObservationValidationMessage(errors[0]) + '.';
       fields.message.hidden = false;
       return;
     }
@@ -9617,7 +9794,7 @@ const V2_B2_PRIVATE = Object.create(null);
 
   function historyObservationsForPlant(observations, plantId) {
     return observations.filter(function (observation) {
-      return (observation.kind === 'note' || observation.kind === 'trap') && (!plantId || observation.plant_id === plantId);
+      return (observation.kind === 'note' || observation.kind === 'trap' || observation.kind === 'stage_obs') && (!plantId || observation.plant_id === plantId);
     });
   }
 
@@ -9637,8 +9814,12 @@ const V2_B2_PRIVATE = Object.create(null);
     });
     var observations = historyObservationsForPlant(result.store.observations, plantId);
     for (var i = 0; i < observations.length; i++) {
+      var obsType;
+      if (observations[i].kind === 'trap') obsType = 'trap_observation';
+      else if (observations[i].kind === 'stage_obs') obsType = 'stage_observation';
+      else obsType = 'note_observation';
       items.push({
-        type: observations[i].kind === 'trap' ? 'trap_observation' : 'note_observation',
+        type: obsType,
         date: observations[i].observed_on,
         recorded_at: observations[i].recorded_at,
         id: observations[i].observation_id,
@@ -9675,11 +9856,23 @@ const V2_B2_PRIVATE = Object.create(null);
     parent.appendChild(card);
   }
 
+  function appendStageObservationCard(parent, observation, result) {
+    var plant = findPlant(result.store.plants, observation.plant_id);
+    var plantLabel = plant ? plantTitle(plant) : observation.plant_id;
+    var entry = typeof stageDiaryEntryByCode === 'function' ? stageDiaryEntryByCode(observation.payload.stage_code) : null;
+    var label = entry ? entry.label_hr : observation.payload.stage_code;
+    var card = makeEl('article', 'v2-diary-card');
+    card.appendChild(makeEl('p', 'v2-diary-title', formatDateYmd(observation.observed_on) + ' · Faza razvoja — ' + label));
+    card.appendChild(makeEl('span', 'v2-diary-meta', 'Opažanja · ' + plantLabel));
+    parent.appendChild(card);
+  }
+
   function appendDiaryItems(parent, items, result, options) {
     for (var i = 0; i < items.length; i++) {
       if (items[i].type === 'activity_group') appendDiaryGroupCard(parent, items[i].group, result, options);
       else if (items[i].type === 'note_observation') appendNoteObservationCard(parent, items[i].observation, result);
       else if (items[i].type === 'trap_observation') appendTrapObservationCard(parent, items[i].observation, result);
+      else if (items[i].type === 'stage_observation') appendStageObservationCard(parent, items[i].observation, result);
     }
   }
 
