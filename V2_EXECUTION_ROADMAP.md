@@ -1,6 +1,6 @@
 # V2 Execution Roadmap
 
-**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation is underway; Runtime Slices 0–7 are complete through S7.4. B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 and Step 2 are complete. Full Runtime Slice 8 is not complete and later Slice 8 steps remain deferred.
+**Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation is underway; Runtime Slices 0–7 are complete through S7.4. B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1, Step 2, and Step 3 are complete. Full Runtime Slice 8 is not complete and later Slice 8 steps remain deferred.
 
 This document converts the completed V2 specification stack (S6–S10) into an implementation execution roadmap. It is bound by the locked core documents and does not authorize runtime implementation by itself.
 
@@ -1135,7 +1135,7 @@ Deferred / next-slice notes:
 
 - Runtime Slice 7 is complete through S7.4; Plant detail seasonal cards, Detalj sezonske radnje, Plant detail diary preview, and display hardening landed.
 - Monitoring/Praćenje remains product-critical and must later appear in Kalendar/Pregled, but visible Monitoring UI is not part of Slice 6.
-- Runtime Slice 8 first implementation is complete: Plant detail read-only B2 monitoring/risk preview only; Pregled/Kalendar integration is deferred until timing/display semantics are owner-approved.
+- Runtime Slice 8 first implementation is complete: Plant detail read-only B2 monitoring/risk preview only. Pregled/Kalendar integration was later owner-approved and completed in Runtime Slice 8 Step 3.
 
 Stop conditions:
 
@@ -1220,9 +1220,9 @@ Parallelization notes:
 
 ---
 
-## 36. Slice 8 — Plant detail B2 preview first, then note observations
+## 36. Slice 8 — Plant detail B2 preview, notes, then read-only Pregled/Kalendar visibility
 
-Status: STEP 1 + STEP 2 COMPLETE — Plant detail read-only B2 preview is implemented, and Plant detail free-standing note Observation capture + Dnevnik evidence is implemented. Full Runtime Slice 8 is not complete and later Slice 8 steps remain deferred until owner-approved.
+Status: STEP 1 + STEP 2 + STEP 3 COMPLETE — Plant detail read-only B2 preview is implemented, Plant detail free-standing note Observation capture + Dnevnik evidence is implemented, and read-only Pregled/Kalendar B2 monitoring/risk visibility is implemented. Full Runtime Slice 8 is not complete and later Slice 8 steps remain deferred until owner-approved.
 
 Purpose:
 
@@ -1244,9 +1244,12 @@ Approved decomposition:
    - Renders saved note Observations in Dnevnik under `Opažanja`, not `Praćenje`.
    - Comes before Pregled/Kalendar monitoring integration.
    - Does not add program attachment, structured observation kinds, observation correction, Pregled/Kalendar entry points, `Bez zapisa`, `Zadnji zapis`, or snapshot monitoring output.
-3. Later read-only Pregled/Kalendar monitoring/risk visibility.
-   - Deferred until after note capture and timing/display semantics are owner-approved.
-   - Must not derive urgency, overdue state, compliance, or scheduled-work pressure from B2 metadata.
+3. S8 Step 3: read-only Pregled/Kalendar monitoring/risk visibility. **Complete.**
+   - Uses the private B2 projection boundary plus private source-row date-window metadata from `V2_ORCHARD_PLAN_TEMPLATES.md`.
+   - Pregled shows only current overlapping seasonal monitoring/risk context.
+   - Kalendar shows B2 monitoring/risk date ranges under `Praćenje` for overlapped months.
+   - Does not derive urgency, compliance, or scheduled-work pressure from B2 metadata.
+   - Does not add capture, program attachment, structured observation kinds, observation correction, snapshot monitoring output, storage shape changes, validators, registries, global B2 exposure, diagnosis, or treatment advice.
 4. Later structured observation capture.
    - Deferred until registries/vocabularies are owner-approved.
    - Includes `trap` capture, `scouting` capture with `target_code`, `symptom` capture with `symptom_code`, `stage_obs` capture with `stage_code`, program-attached observations, target/pest registry, symptom registry, stage vocabulary, monitoring program declarations, multi-plant observation capture, and observation correction.
@@ -1288,7 +1291,8 @@ Produces:
 - Rendering separation per V2_UX_MODEL.md §15 + V2_ARCHITECTURE.md §4.12–§4.13: `monitoring_track` stable ids feed štetnici/bolesti monitoring surfaces; `risk_awareness_track` stable ids feed promatranje/rizik/stanje surfaces. This is audit/projection metadata only, not new canonical runtime schema, not a new user data model, and not a registry. Runtime must not infer the track from Croatian label pattern-matching.
 - First-step examples: `Praćenje šljivinog savijača — proljetni let` and `Sezonska napomena: postoji rizik pucanja plodova nakon jače kiše`.
 - S8 Step 2 runtime: Plant detail `kind = "note"` capture + Dnevnik evidence is implemented, with no program attachment and no structured observation registry dependency.
-- Later only: Pregled §1.8 Praćenje, Kalendar §2.11 monitoring, Kalendar §2.12 risk-awareness, program-attached observation capture, structured trap/scouting/symptom/stage capture, monitoring-context record displays, `Bez zapisa`, `Zadnji zapis`, and stage confirmation.
+- S8 Step 3 runtime: Pregled §1.8 Praćenje plus Kalendar §2.11 monitoring / §2.12 risk-awareness visibility are implemented read-only, without capture or record-status semantics.
+- Later only: program-attached observation capture, structured trap/scouting/symptom/stage capture, monitoring-context record displays, and stage confirmation.
 - Stage vocabulary rule: B2 did not add `stage_vocabulary[]`. Stage confirmation stays deferred until the owner approves a minimal generic MVP vocabulary or an explicit stage-write deferral/restriction.
 
 Manual verification:
@@ -1579,7 +1583,7 @@ Pre-Slice-7 Action Window Notes Projection prerequisite (B1 + B1.1):
 - no new `innerHTML`, `outerHTML`, `document.write`, `eval`, or `new Function(` calls were introduced
 - Slice 6 surfaces (Pregled / Kalendar / seasonal-action placeholder) are unchanged
 - Activity and Correction schemas / validators are unchanged
-- B2 stable-id source-map projection grouping is complete as metadata only and was NOT implemented by B1 or B1.1. Runtime Slice 8 Step 1 added Plant detail read-only B2 monitoring/risk preview only; Runtime Slice 8 Step 2 added Plant detail free-standing note Observation capture and Dnevnik / plant-history `Opažanja` rows only. `monitoring_programs[]`, minimal generic `stage_vocabulary[]` or stage-write deferral/restriction, Kalendar §2.11 / §2.12 Praćenje, Pregled Praćenje, structured/program-attached observation capture, and broader monitoring/risk runtime integration remain later owner-approved Slice 8 work. The current B2 projection does not add `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`.
+- B2 stable-id source-map projection grouping is complete as metadata only and was NOT implemented by B1 or B1.1. Runtime Slice 8 Step 1 added Plant detail read-only B2 monitoring/risk preview only; Runtime Slice 8 Step 2 added Plant detail free-standing note Observation capture and Dnevnik / plant-history `Opažanja` rows only; Runtime Slice 8 Step 3 added read-only Pregled/Kalendar B2 monitoring/risk visibility only. `monitoring_programs[]`, minimal generic `stage_vocabulary[]` or stage-write deferral/restriction, structured/program-attached observation capture, and broader monitoring/risk runtime integration remain later owner-approved Slice 8 work. The current B2 projection does not add `awareness_definitions[]`, `target_registry[]`, or `symptom_registry[]`.
 - full browser runtime verification, Cloudflare deployment verification, full import/export UI round-trip, and direct protected legacy localStorage byte-dump comparison were not performed for the B1 or B1.1 commits
 
 Slice 7 — Plant detail, Detalj, optional weather:
@@ -1593,9 +1597,9 @@ Slice 8 — Plant detail B2 preview first, then observations/stage:
 
 - Step 1 complete: Plant detail read-only B2 monitoring/risk preview, with monitoring and risk-awareness separated if both appear on Plant detail
 - Step 2 complete: Plant detail free-standing note Observation capture + Dnevnik evidence under `Opažanja`
+- Step 3 complete: read-only Pregled/Kalendar B2 monitoring/risk visibility under neutral seasonal copy
 - Full Runtime Slice 8 is not complete
-- Pregled/Kalendar monitoring/risk integration waits for owner-approved timing/display semantics
-- Still deferred: structured trap/scouting/symptom/stage capture, program-attached observations, observation correction, `Bez zapisa` / `Zadnji zapis`, diagnosis/treatment logic, and stage confirmation
+- Still deferred: structured trap/scouting/symptom/stage capture, program-attached observations, observation correction, monitoring-context record-status copy, diagnosis/treatment logic, and stage confirmation
 - Next work is planning/approval for the next S8 step
 
 Slice 9 — Observation correction, archive / lifecycle:
@@ -1771,4 +1775,4 @@ Runtime Slice 0 rules (re-stated for the handoff):
 
 Runtime implementation still requires explicit owner approval after S11 is closed. Even with this roadmap complete, no runtime work begins until the owner explicitly opens runtime Slice 0.
 
-Post-S8 Step 2 tracker note: Runtime Slices 0–7 are complete through `d61cc90 Harden S7 seasonal action detail display`, B2 metadata-only projection boundary is complete, Runtime Slice 8 Step 1 is complete as Plant detail-only read-only B2 monitoring/risk preview, and Runtime Slice 8 Step 2 is complete as Plant detail free-standing note Observation capture plus Dnevnik / plant-history evidence under `Opažanja`. Full Runtime Slice 8 is not complete. The seasonal snapshot remains private, read-time, derived, and non-persisted. Later Slice 8 steps remain deferred until owner-approved.
+Post-S8 Step 3 tracker note: Runtime Slices 0–7 are complete through `d61cc90 Harden S7 seasonal action detail display`, B2 metadata-only projection boundary is complete, Runtime Slice 8 Step 1 is complete as Plant detail-only read-only B2 monitoring/risk preview, Runtime Slice 8 Step 2 is complete as Plant detail free-standing note Observation capture plus Dnevnik / plant-history evidence under `Opažanja`, and Runtime Slice 8 Step 3 is complete as read-only Pregled/Kalendar B2 monitoring/risk visibility. Full Runtime Slice 8 is not complete. The seasonal snapshot remains private, read-time, derived, and non-persisted. Later Slice 8 steps remain deferred until owner-approved.

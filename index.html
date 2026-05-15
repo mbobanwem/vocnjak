@@ -3726,6 +3726,49 @@ const V2_B2_PRIVATE = Object.create(null);
   };
   var B2_PROJECTION_SOURCE_FILE = 'V2_ORCHARD_PLAN_TEMPLATES.md';
   var B2_PROJECTION_VISIBILITY = 'hidden_until_slice_8';
+  var B2_PROJECTION_SOURCE_WINDOWS = deepFreezeB2Projection({
+    337: b2ProjectionWindow(4, 25, 8, 15),
+    446: b2ProjectionWindow(3, 20, 6, 30),
+    484: b2ProjectionWindow(4, 20, 8, 15),
+    516: b2ProjectionWindow(4, 20, 8, 15),
+    654: b2ProjectionWindow(4, 25, 6, 20),
+    747: b2ProjectionWindow(3, 25, 7, 10),
+    796: b2ProjectionWindow(6, 1, 7, 25),
+    860: b2ProjectionWindow(4, 25, 7, 10),
+    918: b2ProjectionWindow(3, 28, 7, 15),
+    1049: b2ProjectionWindow(4, 15, 7, 31),
+    1064: b2ProjectionWindow(4, 15, 7, 31),
+    1079: b2ProjectionWindow(5, 1, 8, 31),
+    1213: b2ProjectionWindow(4, 15, 7, 31),
+    1228: b2ProjectionWindow(4, 15, 7, 31),
+    1243: b2ProjectionWindow(5, 1, 8, 31),
+    1375: b2ProjectionWindow(2, 1, 3, 31),
+    1418: b2ProjectionWindow(4, 1, 5, 15),
+    1443: b2ProjectionWindow(4, 1, 8, 31),
+    1481: b2ProjectionWindow(4, 1, 7, 31),
+    1596: b2ProjectionWindow(4, 25, 6, 15),
+    1643: b2ProjectionWindow(6, 15, 8, 31),
+    1694: b2ProjectionWindow(4, 1, 8, 31),
+    1732: b2ProjectionWindow(4, 1, 6, 15),
+    1757: b2ProjectionWindow(4, 1, 9, 15),
+    1809: b2ProjectionWindow(5, 20, 9, 15),
+    1931: b2ProjectionWindow(4, 20, 7, 15),
+    1969: b2ProjectionWindow(4, 25, 8, 15),
+    2004: b2ProjectionWindow(4, 25, 8, 15),
+    2132: b2ProjectionWindow(2, 1, 3, 31),
+    2182: b2ProjectionWindow(4, 15, 8, 15),
+    2227: b2ProjectionWindow(4, 15, 8, 15),
+    2429: b2ProjectionWindow(4, 1, 5, 31),
+    2440: b2ProjectionWindow(4, 1, 5, 31),
+    2455: b2ProjectionWindow(6, 1, 9, 30),
+    2779: b2ProjectionWindow(5, 1, 8, 31),
+    2795: b2ProjectionWindow(8, 1, 10, 15),
+    2949: b2ProjectionWindow(7, 1, 9, 15),
+    2977: b2ProjectionWindow(5, 1, 8, 15),
+    3089: b2ProjectionWindow(1, 1, 3, 31),
+    3160: b2ProjectionWindow(5, 1, 7, 15),
+    3188: b2ProjectionWindow(3, 1, 4, 30)
+  });
   var B2_PROJECTION_BOUNDARY = deepFreezeB2Projection({
     projection_version: 'b2_metadata_only_v1',
     runtime_visibility: B2_PROJECTION_VISIBILITY,
@@ -4169,6 +4212,10 @@ const V2_B2_PRIVATE = Object.create(null);
   if (B2_PROJECTION_VALIDATION_ERRORS.length && window.console && typeof window.console.error === 'function') {
     window.console.error('Vocnjak V2 B2 projection metadata validation failed.', B2_PROJECTION_VALIDATION_ERRORS);
   }
+  var B2_DISPLAY_VALIDATION_ERRORS = validateB2DisplayMetadata(B2_PROJECTION_BOUNDARY, B2_PROJECTION_SOURCE_WINDOWS);
+  if (B2_DISPLAY_VALIDATION_ERRORS.length && window.console && typeof window.console.error === 'function') {
+    window.console.error('Vocnjak V2 B2 display metadata validation failed.', B2_DISPLAY_VALIDATION_ERRORS);
+  }
 
   function b2PlantDetailMethodText(methodKind) {
     if (methodKind === 'trap') return 'Feromonska ili ljepljiva klopka, ako postoji u praksi.';
@@ -4202,6 +4249,154 @@ const V2_B2_PRIVATE = Object.create(null);
     return preview;
   }
   V2_B2_PRIVATE.plantDetailPreview = b2PlantDetailPreview;
+
+  function b2SeasonalVisibility(plants, today) {
+    var empty = { current: [], all: [] };
+    if (B2_PROJECTION_VALIDATION_ERRORS.length > 0 || B2_DISPLAY_VALIDATION_ERRORS.length > 0) return empty;
+    if (!Array.isArray(plants) || typeof today !== 'string' || today.length < 10) return empty;
+    var year = Number(today.slice(0, 4));
+    if (!year) return empty;
+
+    var sourceEntries = b2SourceEntriesByRow(B2_PROJECTION_BOUNDARY);
+    var sortedPlants = plants.slice().sort(function (a, b) { return a.stable_order - b.stable_order; });
+    var groupsByKey = Object.create(null);
+    var items = B2_PROJECTION_BOUNDARY.projected_items || [];
+
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var refs = item.source_refs || [];
+      for (var r = 0; r < refs.length; r++) {
+        var ref = refs[r];
+        var sourceEntry = sourceEntries[ref.source_row];
+        var sourceWindow = B2_PROJECTION_SOURCE_WINDOWS[ref.source_row];
+        if (!sourceEntry || !sourceWindow) continue;
+        var dates = b2DisplayWindowDates(sourceWindow, year);
+        var key = [
+          item.projected_id,
+          item.track,
+          dates.effective_open,
+          dates.effective_close
+        ].join('|');
+        if (!groupsByKey[key]) {
+          groupsByKey[key] = {
+            projected_id: item.projected_id,
+            track: item.track,
+            method_kind: item.method_kind,
+            label: item.label_hr_draft,
+            effective_open: dates.effective_open,
+            effective_close: dates.effective_close,
+            window: sourceWindow,
+            source_rows: [],
+            species: [],
+            plants: [],
+            _sourceRows: Object.create(null),
+            _species: Object.create(null),
+            _plants: Object.create(null)
+          };
+        }
+        b2AddGroupSource(groupsByKey[key], ref.source_row);
+        b2AddMatchingPlants(groupsByKey[key], sortedPlants, sourceEntry.species || item.species || []);
+      }
+    }
+
+    var all = Object.keys(groupsByKey).map(function (key) {
+      var group = groupsByKey[key];
+      delete group._sourceRows;
+      delete group._species;
+      delete group._plants;
+      return group;
+    }).filter(function (group) {
+      return group.plants.length > 0;
+    });
+    all.sort(b2DisplayGroupSort);
+    return {
+      current: all.filter(function (group) {
+        return group.effective_open <= today && group.effective_close >= today;
+      }),
+      all: all
+    };
+  }
+  V2_B2_PRIVATE.seasonalVisibility = b2SeasonalVisibility;
+
+  function b2ProjectionWindow(monthStart, dayStart, monthEnd, dayEnd) {
+    return {
+      monthStart: monthStart,
+      dayStart: dayStart,
+      monthEnd: monthEnd,
+      dayEnd: dayEnd
+    };
+  }
+
+  function b2SourceEntriesByRow(boundary) {
+    var byRow = Object.create(null);
+    var entries = boundary.source_entries || [];
+    for (var i = 0; i < entries.length; i++) byRow[entries[i].source_row] = entries[i];
+    return byRow;
+  }
+
+  function b2YmdFromMonthDay(year, month, day) {
+    return year + '-' + (month < 10 ? '0' + month : '' + month) + '-' + (day < 10 ? '0' + day : '' + day);
+  }
+
+  function b2DisplayWindowDates(sourceWindow, year) {
+    return {
+      effective_open: b2YmdFromMonthDay(year, sourceWindow.monthStart, sourceWindow.dayStart),
+      effective_close: b2YmdFromMonthDay(year, sourceWindow.monthEnd, sourceWindow.dayEnd)
+    };
+  }
+
+  function b2AddGroupSource(group, sourceRow) {
+    if (group._sourceRows[sourceRow]) return;
+    group._sourceRows[sourceRow] = true;
+    group.source_rows.push(sourceRow);
+  }
+
+  function b2AddMatchingPlants(group, plants, species) {
+    for (var i = 0; i < plants.length; i++) {
+      var plant = plants[i];
+      if (!plant || typeof plant.species !== 'string' || species.indexOf(plant.species) === -1) continue;
+      if (!group._species[plant.species]) {
+        group._species[plant.species] = true;
+        group.species.push(plant.species);
+      }
+      if (group._plants[plant.plant_id]) continue;
+      group._plants[plant.plant_id] = true;
+      group.plants.push(plant);
+    }
+  }
+
+  function b2DisplayGroupSort(a, b) {
+    if (a.effective_open !== b.effective_open) return a.effective_open.localeCompare(b.effective_open);
+    if (a.track !== b.track) return a.track.localeCompare(b.track);
+    return a.label.localeCompare(b.label, 'hr');
+  }
+
+  function validateB2DisplayMetadata(boundary, windowsByRow) {
+    var errors = [];
+    if (!isPlainObject(windowsByRow)) return ['B2 display windows must be a plain object.'];
+    (boundary.source_entries || []).forEach(function (sourceEntry) {
+      var sourceWindow = windowsByRow[sourceEntry.source_row];
+      if (!isPlainObject(sourceWindow)) {
+        errors.push('Missing B2 display window for row ' + sourceEntry.source_row);
+        return;
+      }
+      if (!b2ValidDisplayWindow(sourceWindow)) errors.push('Invalid B2 display window for row ' + sourceEntry.source_row);
+    });
+    return errors;
+  }
+
+  function b2ValidDisplayWindow(sourceWindow) {
+    if (!b2ValidMonthDay(sourceWindow.monthStart, sourceWindow.dayStart)) return false;
+    if (!b2ValidMonthDay(sourceWindow.monthEnd, sourceWindow.dayEnd)) return false;
+    return (sourceWindow.monthEnd * 100 + sourceWindow.dayEnd) >= (sourceWindow.monthStart * 100 + sourceWindow.dayStart);
+  }
+
+  function b2ValidMonthDay(month, day) {
+    if (!Number.isInteger(month) || !Number.isInteger(day)) return false;
+    if (month < 1 || month > 12) return false;
+    var maxDay = [31,29,31,30,31,30,31,31,30,31,30,31][month - 1];
+    return day >= 1 && day <= maxDay;
+  }
 
   function b2ProjectionSourceRef(row, label) {
     return {
@@ -6796,9 +6991,14 @@ const V2_B2_PRIVATE = Object.create(null);
     'Siječanj','Veljača','Ožujak','Travanj','Svibanj','Lipanj',
     'Srpanj','Kolovoz','Rujan','Listopad','Studeni','Prosinac'
   ];
+  var MONTH_NAMES_HR_GENITIVE = [
+    'siječnja','veljače','ožujka','travnja','svibnja','lipnja',
+    'srpnja','kolovoza','rujna','listopada','studenoga','prosinca'
+  ];
   var hasOwn = Object.prototype.hasOwnProperty;
   var activityHelpers = window.v2ActivityHelpers;
   var b2PlantDetailPreview = V2_B2_PRIVATE.plantDetailPreview;
+  var b2SeasonalVisibility = V2_B2_PRIVATE.seasonalVisibility;
   var currentFormFields = null;
   var currentActivityFields = null;
   var currentCorrectionFields = null;
@@ -8639,6 +8839,94 @@ const V2_B2_PRIVATE = Object.create(null);
     parent.appendChild(section);
   }
 
+  function b2VisibilityForPlants(plants, today) {
+    if (typeof b2SeasonalVisibility !== 'function') return { current: [], all: [] };
+    return b2SeasonalVisibility(plants, today);
+  }
+
+  function b2UniquePlantCount(groups) {
+    var seen = Object.create(null);
+    var count = 0;
+    for (var i = 0; i < groups.length; i++) {
+      for (var p = 0; p < groups[i].plants.length; p++) {
+        var plantId = groups[i].plants[p].plant_id;
+        if (seen[plantId]) continue;
+        seen[plantId] = true;
+        count += 1;
+      }
+    }
+    return count;
+  }
+
+  function appendB2PregledSection(parent, groups) {
+    if (!groups || groups.length === 0) return;
+    var plantCount = b2UniquePlantCount(groups);
+    if (plantCount === 0) return;
+    var section = makeEl('section', 'v2-seasonal-section');
+    section.appendChild(makeEl('h3', '', 'Sezonsko praćenje'));
+    var sentence = plantCount === 1
+      ? 'Trenutno postoji sezonska napomena za ' + plantCountText(plantCount) + '.'
+      : 'Trenutno postoje sezonske napomene za ' + plantCountText(plantCount) + '.';
+    section.appendChild(makeEl('p', 'v2-seasonal-meta', sentence));
+    section.appendChild(makeEl('p', 'v2-seasonal-note', 'Detalji su na kartonu voćke.'));
+    parent.appendChild(section);
+  }
+
+  function b2CalendarTitle(group) {
+    if (group.track === 'risk_awareness_track') return 'Sezonska napomena — ' + group.label;
+    return 'Praćenje — ' + group.label;
+  }
+
+  function b2CalendarTypeLine(group) {
+    if (group.track === 'risk_awareness_track') return 'Tip: sezonska napomena';
+    return 'Tip: praćenje';
+  }
+
+  function b2CalendarInfoLine(group) {
+    if (group.track === 'risk_awareness_track') return 'Informativno, ovisi o stanju voćke i vremenu.';
+    return 'Informativno iz plana, nije zadatak.';
+  }
+
+  function b2MonthDayText(month, day) {
+    return day + '. ' + MONTH_NAMES_HR_GENITIVE[month - 1];
+  }
+
+  function b2SeasonalRangeText(group) {
+    var sourceWindow = group.window;
+    if (!sourceWindow) return formatDateRange(group.effective_open, group.effective_close);
+    if (sourceWindow.monthStart === sourceWindow.monthEnd) {
+      if (sourceWindow.dayStart === sourceWindow.dayEnd) {
+        return b2MonthDayText(sourceWindow.monthStart, sourceWindow.dayStart);
+      }
+      return sourceWindow.dayStart + '.-' + sourceWindow.dayEnd + '. ' + MONTH_NAMES_HR_GENITIVE[sourceWindow.monthStart - 1];
+    }
+    return b2MonthDayText(sourceWindow.monthStart, sourceWindow.dayStart) + ' - ' + b2MonthDayText(sourceWindow.monthEnd, sourceWindow.dayEnd);
+  }
+
+  function appendB2CalendarCard(parent, group) {
+    var card = makeEl('article', 'v2-seasonal-card');
+    card.appendChild(makeEl('p', 'v2-seasonal-card-title', b2CalendarTitle(group)));
+    card.appendChild(makeEl('span', 'v2-seasonal-meta', 'Sezonsko razdoblje: ' + b2SeasonalRangeText(group)));
+    card.appendChild(makeEl('span', 'v2-seasonal-meta', 'Primjenjuje se na ' + plantCountText(group.plants.length) + '.'));
+    card.appendChild(makeEl('span', 'v2-seasonal-meta', b2CalendarTypeLine(group)));
+    card.appendChild(makeEl('span', 'v2-seasonal-note', b2CalendarInfoLine(group)));
+    parent.appendChild(card);
+  }
+
+  function b2GroupOverlapsMonth(group, month) {
+    var start = ymdFromMonthDay(Number(group.effective_open.slice(0, 4)), { month: month, day: 1 });
+    var end = endOfMonthYmd(Number(group.effective_open.slice(0, 4)), month);
+    return group.effective_open <= end && group.effective_close >= start;
+  }
+
+  function appendB2CalendarSection(parent, groups) {
+    if (!groups || groups.length === 0) return;
+    parent.appendChild(makeEl('p', 'v2-seasonal-meta', 'Praćenje'));
+    var list = makeEl('div', 'v2-seasonal-list');
+    for (var i = 0; i < groups.length; i++) appendB2CalendarCard(list, groups[i]);
+    parent.appendChild(list);
+  }
+
   function findSeasonalGroup(snapshot, route) {
     if (!Number.isInteger(route.cycle_year)) return null;
     for (var i = 0; i < snapshot.groups.length; i++) {
@@ -8812,6 +9100,8 @@ const V2_B2_PRIVATE = Object.create(null);
     }
 
     pregledView.appendChild(makeEl('p', 'v2-plants-status', seasonalStatusSentence(snapshot)));
+    var b2Visibility = b2VisibilityForPlants(result.store.plants, snapshot.today);
+    appendB2PregledSection(pregledView, b2Visibility.current);
     var currentGroups = snapshot.groups.filter(groupHasLiveState);
     var missedGroups = snapshot.groups.filter(groupHasMissedState);
     var upcomingGroups = upcomingGroupsForPregled(snapshot);
@@ -8851,6 +9141,7 @@ const V2_B2_PRIVATE = Object.create(null);
       renderSeasonalSnapshotFailure(calendarView, e);
       return;
     }
+    var b2Visibility = b2VisibilityForPlants(result.store.plants, snapshot.today);
     if (result.store.plants.length === 0) {
       calendarView.appendChild(makeEl('p', 'v2-plants-empty', 'Dodaj voćku kako bi se prikazao sezonski kalendar.'));
       return;
@@ -8869,6 +9160,8 @@ const V2_B2_PRIVATE = Object.create(null);
         for (var g = 0; g < monthGroups.length; g++) appendSeasonalCard(list, monthGroups[g], 'calendar', true);
         month.appendChild(list);
       }
+      var b2MonthGroups = b2Visibility.all.filter(function (group) { return b2GroupOverlapsMonth(group, m); });
+      appendB2CalendarSection(month, b2MonthGroups);
       calendarView.appendChild(month);
     }
 
