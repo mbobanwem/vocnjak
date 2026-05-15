@@ -1591,10 +1591,12 @@ Slice 7 — Plant detail, Detalj, optional weather:
 
 Slice 8 — Plant detail B2 preview first, then observations/stage:
 
-- first implementation is complete: Plant detail read-only B2 monitoring/risk preview only
-- monitoring and risk-awareness are separated if both appear on Plant detail
-- Pregled/Kalendar integration waits for owner-approved timing/display semantics
-- observation capture/Dnevnik evidence and stage confirmation remain later steps
+- Step 1 complete: Plant detail read-only B2 monitoring/risk preview, with monitoring and risk-awareness separated if both appear on Plant detail
+- Step 2 complete: Plant detail free-standing note Observation capture + Dnevnik evidence under `Opažanja`
+- Full Runtime Slice 8 is not complete
+- Pregled/Kalendar monitoring/risk integration waits for owner-approved timing/display semantics
+- Still deferred: structured trap/scouting/symptom/stage capture, program-attached observations, observation correction, `Bez zapisa` / `Zadnji zapis`, diagnosis/treatment logic, and stage confirmation
+- Next work is planning/approval for the next S8 step
 
 Slice 9 — Observation correction, archive / lifecycle:
 
