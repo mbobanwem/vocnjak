@@ -4309,6 +4309,7 @@ const V2_B2_PRIVATE = Object.create(null);
       return group.plants.length > 0;
     });
     all.sort(b2DisplayGroupSort);
+    b2MarkAmbiguousDisplayGroups(all);
     return {
       current: all.filter(function (group) {
         return group.effective_open <= today && group.effective_close >= today;
@@ -4317,6 +4318,18 @@ const V2_B2_PRIVATE = Object.create(null);
     };
   }
   V2_B2_PRIVATE.seasonalVisibility = b2SeasonalVisibility;
+
+  function b2MarkAmbiguousDisplayGroups(groups) {
+    var counts = Object.create(null);
+    for (var i = 0; i < groups.length; i++) {
+      var key = groups[i].projected_id + '|' + groups[i].track;
+      counts[key] = (counts[key] || 0) + 1;
+    }
+    for (var j = 0; j < groups.length; j++) {
+      var sigKey = groups[j].projected_id + '|' + groups[j].track;
+      groups[j].requires_species_qualifier = counts[sigKey] > 1;
+    }
+  }
 
   function b2ProjectionWindow(monthStart, dayStart, monthEnd, dayEnd) {
     return {
@@ -8906,11 +8919,21 @@ const V2_B2_PRIVATE = Object.create(null);
   function appendB2CalendarCard(parent, group) {
     var card = makeEl('article', 'v2-seasonal-card');
     card.appendChild(makeEl('p', 'v2-seasonal-card-title', b2CalendarTitle(group)));
+    var qualifier = b2GroupSpeciesQualifier(group);
+    if (qualifier) card.appendChild(makeEl('span', 'v2-seasonal-meta', qualifier));
     card.appendChild(makeEl('span', 'v2-seasonal-meta', 'Sezonsko razdoblje: ' + b2SeasonalRangeText(group)));
     card.appendChild(makeEl('span', 'v2-seasonal-meta', 'Primjenjuje se na ' + plantCountText(group.plants.length) + '.'));
     card.appendChild(makeEl('span', 'v2-seasonal-meta', b2CalendarTypeLine(group)));
     card.appendChild(makeEl('span', 'v2-seasonal-note', b2CalendarInfoLine(group)));
     parent.appendChild(card);
+  }
+
+  function b2GroupSpeciesQualifier(group) {
+    if (!group || !group.requires_species_qualifier) return '';
+    if (!Array.isArray(group.species) || group.species.length === 0) return '';
+    var labels = group.species.map(speciesLabel).filter(function (l) { return l && l.length > 0; });
+    if (labels.length === 0) return '';
+    return labels.join(', ');
   }
 
   function b2GroupOverlapsMonth(group, month) {
@@ -9108,7 +9131,7 @@ const V2_B2_PRIVATE = Object.create(null);
     appendSeasonalSection(pregledView, 'Sada aktualno', currentGroups, 'Trenutno nema aktualnih sezonskih radnji.', 'current', false);
     appendSeasonalSection(pregledView, 'Za provjeru: nema evidencije', missedGroups, 'Nema prošlih sezonskih radnji bez evidencije u ovom prikazu.', 'missed', false);
     appendSeasonalSection(pregledView, 'Uskoro', upcomingGroups, 'Nema skorih sezonskih radnji u ovom prikazu.', 'upcoming', false);
-    if (currentGroups.length === 0 && missedGroups.length === 0 && upcomingGroups.length === 0) {
+    if (currentGroups.length === 0 && missedGroups.length === 0 && upcomingGroups.length === 0 && b2Visibility.current.length === 0) {
       pregledView.appendChild(makeEl('p', 'v2-plants-empty', 'Za ovaj dio sezone nema prikazanih sezonskih radnji.'));
     }
   }
