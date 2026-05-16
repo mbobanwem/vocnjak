@@ -4472,6 +4472,98 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   V2_B2_PRIVATE.trapCaptureSourceById = trapCaptureSourceById;
   V2_B2_PRIVATE.trapCaptureSourcesForSpecies = trapCaptureSourcesForSpecies;
 
+  var TRAP_ADVISORY_SOURCES = deepFreezeB2Projection([
+    {
+      source_entry_id: 'trap_source_654',
+      cadence_note: 'Pregledaj ploče najmanje jednom tjedno, a pred berbu i češće.',
+      bands: [
+        { min: 0, max: 0, label: 'Bez ulova', body: 'Nastavi redovni pregled.' },
+        { min: 1, max: 4, label: 'Nizak ulov (oko 1–5)', body: 'Tipična početna aktivnost — nastavi pratiti.' },
+        { min: 5, max: 19, label: 'Povećana aktivnost (oko 5–15)', body: 'Pojačaj praćenje i provjeri lokalne preporuke.' },
+        { min: 20, max: null, label: 'Jak pritisak (oko 20–30+)', body: 'Moguć ozbiljan napad — odmah provjeri lokalni savjet / poljoprivrednu apoteku.' }
+      ],
+      footer: 'Ovo su informativni primjeri, ne pravila aplikacije. Stvarni pragovi ovise o sorti, godini i lokalnim preporukama.'
+    },
+    {
+      source_entry_id: 'trap_source_860',
+      cadence_note: 'Pregledaj ploče najmanje jednom tjedno, a pred berbu i češće ako se ulov mijenja ili je berba blizu.',
+      bands: [
+        { min: 0, max: 0, label: 'Bez ulova', body: 'Nastavi redovni pregled.' },
+        { min: 1, max: 4, label: 'Nizak ulov (oko 1–5)', body: 'Tipična početna aktivnost — nastavi pratiti.' },
+        { min: 5, max: 19, label: 'Povećana aktivnost (oko 5–15)', body: 'Pojačaj praćenje i provjeri lokalne preporuke.' },
+        { min: 20, max: null, label: 'Jak pritisak (oko 20–30+)', body: 'Moguć ozbiljan napad — odmah provjeri lokalni savjet / poljoprivrednu apoteku.' }
+      ],
+      footer: 'Ovo su informativni primjeri, ne pravila aplikacije. Stvarni pragovi ovise o sorti, godini i lokalnim preporukama. Ulov je dokaz aktivnosti, ne nalog za tretiranje.'
+    },
+    {
+      source_entry_id: 'trap_source_1596',
+      cadence_note: 'Pregledaj klopku najmanje jednom tjedno.',
+      bands: [
+        { min: 0, max: 3, label: 'Nizak/pozadinski ulov', body: 'Nastavi tjedni pregled.' },
+        { min: 4, max: 29, label: 'Pojačana aktivnost (oko 5–10)', body: 'Pažljivije pregledaj plodove.' },
+        { min: 30, max: null, label: 'Moguć jak pritisak (30+ tjedno)', body: 'Zatraži lokalni stručni savjet / savjet poljoprivredne apoteke.' }
+      ],
+      footer: 'Ovi brojevi su informativni primjeri za orijentaciju, ne pravila aplikacije.'
+    },
+    {
+      source_entry_id: 'trap_source_1643',
+      cadence_note: 'Pregledaj klopku tjedno; pred berbu ili ako ulov raste, pregledaj češće.',
+      bands: [
+        { min: 0, max: 3, label: 'Nizak/pozadinski ulov', body: 'Nastavi tjedni pregled.' },
+        { min: 4, max: 29, label: 'Pojačana aktivnost (oko 5–10)', body: 'Pažljivije pregledaj plodove.' },
+        { min: 30, max: null, label: 'Moguć jak pritisak (30+ tjedno)', body: 'Zatraži lokalni stručni savjet / savjet poljoprivredne apoteke.' }
+      ],
+      footer: 'Ovi brojevi su informativni primjeri za orijentaciju, ne pravila aplikacije.'
+    }
+  ]);
+
+  function trapAdvisorySourceById(sourceEntryId) {
+    for (var i = 0; i < TRAP_ADVISORY_SOURCES.length; i++) {
+      if (TRAP_ADVISORY_SOURCES[i].source_entry_id === sourceEntryId) return TRAP_ADVISORY_SOURCES[i];
+    }
+    return null;
+  }
+
+  function recentTrapObservationsForPlant(observations, plantId, sourceEntryId, todayYmd) {
+    if (!Array.isArray(observations) || !plantId || !sourceEntryId || typeof todayYmd !== 'string') return [];
+    var todayParts = todayYmd.split('-');
+    if (todayParts.length !== 3) return [];
+    var startDt = new Date(Number(todayParts[0]), Number(todayParts[1]) - 1, Number(todayParts[2]));
+    if (isNaN(startDt.getTime())) return [];
+    startDt.setDate(startDt.getDate() - 6);
+    var sy = startDt.getFullYear();
+    var sm = startDt.getMonth() + 1;
+    var sd = startDt.getDate();
+    var startYmd = sy + '-' + (sm < 10 ? '0' + sm : '' + sm) + '-' + (sd < 10 ? '0' + sd : '' + sd);
+    var out = [];
+    for (var i = 0; i < observations.length; i++) {
+      var obs = observations[i];
+      if (!obs || obs.kind !== 'trap') continue;
+      if (obs.plant_id !== plantId) continue;
+      if (!obs.payload || obs.payload.source_entry_id !== sourceEntryId) continue;
+      if (typeof obs.observed_on !== 'string') continue;
+      if (obs.observed_on < startYmd || obs.observed_on > todayYmd) continue;
+      out.push(obs);
+    }
+    return out;
+  }
+
+  function resolveTrapAdvisoryBand(advisorySource, totalCount) {
+    if (!advisorySource || !Array.isArray(advisorySource.bands)) return null;
+    if (typeof totalCount !== 'number' || totalCount < 0) return null;
+    for (var i = 0; i < advisorySource.bands.length; i++) {
+      var band = advisorySource.bands[i];
+      if (totalCount < band.min) continue;
+      if (band.max === null || band.max === undefined) return band;
+      if (totalCount <= band.max) return band;
+    }
+    return null;
+  }
+
+  V2_B2_PRIVATE.trapAdvisorySourceById = trapAdvisorySourceById;
+  V2_B2_PRIVATE.recentTrapObservationsForPlant = recentTrapObservationsForPlant;
+  V2_B2_PRIVATE.resolveTrapAdvisoryBand = resolveTrapAdvisoryBand;
+
   var STAGE_DIARY_VOCABULARY = deepFreezeB2Projection([
     { stage_code: 'dormant', label_hr: 'Mirovanje' },
     { stage_code: 'bud_swell', label_hr: 'Pupovi bubre' },
@@ -7117,6 +7209,9 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   var b2SeasonalVisibility = V2_B2_PRIVATE.seasonalVisibility;
   var trapCaptureSourceById = V2_B2_PRIVATE.trapCaptureSourceById;
   var trapCaptureSourcesForSpecies = V2_B2_PRIVATE.trapCaptureSourcesForSpecies;
+  var trapAdvisorySourceById = V2_B2_PRIVATE.trapAdvisorySourceById;
+  var recentTrapObservationsForPlant = V2_B2_PRIVATE.recentTrapObservationsForPlant;
+  var resolveTrapAdvisoryBand = V2_B2_PRIVATE.resolveTrapAdvisoryBand;
   var stageDiaryEntryByCode = V2_STAGE_DIARY_PRIVATE.stageDiaryEntryByCode;
   var stageDiaryEntries = V2_STAGE_DIARY_PRIVATE.stageDiaryEntries;
   var currentFormFields = null;
@@ -7850,6 +7945,73 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     section.appendChild(form);
   }
 
+  function appendPlantDetailTrapAdvisorySection(parent, plant, result) {
+    if (typeof trapCaptureSourcesForSpecies !== 'function') return;
+    if (typeof trapAdvisorySourceById !== 'function') return;
+    var sources = trapCaptureSourcesForSpecies(plant.species);
+    if (!sources.length) return;
+    var observations = result && result.store && Array.isArray(result.store.observations) ? result.store.observations : [];
+    var todayYmd = localTodayYmd();
+
+    var section = makeEl('section', 'v2-plants-section');
+    section.appendChild(makeEl('h3', '', 'Klopke'));
+    var list = makeEl('div', 'v2-seasonal-list');
+    var anyCard = false;
+
+    for (var i = 0; i < sources.length; i++) {
+      var captureSource = sources[i];
+      var advisory = trapAdvisorySourceById(captureSource.source_entry_id);
+      if (!advisory) continue;
+      anyCard = true;
+      var card = makeEl('article', 'v2-seasonal-card');
+      card.appendChild(makeEl('p', 'v2-seasonal-card-title', captureSource.target_label_hr));
+      if (advisory.cadence_note) card.appendChild(makeEl('span', 'v2-seasonal-meta', advisory.cadence_note));
+
+      var lastObs = null;
+      for (var j = 0; j < observations.length; j++) {
+        var obs = observations[j];
+        if (!obs || obs.kind !== 'trap') continue;
+        if (obs.plant_id !== plant.plant_id) continue;
+        if (!obs.payload || obs.payload.source_entry_id !== captureSource.source_entry_id) continue;
+        if (typeof obs.observed_on !== 'string') continue;
+        if (!lastObs || obs.observed_on > lastObs.observed_on) lastObs = obs;
+      }
+      if (lastObs) {
+        card.appendChild(makeEl('span', 'v2-seasonal-note', 'Zadnji spremljeni zapis: ' + formatDateYmd(lastObs.observed_on)));
+      }
+
+      var recent = typeof recentTrapObservationsForPlant === 'function' ? recentTrapObservationsForPlant(observations, plant.plant_id, captureSource.source_entry_id, todayYmd) : [];
+      if (recent.length > 0) {
+        var total = 0;
+        for (var k = 0; k < recent.length; k++) {
+          var rc = recent[k];
+          if (rc && rc.payload && typeof rc.payload.count === 'number') total += rc.payload.count;
+        }
+        var band = typeof resolveTrapAdvisoryBand === 'function' ? resolveTrapAdvisoryBand(advisory, total) : null;
+        var bandText = 'Ulov u zadnjih 7 dana: ' + total;
+        if (band) bandText += ' — ' + band.label + '; ' + band.body;
+        card.appendChild(makeEl('span', 'v2-seasonal-note', bandText));
+      }
+
+      card.appendChild(makeEl('span', 'v2-seasonal-meta', 'Pragovi (informativni):'));
+      var pragoviList = makeEl('ul', 'v2-seasonal-pragovi');
+      for (var b = 0; b < advisory.bands.length; b++) {
+        pragoviList.appendChild(makeEl('li', '', advisory.bands[b].label + ' — ' + advisory.bands[b].body));
+      }
+      card.appendChild(pragoviList);
+
+      if (advisory.footer) {
+        card.appendChild(makeEl('span', 'v2-seasonal-note', advisory.footer));
+      }
+
+      list.appendChild(card);
+    }
+
+    if (!anyCard) return;
+    section.appendChild(list);
+    parent.appendChild(section);
+  }
+
   function renderNotFound() {
     setViews('detail');
     clearNode(detailView);
@@ -7926,6 +8088,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     appendPlantDetailB2Section(detailView, 'Praćenje', b2Preview.monitoring);
     appendPlantDetailB2Section(detailView, 'Sezonske napomene', b2Preview.riskAwareness);
     appendNoteObservationCaptureSection(detailView, plant);
+    appendPlantDetailTrapAdvisorySection(detailView, plant, result);
 
     var diary = makeEl('section', 'v2-plants-section');
     diary.appendChild(makeEl('h3', '', 'Dnevnik ove voćke'));
