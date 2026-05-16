@@ -176,6 +176,34 @@ NOT allowed:
 
 ---
 
+### 4.11 AI image analysis (post-V2 completion subscription candidate)
+
+This is a **post-V2 completion boundary candidate**, not a new concept. Image analysis was already explored historically in `archive/v1/AI_STRATEGY_V1.md` (descriptive AI image analysis via the Plant detail "Analiziraj fotografiju" entry point, app-owned AI backend, future premium / paid tier monetization, no diagnosis / no product / no dose safety rules) and is connected to the onboarding language selection (HR default, EN optional) / multi-language (HR + EN) / subscription model (Freemium + "smart assistant") / paywall UX concept references in `archive/future/STORE_READY_ROADMAP_V1.md` (Sessions 17, 18, 22, 23). Per `CLAUDE.md` archive policy, these are historical concept references only — not authoritative spec.
+
+Scope inherits §4.10's "strictly limited" boundary. Image analysis is descriptive only (leaf, fruit, flower, bark, trap, symptom), may help prefill a `note` (and a future `symptom`) Observation, never replaces deterministic logic, and never auto-saves.
+
+Required wording (verbatim): "AI-assisted image analysis belongs to a future paid/subscription capability discussion and must be reconciled with the existing store-readiness subscription/paywall/multilingual concept references before promotion into V2 core."
+
+This is post-V2 completion boundary, not next after Runtime Slice 8.
+
+Hard boundaries:
+
+- no AI diagnosis
+- no AI treatment instruction
+- no pesticide/product recommendation
+- no AI-authored action recommendation
+- no implementation now
+
+Allowed example wording: "Vidljive su promjene na listu. Zapiši ovo kao opažanje i po potrebi se savjetuj s agronomom."
+
+Forbidden example wording: "Ovo je bolest X. Prskaj proizvodom Y."
+
+Privacy / cost / disclaimer design remain open questions for a dedicated future session.
+
+This entry is non-binding per §2 and may only enter V2 core via the §3 promotion rule (new session, scope, rewrite into the correct active V2 doc, owner sign-off).
+
+---
+
 ## 5. Deferred questions
 
 These are open questions that require structured sessions before inclusion:

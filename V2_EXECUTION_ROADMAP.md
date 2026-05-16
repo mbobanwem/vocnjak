@@ -1222,7 +1222,7 @@ Parallelization notes:
 
 ## 36. Slice 8 — Plant detail B2 preview, notes, then read-only Pregled/Kalendar visibility
 
-Status: STEP 1 + STEP 2 + STEP 3 + STEP 4A RUNTIME COMPLETE; STEP 5A DOC-LOCKED — Plant detail read-only B2 preview is implemented, Plant detail free-standing note Observation capture + Dnevnik evidence is implemented, read-only Pregled/Kalendar B2 monitoring/risk visibility is implemented, Plant-detail-only free-standing trap count capture + Dnevnik evidence is implemented, and minimal free-standing stage diary `kind = "stage_obs"` capture is documented for a later runtime implementation. Full Runtime Slice 8 is not complete; broader deferred S8 work remains tracked in the return map below.
+Status: STEPS 1–5A RUNTIME COMPLETE; STEP 6 AND STEP 7 SPECIFIED AND OPEN — Plant detail read-only B2 preview, Plant detail free-standing note Observation capture + Dnevnik evidence, read-only Pregled/Kalendar B2 monitoring/risk visibility, bounded free-standing trap count capture, and minimal free-standing stage diary `kind = "stage_obs"` capture are implemented in `index.html`. Runtime Slice 8 is not closed; Step 6 (multi-plant structured Observation capture) and Step 7 (template runtime coverage gate + source-backed trap advisory bands + read-only observation status) remain open and are each gated by Claude analysis/proposal before runtime. Runtime Slice 8 cannot close until Step 7's coverage gate concludes either S8 can close or every S8 blocker it identifies has been resolved.
 
 Purpose:
 
@@ -1258,36 +1258,59 @@ Approved decomposition:
    - Does not use B2 `projected_id` values as pest/target identifiers; `projected_id` remains traceability/display metadata only.
    - Approved first runtime source rows are `337`, `654`, `860`, `1596`, `1643`, `2455`, `2949`, and `2977`.
    - Rows `516`, `1064`, and `1228` remain out of scope because their source text/B2 handling keeps trap-vs-scouting ambiguity.
-5. S8 Step 5a — minimal stage diary observation. **Doc-lock complete; runtime complete.**
+5. S8 Step 5a — minimal stage diary observation. **Complete (`1fb4e34`).**
    - Documents and implements a minimal `kind = "stage_obs"` diary path for Plant-detail-only, one-plant-only, free-standing factual stage capture with `program_id = null` and user provenance.
    - Uses only a closed, owner-approved `stage_diary_vocabulary[]` of nine entries (`dormant`, `bud_swell`, `bloom_started`, `bloom_finished`, `fruit_set`, `color_change`, `ripening`, `harvest`, `leaf_fall`) documented in `V2_DOMAIN_MODEL.md §3.2.3a`.
    - Defines the write-time invariant, fail-closed validation, and export/import preservation shapes in `V2_ARCHITECTURE.md §1.11, §1.20, §1.21, §1.22, §1.23`.
    - Defines the Plant detail entry point `Dodaj fazu razvoja`, the save copy `Spremi fazu razvoja`, the save toast `Opažanje spremljeno.`, and the Dnevnik factual row shape `Faza razvoja — <label_hr>` in `V2_UX_MODEL.md §0.8, §3.13, §10.5a, §10.12`.
    - Does not introduce a phenology engine, BBCH, per-species phenology, plan recalculation, action unlocking/blocking, diagnosis, treatment advice, weather/stage automation, pressure/severity scoring, compliance UX, multi-plant stage capture, program-attached stage capture, observation correction for stage diary, or any broader stage registry.
-   - Runtime implementation of Step 5a is complete in `index.html`; broader phenology-aware stage confirmation (§11) remains deferred until separately owner-approved.
-6. Later structured observation capture beyond Step 4a / Step 5a.
-   - Deferred until the relevant source maps, registries, or vocabularies are owner-approved.
-   - Includes `scouting` capture with `target_code`, `symptom` capture with `symptom_code`, the broader phenology-aware `stage_obs` capture against catalog `stage_vocabulary[]`, program-attached observations, broad target/pest registry if ever approved, symptom registry, full stage vocabulary, monitoring program declarations, multi-plant observation capture, and observation correction.
-   - Only later monitoring-context steps may introduce observation-record states such as neutral `Bez zapisa` / `Zadnji zapis` where §0 permits them.
-7. Later broader stage confirmation flow (§11).
-   - Deferred until the owner approves a broader phenology-aware vocabulary beyond the Step 5a diary list.
-   - Stage confirmation must remain optional and non-blocking.
+   - Runtime implementation of Step 5a is complete in `index.html`; broader phenology-aware stage confirmation (§11) remains tracked in the Post-S8 Carry-forward Action Map below.
+6. **S8 Step 6 — Multi-plant structured Observation capture.** Required before Runtime Slice 8 closure.
+   - Required first action: Claude analysis/proposal before runtime.
+   - Analysis must compare the existing Activity multi-plant/group model; determine whether Observations should use `observation_group_id`; define fan-out rules (one Observation per plant with shared group identity); evaluate first safe runtime candidates — `stage_obs` likely first, `note` likely possible, `trap` requires physical-trap semantics before runtime (one trap per plant? one trap for multiple plants? one trap for row/area?).
+   - Hard boundary: no runtime implementation in this closure patch unless separately approved; no destructive schema changes; no broad registry; no diagnosis; no treatment recommendation.
+7. **S8 Step 7 — Template runtime coverage gate + source-backed trap advisory bands + read-only observation status.** Required before Runtime Slice 8 closure.
+   - Required first action: Claude analysis/proposal before runtime; the analysis must produce a traceability table — the table is the gate.
+   - Coverage gate maps `V2_ORCHARD_PLAN_TEMPLATES.md` → bounded source maps / docs → `index.html` runtime → visible UX surfaces. Required columns: Source row / entry, Species, Template content summary, S8 relevance, Expected V2 destination, Current runtime status, Evidence in `index.html` / docs, Gap, Priority, Required next action. Allowed "Current runtime status" values: `implemented`, `partially implemented`, `missing`, `intentionally not runtime`, `blocked by owner decision`. Allowed "Priority" values: `S8 blocker`, `S8 polish`, `remaining V2`, `post-V2`. Scope covers monitoring rows, trap rows, trap advisory / count interpretation bands, risk-awareness rows, scouting references, symptom references, stage / phenology cues relevant to `stage_obs`, and beginner guidance.
+   - Step 7 must answer explicitly: which plan-template monitoring/observation items are already represented in Plant detail, in Pregled, in Kalendar, in Dnevnik / Observation capture; which are source-backed but not visible to the user yet; and which are missing and must block S8 closure.
+   - Trap advisory display: extract bands only from `V2_ORCHARD_PLAN_TEMPLATES.md`, preserve existing trap count guidance as MUST-PRESERVE (cherry / sour cherry fly bands at 1–5, 5–15, 20–30+ with local-expert / agricultural-pharmacy advice; plum moth bands at 0–3 / 5–10 / 30+ weekly), do not invent global thresholds, respect per-species/per-pest/per-row wording, define safe UI wording for Plant detail and optionally Pregled/Kalendar read-only status.
+   - Allowed examples: `Zadnji spremljeni zapis: 15.06.2026.` · `Ulov u zadnjih 7 dana: 3 — nizak/pozadinski ulov; nastavi pratiti.` · `Ulov u zadnjih 7 dana: 30+ — moguć jak pritisak; zatraži lokalni stručni savjet / savjet poljoprivredne apoteke.`
+   - Hard boundary: no product names; no dosage; no automatic treatment recommendation; no `prskaj sada`; no due/overdue; no `kasniš`; no checkbox/task framing; no compliance UX; no diagnosis.
+   - Hard rule (Slice 8 closure gate): Runtime Slice 8 cannot close until Step 7's coverage gate says either `S8 can close` or every `S8 blocker` row has been resolved.
 
-S8 deferred return map:
+S8 remaining steps:
 
-Deferred means not in the current runtime slice, not abandoned. Each deferred item has a return condition, and agents must not use deferred wording to skip owner-approved S8 work. Step 4a runtime is complete; Step 5a documentation is complete and its runtime remains the next deferred step; broader deferred items require later owner approval.
+Runtime Slice 8 is not closed. Steps 1, 2, 3, 4a, and 5a are runtime-complete (items 1–5 above). Two remaining steps gate Slice 8 closure; each is analysis-first per items 6 and 7 above:
 
-- S8 Step 4a runtime implementation — COMPLETE; implemented bounded `trap_capture_sources[]` and trap Observation runtime in `index.html`.
-- Scouting capture — return condition: after trap-only Step 4a runtime is accepted and owner approves bounded scouting source-map / target identifier semantics.
-- Symptom capture — return condition: after owner-approved symptom source-map/registry and UX copy that avoids diagnosis.
-- S8 Step 5a documentation — COMPLETE; documents minimal free-standing diary `kind = "stage_obs"` against the bounded `stage_diary_vocabulary[]`.
-- S8 Step 5a runtime implementation — COMPLETE; implemented bounded `stage_diary_vocabulary[]` and stage_obs Observation runtime in `index.html`.
-- Broader phenology-aware stage confirmation (§11) — return condition: separate owner-approved session for a broader phenology vocabulary, plan-effect semantics, or BBCH mapping. Explicitly out of scope for Step 5a.
-- Program-attached observations — return condition: after free-standing capture is stable and owner approves program attachment semantics.
-- Multi-plant structured capture — return condition: after one-plant trap capture is accepted and group identity rules are approved.
-- Observation correction — return condition: separate correction session; not a substitute for S8 Step 4 structured capture.
+- S8 Step 6 — Multi-plant structured Observation capture (see item 6).
+- S8 Step 7 — Template runtime coverage gate + source-backed trap advisory bands + read-only observation status (see item 7).
+
+Hard rule: Runtime Slice 8 cannot close until Step 7's coverage gate says either `S8 can close` or every `S8 blocker` row from the coverage gate has been resolved.
+
+Post-S8 Carry-forward Action Map:
+
+Carried forward means tracked for a future owner-approved session, not abandoned. Items below do not gate Slice 8 closure (Step 6 and Step 7 do); they queue up for owner-approved sessions after Slice 8 finally closes. Agents must not use carry-forward wording to skip owner-approved work, remove plan-template guidance, expand scope without explicit owner approval, or duplicate concepts that already exist in `archive/future/STORE_READY_ROADMAP_V1.md` or `archive/v1/AI_STRATEGY_V1.md`.
+
+HIGH / near-term after S8 closure:
+
+- Observation correction — required wording: "Next step after S8 closure may be Claude analysis/proposal for Observation correction." Required analysis must compare the existing Activity correction model before proposing code; decide whether Observation correction reuses the same Correction model; define per-kind correction fields (note text, trap count, stage code); define Dnevnik display (original preserved, corrected status visible alongside). Hard boundary: no destructive edit/delete.
+
+MEDIUM:
+
+- Scouting capture — return condition: after owner-approved bounded scouting source-map / target identifier semantics. No broad pest registry. No diagnosis.
+- Symptom capture — return condition: after owner-approved symptom source-map / registry and UX copy that avoids diagnosis. No "ovo je bolest X" wording.
+- Program-attached observations — return condition: after free-standing capture is stable and owner approves program attachment semantics. Free-standing `note` / `trap` / `stage_obs` remain the current shape.
+- Broader phenology-aware stage confirmation (§11) — return condition: after owner-approved broader phenology vocabulary / plan-effect semantics / BBCH decision. Beyond the Step 5a nine-entry `stage_diary_vocabulary[]`.
+
+LOW / polish:
+
+- Orphan-code fallback display — return condition: low-risk polish pass. Show `Nepoznata faza razvoja` instead of raw `stage_code` if a historical code no longer resolves; analogous fallback for trap codes. No schema change.
 - `Bez zapisa` / `Zadnji zapis` — return condition: after owner-approved non-compliance display rule.
-- Pregled/Kalendar capture/status — return condition: after Plant detail capture/history is accepted and owner approves non-task, non-compliance display semantics.
+- Pregled/Kalendar capture/status beyond Step 7 — return condition: after Plant detail capture/history is accepted and owner approves non-task, non-compliance display semantics not already covered by Step 7.
+
+Post-V2 completion boundary (not next after S8):
+
+- AI-assisted image analysis (paid subscription) — see `V2_FUTURE_ROADMAP.md §4.11`. Concept already exists historically in `archive/v1/AI_STRATEGY_V1.md` and is connected to the existing subscription / paywall / multilingual concept references in `archive/future/STORE_READY_ROADMAP_V1.md` (Sessions 17, 18, 22, 23) per `CLAUDE.md` archive policy (historical reference only, not binding). Required wording: "AI-assisted image analysis belongs to a future paid/subscription capability discussion and must be reconciled with the existing store-readiness subscription/paywall/multilingual concept references before promotion into V2 core." This is post-V2 completion boundary, not next after S8. Hard boundaries: no AI diagnosis; no AI treatment instruction; no pesticide/product recommendation; no AI-authored action recommendation; no implementation now.
 
 Allowed first-step touch points:
 

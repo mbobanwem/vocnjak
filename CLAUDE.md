@@ -104,7 +104,7 @@ Current:
 - §0 monitoring constraints remain locked and authoritative
 - legacy data and V1/V3/V4 keys remain protected
 - implementation was forbidden through S11 documentation; Slices 0, 1, 2, 3, 4, 5, 6, and 7 plus the Pre-Slice-7 Action Window Notes Projection prerequisite (B1 and B1.1) and B2 metadata-only projection boundary were then owner-approved and committed
-- Runtime Slice 8 Step 1, Step 2, Step 3, and Step 4a runtime are complete; later S8 runtime work must remain owner-approved and must preserve the Plant detail free-standing Observation boundary unless the owner explicitly opens the next step
+- Runtime Slice 8 Step 1, Step 2, Step 3, Step 4a, and Step 5a runtime are complete; Runtime Slice 8 remains open for Step 6 (multi-plant structured Observation capture) and Step 7 (template runtime coverage gate + source-backed trap advisory bands + read-only observation status), each gated by Claude analysis/proposal before runtime; Slice 8 cannot close until Step 7's coverage gate concludes either S8 can close or every S8 blocker it identifies is resolved; later S8 runtime work must remain owner-approved and must preserve the Plant detail free-standing Observation boundary unless the owner explicitly opens the next step
 
 ### INPUT FILES (NOT YET VALIDATED V2 TRUTH)
 
