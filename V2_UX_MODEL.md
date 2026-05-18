@@ -132,6 +132,16 @@ S8 Step 7 narrow advisory exception:
 - It must not create monitoring state, task state, compliance state, pressure/severity scoring, diagnosis, treatment advice, automatic action recommendation, product recommendation, dose recommendation, karenca derivation, due/overdue copy, or `prskaj sada` framing.
 - This exception does not weaken the general monitoring prohibitions in §0; it only permits the narrow Step 7 source-backed read-only advisory display.
 
+S8 Step 7b context-only trap advisory exception:
+
+- For owner-approved source-backed trap rows whose approved source in `V2_ORCHARD_PLAN_TEMPLATES.md` lacks numeric treatment thresholds, the Plant detail `Klopke` card renders `Sažetak izvora` (concise per-row source-backed Croatian bullets, drawn directly from that row's entry, condensed only for readability) and `Orijentir za razgovor` (a shared pest-agnostic generic count-orientation block: `0` / `1–5` / `6–19` / `20+`) instead of `Pragovi (informativni)`.
+- `Orijentir za razgovor` bands are conversation orientation only. They are NOT treatment thresholds, pressure scores, risk scores, severity, urgency, or spray recommendations. They do not vary by species, pest, or season.
+- The block must always end with the explicit `Ovo nije prag za tretman.` disclaimer.
+- The `20+` band must only route to local expert / agro pharmacy / advisory service before any treatment decision; it must not recommend a product, dose, or treatment action.
+- `Sažetak izvora` content must be drawn directly from the row's entry in `V2_ORCHARD_PLAN_TEMPLATES.md` and preserve its qualitative tone. Do not invent thresholds. Do not invent agronomic meaning. Do not add product names or doses not present in the source.
+- This exception applies only to context-only entries; numeric-band trap advisory rows continue to render `Pragovi (informativni)` per the Step 7 narrow advisory exception above.
+- §0.1–§0.7 monitoring prohibitions remain in force. This exception does not weaken them; it only permits the narrow Step 7b qualitative-source display where numeric bands are not source-backed.
+
 S8 Step 2 implemented boundary:
 
 - Plant detail only.

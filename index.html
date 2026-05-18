@@ -4515,8 +4515,66 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
         { min: 30, max: null, label: 'Moguć jak pritisak (30+ tjedno)', body: 'Zatraži lokalni stručni savjet / savjet poljoprivredne apoteke.' }
       ],
       footer: 'Ovi brojevi su informativni primjeri za orijentaciju, ne pravila aplikacije.'
+    },
+    {
+      source_entry_id: 'trap_source_337',
+      mode: 'context_only',
+      source_summary_heading_hr: 'Sažetak izvora',
+      source_summary_lines_hr: [
+        'Jabučni savijač (Cydia pomonella) uzrokuje crvljivost i ulazne rupe u plodovima jabuke.',
+        'Feromonska klopka na rubnom / vanjskom dijelu krošnje, 1.5–2 m visine; pregledavati najmanje jednom tjedno.',
+        'Pri svakom pregledu ukloniti ulov, zapisati broj i zamijeniti mamac prema uputi proizvođača.',
+        'Ako nema ulova i nema oštećenja plodova, insekticid nije opravdan.',
+        'Ako se ulov ponavlja ili se vide svježi ubodi / ulazne rupe na plodovima, usporediti s lokalnim pragovima ili stručnim savjetom prije tretmana.'
+      ]
+    },
+    {
+      source_entry_id: 'trap_source_2455',
+      mode: 'context_only',
+      source_summary_heading_hr: 'Sažetak izvora',
+      source_summary_lines_hr: [
+        'Maslinova muha (Bactrocera oleae) — najvažniji štetnik masline.',
+        'Žute ljepljive ploče s atraktantom.',
+        'Tjedno pregledavati.',
+        'Pri jakom naletu odluku provjeriti prema etiketi proizvoda, lokalnoj registraciji i stručnom/lokalnom savjetu; aplikacija ne odlučuje o tretmanu.'
+      ]
+    },
+    {
+      source_entry_id: 'trap_source_2949',
+      mode: 'context_only',
+      source_summary_heading_hr: 'Sažetak izvora',
+      source_summary_lines_hr: [
+        'Orahova muha (Rhagoletis completa) — pratiti aktivnost tijekom ovog prozora.',
+        'Žuta ljepljiva klopka s amonijevim mamcem; provjeravati tjedno.',
+        'Pratiti ulov u klopci i opće stanje zelenog kožuha, bez automatskog zaključka o tretmanu.',
+        'Orahova muha najčešće obezbojuje ili oštećuje zeleni kožuh, ali jezgra često ostaje jestiva.',
+        'Ulov u klopci je dokaz aktivnosti, ne naredba za tretiranje; aplikacija ne odlučuje o tretmanu.'
+      ]
+    },
+    {
+      source_entry_id: 'trap_source_2977',
+      mode: 'context_only',
+      source_summary_heading_hr: 'Sažetak izvora',
+      source_summary_lines_hr: [
+        'Jabučni savijač na orahu (Cydia pomonella) — pratiti aktivnost kroz sezonu.',
+        'Feromonska klopka za Cydia pomonella; provjeravati tjedno tijekom ovog prozora.',
+        'Feromonske klopke za jabučnog savijača mogu privući leptire iz šire okolice, ne samo s oraha.',
+        'Ulov je dokaz prisutnosti / aktivnosti, ne precizna mjera pritiska na konkretno stablo.',
+        'U hobi uzgoju oraha tretman je rijetko nužan; aplikacija ne odlučuje o tretmanu.'
+      ]
     }
   ]);
+
+  var CONTEXT_ONLY_TRAP_ORIENTATION = deepFreezeB2Projection({
+    heading_hr: 'Orijentir za razgovor',
+    orientation_items: [
+      { range_label: '0',    body_hr: 'Nema zabilježenog ulova u ovom unosu.' },
+      { range_label: '1–5',  body_hr: 'Manji ulov; nastavite pratiti trend.' },
+      { range_label: '6–19', body_hr: 'Uočljiviji ulov; usporedite s prethodnim zapisima i vidljivim stanjem plodova / stabla.' },
+      { range_label: '20+',  body_hr: 'Visok ulov za kućni voćnjak; ponesite zapis u poljoprivrednu ljekarnu, lokalnom stručnjaku ili savjetodavnoj službi prije bilo kakve odluke o tretmanu.' }
+    ],
+    footer_hr: 'Ovo nije prag za tretman.'
+  });
 
   function trapAdvisorySourceById(sourceEntryId) {
     for (var i = 0; i < TRAP_ADVISORY_SOURCES.length; i++) {
@@ -8274,21 +8332,42 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
           var rc = recent[k];
           if (rc && rc.payload && typeof rc.payload.count === 'number') total += rc.payload.count;
         }
-        var band = typeof resolveTrapAdvisoryBand === 'function' ? resolveTrapAdvisoryBand(advisory, total) : null;
         var bandText = 'Ulov u zadnjih 7 dana: ' + total;
-        if (band) bandText += ' — ' + band.label + '; ' + band.body;
+        if (advisory.mode !== 'context_only') {
+          var band = typeof resolveTrapAdvisoryBand === 'function' ? resolveTrapAdvisoryBand(advisory, total) : null;
+          if (band) bandText += ' — ' + band.label + '; ' + band.body;
+        }
         card.appendChild(makeEl('span', 'v2-seasonal-note', bandText));
       }
 
-      card.appendChild(makeEl('span', 'v2-seasonal-meta', 'Pragovi (informativni):'));
-      var pragoviList = makeEl('ul', 'v2-seasonal-pragovi');
-      for (var b = 0; b < advisory.bands.length; b++) {
-        pragoviList.appendChild(makeEl('li', '', advisory.bands[b].label + ' — ' + advisory.bands[b].body));
-      }
-      card.appendChild(pragoviList);
+      if (advisory.mode === 'context_only') {
+        card.appendChild(makeEl('span', 'v2-seasonal-meta', (advisory.source_summary_heading_hr || 'Sažetak izvora') + ':'));
+        var sourceList = makeEl('ul', 'v2-seasonal-pragovi');
+        var summaryLines = Array.isArray(advisory.source_summary_lines_hr) ? advisory.source_summary_lines_hr : [];
+        for (var c = 0; c < summaryLines.length; c++) {
+          sourceList.appendChild(makeEl('li', '', summaryLines[c]));
+        }
+        card.appendChild(sourceList);
 
-      if (advisory.footer) {
-        card.appendChild(makeEl('span', 'v2-seasonal-note', advisory.footer));
+        card.appendChild(makeEl('span', 'v2-seasonal-meta', CONTEXT_ONLY_TRAP_ORIENTATION.heading_hr + ':'));
+        var orientList = makeEl('ul', 'v2-seasonal-pragovi');
+        for (var o = 0; o < CONTEXT_ONLY_TRAP_ORIENTATION.orientation_items.length; o++) {
+          var ob = CONTEXT_ONLY_TRAP_ORIENTATION.orientation_items[o];
+          orientList.appendChild(makeEl('li', '', ob.range_label + ' — ' + ob.body_hr));
+        }
+        card.appendChild(orientList);
+        card.appendChild(makeEl('span', 'v2-seasonal-note', CONTEXT_ONLY_TRAP_ORIENTATION.footer_hr));
+      } else {
+        card.appendChild(makeEl('span', 'v2-seasonal-meta', 'Pragovi (informativni):'));
+        var pragoviList = makeEl('ul', 'v2-seasonal-pragovi');
+        for (var b = 0; b < advisory.bands.length; b++) {
+          pragoviList.appendChild(makeEl('li', '', advisory.bands[b].label + ' — ' + advisory.bands[b].body));
+        }
+        card.appendChild(pragoviList);
+
+        if (advisory.footer) {
+          card.appendChild(makeEl('span', 'v2-seasonal-note', advisory.footer));
+        }
       }
 
       list.appendChild(card);

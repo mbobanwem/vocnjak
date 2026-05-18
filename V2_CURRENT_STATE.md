@@ -129,13 +129,13 @@ Coverage map:
 
 | Species | Trap/advisory topic | Current status | Required next action |
 |---|---|---|---|
-| apple | codling moth / jabučni savijač | known gap; prior S3/S5 audit notes (`V2_S3_AUDIT_CONSOLIDATION.md`) say apple codling moth later gets the full trap + fruit-signal pattern; current source row 337 in `V2_ORCHARD_PLAN_TEMPLATES.md` references "lokalni pragovi" but does not list numeric bands | source-check / extract source-backed bands or record explicit owner decision if no numeric bands are available; do not silently leave apple as "no advisory card forever" |
+| apple | codling moth / jabučni savijač | owner-approved context-only advisory runtime implemented in this patch: source-backed `Sažetak izvora` from row 337 plus shared pest-agnostic `Orijentir za razgovor` block; no numeric bands; numeric source-check remains open **only** for concrete numeric treatment thresholds | optional future source-check / extension if concrete numeric treatment thresholds emerge from owner-approved source review |
 | pear | fruit moth / codling-like trap monitoring | needs monitoring split before advisory mapping; trap-vs-scouting ambiguity also tracked at `V2_DOMAIN_MODEL.md` §3.2.1a:716 | resolve pear monitoring split; then source-check advisory bands |
 | quince | codling trap option | source-check required | only add advisory if trap source-check resolves |
 | peach | Grapholita / fruit moth monitoring | future full pattern candidate; trap-vs-scouting ambiguity at source row 1228 tracked at `V2_DOMAIN_MODEL.md` §3.2.1a:716 | source-check bands + fruit-signal pattern |
 | nectarine | Grapholita / fruit moth monitoring | future full pattern candidate; trap-vs-scouting ambiguity at source row 1064 tracked at `V2_DOMAIN_MODEL.md` §3.2.1a:716 | source-check bands + fruit-signal pattern |
-| walnut | walnut fly / codling monitoring (source rows 2949, 2977) | source-check required; current minimal Step 7 intentionally excludes both walnut rows because source carries qualitative wording only and adjoining template wording crosses the Step 7 treatment-framing hard boundary | source-check before advisory mapping; if no numeric bands exist, record explicit owner decision |
-| olive | olive fly trap (source row 2455) | no numeric bands in minimal source; context-only candidate; adjoining template wording for treatment is out of Step 7 scope | keep as polish/context note unless source-backed bands are added; do not promote treatment-framed prose into advisory copy |
+| walnut | walnut fly / codling monitoring (source rows 2949, 2977) | owner-approved context-only advisory runtime implemented in this patch: source-backed `Sažetak izvora` from rows 2949 and 2977 plus shared pest-agnostic `Orijentir za razgovor` block; no numeric bands | optional future source-check / extension if concrete numeric treatment thresholds emerge from owner-approved source review |
+| olive | olive fly trap (source row 2455) | owner-approved context-only advisory runtime implemented in this patch: source-backed `Sažetak izvora` from row 2455 plus shared pest-agnostic `Orijentir za razgovor` block; no numeric bands | optional future source-check / extension if concrete numeric treatment thresholds emerge from owner-approved source review |
 | sweet_cherry | cherry fly | minimal bands implemented in `905af41`; fruit-signal / inspection-orientation polish still open | optional future polish only |
 | sour_cherry | cherry fly | minimal bands implemented in `905af41`; fruit-signal / inspection-orientation polish still open | optional future polish only |
 | plum | plum moth spring/summer | minimal bands implemented in `905af41`; "nagli skok s niske razine" comparative previous-week logic, fruit-signal pattern, and harvest-proximity caveat polish still open | optional future polish / source-backed extension |
@@ -147,7 +147,7 @@ Hard rules (binding for any future Step 7 expansion):
 - Do not turn advisory text into treatment instruction (no product names, no dosage, no `prskaj sada`, no `tretiraj`, no diagnosis, no `kasniš`/`obavezno`/`due`/`overdue`/`missed`, no checkbox/task framing, no compliance UX).
 - Do not persist advisory `band` / `level` / `severity` / `pressure_score` / `advisory` in Observation payload; advisory remains read-time only.
 - If a species lacks source-backed numeric bands, record it as a source gap or owner-decision item; do not silently omit it.
-- Apple codling moth must remain visible in the gap map until resolved.
+- Apple codling moth context-only advisory runtime is implemented in this patch. The remaining open item for apple 337 is the numeric source-check, which stays open **only** for concrete numeric treatment thresholds and does not block context-only display.
 
 Step 7 closure requires:
 
