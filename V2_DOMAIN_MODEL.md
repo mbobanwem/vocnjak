@@ -655,7 +655,7 @@ Rules that cross into §1.1 catalog fields or §1.2 window fields live in §1.6.
 
 #### 3.2.1a S8 Step 4a free-standing trap capture source map
 
-Runtime Slice 8 Step 4a clarifies a minimal future trap capture path only. It is documentation-only until separately implemented.
+Runtime Slice 8 Step 4a implements a minimal trap capture path only.
 
 Step 4a trap Observations are:
 
@@ -745,7 +745,7 @@ No other fields. The date the stage was reached is `observation.observed_on` (S2
 
 #### 3.2.3a S8 Step 5a minimal stage diary observation
 
-Runtime Slice 8 Step 5a clarifies a minimal future stage diary capture path only. It is documentation-only until separately implemented.
+Runtime Slice 8 Step 5a implements a minimal stage diary capture path only.
 
 Step 5a diary stage Observations are:
 

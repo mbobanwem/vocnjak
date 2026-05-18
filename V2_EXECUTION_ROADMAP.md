@@ -1222,7 +1222,7 @@ Parallelization notes:
 
 ## 36. Slice 8 — Plant detail B2 preview, notes, then read-only Pregled/Kalendar visibility
 
-Status: STEPS 1–5A RUNTIME COMPLETE; STEP 7 MINIMAL RUNTIME EXISTS LOCALLY (NOT PUSHED); STEP 6 OPEN; STEP 7 NOT FULLY CLOSED PENDING STEP 7B — Plant detail read-only B2 preview, Plant detail free-standing note Observation capture + Dnevnik evidence, read-only Pregled/Kalendar B2 monitoring/risk visibility, bounded free-standing trap count capture, and minimal free-standing stage diary `kind = "stage_obs"` capture are implemented in `index.html`. A local-only commit `905af41 Implement S8 Step 7 trap advisory display` adds a read-only Plant-detail `Klopke` advisory section for only the four S8-blocker source rows (sweet cherry `trap_source_654`, sour cherry `trap_source_860`, plum spring `trap_source_1596`, plum summer `trap_source_1643`); `905af41` is not pushed. Runtime Slice 8 is not closed; Step 6 (multi-plant structured Observation capture) remains open and is gated by Claude analysis/proposal before runtime; Step 7 is not fully closed until Step 7b Trap Advisory Source-Coverage Gap Map is recorded and owner-reviewed. Runtime Slice 8 cannot close until Step 7's coverage gate concludes either S8 can close or every S8 blocker it identifies has been resolved.
+Status: STEPS 1–5A RUNTIME COMPLETE; STEP 7 MINIMAL RUNTIME PUSHED ON MAIN; STEP 6 OPEN; STEP 7B OWNER REVIEW / SOURCE-COVERAGE DECISIONS OPEN; STEP 7 NOT FULLY CLOSED — Plant detail read-only B2 preview, Plant detail free-standing note Observation capture + Dnevnik evidence, read-only Pregled/Kalendar B2 monitoring/risk visibility, bounded free-standing trap count capture, and minimal free-standing stage diary `kind = "stage_obs"` capture are implemented in `index.html`. The minimal Step 7 runtime is pushed on main at `905af41 Implement S8 Step 7 trap advisory display` and adds a read-only Plant-detail `Klopke` advisory section for only the four S8-blocker source rows (sweet cherry `trap_source_654`, sour cherry `trap_source_860`, plum spring `trap_source_1596`, plum summer `trap_source_1643`). Runtime Slice 8 is not closed; Step 6 (multi-plant structured Observation capture) remains open and is gated by Claude analysis/proposal before runtime; Step 7 is not fully closed until Step 7b Trap Advisory Source-Coverage Gap Map is owner-reviewed and source-coverage decisions are complete.
 
 Purpose:
 
@@ -1277,7 +1277,7 @@ Approved decomposition:
    - Allowed examples: `Zadnji spremljeni zapis: 15.06.2026.` · `Ulov u zadnjih 7 dana: 3 — nizak/pozadinski ulov; nastavi pratiti.` · `Ulov u zadnjih 7 dana: 30+ — moguć jak pritisak; zatraži lokalni stručni savjet / savjet poljoprivredne apoteke.`
    - Hard boundary: no product names; no dosage; no automatic treatment recommendation; no `prskaj sada`; no due/overdue; no `kasniš`; no checkbox/task framing; no compliance UX; no diagnosis.
    - Hard rule (Slice 8 closure gate): Runtime Slice 8 cannot close until Step 7's coverage gate says either `S8 can close` or every `S8 blocker` row has been resolved.
-   - Minimal runtime status: a Plant-detail-only minimal runtime patch exists locally at `905af41 Implement S8 Step 7 trap advisory display`, covering only the four S8-blocker source rows (sweet cherry `trap_source_654`, sour cherry `trap_source_860`, plum spring `trap_source_1596`, plum summer `trap_source_1643`); `905af41` is not pushed; Step 7 is not fully closed until Step 7b Trap Advisory Source-Coverage Gap Map (see item 8 below) is recorded and owner-reviewed.
+   - Minimal runtime status: the Plant-detail-only minimal runtime is pushed on main at `905af41 Implement S8 Step 7 trap advisory display`, covering only the four S8-blocker source rows (sweet cherry `trap_source_654`, sour cherry `trap_source_860`, plum spring `trap_source_1596`, plum summer `trap_source_1643`); Step 7 is not fully closed until Step 7b Trap Advisory Source-Coverage Gap Map (see item 8 below) is owner-reviewed and source-coverage decisions are complete.
 8. **S8 Step 7b — Trap Advisory Source-Coverage Gap Map.** Required before Step 7 closure; documentation/tracking only.
    - Purpose: prevent silent loss of plan-template advisory guidance after the minimal Step 7 runtime patch; keep apple codling moth and other source-backed candidates visible on the roadmap rather than dropped.
    - Required first action: record the gap map in `V2_CURRENT_STATE.md` under the existing Runtime Slice 8 Remaining Steps area, then have it owner-reviewed.
@@ -1298,11 +1298,10 @@ Approved decomposition:
 
 S8 remaining steps:
 
-Runtime Slice 8 is not closed. Steps 1, 2, 3, 4a, and 5a are runtime-complete (items 1–5 above). A minimal Step 7 runtime exists locally at `905af41` (not pushed) for the four S8-blocker source rows. Three remaining items gate Slice 8 closure:
+Runtime Slice 8 is not closed. Steps 1, 2, 3, 4a, and 5a are runtime-complete (items 1–5 above). The minimal Step 7 runtime is pushed on main at `905af41` for the four S8-blocker source rows. Two remaining items gate Slice 8 closure:
 
 - S8 Step 6 — Multi-plant structured Observation capture (see item 6).
-- S8 Step 7 — Template runtime coverage gate + source-backed trap advisory bands + read-only observation status (see item 7); minimal runtime exists locally at `905af41` but Step 7 is not fully closed until Step 7b is recorded and owner-reviewed.
-- S8 Step 7b — Trap Advisory Source-Coverage Gap Map (see item 8); documentation/tracking only; required before Step 7 closure.
+- S8 Step 7b — Trap Advisory Source-Coverage Gap Map owner review / source-coverage decisions; Step 7 minimal runtime is pushed on main at `905af41` but Step 7 is not fully closed until Step 7b is owner-reviewed and source-coverage decisions are complete.
 
 Hard rule: Runtime Slice 8 cannot close until Step 7's coverage gate says either `S8 can close` or every `S8 blocker` row from the coverage gate has been resolved.
 
@@ -1368,7 +1367,7 @@ Produces:
 - S8 Step 4a runtime: bounded `trap_capture_sources[]` trap count capture is implemented as Plant-detail-only, one-plant-only, free-standing `kind = "trap"` Observations with `program_id = null`, factual Dnevnik / plant-history evidence, and validator/import-path support for valid trap records.
 - Later only: program-attached observation capture, structured scouting/symptom/stage capture, monitoring-context record displays, and stage confirmation.
 - Stage vocabulary rule: B2 did not add `stage_vocabulary[]`. S8 Step 5a documentation introduces a bounded `stage_diary_vocabulary[]` for the diary path only; broader phenology-aware stage confirmation stays deferred until the owner approves a broader vocabulary or an explicit stage-write deferral/restriction.
-- S8 Step 5a documentation: bounded `stage_diary_vocabulary[]` and the free-standing diary `kind = "stage_obs"` capture path are documented for a later runtime implementation, with no runtime change in this patch.
+- S8 Step 5a runtime: bounded `stage_diary_vocabulary[]` and the free-standing diary `kind = "stage_obs"` capture path are implemented as Plant-detail-only, one-plant-only, free-standing diary capture with `program_id = null`.
 
 Manual verification:
 

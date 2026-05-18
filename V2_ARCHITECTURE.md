@@ -277,10 +277,10 @@ Rules:
 - Note Observations are free-standing-only, one-plant-only, and store `program_id = null`.
 - S8 Step 2 does not use `observation_group_id` for note Observations.
 - User-entered note provenance is exactly `{ "source": "user" }`.
-- S8 Step 4a may later add valid free-standing `kind = "trap"` records only from the bounded `trap_capture_sources[]` source map documented in `V2_DOMAIN_MODEL.md §3.2.1a`.
+- S8 Step 4a adds valid free-standing `kind = "trap"` records only from the bounded `trap_capture_sources[]` source map documented in `V2_DOMAIN_MODEL.md §3.2.1a`.
 - Step 4a trap Observations store `program_id = null`, `payload.source_entry_id`, `payload.target_pest_code`, and `payload.count`.
 - Step 4a trap Observations do not store display labels; labels resolve from retained source-map context.
-- S8 Step 5a may later add valid free-standing `kind = "stage_obs"` diary records only with a `stage_code` resolvable in the bounded `stage_diary_vocabulary[]` documented in `V2_DOMAIN_MODEL.md §3.2.3a`.
+- S8 Step 5a adds valid free-standing `kind = "stage_obs"` diary records only with a `stage_code` resolvable in the bounded `stage_diary_vocabulary[]` documented in `V2_DOMAIN_MODEL.md §3.2.3a`.
 - Step 5a diary stage Observations store `program_id = null`, `payload.stage_code`, and user provenance only.
 - Step 5a diary stage Observations do not store display labels; labels resolve from `stage_diary_vocabulary[]`.
 - No retroactive attach-to-program behavior exists.

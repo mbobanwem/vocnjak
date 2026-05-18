@@ -1,6 +1,6 @@
 # V2_UX_MODEL
 
-**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain future flow contracts and placeholders. Runtime Slice 7 is complete through S7.4; B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 Plant detail read-only B2 preview is complete. S8 Step 2 Plant detail note Observation capture + Dnevnik evidence is complete. Runtime Slice 8 Step 3 Pregled/Kalendar read-only monitoring/risk visibility is complete. S8 Step 4a bounded free-standing trap capture is documented for a later runtime implementation, but not implemented here. S8 Step 5a minimal stage diary observation is documented for a later runtime implementation, but not implemented here. Structured scouting/symptom capture and the broader phenology-aware stage-confirmation flow remain deferred until owner-approved. Full Runtime Slice 8 is not complete. This document defines UX guidance only; no runtime/schema implementation is defined here.
+**Status:** §0 Monitoring UX hard constraints are locked and authoritative. Sections 1–5 define S6 core surfaces. Sections 9–17 contain future flow contracts and placeholders. Runtime Slice 7 is complete through S7.4; B2 metadata-only projection boundary is complete; Runtime Slice 8 Step 1 Plant detail read-only B2 preview is complete. S8 Step 2 Plant detail note Observation capture + Dnevnik evidence is complete. Runtime Slice 8 Step 3 Pregled/Kalendar read-only monitoring/risk visibility is complete. S8 Step 4a bounded free-standing trap capture is runtime-complete. S8 Step 5a minimal stage diary observation is runtime-complete. Structured scouting/symptom capture and the broader phenology-aware stage-confirmation flow remain deferred until owner-approved. Full Runtime Slice 8 is not complete. This document defines UX guidance only; no runtime/schema implementation is defined here.
 
 ---
 
@@ -143,7 +143,7 @@ S8 Step 2 implemented boundary:
 - Pregled/Kalendar monitoring/risk UI remains deferred.
 - Program-attached observation capture, structured trap/scouting/symptom/stage capture, registries/vocabularies, correction, diagnosis/treatment, and snapshot changes remain deferred.
 
-S8 Step 5a documented boundary (doc-lock only — not implemented here):
+S8 Step 5a implemented boundary:
 
 - Plant detail only.
 - Free-standing diary `stage_obs` capture only: `kind = "stage_obs"` with `payload.stage_code`.
@@ -153,7 +153,7 @@ S8 Step 5a documented boundary (doc-lock only — not implemented here):
 - Saved diary stage Observations render as factual plant history / Dnevnik rows under `Opažanja`, not `Praćenje`.
 - Step 5a does not introduce a phenology engine, BBCH, per-species vocabulary, plan recalculation, automatic action generation, stage-based unlocking/blocking, diagnosis, treatment advice, weather automation, or compliance UX.
 - Pregled/Kalendar surfaces are unchanged. `Bez zapisa` and `Zadnji zapis` remain deferred.
-- Step 5a runtime implementation, multi-plant stage capture, observation correction for stage diary, program-attached stage capture, and any broader stage registry remain deferred until separately owner-approved.
+- Multi-plant stage capture, observation correction for stage diary, program-attached stage capture, and any broader stage registry remain deferred until separately owner-approved.
 
 ---
 
@@ -2978,7 +2978,7 @@ Current S8 Step 2 subset:
 - One free-text shape only: `kind = "note"` with `payload.text`.
 - No program-context capture, no structured trap/scouting/symptom/stage capture, no registries/vocabularies, no correction, no Pregled/Kalendar entry, and no Dnevnik/global capture entry in S8 Step 2.
 
-S8 Step 4a documented subset for later runtime implementation:
+S8 Step 4a implemented subset:
 
 - Plant detail free-standing trap Observation capture only.
 - One plant only.
