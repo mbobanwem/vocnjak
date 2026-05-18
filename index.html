@@ -4252,7 +4252,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       var row = {
         label: item.label_hr_draft,
         method: b2PlantDetailMethodText(item.method_kind),
-        note: b2PlantDetailNoteText(item.track)
+        note: b2PlantDetailNoteText(item.track),
+        source_rows: (item.source_refs || []).map(function (ref) { return ref.source_row; })
       };
       if (item.track === 'monitoring_track') preview.monitoring.push(row);
       if (item.track === 'risk_awareness_track') preview.riskAwareness.push(row);
@@ -7195,6 +7196,128 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   var CLOSING_SOON_THRESHOLD_DAYS = 3;
   var PLANT_DETAIL_RECENT_DAYS = 21;
   var DEFERRED_SEASONAL_ACTION_TYPES = { insecticide: true, monitoring: true, irrigation: true };
+  var YOUNG_TREE_STANDARD_SPECIES = [
+    'apple','pear','quince','sweet_cherry','sour_cherry','plum','peach','nectarine','apricot','almond'
+  ];
+  var YOUNG_TREE_FRUITING_ONLY_B2_SOURCE_ROWS = {
+    // V2_ORCHARD_PLAN_TEMPLATES.md rows where the approved source says young/non-bearing trees are not priority or the item is fruit-only.
+    337: true, 516: true, 654: true, 796: true, 860: true, 1596: true, 1643: true,
+    1809: true, 2004: true, 2455: true, 2795: true, 2949: true, 2977: true, 3160: true
+  };
+  var YOUNG_TREE_CONTEXT_DEFS = [
+    {
+      key: 'standard.formative_winter_pruning',
+      species: YOUNG_TREE_STANDARD_SPECIES,
+      title: 'Formiranje uzgojnog oblika',
+      note: 'God. 1-2: fokus je formiranje uzgojnog oblika - vaza kod koštičavih ili vreteno kod jabuke i kruške. Ne rezati rodno drvo.',
+      monthStart: 3, dayStart: 1, monthEnd: 3, dayEnd: 15,
+      sourceRows: [169, 175]
+    },
+    {
+      key: 'standard.summer_shoot_care',
+      species: YOUNG_TREE_STANDARD_SPECIES,
+      title: 'Ljetna njega mladih izbojaka',
+      note: 'Uklanjanje vodopija i pregustih ljetnih izbojaka. Rezati kada novi izdanci dosegnu 10-20 cm; ne po ekstremnoj vrućini.',
+      monthStart: 7, dayStart: 1, monthEnd: 7, dayEnd: 15,
+      sourceRows: [242, 246]
+    },
+    {
+      key: 'standard.watering_context',
+      species: YOUNG_TREE_STANDARD_SPECIES,
+      title: 'Voda i tlo u sušnom razdoblju',
+      note: 'Mlada stabla imaju prioritet jer se korijen još razvija. Provjeri vlagu tla nekoliko centimetara ispod površine i prilagodi kiši, tlu i načinu navodnjavanja.',
+      monthStart: 6, dayStart: 20, monthEnd: 8, dayEnd: 31,
+      sourceRows: [215, 227, 228]
+    },
+    {
+      key: 'standard.watering_shutdown_context',
+      species: YOUNG_TREE_STANDARD_SPECIES,
+      title: 'Kraj sušnog razdoblja',
+      note: 'Smanjiti ili završiti navodnjavanje kada vremenski uvjeti i stanje tla to dopuštaju; kod mladih stabala i suše ne prekidati prerano.',
+      monthStart: 9, dayStart: 1, monthEnd: 9, dayEnd: 15,
+      sourceRows: [250, 261]
+    },
+    {
+      key: 'standard.winter_check',
+      species: YOUNG_TREE_STANDARD_SPECIES,
+      title: 'Pregled mladog stabla za zimu',
+      note: 'Provjeriti deblo, rane, vezice, zaštitu od glodavaca i potpore. Posebno važno za mlada stabla i stabla koja su imala stres u sezoni.',
+      monthStart: 10, dayStart: 1, monthEnd: 10, dayEnd: 31,
+      sourceRows: [270, 278, 280]
+    },
+    {
+      key: 'olive.formative_pruning',
+      species: ['olive'],
+      title: 'Lagano formiranje masline',
+      note: 'Mlada stabla god. 1-3: samo formiranje oblika, bez agresivne rezidbe.',
+      monthStart: 2, dayStart: 1, monthEnd: 3, dayEnd: 15,
+      sourceRows: [2385, 2391]
+    },
+    {
+      key: 'olive.watering_context',
+      species: ['olive'],
+      title: 'Voda za mladu maslinu',
+      note: 'Mlada stabla god. 1-3 trebaju pažnju u suhim razdobljima; odrasla maslina obično ne treba navodnjavanje. Prekomjerno navodnjavanje šteti.',
+      monthStart: 6, dayStart: 1, monthEnd: 8, dayEnd: 31,
+      sourceRows: [2503, 2511]
+    },
+    {
+      key: 'pomegranate.formative_pruning',
+      species: ['pomegranate'],
+      title: 'Lagano formiranje šipka',
+      note: 'Mlada stabla šipka: samo lagano formiranje uz uklanjanje suhih i pregustih izbojaka.',
+      monthStart: 2, dayStart: 1, monthEnd: 3, dayEnd: 15,
+      sourceRows: [2748, 2755]
+    },
+    {
+      key: 'pomegranate.watering_context',
+      species: ['pomegranate'],
+      title: 'Voda za mladi šipak',
+      note: 'Mlada stabla: duboko zalijevanje u suhim razdobljima, prema vlazi tla, kiši i stanju biljke.',
+      monthStart: 6, dayStart: 15, monthEnd: 8, dayEnd: 31,
+      sourceRows: [2808, 2816]
+    },
+    {
+      key: 'pomegranate.winter_protection',
+      species: ['pomegranate'],
+      title: 'Zimska zaštita mladog šipka',
+      note: 'Mlada stabla su osjetljivija; u kontinentalnom podneblju prvih 2-3 godine zaštita debla agrotekstilom ili slamom može biti relevantna.',
+      monthStart: 11, dayStart: 15, monthEnd: 12, dayEnd: 31,
+      sourceRows: [2835, 2844]
+    },
+    {
+      key: 'walnut.formative_pruning',
+      species: ['walnut'],
+      title: 'Postupno formiranje mladog oraha',
+      note: 'Za mlada stabla god. 1-3: formirati niski stablašić postupno; manji korektivni rezovi sigurniji su od velikih rezova.',
+      monthStart: 7, dayStart: 15, monthEnd: 8, dayEnd: 15,
+      sourceRows: [2887, 2894]
+    },
+    {
+      key: 'walnut.watering_context',
+      species: ['walnut'],
+      title: 'Voda za mladi orah',
+      note: 'Mladi orah ima korijen koji se još razvija i može patiti u suši. Aplikacija ne postavlja raspored; odluka ovisi o vlazi tla, kiši i stanju stabla.',
+      monthStart: 5, dayStart: 15, monthEnd: 9, dayEnd: 15,
+      sourceRows: [2917, 2930, 2942]
+    },
+    {
+      key: 'hazelnut.formative_pruning',
+      species: ['hazelnut'],
+      title: 'Oblikovanje mladog grma lijeske',
+      note: 'Za mlade lijeske god. 1-3: fokus je oblikovanje grma; puna obnova najstarijih izbojnica tek kad grm razvije stabilnu strukturu.',
+      monthStart: 2, dayStart: 1, monthEnd: 3, dayEnd: 15,
+      sourceRows: [3118, 3124]
+    },
+    {
+      key: 'hazelnut.watering_context',
+      species: ['hazelnut'],
+      title: 'Voda za mladu lijesku',
+      note: 'Mlada lijeska uspostavlja korijenov sustav i može patiti u suši. Aplikacija ne postavlja raspored; odluka ovisi o vlazi tla, kiši i stanju biljke.',
+      monthStart: 5, dayStart: 15, monthEnd: 9, dayEnd: 15,
+      sourceRows: [3128, 3141, 3153]
+    }
+  ];
   var MONTH_NAMES_HR = [
     'Siječanj','Veljača','Ožujak','Travanj','Svibanj','Lipanj',
     'Srpanj','Kolovoz','Rujan','Listopad','Studeni','Prosinac'
@@ -7442,6 +7565,164 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     var m = now.getMonth() + 1;
     var d = now.getDate();
     return y + '-' + (m < 10 ? '0' + m : '' + m) + '-' + (d < 10 ? '0' + d : '' + d);
+  }
+
+  function isYoungTreeRelevanceMode(plant, todayYmd) {
+    if (!isPlainObject(plant) || typeof plant.planted_at !== 'string') return false;
+    var planted = parseYmd(plant.planted_at);
+    if (!planted || typeof todayYmd !== 'string') return false;
+    var today = parseYmd(todayYmd);
+    if (!today) return false;
+    return today.getFullYear() <= planted.getFullYear() + 1;
+  }
+
+  function isFruitingOnlyActionWindow(def) {
+    if (!isPlainObject(def)) return false;
+    if (def.action_type === 'harvest') return true;
+    var id = typeof def.window_def_id === 'string' ? def.window_def_id : '';
+    var label = typeof def.label === 'string' ? def.label : '';
+    return id.indexOf('.thinning.') !== -1 ||
+      id.indexOf('.bird_net.') !== -1 ||
+      id.indexOf('.fruit_load') !== -1 ||
+      label.indexOf('Prorjeđivanje') !== -1 ||
+      label.indexOf('Mreža protiv ptica') !== -1 ||
+      label.indexOf('opterećenja plodovima') !== -1;
+  }
+
+  function occurrenceVisibleForYoungTreeRelevance(occurrence, todayYmd) {
+    if (!occurrence || !occurrence.plant) return true;
+    if (!isYoungTreeRelevanceMode(occurrence.plant, todayYmd)) return true;
+    return !isFruitingOnlyActionWindow(occurrence.def);
+  }
+
+  function filterSeasonalGroupsForYoungTreeRelevance(groups, todayYmd) {
+    if (!Array.isArray(groups)) return [];
+    var filtered = [];
+    for (var i = 0; i < groups.length; i++) {
+      var group = groups[i];
+      var occurrences = (group.occurrences || []).filter(function (occurrence) {
+        return occurrenceVisibleForYoungTreeRelevance(occurrence, todayYmd);
+      });
+      if (occurrences.length === 0) continue;
+      if (occurrences.length === group.occurrences.length) filtered.push(group);
+      else {
+        var clone = {};
+        for (var key in group) {
+          if (hasOwnKey(group, key)) clone[key] = group[key];
+        }
+        clone.occurrences = occurrences;
+        filtered.push(clone);
+      }
+    }
+    return filtered;
+  }
+
+  function b2GroupIsFruitingOnlyForYoungTrees(group) {
+    if (!group || !Array.isArray(group.source_rows)) return false;
+    for (var i = 0; i < group.source_rows.length; i++) {
+      if (YOUNG_TREE_FRUITING_ONLY_B2_SOURCE_ROWS[group.source_rows[i]]) return true;
+    }
+    return false;
+  }
+
+  function filterB2GroupsForYoungTreeRelevance(groups, todayYmd) {
+    if (!Array.isArray(groups)) return [];
+    var filtered = [];
+    for (var i = 0; i < groups.length; i++) {
+      var group = groups[i];
+      if (!b2GroupIsFruitingOnlyForYoungTrees(group)) {
+        filtered.push(group);
+        continue;
+      }
+      var plants = (group.plants || []).filter(function (plant) {
+        return !isYoungTreeRelevanceMode(plant, todayYmd);
+      });
+      if (plants.length === 0) continue;
+      var clone = {};
+      for (var key in group) {
+        if (hasOwnKey(group, key)) clone[key] = group[key];
+      }
+      clone.plants = plants;
+      filtered.push(clone);
+    }
+    return filtered;
+  }
+
+  function filterB2VisibilityForYoungTreeRelevance(visibility, todayYmd) {
+    return {
+      current: filterB2GroupsForYoungTreeRelevance(visibility && visibility.current, todayYmd),
+      all: filterB2GroupsForYoungTreeRelevance(visibility && visibility.all, todayYmd)
+    };
+  }
+
+  function b2PreviewItemIsFruitingOnlyForYoungTrees(item) {
+    if (!item || !Array.isArray(item.source_rows)) return false;
+    for (var i = 0; i < item.source_rows.length; i++) {
+      if (YOUNG_TREE_FRUITING_ONLY_B2_SOURCE_ROWS[item.source_rows[i]]) return true;
+    }
+    return false;
+  }
+
+  function filterB2PlantDetailPreviewForYoungTree(plant, preview, todayYmd) {
+    if (!isYoungTreeRelevanceMode(plant, todayYmd)) return preview;
+    return {
+      monitoring: (preview.monitoring || []).filter(function (item) { return !b2PreviewItemIsFruitingOnlyForYoungTrees(item); }),
+      riskAwareness: (preview.riskAwareness || []).filter(function (item) { return !b2PreviewItemIsFruitingOnlyForYoungTrees(item); })
+    };
+  }
+
+  function youngTreeContextAppliesToPlant(def, plant) {
+    return isPlainObject(plant) && Array.isArray(def.species) && def.species.indexOf(plant.species) !== -1;
+  }
+
+  function buildYoungTreeContextGroups(plants, todayYmd) {
+    if (!Array.isArray(plants)) return [];
+    var year = Number(todayYmd.slice(0, 4));
+    if (!year) return [];
+    var groupsByKey = Object.create(null);
+    for (var d = 0; d < YOUNG_TREE_CONTEXT_DEFS.length; d++) {
+      var def = YOUNG_TREE_CONTEXT_DEFS[d];
+      var effectiveOpen = ymdFromMonthDay(year, { month: def.monthStart, day: def.dayStart });
+      var effectiveClose = ymdFromMonthDay(year, { month: def.monthEnd, day: def.dayEnd });
+      for (var p = 0; p < plants.length; p++) {
+        var plant = plants[p];
+        if (!isYoungTreeRelevanceMode(plant, todayYmd) || !youngTreeContextAppliesToPlant(def, plant)) continue;
+        var key = [def.key, effectiveOpen, effectiveClose].join('|');
+        if (!groupsByKey[key]) {
+          groupsByKey[key] = {
+            key: key,
+            title: def.title,
+            note: def.note,
+            effective_open: effectiveOpen,
+            effective_close: effectiveClose,
+            source_rows: def.sourceRows.slice(),
+            plants: []
+          };
+        }
+        groupsByKey[key].plants.push(plant);
+      }
+    }
+    var groups = Object.keys(groupsByKey).map(function (key) { return groupsByKey[key]; }).filter(function (group) {
+      return group.plants.length > 0;
+    });
+    groups.sort(function (a, b) {
+      if (a.effective_open !== b.effective_open) return a.effective_open.localeCompare(b.effective_open);
+      return a.title.localeCompare(b.title, 'hr');
+    });
+    return groups;
+  }
+
+  function youngTreeCurrentContextGroups(plants, todayYmd) {
+    return buildYoungTreeContextGroups(plants, todayYmd).filter(function (group) {
+      return group.effective_open <= todayYmd && group.effective_close >= todayYmd;
+    });
+  }
+
+  function youngTreeGroupOverlapsMonth(group, month) {
+    var year = Number(group.effective_open.slice(0, 4));
+    var start = ymdFromMonthDay(year, { month: month, day: 1 });
+    var end = endOfMonthYmd(year, month);
+    return group.effective_open <= end && group.effective_close >= start;
   }
 
   function findActionWindow(catalog, windowDefId) {
@@ -7775,6 +8056,11 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
   function appendTrapObservationCaptureControls(section, plant) {
     var sources = typeof trapCaptureSourcesForSpecies === 'function' ? trapCaptureSourcesForSpecies(plant.species) : [];
+    if (isYoungTreeRelevanceMode(plant, localTodayYmd())) {
+      sources = sources.filter(function (source) {
+        return !YOUNG_TREE_FRUITING_ONLY_B2_SOURCE_ROWS[source.source_row];
+      });
+    }
     if (!sources.length) return;
 
     var opener = makeEl('button', 'v2-plants-secondary', 'Dodaj ulov iz klopke');
@@ -7960,6 +8246,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
     for (var i = 0; i < sources.length; i++) {
       var captureSource = sources[i];
+      if (isYoungTreeRelevanceMode(plant, todayYmd) && YOUNG_TREE_FRUITING_ONLY_B2_SOURCE_ROWS[captureSource.source_row]) continue;
       var advisory = trapAdvisorySourceById(captureSource.source_entry_id);
       if (!advisory) continue;
       anyCard = true;
@@ -8067,9 +8354,14 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     section.appendChild(karton);
     detailView.appendChild(section);
 
+    var todayYmd = localTodayYmd();
+    appendYoungTreePlantDetailSection(detailView, plant, todayYmd);
+
     try {
-      var snapshot = buildSeasonalSnapshot(result.store, result.catalog, localTodayYmd());
-      var currentActions = currentPlantSeasonalOccurrences(snapshot, plant.plant_id, result.catalog);
+      var snapshot = buildSeasonalSnapshot(result.store, result.catalog, todayYmd);
+      var currentActions = currentPlantSeasonalOccurrences(snapshot, plant.plant_id, result.catalog).filter(function (occurrence) {
+        return occurrenceVisibleForYoungTreeRelevance(occurrence, snapshot.today);
+      });
       if (currentActions.length > 0) {
         var seasonal = makeEl('section', 'v2-plants-section');
         seasonal.appendChild(makeEl('h3', '', 'Trenutne sezonske radnje'));
@@ -8085,6 +8377,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     }
 
     var b2Preview = typeof b2PlantDetailPreview === 'function' ? b2PlantDetailPreview(plant) : { monitoring: [], riskAwareness: [] };
+    b2Preview = filterB2PlantDetailPreviewForYoungTree(plant, b2Preview, todayYmd);
     appendPlantDetailB2Section(detailView, 'Praćenje', b2Preview.monitoring);
     appendPlantDetailB2Section(detailView, 'Sezonske napomene', b2Preview.riskAwareness);
     appendNoteObservationCaptureSection(detailView, plant);
@@ -9244,9 +9537,10 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return groups.filter(function (group) { return groupStats(group).closingSoon > 0; }).length;
   }
 
-  function seasonalStatusSentence(snapshot) {
-    var current = countCurrentGroups(snapshot.groups);
-    var closing = countClosingSoonGroups(snapshot.groups);
+  function seasonalStatusSentence(snapshot, groups) {
+    var displayGroups = Array.isArray(groups) ? groups : snapshot.groups;
+    var current = countCurrentGroups(displayGroups);
+    var closing = countClosingSoonGroups(displayGroups);
     if (current === 0) return 'Trenutno nema aktualnih sezonskih radnji.';
     var text = current === 1 ? 'Trenutno je aktualna 1 sezonska radnja.' : 'Trenutno su aktualne ' + current + ' sezonske radnje.';
     if (closing === 1) text += ' Jedna je pri kraju.';
@@ -9480,6 +9774,53 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       : 'Trenutno postoje sezonske napomene za ' + plantCountText(plantCount) + '.';
     section.appendChild(makeEl('p', 'v2-seasonal-meta', sentence));
     section.appendChild(makeEl('p', 'v2-seasonal-note', 'Detalji su na kartonu voćke.'));
+    parent.appendChild(section);
+  }
+
+  function youngTreeDateLine(group, context) {
+    if (context === 'calendar') return 'Sezonska napomena: ' + formatDateRange(group.effective_open, group.effective_close);
+    return 'Aktualno: ' + formatDateRange(group.effective_open, group.effective_close);
+  }
+
+  function appendYoungTreeContextCard(parent, group, context) {
+    var card = makeEl('article', 'v2-seasonal-card');
+    card.appendChild(makeEl('p', 'v2-seasonal-card-title', group.title));
+    card.appendChild(makeEl('span', 'v2-seasonal-meta', youngTreeDateLine(group, context)));
+    card.appendChild(makeEl('span', 'v2-seasonal-meta', 'Primjenjuje se na ' + plantCountText(group.plants.length) + '.'));
+    card.appendChild(makeEl('span', 'v2-seasonal-note', group.note));
+    parent.appendChild(card);
+  }
+
+  function appendYoungTreePregledSection(parent, groups) {
+    if (!groups || groups.length === 0) return;
+    var section = makeEl('section', 'v2-seasonal-section');
+    section.appendChild(makeEl('h3', '', 'Mlade voćke'));
+    section.appendChild(makeEl('p', 'v2-seasonal-meta', 'Fokus je uspostava, zdrav rast, formiranje krošnje i relevantno praćenje listova ili izbojaka.'));
+    var list = makeEl('div', 'v2-seasonal-list');
+    for (var i = 0; i < groups.length; i++) appendYoungTreeContextCard(list, groups[i], 'pregled');
+    section.appendChild(list);
+    parent.appendChild(section);
+  }
+
+  function appendYoungTreeCalendarSection(parent, groups) {
+    if (!groups || groups.length === 0) return;
+    parent.appendChild(makeEl('p', 'v2-seasonal-meta', 'Mlade voćke'));
+    var list = makeEl('div', 'v2-seasonal-list');
+    for (var i = 0; i < groups.length; i++) appendYoungTreeContextCard(list, groups[i], 'calendar');
+    parent.appendChild(list);
+  }
+
+  function appendYoungTreePlantDetailSection(parent, plant, todayYmd) {
+    if (!isYoungTreeRelevanceMode(plant, todayYmd)) return;
+    var current = youngTreeCurrentContextGroups([plant], todayYmd);
+    var section = makeEl('section', 'v2-plants-section');
+    section.appendChild(makeEl('h3', '', 'Mlada voćka'));
+    section.appendChild(makeEl('p', 'v2-seasonal-note', 'Kod mladih i nerodnih voćki plodonosne radnje nisu prikazane kao trenutni fokus. Sada je važnija uspostava, zdrav rast, formiranje krošnje i relevantno praćenje listova ili izbojaka.'));
+    if (current.length > 0) {
+      var list = makeEl('div', 'v2-seasonal-list');
+      for (var i = 0; i < current.length; i++) appendYoungTreeContextCard(list, current[i], 'pregled');
+      section.appendChild(list);
+    }
     parent.appendChild(section);
   }
 
@@ -9720,16 +10061,23 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       return;
     }
 
-    pregledView.appendChild(makeEl('p', 'v2-plants-status', seasonalStatusSentence(snapshot)));
-    var b2Visibility = b2VisibilityForPlants(result.store.plants, snapshot.today);
+    var displayGroups = filterSeasonalGroupsForYoungTreeRelevance(snapshot.groups, snapshot.today);
+    pregledView.appendChild(makeEl('p', 'v2-plants-status', seasonalStatusSentence(snapshot, displayGroups)));
+    var youngTreeCurrentGroups = youngTreeCurrentContextGroups(result.store.plants, snapshot.today);
+    appendYoungTreePregledSection(pregledView, youngTreeCurrentGroups);
+    var b2Visibility = filterB2VisibilityForYoungTreeRelevance(b2VisibilityForPlants(result.store.plants, snapshot.today), snapshot.today);
     appendB2PregledSection(pregledView, b2Visibility.current);
-    var currentGroups = snapshot.groups.filter(groupHasLiveState);
-    var missedGroups = snapshot.groups.filter(groupHasMissedState);
-    var upcomingGroups = upcomingGroupsForPregled(snapshot);
+    var currentGroups = displayGroups.filter(groupHasLiveState);
+    var missedGroups = displayGroups.filter(groupHasMissedState);
+    var upcomingSnapshot = {
+      today: snapshot.today,
+      groups: displayGroups
+    };
+    var upcomingGroups = upcomingGroupsForPregled(upcomingSnapshot);
     appendSeasonalSection(pregledView, 'Sada aktualno', currentGroups, 'Trenutno nema aktualnih sezonskih radnji.', 'current', false);
     appendSeasonalSection(pregledView, 'Za provjeru: nema evidencije', missedGroups, 'Nema prošlih sezonskih radnji bez evidencije u ovom prikazu.', 'missed', false);
     appendSeasonalSection(pregledView, 'Uskoro', upcomingGroups, 'Nema skorih sezonskih radnji u ovom prikazu.', 'upcoming', false);
-    if (currentGroups.length === 0 && missedGroups.length === 0 && upcomingGroups.length === 0 && b2Visibility.current.length === 0) {
+    if (currentGroups.length === 0 && missedGroups.length === 0 && upcomingGroups.length === 0 && b2Visibility.current.length === 0 && youngTreeCurrentGroups.length === 0) {
       pregledView.appendChild(makeEl('p', 'v2-plants-empty', 'Za ovaj dio sezone nema prikazanih sezonskih radnji.'));
     }
   }
@@ -9762,7 +10110,9 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       renderSeasonalSnapshotFailure(calendarView, e);
       return;
     }
-    var b2Visibility = b2VisibilityForPlants(result.store.plants, snapshot.today);
+    var displayGroups = filterSeasonalGroupsForYoungTreeRelevance(snapshot.groups, snapshot.today);
+    var b2Visibility = filterB2VisibilityForYoungTreeRelevance(b2VisibilityForPlants(result.store.plants, snapshot.today), snapshot.today);
+    var youngTreeContextGroups = buildYoungTreeContextGroups(result.store.plants, snapshot.today);
     if (result.store.plants.length === 0) {
       calendarView.appendChild(makeEl('p', 'v2-plants-empty', 'Dodaj voćku kako bi se prikazao sezonski kalendar.'));
       return;
@@ -9773,7 +10123,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       month.id = 'v2CalendarMonth' + m;
       month.appendChild(makeEl('h3', '', MONTH_NAMES_HR[m - 1]));
       month.appendChild(makeEl('p', 'v2-seasonal-meta', 'Sezonske radnje'));
-      var monthGroups = snapshot.groups.filter(function (group) { return groupOverlapsMonth(group, m); });
+      var monthGroups = displayGroups.filter(function (group) { return groupOverlapsMonth(group, m); });
       if (monthGroups.length === 0) {
         month.appendChild(makeEl('p', 'v2-plants-empty', 'Nema sezonskih radnji u ovom mjesecu.'));
       } else {
@@ -9781,6 +10131,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
         for (var g = 0; g < monthGroups.length; g++) appendSeasonalCard(list, monthGroups[g], 'calendar', true);
         month.appendChild(list);
       }
+      var youngMonthGroups = youngTreeContextGroups.filter(function (group) { return youngTreeGroupOverlapsMonth(group, m); });
+      appendYoungTreeCalendarSection(month, youngMonthGroups);
       var b2MonthGroups = b2Visibility.all.filter(function (group) { return b2GroupOverlapsMonth(group, m); });
       appendB2CalendarSection(month, b2MonthGroups);
       calendarView.appendChild(month);
@@ -9808,6 +10160,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     try {
       snapshot = buildSeasonalSnapshot(result.store, result.catalog, localTodayYmd());
       found = findSeasonalGroup(snapshot, route);
+      found = filterSeasonalGroupsForYoungTreeRelevance(found ? [found] : [], snapshot.today)[0] || null;
     } catch (e) {
       appendSeasonalHeader(seasonalActionView, 'Sezonska radnja', 'kalendar');
       renderSeasonalSnapshotFailure(seasonalActionView, e);

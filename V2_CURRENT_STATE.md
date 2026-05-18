@@ -157,6 +157,18 @@ Step 7 closure requires:
 
 Step 7b does not introduce new schema, new runtime, new fields, new vocabulary, new registry, or new UI surface. It is tracking-only.
 
+#### S8 Year-1–2 young-tree relevance — runtime-complete; UX-spec sanctioned
+
+- Runtime Slice 8 young-tree relevance work is runtime-complete in `index.html`. The patch is uncommitted, pending owner approval to commit alongside the `V2_UX_MODEL.md` §2.16 / §5.13 amendment and this tracker entry.
+- For plants in year 1 or year 2 after planting, Pregled and the main Kalendar view structurally hide from primary surfaces the fruit-only seasonal actions, monitoring items, and risk-awareness items whose approved Plan Templates / source context state are not relevant to young, non-bearing trees (harvest, fruit thinning, bird-net, fruit-load checks, codling moth, fruit fly, fruit cracking, fruit drop, hazelnut weevil; owner-curated fruit-only source row set behind the rule).
+- Year-3+ plants restore the normal plan; the exception does not apply.
+- Non-fruit-only content remains visible for year-1–2 plants: formative pruning, summer shoot care, watering and establishment context, leaf and shoot monitoring, aphid scouting, sharka, monilia, fire blight, frost awareness, peacock spot, bud mite, fertilization, winter inspection, winter protection.
+- In place of suppressed cards, Pregled / Kalendar / Plant detail render read-only "Mlade voćke" / "Mlada voćka" orientation cards drawn from authored Plan Template young-tree notes. Watering content surfaced here is info-only orientation, not Activity / compliance / done / skipped / missed / overdue.
+- Read-time display-relevance rule only: no persisted state, no schema change, no validator change, no backup / import / export change.
+- `V2_UX_MODEL.md` §2.16 and §5.13 were amended to sanction this narrow exception; the general no-automatic-hiding rule continues to bind every plant and every item outside the year-1–2 fruit-only frame.
+- Trap capture hiding for year-1–2 fruit-only rows is a Runtime Slice 8 simplification, not a permanent product rule. If the owner later wants sentinel-trap logging on young trees, the exception MUST be narrowed — keep primary monitoring / risk surfaces clean for year-1–2 plants, but restore the optional capture path — rather than generalising the hiding rule.
+- This addendum does not close Slice 8; Step 6 (multi-plant structured Observation capture) and Step 7b (Trap Advisory Source-Coverage Gap Map owner review) remain open.
+
 ### Post-S8 Carry-forward Action Map
 
 Carried forward means tracked for a future owner-approved session, not abandoned. Items below do not gate Slice 8 closure (Step 6 and Step 7 do); they queue up for owner-approved sessions after Slice 8 finally closes. Agents must not use carry-forward wording to skip owner-approved work, remove plan-template guidance, expand scope without explicit owner approval, or duplicate concepts that already exist in `archive/future/STORE_READY_ROADMAP_V1.md` or `archive/v1/AI_STRATEGY_V1.md`.

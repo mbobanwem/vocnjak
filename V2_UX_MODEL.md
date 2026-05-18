@@ -1004,6 +1004,16 @@ Full explanation belongs in detail.
 
 Kalendar must not infer guilt, pressure, or automatic hiding for young trees.
 
+**Sanctioned year-1–2 young-tree relevance exception.** For plants in their first or second calendar year after planting, Kalendar MAY structurally hide from primary surfaces the seasonal actions, monitoring items, and risk-awareness items whose approved Plan Templates and source context state are not relevant for young, non-bearing trees — typically harvest, fruit thinning, bird-net, fruit-load checks, and the narrow set of pest monitoring whose target is the fruit or nut itself (codling moth, fruit fly, fruit cracking, fruit drop, hazelnut weevil, and similar items the owner has explicitly curated as fruit-target-only). Runtime maintains a bounded, owner-curated fruit-only source row set behind this rule; the exact selector mechanics are an implementation concern and are not enumerated here.
+
+All other Kalendar content MUST remain visible for year-1–2 plants — including formative pruning, summer shoot care, watering and establishment context, leaf and shoot monitoring, aphid scouting, sharka, monilia, fire blight, peacock spot, bud mite, frost awareness, fertilization, winter inspection, winter protection, and any other Plan Template or source content that does not specifically state young-tree non-applicability.
+
+In place of the suppressed cards, Kalendar may render a short factual "Mlade voćke" sub-section per month carrying read-only orientation drawn from authored Plan Template young-tree notes (formative pruning, summer shoot care, watering establishment, watering shutdown, winter check, and the per-species variants the owner approves). These orientation cards are static informational text — no Activity capture, no state, no done / skipped / missed / overdue / compliance copy, no clickable target. Watering content surfaced here is info-only orientation, not an action with state.
+
+Scope guards: this exception applies only to plants in their first or second year after planting. It MUST NOT apply to year-3+ plants, MUST NOT generalise beyond the fruit-only items the owner has curated, and MUST NOT alter persisted state, schema, validators, or backup/import/export shape — it is a read-time display-relevance rule only.
+
+The earlier no-automatic-hiding statement in this section continues to bind every plant and every item outside this narrowly-defined year-1–2 fruit-only frame. See §5.13 for the matching Plant detail behavior.
+
 ### 2.17 Weather
 
 Weather hints appear only on near-term visible cards or as a global band when one near-term advisory affects multiple visible current/near-term cards.
@@ -2478,6 +2488,16 @@ Za mlada stabla god. 1–2: fokus na formiranje uzgojnog oblika.
 ```
 
 These must be factual and non-guilt-inducing.
+
+**Sanctioned year-1–2 young-tree relevance exception (narrow).** For plants in their first or second calendar year after planting, Plant detail MAY structurally suppress from primary surfaces the seasonal action cards, monitoring cards, risk-awareness cards, and the seasonal-action-detail route for items whose approved Plan Templates and source context state are not relevant for young, non-bearing trees. Suppression scope matches §2.16; the bounded fruit-only source row set is curated by the owner and maintained in runtime.
+
+In place of the suppressed surfaces, Plant detail may render a single "Mlada voćka" section: one heading, one neutral explanation sentence, and the currently-applicable young-tree orientation cards drawn from authored Plan Template young-tree notes. The orientation cards are static informational text. They introduce no new entity, state, storage shape, validator, or registry; they are read-time projections of authored Plan Template content.
+
+Everything else MUST remain visible for year-1–2 plants with caveat-only treatment per the rules above: formative pruning, summer shoot care, watering and establishment context, leaf and shoot monitoring, aphid scouting, sharka, monilia, fire blight, peacock spot, bud mite, frost awareness, winter inspection, fertilization, winter protection, and any other non-fruit-only Plan Template or source content. Watering remains info-only orientation, not an Activity / compliance / done-state surface.
+
+**Trap capture under this exception (Runtime Slice 8 simplification).** The current Runtime Slice 8 realisation suppresses the Plant detail trap-capture button and the trap-advisory aggregation alongside the fruit-only trap monitoring cards for year-1–2 plants. This is a Slice 8 simplification, not a permanent product rule. A grower who wants to set a sentinel trap on a young tree to gauge incoming pressure cannot record captures from Plant detail under this realisation. If the owner later wants sentinel trap logging on young trees, the exception MUST be narrowed — keep the primary monitoring and risk surfaces clean for year-1–2 plants, but restore the optional capture path — rather than generalising the hiding rule.
+
+Year-3+ plants regain the full set of surfaces, including all monitoring, trap capture, and seasonal-action paths. This exception applies only to year-1 and year-2 plants and is a read-time display-relevance rule only — no persisted state, no schema change, no validator change.
 
 ### 5.14 Irrigation / watering
 
