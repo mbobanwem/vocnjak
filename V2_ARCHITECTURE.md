@@ -1216,6 +1216,8 @@ Rules:
 - `kind = "note"` is a free-standing Observation shape only; it is ignored by snapshot derivation, monitoring program state, `open_condition`, weather composition, treatment logic, pressure/severity/threshold logic, and awareness/risk matching.
 - S8 Step 4a `kind = "trap"` with `program_id = null` is also free-standing only; its count is factual history evidence and is ignored by snapshot derivation, monitoring program state, `open_condition`, weather composition, treatment logic, pressure/severity/threshold logic, and awareness/risk matching.
 
+S8 Step 7 source-backed trap advisory display is a read-time derived display layer only. It may read valid `kind = "trap"` Observations and map `(plant_id, source_entry_id, rolling 7-day count)` to owner-approved, source-backed display copy for explicitly approved trap rows. It persists nothing, does not change `Observation.payload`, does not change import/export/backup shape, does not change snapshot, and is not monitoring state, threshold state, pressure scoring, or severity scoring.
+
 ### 4.14 Za pregledati cue projection
 
 `Za pregledati` cue projection produces calm review candidates from the snapshot and existing S7 routes.

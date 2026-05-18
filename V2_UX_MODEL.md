@@ -124,6 +124,14 @@ Status: implemented for Plant detail read-only preview in Runtime Slice 8 Step 1
 - `buildSeasonalSnapshot(...).monitoring` remains empty; B2 metadata remains private, non-persisted, non-global, and separate from snapshot.
 - §0.1–§0.7 remain authoritative for all later monitoring UX.
 
+S8 Step 7 narrow advisory exception:
+
+- Source-backed trap advisory display is allowed only as a read-only display layer for explicitly owner-approved trap rows.
+- It may show advisory bands only when the band copy is traceable to `V2_ORCHARD_PLAN_TEMPLATES.md`.
+- It remains non-persisted and must not alter Observation payload.
+- It must not create monitoring state, task state, compliance state, pressure/severity scoring, diagnosis, treatment advice, automatic action recommendation, product recommendation, dose recommendation, karenca derivation, due/overdue copy, or `prskaj sada` framing.
+- This exception does not weaken the general monitoring prohibitions in §0; it only permits the narrow Step 7 source-backed read-only advisory display.
+
 S8 Step 2 implemented boundary:
 
 - Plant detail only.
