@@ -1513,7 +1513,7 @@ Historically, Runtime Slice 2 created a foundation-only pre-usable `catalog_v1`:
 
 As of `df6a7fc Implement Action Window Seed prerequisite`, canonical runtime `catalog_v1` has been expanded with source-backed `action_window_definitions` and real stable `window_def_id` values. Current runtime `catalog_v1` is no longer foundation-only.
 
-As of `ad9a113 Project action-window notes into canonical catalog` (B1) and `a1b5307 Clean B1 action-window notes boundary` (B1.1), canonical `catalog_v1` also exposes the optional per-window `action_window_definitions[].notes` field and the top-level `spray_safety_notes` constant array. The projected note content is restricted to action-execution mechanics (timing, fenofaza, safe-execution wording, oil/copper spacing, "ne duplicirati" / "ne automatski" guidance, product-category / label wording, young-tree caveats, thinning / harvest / bird-net practical guidance) and explicitly excludes monitoring decision prose, awareness / risk prose, pathogen / symptom registry prose, frost-diagnostic prose, and history-coaching prose. As of B2, source-map projection grouping exists as private/read-only metadata in `index.html`: 36 projected items, 41 source-entry mappings, 5 merge groups, `monitoring_track` / `risk_awareness_track`, and `hidden_until_slice_8` visibility. B2 projection constants are separate from `buildSeasonalSnapshot`, are not persisted, are not rendered, and do not add monitoring programs, awareness definitions, target / symptom registries, or stage vocabulary. Slice 8 is the first allowed consumer of that metadata after owner approval. Canonical drift on `notes` and `spray_safety_notes` is detected by `compareCanonicalCatalogNode`. Pre-B1 `vocnjak_v2` stores are deterministically refreshable via `isB1RefreshableCatalogV1` / `normalizeStoreCatalogForCurrentCanonical` only when the stored catalog matches canonical minus the B1 projection and contains no own `notes` or `spray_safety_notes`.
+As of `ad9a113 Project action-window notes into canonical catalog` (B1) and `a1b5307 Clean B1 action-window notes boundary` (B1.1), canonical `catalog_v1` also exposes the optional per-window `action_window_definitions[].notes` field and the top-level `spray_safety_notes` constant array. The projected note content is restricted to action-execution mechanics (timing, fenofaza, safe-execution wording, oil/copper spacing, "ne duplicirati" / "ne automatski" guidance, product-category / label wording, young-tree caveats, thinning / harvest / bird-net practical guidance) and explicitly excludes monitoring decision prose, awareness / risk prose, pathogen / symptom registry prose, frost-diagnostic prose, and history-coaching prose. As of B2, source-map projection grouping exists as private/read-only metadata in `index.html`: 36 projected items, 41 source-entry mappings, 5 merge groups, `monitoring_track` / `risk_awareness_track`, and `hidden_until_slice_8` visibility. B2 projection constants are separate from `buildSeasonalSnapshot`, are not persisted, and do not add monitoring programs, awareness definitions, target / symptom registries, or stage vocabulary. They were not rendered at B2 creation; later S8 runtime consumers may read them only through explicitly owner-approved, read-only projection paths. Canonical drift on `notes` and `spray_safety_notes` is detected by `compareCanonicalCatalogNode`. Pre-B1 `vocnjak_v2` stores are deterministically refreshable via `isB1RefreshableCatalogV1` / `normalizeStoreCatalogForCurrentCanonical` only when the stored catalog matches canonical minus the B1 projection and contains no own `notes` or `spray_safety_notes`.
 
 The Pre-Slice-5 Action Window Seed prerequisite extended/replaced V2 `catalog_v1` into the first usable canonical V2 catalog before Runtime Slice 5 implementation may write Activity records:
 
@@ -1551,6 +1551,25 @@ Shared template source MAY be projected into species-first runtime IDs when that
 Deferred monitoring, awareness, and watering/advisory items MUST be carried forward to their owning future slice instead of being dropped.
 
 Import/export validation MUST protect the projection against canonical drift, placeholders, broad generic IDs, synthetic/null/sentinel IDs, forbidden action types, and deferred rows accidentally entering the runtime seed.
+
+### 6.5c Guidance vs persistence projection flow
+
+Plan Templates content may feed read-only app guidance before it can be persisted as a structured record.
+
+The runtime projection flow is:
+
+```text
+V2_ORCHARD_PLAN_TEMPLATES.md source row/block
+-> projection disposition (V2_DOMAIN_MODEL.md §0.2b)
+-> existing app surface
+-> optional capture only when the required durable identifier and validator path exist
+```
+
+Read-only guidance does not require a new persisted identifier. Structured persistence does. Missing `target_code` or `symptom_code` blocks structured `Observation.scouting` / `Observation.symptom` writes; it does not block source-backed guidance display.
+
+B2 remains private projection metadata. Runtime may consume B2 through approved read paths, but B2 `projected_id`, source rows, merge groups, bands, and display copy are not persisted target identity and are not registries. Existing B2/action-window/trap/stage runtime paths should be extended where possible; future work should not introduce a parallel projection architecture.
+
+Validator, import, and export support must be added before any new structured Observation kind or identifier path is writable. Until then, unsupported structured persistence must fail closed rather than invent identifiers, reinterpret B2 metadata, or store display labels/copy as durable payload fields.
 
 ### 6.6 Manual owner recovery path
 

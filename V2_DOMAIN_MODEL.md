@@ -45,6 +45,51 @@ The model MUST NOT collapse:
 
 If approved plan-template content cannot be represented faithfully, the domain model MUST be amended in an owner-approved session. The content MUST NOT be silently flattened, dropped, generalized, or renamed away.
 
+### 0.2b Plan-template projection dispositions
+
+This section defines planning / curation vocabulary only. It does NOT define persisted fields, runtime state, catalog schema, app enums, or user-facing labels.
+
+Before declaring a content/source gap, inspect the relevant row or section in `V2_ORCHARD_PLAN_TEMPLATES.md`. For each row or content block, separate:
+
+1. Can this content appear in the app as read-only guidance?
+2. Can this content be persisted as a structured record now?
+3. If not, what exact identifier, model, or runtime gap blocks persistence?
+
+Do not collapse "cannot persist as structured Observation yet" into "cannot appear in app." If Plan Templates contain safe practical guidance, the projection must choose the correct app surface for guidance even when structured persistence waits.
+
+Projection planning may use these disposition fields:
+
+- `destination`: `Activity action window`, `Observation.trap`, `Observation.scouting`, `Observation.stage_obs`, `Observation.symptom`, `Observation.note`, `read-only guidance`, or `not supported / out of current scope`.
+- `guidance_status`: whether the source-backed content can be shown now, must not be shown, or needs owner decision.
+- `persistence_status`: whether a structured record can be written now, is blocked by missing identifier/runtime support, needs owner decision, or is future scope.
+- `implementation_status`: whether current runtime/docs are sufficient, narrow but extendable, missing, or need correction.
+
+Classification rules:
+
+- Content about doing or skipping work (pruning, spraying, treating, installing, harvesting, protection setup, or other seasonal work) projects to Activity.
+- Content about a physical trap or counted catch (`klopka`, `klopke`, `ulov`, pheromone trap, sticky plate) projects to `Observation.trap` only when a bounded source entry and target mapping are approved.
+- Content about visual inspection, what to look for, checking leaves/shoots/fruit, or presence/absence of a target problem projects to `Observation.scouting` only after a durable `target_code` source is approved.
+- Visible signs may appear as read-only guidance or scouting guidance. They project to `Observation.symptom` only after an approved `symptom_code` source exists.
+- Content about phenology or growth stage projects to `Observation.stage_obs` only when the required `stage_code` vocabulary exists for that capture path.
+- Content that helps the grower understand what to look for, when to delay/skip, or why a condition matters may project as read-only guidance even when no structured record can be written yet.
+
+The model MUST NOT turn scouting or symptom content into Activity. The model MUST NOT turn visual scouting or symptom content into `Klopke` / `Observation.trap`.
+
+Examples that must not be flattened:
+
+- Pear row `516`: split trap Observation candidate from fruit-signal scouting/symptom guidance; not one context-only `Klopke` card.
+- Nectarine row `1064` and peach row `1228`: mixed optional-trap plus visual shoot/fruit signs; not clean Step 7b `Klopke`.
+- Quince row `2004`: visual scouting/symptom content; no trap path unless source confirms trap content.
+
+Identifier categories for projection:
+
+- Safe to persist now: `window_def_id` for Activity; `observation_id`; `plant_id`; `catalog_version`; write dates; approved Step 4a trap `source_entry_id` with its local `target_pest_code`; approved Step 5a diary `stage_code`.
+- Metadata only unless owner-approved otherwise: B2 `projected_id`, B2 source-row mappings, merge groups, Plan Templates row numbers, advisory bands, and advisory copy.
+- Display-only: labels, notes, source summaries, beginner guidance, and user-facing explanatory text.
+- Missing / owner-approved before persistence: durable scouting `target_code`, durable `symptom_code`, monitoring `program_id` declarations with deterministic capture entry points, and disputed mixed-row trap splits.
+
+B2 `projected_id` MUST NOT become persisted `target_code` by default. B2 is projection metadata, not a target registry, pest registry, symptom registry, stage vocabulary, or treatment taxonomy. Source-row-based identifiers may be considered only as an owner-approved bounded adapter; they MUST NOT be silently promoted into broad taxonomy.
+
 ### 0.3 Derived (never stored)
 
 - **Window state** per (plant, action).

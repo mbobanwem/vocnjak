@@ -165,6 +165,22 @@ S8 Step 5a implemented boundary:
 - Pregled/Kalendar surfaces are unchanged. `Bez zapisa` and `Zadnji zapis` remain deferred.
 - Multi-plant stage capture, observation correction for stage diary, program-attached stage capture, and any broader stage registry remain deferred until separately owner-approved.
 
+### 0.9 Plan Templates guidance before structured capture
+
+Approved Plan Templates content may appear as calm read-only guidance before structured capture exists for that content.
+
+Guidance rules:
+
+- Use beginner-readable labels and practical wording from approved catalog/template sources.
+- Do not expose row ids, source ids, `target_code`, `symptom_code`, `program_id`, payload names, or schema terms to the grower.
+- Do not imply the plant currently has a problem.
+- Do not infer urgency, pressure, severity, compliance, overdue state, or treatment need from missing observations.
+- Do not recommend products, doses, spraying now, or treatment actions.
+- Do not hide useful source-backed guidance only because structured persistence is blocked.
+- Factual records that do exist belong in Dnevnik / plant history with neutral evidence copy.
+
+Capture waits for the relevant owner-approved identifier and runtime path. Visual scouting needs a durable `target_code` before structured `Observation.scouting` writes. Symptom capture needs an approved `symptom_code` before structured `Observation.symptom` writes.
+
 ---
 
 ## 1. Pregled (home)
@@ -3284,6 +3300,8 @@ Step 5a is a diary record only. It does not unlock, block, schedule, complete, o
 §11 (Stage confirmation) remains a future phenology-aware flow placeholder; it is separate from this §10.5a diary path. If a future owner-approved session opens §11, it may refine or replace `stage_diary_vocabulary[]` and its mapping to catalog `stage_vocabulary[]`. Until then, Step 5a writes go only through `stage_diary_vocabulary[]`.
 
 ### 10.6 Visual scouting UX
+
+Visual scouting capture is a future structured `Observation.scouting` path. It must not be enabled until the relevant source-backed `target_code` strategy, validator path, and Dnevnik rendering are owner-approved. Until then, Plan Templates visual-scouting content may still appear as read-only guidance under §0.9.
 
 For visual scouting, use:
 

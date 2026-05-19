@@ -60,6 +60,10 @@ Required proof before any catalog/action-window implementation plan: a source ma
 
 If that proof is missing: STOP.
 
+Before declaring a Plan Templates content gap, inspect the relevant `V2_ORCHARD_PLAN_TEMPLATES.md` row/section. Separate read-only guidance eligibility from structured persistence eligibility. If persistence is blocked, name the exact missing identifier/model/runtime support. Do not hide safe source-backed guidance only because `Observation.scouting` or `Observation.symptom` persistence is not ready.
+
+Do not invent `target_code`, `symptom_code`, registries, treatment/pressure/urgency/compliance logic, or use B2 `projected_id` as persisted target identity. Visual scouting and symptom content are Observations, not Activities or `Klopke`.
+
 ### IN PROGRESS
 
 - current target document only
@@ -106,7 +110,7 @@ Current:
 - implementation was forbidden through S11 documentation; Slices 0, 1, 2, 3, 4, 5, 6, and 7 plus the Pre-Slice-7 Action Window Notes Projection prerequisite (B1 and B1.1) and B2 metadata-only projection boundary were then owner-approved and committed
 - Runtime Slice 8 Step 1, Step 2, Step 3, Step 4a, Step 5a, and Step 7 minimal runtime are complete; Runtime Slice 8 remains open for Step 6 (multi-plant structured Observation capture) and Step 7b owner review / source-coverage decisions; Step 7 is not fully closed until Step 7b is owner-reviewed and source-coverage decisions are complete; later S8 runtime work must remain owner-approved and must preserve the Plant detail free-standing Observation boundary unless the owner explicitly opens the next step
 - The minimal Step 7 runtime is pushed on main at `905af41 Implement S8 Step 7 trap advisory display` and covers only the four S8-blocker source rows (sweet cherry `trap_source_654`, sour cherry `trap_source_860`, plum spring `trap_source_1596`, plum summer `trap_source_1643`); the patch adds a read-only Plant-detail `Klopke` advisory section that aggregates existing valid trap Observations over the rolling last-7-day window per `(plant_id, source_entry_id)` and renders source-backed advisory band copy plus a static `Pragovi (informativni)` reference block, and does not change Observation payload, validators, backup/import/export shape, snapshot, Pregled, Kalendar, or the Dnevnik trap card
-- Runtime Slice 8 Step 7b Trap Advisory Source-Coverage Gap Map is documentation/tracking only and is required before Step 7 closure; the gap map is recorded in `V2_CURRENT_STATE.md` (Runtime Slice 8 Remaining Steps area) and `V2_EXECUTION_ROADMAP.md` (item 8 in §36); apple codling moth advisory coverage is a known gap, not a rejected feature, and must remain visible in the gap map until resolved; Step 7b does not introduce new schema, new runtime, new fields, new vocabulary, new registry, or new UI surface
+- Runtime Slice 8 Step 7b Trap Advisory Source-Coverage Gap Map is documentation/tracking only and is required before Step 7 closure; the gap map is recorded in `V2_CURRENT_STATE.md` (Runtime Slice 8 Remaining Steps area) and `V2_EXECUTION_ROADMAP.md` (item 8 in §36); apple row 337 has owner-approved context-only advisory runtime at `b1d840c`, and any remaining apple codling moth gap is limited to a future source-backed numeric extension if concrete numeric treatment thresholds emerge from owner-approved source review; Step 7b does not introduce new schema, new runtime, new fields, new vocabulary, new registry, or new UI surface
 - Step 7b tracking / clarification is pushed on main at `665d38b Track S8 Step 7 trap advisory coverage gaps` and `9996f1a Clarify S8 Step 7b advisory tracking`; any follow-up cleanup commit must remain tightly scoped and must not be pushed without owner approval
 
 ### INPUT FILES (NOT YET VALIDATED V2 TRUTH)

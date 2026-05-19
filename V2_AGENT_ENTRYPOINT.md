@@ -40,25 +40,9 @@ Historical / supporting reading only:
 
 ## Current phase
 
-Current phase: S5 closed — pre-S6 documentation inventory / simplification patch.
+This routing file does not carry current phase status or the current edit allowlist.
 
-Current next step: apply the minimal routing/governance cleanup approved by the pre-S6 inventory review.
-
-After this cleanup, the next owner-approved phase is S6 UX core surfaces in `V2_UX_MODEL.md`.
-
-Allowed current output:
-
-- documentation alignment only
-- no catalog/template content changes
-- no runtime, schema, regional engine, or implementation changes
-
-Do not edit during this cleanup:
-
-- `V2_PLANT_CATALOG.md`
-- `V2_ORCHARD_PLAN_TEMPLATES.md`
-- `V2_CATALOG_AUDIT.md`
-- `V2_CURRENT_STATE.md`
-- code/runtime files
+For current phase, open work, approved files, and stop conditions, read `V2_CURRENT_STATE.md` and the active owner request. If this routing file appears to conflict with `V2_CURRENT_STATE.md`, `V2_CURRENT_STATE.md` wins.
 
 ---
 

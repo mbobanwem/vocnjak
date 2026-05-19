@@ -32,6 +32,8 @@ Runtime Slice 8 Step 1, Step 2, Step 3, Step 4a, and Step 5a are runtime-complet
 
 Runtime Slice 8 is not closed. Steps 1, 2, 3, 4a, and 5a are runtime-complete. Step 7 numeric-band runtime covers sweet cherry, sour cherry, and plum rows 654/860/1596/1643. Step 7b context-only trap advisory runtime at `b1d840c` also covers apple row 337, olive row 2455, walnut row 2949, and walnut row 2977. Step 6 remains open. Step 7 remains open until remaining row dispositions are documented and Step 6 impact is clear. The b1d840c Step 7b context-only advisory runtime is already pushed. This cleanup is documentation/tracking only and adds no runtime, schema, fields, vocabulary, registry, or UI surface.
 
+Projection consolidation is active as a documentation-only planning step before any further S8 runtime expansion. It consolidates how `V2_ORCHARD_PLAN_TEMPLATES.md` content reaches existing app surfaces, without adding runtime, schema, fields, registries, a new MD file, or UI behavior. It does not close S8. Step 6 remains open. Step 7 remains not fully closed.
+
 #### S8 Step 6 — Multi-plant structured Observation capture
 
 - Status: required before Runtime Slice 8 closure.
@@ -161,7 +163,7 @@ Step 7b does not introduce new schema, new runtime, new fields, new vocabulary, 
 
 #### S8 Year-1–2 young-tree relevance — runtime-complete; UX-spec sanctioned
 
-- Runtime Slice 8 young-tree relevance work is runtime-complete in `index.html`. The patch is uncommitted, pending owner approval to commit alongside the `V2_UX_MODEL.md` §2.16 / §5.13 amendment and this tracker entry.
+- Runtime Slice 8 young-tree relevance work is runtime-complete and pushed on main at `9074e7b Implement S8 year-1-2 young-tree relevance`.
 - For plants in year 1 or year 2 after planting, Pregled and the main Kalendar view structurally hide from primary surfaces the fruit-only seasonal actions, monitoring items, and risk-awareness items whose approved Plan Templates / source context state are not relevant to young, non-bearing trees (harvest, fruit thinning, bird-net, fruit-load checks, codling moth, fruit fly, fruit cracking, fruit drop, hazelnut weevil; owner-curated fruit-only source row set behind the rule).
 - Year-3+ plants restore the normal plan; the exception does not apply.
 - Non-fruit-only content remains visible for year-1–2 plants: formative pruning, summer shoot care, watering and establishment context, leaf and shoot monitoring, aphid scouting, sharka, monilia, fire blight, frost awareness, peacock spot, bud mite, fertilization, winter inspection, winter protection.

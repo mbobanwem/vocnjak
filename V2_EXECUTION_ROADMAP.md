@@ -1306,7 +1306,7 @@ Approved decomposition:
    - `V2_UX_MODEL.md` §2.16 and §5.13 were amended to sanction this narrow exception; the general no-automatic-hiding rule continues to bind every plant and every item outside the year-1–2 fruit-only frame.
    - Trap capture hiding for year-1–2 fruit-only rows is a Runtime Slice 8 simplification, not a permanent product rule. If the owner later wants sentinel-trap logging on young trees, the exception MUST be narrowed — keep primary monitoring / risk surfaces clean for year-1–2 plants, but restore the optional capture path — rather than generalising the hiding rule.
    - Does not close Slice 8. Step 6 and Step 7b remain open.
-   - Status note: runtime is uncommitted as of this tracker entry; pending owner approval to commit `index.html` + `V2_UX_MODEL.md` (§2.16 / §5.13 amendment) + this tracker update together.
+   - Status note: runtime is pushed on main at `9074e7b Implement S8 year-1-2 young-tree relevance`.
 
 S8 remaining steps:
 
@@ -1316,6 +1316,16 @@ Runtime Slice 8 is not closed. Steps 1, 2, 3, 4a, and 5a are runtime-complete (i
 - S8 Step 7b — Trap Advisory Source-Coverage Gap Map owner-reviewed source/destination decisions; Step 7 is not fully closed until remaining row dispositions are documented and Step 6 impact is clear.
 
 Hard rule: Runtime Slice 8 cannot close until Step 7's coverage gate says either `S8 can close` or every `S8 blocker` row from the coverage gate has been resolved.
+
+Projection consolidation sequence before further runtime:
+
+1. Consolidate Plan Templates projection rules into existing docs; do not create a new MD file.
+2. Extend read-only guidance through existing S6/S7/S8 surfaces before adding new structured persistence.
+3. Approve durable scouting target identifiers before `Observation.scouting` writes.
+4. Stabilize identifiers before implementing multi-plant structured Observation grouping.
+5. Approve symptom identifiers before `Observation.symptom` writes.
+
+This sequence references `V2_DOMAIN_MODEL.md §0.2b` for projection dispositions, `V2_ARCHITECTURE.md §6.5c` for guidance-vs-persistence architecture, and `V2_UX_MODEL.md §0.9` for user-facing guidance behavior. The roadmap records order only; it does not redefine the model.
 
 Post-S8 Carry-forward Action Map:
 
