@@ -387,6 +387,12 @@
   .v2-seasonal-note {
     margin-top: 4px;
   }
+  .v2-b2-guidance-list {
+    margin: 6px 0 0;
+    padding-left: 18px;
+    color: #64748b;
+    line-height: 1.4;
+  }
   .v2-seasonal-status {
     display: inline-block;
     margin: 6px 0;
@@ -4227,6 +4233,80 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     trapCaptureSource('trap_source_2949', 2949, 'walnut', 'walnut_fly_sticky_trap_monitoring', 'Orahova muha (Rhagoletis completa)', 'trap_source_2949_target'),
     trapCaptureSource('trap_source_2977', 2977, 'walnut', 'walnut_codling_moth_trap_monitoring', 'Jabučni savijač na orahu (Cydia pomonella)', 'trap_source_2977_target')
   ]);
+  function b2ReadonlyGuidance(label, bullets) {
+    return {
+      label: label,
+      bullets: bullets
+    };
+  }
+
+  var B2_READONLY_GUIDANCE_BY_SOURCE_ROW = deepFreezeB2Projection({
+    337: b2ReadonlyGuidance('Što gledati', [
+      'svježi ubodi ili rupice na plodu',
+      'mrvice / piljevina uz ulaz',
+      'neočekivano otpali mladi plodovi'
+    ]),
+    516: b2ReadonlyGuidance('Što gledati', [
+      'ulov na klopci, ako je postavljena',
+      'male rupice, mrvice ili piljevina uz ulaz na plodu',
+      'kapljice smole ili neočekivano otpali plodovi'
+    ]),
+    654: b2ReadonlyGuidance('Što gledati', [
+      'ulov na žutoj ljepljivoj ploči',
+      'promjene u ulovu između pregleda'
+    ]),
+    860: b2ReadonlyGuidance('Što gledati', [
+      'ulov na žutoj ljepljivoj ploči',
+      'promjene u ulovu između pregleda'
+    ]),
+    1064: b2ReadonlyGuidance('Što gledati', [
+      'sušenje ili venuće vrhova izboja',
+      'male rupice na izbojima ili plodu',
+      'mrvice / piljevina uz oštećen izboj ili plod'
+    ]),
+    1228: b2ReadonlyGuidance('Što gledati', [
+      'sušenje ili venuće vrhova izboja',
+      'male rupice na izbojima ili plodu',
+      'mrvice / piljevina uz oštećen izboj ili plod'
+    ]),
+    1596: b2ReadonlyGuidance('Što gledati', [
+      'kapljice smole na mladim plodovima',
+      'male ulazne rupice',
+      'neočekivano otpali mladi plodovi'
+    ]),
+    1643: b2ReadonlyGuidance('Što gledati', [
+      'smolaste kapljice na plodu',
+      'ulazne ili izlazne rupice',
+      'oštećeni ili rano otpali plodovi'
+    ]),
+    2004: b2ReadonlyGuidance('Što gledati', [
+      'svježi ubodi ili rupice na plodu',
+      'mrvice / piljevina uz ulaz',
+      'smolaste kapljice ili rano otpali plodovi'
+    ]),
+    2455: b2ReadonlyGuidance('Što gledati', [
+      'ulov na žutoj ploči s atraktantom',
+      'promjene u ulovu između pregleda'
+    ]),
+    2949: b2ReadonlyGuidance('Što gledati', [
+      'ulov na žutoj ljepljivoj klopci',
+      'oštećenja zelenog kožuha ploda',
+      'promjene boje zelenog kožuha'
+    ]),
+    2977: b2ReadonlyGuidance('Što gledati', [
+      'ulov na feromonskoj klopci, ako je postavljena',
+      'promjene u ulovu kroz sezonu'
+    ]),
+    3160: b2ReadonlyGuidance('Što gledati', [
+      'odrasle pipe na bijeloj podlozi pri pregledu grana',
+      'napadnuti ili oštećeni plodovi'
+    ]),
+    3188: b2ReadonlyGuidance('Što gledati', [
+      'nabrekli pupovi',
+      'deformirani ili neobično povećani pupovi',
+      'vidljive promjene na zimskim pupovima'
+    ])
+  });
 
   function b2PlantDetailMethodText(methodKind) {
     if (methodKind === 'trap') return 'Feromonska ili ljepljiva klopka, ako postoji u praksi.';
@@ -4240,11 +4320,42 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return 'Opažanje / evidencija, ne obaveza.';
   }
 
+  function b2SourceEntryAppliesToPlant(sourceEntry, plant) {
+    return sourceEntry &&
+      Array.isArray(sourceEntry.species) &&
+      sourceEntry.species.indexOf(plant.species) !== -1;
+  }
+
+  function b2GuidanceForPlantDetailItem(item, plant, sourceEntries) {
+    var refs = item.source_refs || [];
+    var bullets = [];
+    var seen = Object.create(null);
+    for (var i = 0; i < refs.length; i++) {
+      var ref = refs[i];
+      var sourceEntry = sourceEntries[ref.source_row];
+      if (!b2SourceEntryAppliesToPlant(sourceEntry, plant)) continue;
+      var guidance = B2_READONLY_GUIDANCE_BY_SOURCE_ROW[ref.source_row];
+      if (!guidance || !Array.isArray(guidance.bullets)) continue;
+      for (var b = 0; b < guidance.bullets.length; b++) {
+        var bullet = guidance.bullets[b];
+        if (seen[bullet]) continue;
+        seen[bullet] = true;
+        bullets.push(bullet);
+      }
+    }
+    if (bullets.length === 0) return null;
+    return {
+      label: 'Što gledati',
+      bullets: bullets
+    };
+  }
+
   function b2PlantDetailPreview(plant) {
     var preview = { monitoring: [], riskAwareness: [] };
     if (!plant || typeof plant.species !== 'string') return preview;
     if (B2_PROJECTION_VALIDATION_ERRORS.length > 0) return preview;
     var items = B2_PROJECTION_BOUNDARY.projected_items || [];
+    var sourceEntries = b2SourceEntriesByRow(B2_PROJECTION_BOUNDARY);
     for (var i = 0; i < items.length; i++) {
       var item = items[i];
       if (!item || !Array.isArray(item.species) || item.species.indexOf(plant.species) === -1) continue;
@@ -4253,6 +4364,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
         label: item.label_hr_draft,
         method: b2PlantDetailMethodText(item.method_kind),
         note: b2PlantDetailNoteText(item.track),
+        guidance: b2GuidanceForPlantDetailItem(item, plant, sourceEntries),
         source_rows: (item.source_refs || []).map(function (ref) { return ref.source_row; })
       };
       if (item.track === 'monitoring_track') preview.monitoring.push(row);
@@ -8042,6 +8154,14 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       card.appendChild(makeEl('p', 'v2-seasonal-card-title', items[i].label));
       if (items[i].method) card.appendChild(makeEl('span', 'v2-seasonal-meta', items[i].method));
       card.appendChild(makeEl('span', 'v2-seasonal-note', items[i].note));
+      if (items[i].guidance && Array.isArray(items[i].guidance.bullets) && items[i].guidance.bullets.length > 0) {
+        card.appendChild(makeEl('span', 'v2-seasonal-meta', items[i].guidance.label + ':'));
+        var guidanceList = makeEl('ul', 'v2-b2-guidance-list');
+        for (var b = 0; b < items[i].guidance.bullets.length; b++) {
+          guidanceList.appendChild(makeEl('li', '', items[i].guidance.bullets[b]));
+        }
+        card.appendChild(guidanceList);
+      }
       list.appendChild(card);
     }
     section.appendChild(list);
