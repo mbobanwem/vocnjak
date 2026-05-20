@@ -1234,6 +1234,7 @@ Approved decomposition:
    - Consumes B2 metadata through an explicit S8 read path.
    - Shows plant-specific monitoring and risk-awareness context only on Plant detail.
    - Keeps monitoring items and risk-awareness items visually/textually separated.
+   - As of `81c0fdb`, existing Plant detail B2 preview cards also render curated, source-backed, read-only `Što gledati` guidance bullets. This is Plant-detail-only display guidance: it renders no raw Plan Templates notes, adds no structured persistence, no `target_code` / `symptom_code`, no registry, no `Observation.scouting` / `Observation.symptom` writes, and changes no validators/import/export/schema/localStorage, Pregled/Kalendar, Dnevnik, S8/Step 6/Step 7 closure status, or treatment/pressure/urgency/compliance logic.
    - Does not add persistence, observation writes, Dnevnik observation rows, new routes, tap-through detail, CTAs, Pregled, Kalendar, or `Bez zapisa`.
    - Does not change `buildSeasonalSnapshot(...).monitoring`; it remains empty.
    - Keeps B2 metadata private, non-global, non-persisted, and separate from snapshot.
