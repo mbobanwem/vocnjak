@@ -3301,13 +3301,19 @@ Step 5a is a diary record only. It does not unlock, block, schedule, complete, o
 
 ### 10.6 Visual scouting UX
 
-Visual scouting capture is a future structured `Observation.scouting` path. It must not be enabled until the relevant source-backed `target_code` strategy, validator path, and Dnevnik rendering are owner-approved. Until then, Plan Templates visual-scouting content may still appear as read-only guidance under §0.9.
+Visual scouting capture is a structured `Observation.scouting` path. S8 Step 7c is the narrow owner-approved exception for Plant detail visual scouting capture using the bounded `scouting_capture_sources[]` source map defined in `V2_DOMAIN_MODEL.md §3.2.2a`. Outside that Step 7c path, visual scouting capture must not be enabled until the relevant source-backed `target_code` strategy, validator path, and Dnevnik rendering are owner-approved. Plan Templates visual-scouting content may still appear as read-only guidance under §0.9.
+
+Step 7c Plant detail call-to-action may use:
+
+```text
+Zabilježi vizualni pregled
+```
 
 For visual scouting, use:
 
 ```text
-Primijećeno
-Nije primijećeno
+Nema vidljivih znakova
+Ima vidljivih znakova
 ```
 
 Helper copy:
@@ -3319,9 +3325,13 @@ Bilježi samo ono što si vidio/la — ne procjenu stanja voćke.
 Rules:
 
 - save remains disabled until one option is selected
-- notes are optional
-- `Nije primijećeno` means only that the user did not notice the target during this check
-- `Nije primijećeno` must not imply that the plant is safe, clean, resolved, or problem-free
+- when visible signs are present, the grower chooses from source-backed visible signs for the selected Step 7c source entry
+- source-backed visible signs are checklist signs for scouting capture, not `Observation.symptom` capture
+- notes are optional and labeled `Bilješka`
+- `Nema vidljivih znakova` means only that the user did not notice the listed visible signs during this check
+- `Nema vidljivih znakova` must not imply that the plant is safe, clean, resolved, or problem-free
+- Step 7c may show calm advisory copy after signs are recorded: `Ako se znakovi ponavljaju ili šire, ponesi sliku/plod/list i zatraži savjet lokalne poljoapoteke ili stručnjaka.`
+- do not show diagnosis, treatment recommendation, product names, dosage, `prskaj`, pressure, urgency, or compliance language
 
 ### 10.7 Date behavior
 
@@ -3359,11 +3369,21 @@ Storage behavior is governed by `V2_DOMAIN_MODEL.md §1.7.3 L5b`.
 
 Current §10 does not support multi-plant monitoring capture.
 
+Narrow S8 Step 7c exception: Plant detail visual scouting capture may support multi-plant saves for the same visual check only.
+
 One monitoring observation means:
 
 ```text
 one plant + one program/context
 ```
+
+For the Step 7c exception, one multi-plant capture means:
+
+- one visual scouting source
+- one observed date
+- one result/sign selection
+- one optional note
+- one per-plant Observation
 
 Current §10 must not include:
 
@@ -3373,7 +3393,18 @@ Current §10 must not include:
 - progress language
 - checklist language
 
-Future multi-plant monitoring requires a future owner-approved UX session. It is not merely an S8/S9 implementation detail.
+Step 7c multi-plant rules:
+
+- current plant is preselected
+- eligible plants are limited to the same `scouting_capture_sources[]` entry context, including same species/source eligibility
+- the capture records the same visual check only
+- runtime writes one Observation per selected plant
+- multi-plant saves share `observation_group_id`
+- global Dnevnik may group the records
+- Plant detail remains plant-scoped
+- no coverage, progress, urgency, pressure, compliance, diagnosis, treatment, product, dose, or `prskaj` language
+
+Future multi-plant monitoring beyond the Step 7c visual scouting path requires a future owner-approved UX session. It is not merely an S8/S9 implementation detail.
 
 ### 10.10 Treatment-advice boundary
 

@@ -780,6 +780,93 @@ provenance = { source: "user" }
 | `target_code` | string identifier                                                                   | required    | What is being scouted for. Opaque in S2.4.                                   |
 | `finding`     | `{ mode: "count", value: integer ≥ 0 }` OR `{ mode: "presence", value: boolean }`   | required    | Primary observation. Mode declared at capture; not inferred.                 |
 
+#### 3.2.2a S8 Step 7c free-standing visual scouting source map
+
+Runtime Slice 8 Step 7c authorizes a narrow visual scouting capture path only.
+
+Step 7c scouting Observations are:
+
+- Plant-detail-only;
+- free-standing only;
+- stored with `program_id = null`;
+- factual visible-sign evidence only;
+- not monitoring-program evidence;
+- not `Observation.symptom` capture;
+- not a diagnosis, treatment recommendation, pressure score, urgency signal, compliance signal, weather automation input, or automatic action trigger.
+
+Step 7c uses a bounded source map:
+
+```text
+scouting_capture_sources[]
+```
+
+`scouting_capture_sources[]` is sourced from `V2_ORCHARD_PLAN_TEMPLATES.md`, limited to the approved S8 Step 7c source rows, and used only for Step 7c visual scouting Observation validation/display. It is a closed source-row-backed adapter, not a broad target registry, not a symptom registry, not diagnosis logic, not treatment logic, not a replacement for `monitoring_programs[]`, and not a change to trap capture.
+
+For mixed trap/visual rows, trap capture and trap advisory display remain separate. `scouting_capture_sources[]` covers only visible plant, fruit, shoot, nut, husk, or bud signs.
+
+Each source-map entry has:
+
+```text
+source_entry_id
+source_row
+species
+projected_id, if retained for B2 display/source traceability
+method_kind = "scouting"
+target_label_hr
+local_scouting_target_code
+sign_choices[] = { sign_key, label_hr }
+window, if source-backed
+```
+
+Rules:
+
+- `source_entry_id` is the primary Plan Templates traceability key for Step 7c.
+- `projected_id` may be retained only for B2 display/source traceability.
+- `projected_id` is NOT the target identifier.
+- `target_code` in a Step 7c scouting Observation MUST equal the selected source entry's `local_scouting_target_code`.
+- `target_code` resolves only inside `scouting_capture_sources[]` for Step 7c.
+- Unknown `source_entry_id` values fail closed.
+- Mismatched `source_entry_id` / `target_code` pairs fail closed.
+- `selected_sign_keys` resolve only inside the selected source entry's `sign_choices[]`.
+- `(source_entry_id, sign_key)` is the durable visible-sign identity.
+- `sign_key` alone is not globally meaningful.
+- Step 7c persists `sign_key` values, not Croatian display labels.
+- Step 7c sign keys are scouting checklist signs, not persisted `symptom_code` values.
+- Display labels are resolved from retained source-map context; Step 7c Observations MUST NOT persist `target_label_hr`, sign labels, or Plan Templates prose in payload.
+
+Approved initial Step 7c source entries:
+
+| `source_entry_id` | Source row | Species | `projected_id` traceability | `local_scouting_target_code` | Visual subset |
+|---|---:|---|---|---|---|
+| `scouting_source_337` | 337 | `apple` | `apple_codling_moth_trap_monitoring` | `scouting_source_337_target` | visible fruit signs only; trap capture/advisory remains separate |
+| `scouting_source_516` | 516 | `pear` | `pear_fruit_moth_monitoring` | `scouting_source_516_target` | visible fruit signs only; optional trap content remains separate |
+| `scouting_source_1064` | 1064 | `nectarine` | `peach_nectarine_fruit_moth_monitoring` | `scouting_source_1064_target` | visible shoot/fruit signs only; optional trap content remains separate |
+| `scouting_source_1228` | 1228 | `peach` | `peach_nectarine_fruit_moth_monitoring` | `scouting_source_1228_target` | visible shoot/fruit signs only; optional trap content remains separate |
+| `scouting_source_1596` | 1596 | `plum` | `plum_moth_spring_trap_monitoring` | `scouting_source_1596_target` | visible young-fruit signs only; trap capture/advisory remains separate |
+| `scouting_source_1643` | 1643 | `plum` | `plum_moth_summer_trap_monitoring` | `scouting_source_1643_target` | visible fruit signs only; trap capture/advisory remains separate |
+| `scouting_source_2004` | 2004 | `quince` | `quince_fruit_moth_scouting` | `scouting_source_2004_target` | visible fruit signs only; no trap path is added |
+| `scouting_source_2949` | 2949 | `walnut` | `walnut_fly_sticky_trap_monitoring` | `scouting_source_2949_target` | visible green-husk signs only; trap capture/advisory remains separate |
+| `scouting_source_3160` | 3160 | `hazelnut` | `hazelnut_weevil_scouting` | `scouting_source_3160_target` | visible adult-weevil / nut-damage signs only |
+| `scouting_source_3188` | 3188 | `hazelnut` | `hazelnut_bud_mite_scouting` | `scouting_source_3188_target` | visible bud signs only |
+
+Step 7c payload shape:
+
+```text
+kind = "scouting"
+program_id = null
+payload = {
+  source_entry_id: string,
+  target_code: string,
+  finding: { mode: "presence", value: boolean },
+  selected_sign_keys: string[],
+  note?: string
+}
+provenance = { source: "user" }
+observation_group_id? = string
+```
+
+`observation_group_id` is optional and is used only when one Step 7c capture flow saves one per-plant scouting Observation for multiple eligible plants. The grouping rules in §0.11 remain authoritative.
+
 #### 3.2.3 `stage_obs`
 
 | Field        | Type              | Cardinality | Semantics                                                                                          |
@@ -919,6 +1006,20 @@ A note Observation is not monitoring-program evidence, not attachable to monitor
 - `finding.mode` not in `{ "count", "presence" }`.
 - `finding.mode = "count"` and `finding.value` absent or not an integer ≥ 0.
 - `finding.mode = "presence"` and `finding.value` not a boolean.
+- For S8 Step 7c free-standing scouting capture, `source_entry_id` absent or empty.
+- For S8 Step 7c free-standing scouting capture, `source_entry_id` does not resolve in `scouting_capture_sources[]`.
+- For S8 Step 7c free-standing scouting capture, the resolved source entry's `species` does not match the Observation plant's species.
+- For S8 Step 7c free-standing scouting capture, `target_code` does not equal the resolved source entry's `local_scouting_target_code`.
+- For S8 Step 7c free-standing scouting capture, `finding.mode` is not exactly `"presence"`.
+- For S8 Step 7c free-standing scouting capture, `finding.value` is not a boolean.
+- For S8 Step 7c free-standing scouting capture, `selected_sign_keys` is absent or not an array.
+- For S8 Step 7c free-standing scouting capture, any `selected_sign_keys[]` value does not resolve inside the selected source entry's `sign_choices[]`.
+- For S8 Step 7c free-standing scouting capture, `finding.value = false` and `selected_sign_keys` is not empty.
+- For S8 Step 7c free-standing scouting capture, `finding.value = true` and `selected_sign_keys` does not contain at least one valid sign key.
+- For S8 Step 7c free-standing scouting capture, optional `note` is present but is not trimmed, is empty after trim, or exceeds 1000 characters.
+- For S8 Step 7c free-standing scouting capture, `program_id` is not `null`.
+- For S8 Step 7c free-standing scouting capture, provenance is not exactly `{ source: "user" }`.
+- For S8 Step 7c free-standing scouting capture, the payload attempts to persist a global `symptom_code`, Croatian display label, Plan Templates prose, diagnosis, treatment recommendation, pressure, urgency, compliance, or Activity reference.
 
 #### 3.4.3 `stage_obs` payload — invalid if
 
