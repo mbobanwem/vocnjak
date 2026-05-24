@@ -6725,6 +6725,38 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     status: ['status'],
     notes: ['notes']
   };
+  var OBSERVATION_CORRECTION_TYPE_KEYS = {
+    date: ['observed_on'],
+    plant: ['plant_id'],
+    note_text: ['text'],
+    trap_count: ['count'],
+    stage_code: ['stage_code'],
+    scouting_result: ['scouting_result'],
+    scouting_note: ['scouting_note']
+  };
+  var OBSERVATION_CORRECTION_RULES = {
+    note: {
+      date: { key: 'observed_on', grouped: false },
+      plant: { key: 'plant_id', grouped: false },
+      note_text: { key: 'text', grouped: true }
+    },
+    trap: {
+      date: { key: 'observed_on', grouped: false },
+      plant: { key: 'plant_id', grouped: false },
+      trap_count: { key: 'count', grouped: false }
+    },
+    stage_obs: {
+      date: { key: 'observed_on', grouped: false },
+      plant: { key: 'plant_id', grouped: false },
+      stage_code: { key: 'stage_code', grouped: true }
+    },
+    scouting: {
+      date: { key: 'observed_on', grouped: false },
+      plant: { key: 'plant_id', grouped: false },
+      scouting_result: { key: 'scouting_result', grouped: true },
+      scouting_note: { key: 'scouting_note', grouped: true }
+    }
+  };
   var trapCaptureSourceById = V2_B2_PRIVATE.trapCaptureSourceById;
   var scoutingCaptureSourceById = V2_B2_PRIVATE.scoutingCaptureSourceById;
   var stageDiaryEntryByCode = V2_STAGE_DIARY_PRIVATE.stageDiaryEntryByCode;
@@ -7477,11 +7509,11 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return 0;
   }
 
-  function correctionExpectedKeys(types) {
+  function correctionExpectedKeys(types, typeKeys) {
     var expected = Object.create(null);
     var count = 0;
     for (var i = 0; i < types.length; i++) {
-      var keys = CORRECTION_TYPE_KEYS[types[i]];
+      var keys = typeKeys[types[i]];
       for (var j = 0; j < keys.length; j++) {
         if (!expected[keys[j]]) {
           expected[keys[j]] = true;
@@ -7492,18 +7524,51 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return { keys: expected, count: count };
   }
 
-  function validateCorrection(correction, parsed, catalog, activityById, path) {
-    if (!isPlainObject(correction)) return [path + ' not a plain object'];
-    var keys = Object.keys(correction);
-    for (var i = 0; i < keys.length; i++) {
-      if (ALLOWED_CORRECTION_KEYS.indexOf(keys[i]) === -1) return [path + ' unexpected key: ' + keys[i]];
+  function observationCorrectionRule(kind, type) {
+    if (!hasOwnKey(OBSERVATION_CORRECTION_RULES, kind)) return null;
+    var rules = OBSERVATION_CORRECTION_RULES[kind];
+    return hasOwnKey(rules, type) ? rules[type] : null;
+  }
+
+  function validateCorrectionValueKeys(correction, typeKeys, path) {
+    if (!isPlainObject(correction.corrected_values)) return [path + '.corrected_values not a plain object'];
+    var expected = correctionExpectedKeys(correction.correction_types, typeKeys);
+    var valueKeys = Object.keys(correction.corrected_values);
+    if (valueKeys.length !== expected.count) return [path + '.corrected_values keys must match correction_types'];
+    for (var v = 0; v < valueKeys.length; v++) {
+      if (!expected.keys[valueKeys[v]]) return [path + '.corrected_values unexpected key: ' + valueKeys[v]];
     }
-    for (var j = 0; j < REQUIRED_CORRECTION_KEYS.length; j++) {
-      if (keys.indexOf(REQUIRED_CORRECTION_KEYS[j]) === -1) return [path + ' missing key: ' + REQUIRED_CORRECTION_KEYS[j]];
+    return [];
+  }
+
+  function validateScoutingResultCorrectionValue(value, original, path) {
+    if (!isPlainObject(value)) return [path + ' not a plain object'];
+    var keys = Object.keys(value);
+    if (keys.length !== 2 || keys.indexOf('finding') === -1 || keys.indexOf('selected_sign_keys') === -1) return [path + ' keys must equal [finding,selected_sign_keys]'];
+    if (!isPlainObject(value.finding)) return [path + '.finding not a plain object'];
+    var findingKeys = Object.keys(value.finding);
+    if (findingKeys.length !== 2 || findingKeys.indexOf('mode') === -1 || findingKeys.indexOf('value') === -1) return [path + '.finding keys must equal [mode,value]'];
+    if (value.finding.mode !== 'presence') return [path + '.finding.mode must be presence'];
+    if (typeof value.finding.value !== 'boolean') return [path + '.finding.value must be boolean'];
+    if (!Array.isArray(value.selected_sign_keys)) return [path + '.selected_sign_keys must be an array'];
+    var source = typeof scoutingCaptureSourceById === 'function' ? scoutingCaptureSourceById(original.payload.source_entry_id) : null;
+    if (!source) return [path + '.selected_sign_keys cannot resolve original source_entry_id'];
+    var validSigns = Object.create(null);
+    for (var s = 0; s < source.sign_choices.length; s++) validSigns[source.sign_choices[s].sign_key] = true;
+    var seenSigns = Object.create(null);
+    for (var i = 0; i < value.selected_sign_keys.length; i++) {
+      var signKey = value.selected_sign_keys[i];
+      if (typeof signKey !== 'string' || signKey.trim().length === 0) return [path + '.selected_sign_keys contains invalid sign'];
+      if (!validSigns[signKey]) return [path + '.selected_sign_keys contains unknown sign'];
+      if (seenSigns[signKey]) return [path + '.selected_sign_keys contains duplicate sign'];
+      seenSigns[signKey] = true;
     }
-    if (typeof correction.correction_id !== 'string' || correction.correction_id.trim().length === 0) return [path + '.correction_id required'];
-    if (typeof correction.original_record_id !== 'string' || correction.original_record_id.trim().length === 0) return [path + '.original_record_id required'];
-    if (correction.original_record_type !== 'activity') return [path + '.original_record_type must be activity in Slice 5'];
+    if (value.finding.value === false && value.selected_sign_keys.length !== 0) return [path + '.selected_sign_keys must be empty when finding.value is false'];
+    if (value.finding.value === true && value.selected_sign_keys.length === 0) return [path + '.selected_sign_keys required when finding.value is true'];
+    return [];
+  }
+
+  function validateActivityCorrection(correction, parsed, catalog, activityById, path) {
     if (!activityById[correction.original_record_id]) return [path + '.original_record_id must target an original Activity'];
     if (!Array.isArray(correction.correction_types) || correction.correction_types.length === 0) return [path + '.correction_types must be a non-empty array'];
     var seenTypes = Object.create(null);
@@ -7513,13 +7578,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       if (seenTypes[type]) return [path + '.correction_types contains duplicate type'];
       seenTypes[type] = true;
     }
-    if (!isPlainObject(correction.corrected_values)) return [path + '.corrected_values not a plain object'];
-    var expected = correctionExpectedKeys(correction.correction_types);
-    var valueKeys = Object.keys(correction.corrected_values);
-    if (valueKeys.length !== expected.count) return [path + '.corrected_values keys must match correction_types'];
-    for (var v = 0; v < valueKeys.length; v++) {
-      if (!expected.keys[valueKeys[v]]) return [path + '.corrected_values unexpected key: ' + valueKeys[v]];
-    }
+    var keyErrs = validateCorrectionValueKeys(correction, CORRECTION_TYPE_KEYS, path);
+    if (keyErrs.length > 0) return keyErrs;
     var cv = correction.corrected_values;
     if (seenTypes.date) {
       var dateErr = checkDate(cv.occurred_on);
@@ -7535,9 +7595,102 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     }
     if (seenTypes.status && (typeof cv.status !== 'string' || !hasOwnKey(ACTIVITY_STATUSES, cv.status))) return [path + '.corrected_values.status must be done or skipped'];
     if (seenTypes.notes && (typeof cv.notes !== 'string' || cv.notes.trim().length === 0)) return [path + '.corrected_values.notes must be a non-empty string'];
+    return [];
+  }
+
+  function validateObservationCorrection(correction, parsed, observationById, path) {
+    var original = observationById[correction.original_record_id];
+    if (!original) return [path + '.original_record_id must target an original Observation'];
+    if (!hasOwnKey(OBSERVATION_CORRECTION_RULES, original.kind)) return [path + '.original_record_id targets unsupported Observation kind'];
+    if (!Array.isArray(correction.correction_types) || correction.correction_types.length === 0) return [path + '.correction_types must be a non-empty array'];
+    var grouped = hasOwnKey(original, 'observation_group_id');
+    var seenTypes = Object.create(null);
+    for (var t = 0; t < correction.correction_types.length; t++) {
+      var type = correction.correction_types[t];
+      var rule = typeof type === 'string' ? observationCorrectionRule(original.kind, type) : null;
+      if (!rule) return [path + '.correction_types contains unsupported type'];
+      if (seenTypes[type]) return [path + '.correction_types contains duplicate type'];
+      if (grouped && !rule.grouped) return [path + '.correction_types contains type not allowed for grouped Observation'];
+      seenTypes[type] = true;
+    }
+    var keyErrs = validateCorrectionValueKeys(correction, OBSERVATION_CORRECTION_TYPE_KEYS, path);
+    if (keyErrs.length > 0) return keyErrs;
+    var cv = correction.corrected_values;
+    if (seenTypes.date) {
+      var dateErr = checkDate(cv.observed_on);
+      if (dateErr) return [path + '.corrected_values.observed_on ' + dateErr];
+      var recordedOn = localDateFromIsoUtc(original.recorded_at);
+      if (recordedOn < cv.observed_on) return [path + '.corrected_values.observed_on must be on or before original recorded_at local calendar date'];
+    }
+    if (seenTypes.plant && !findPlantById(parsed.plants, cv.plant_id)) return [path + '.corrected_values.plant_id must reference an existing plant'];
+    if (seenTypes.note_text) {
+      if (typeof cv.text !== 'string') return [path + '.corrected_values.text must be a string'];
+      if (cv.text.trim().length === 0) return [path + '.corrected_values.text required'];
+      if (cv.text !== cv.text.trim()) return [path + '.corrected_values.text must be stored trimmed'];
+      if (cv.text.length > 1000) return [path + '.corrected_values.text must be 1000 characters or less'];
+    }
+    if (seenTypes.trap_count) {
+      if (typeof cv.count !== 'number' || !isFinite(cv.count) || Math.floor(cv.count) !== cv.count) return [path + '.corrected_values.count must be an integer'];
+      if (cv.count < 0) return [path + '.corrected_values.count must be non-negative'];
+    }
+    if (seenTypes.stage_code) {
+      if (typeof cv.stage_code !== 'string' || cv.stage_code.trim().length === 0) return [path + '.corrected_values.stage_code required'];
+      var entry = typeof stageDiaryEntryByCode === 'function' ? stageDiaryEntryByCode(cv.stage_code) : null;
+      if (!entry) return [path + '.corrected_values.stage_code unknown'];
+    }
+    if (seenTypes.scouting_result) {
+      var resultErrs = validateScoutingResultCorrectionValue(cv.scouting_result, original, path + '.corrected_values.scouting_result');
+      if (resultErrs.length > 0) return resultErrs;
+    }
+    if (seenTypes.scouting_note) {
+      if (cv.scouting_note !== null) {
+        if (typeof cv.scouting_note !== 'string') return [path + '.corrected_values.scouting_note must be a string or null'];
+        if (cv.scouting_note.trim().length === 0) return [path + '.corrected_values.scouting_note must be non-empty or null'];
+        if (cv.scouting_note !== cv.scouting_note.trim()) return [path + '.corrected_values.scouting_note must be stored trimmed'];
+        if (cv.scouting_note.length > 1000) return [path + '.corrected_values.scouting_note must be 1000 characters or less'];
+      }
+    }
+    return [];
+  }
+
+  function validateCorrection(correction, parsed, catalog, activityById, observationById, path) {
+    if (!isPlainObject(correction)) return [path + ' not a plain object'];
+    var keys = Object.keys(correction);
+    for (var i = 0; i < keys.length; i++) {
+      if (ALLOWED_CORRECTION_KEYS.indexOf(keys[i]) === -1) return [path + ' unexpected key: ' + keys[i]];
+    }
+    for (var j = 0; j < REQUIRED_CORRECTION_KEYS.length; j++) {
+      if (keys.indexOf(REQUIRED_CORRECTION_KEYS[j]) === -1) return [path + ' missing key: ' + REQUIRED_CORRECTION_KEYS[j]];
+    }
+    if (typeof correction.correction_id !== 'string' || correction.correction_id.trim().length === 0) return [path + '.correction_id required'];
+    if (typeof correction.original_record_id !== 'string' || correction.original_record_id.trim().length === 0) return [path + '.original_record_id required'];
+    var typedErrs;
+    if (correction.original_record_type === 'activity') {
+      typedErrs = validateActivityCorrection(correction, parsed, catalog, activityById, path);
+    } else if (correction.original_record_type === 'observation') {
+      typedErrs = validateObservationCorrection(correction, parsed, observationById, path);
+    } else {
+      return [path + '.original_record_type must be activity or observation'];
+    }
+    if (typedErrs.length > 0) return typedErrs;
     if (!isIsoUtcTimestamp(correction.created_at)) return [path + '.created_at must be an ISO UTC timestamp'];
     if (hasOwnKey(correction, 'explanation') && (typeof correction.explanation !== 'string' || correction.explanation.trim().length === 0)) return [path + '.explanation must be a non-empty string'];
     return [];
+  }
+
+  function clonePlainData(value) {
+    if (Array.isArray(value)) {
+      var arr = [];
+      for (var i = 0; i < value.length; i++) arr.push(clonePlainData(value[i]));
+      return arr;
+    }
+    if (isPlainObject(value)) {
+      var out = {};
+      var keys = Object.keys(value);
+      for (var j = 0; j < keys.length; j++) out[keys[j]] = clonePlainData(value[keys[j]]);
+      return out;
+    }
+    return value;
   }
 
   function composeEffectiveActivity(activity, corrections) {
@@ -7572,24 +7725,149 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return effective;
   }
 
+  function composeEffectiveObservation(observation, corrections) {
+    var effective = clonePlainData(observation);
+    var sorted = corrections.slice().sort(correctionSort);
+    for (var i = 0; i < sorted.length; i++) {
+      var correction = sorted[i];
+      var types = correction.correction_types;
+      var cv = correction.corrected_values;
+      if (types.indexOf('date') !== -1) effective.observed_on = cv.observed_on;
+      if (types.indexOf('plant') !== -1) effective.plant_id = cv.plant_id;
+      if (types.indexOf('note_text') !== -1) effective.payload.text = cv.text;
+      if (types.indexOf('trap_count') !== -1) effective.payload.count = cv.count;
+      if (types.indexOf('stage_code') !== -1) effective.payload.stage_code = cv.stage_code;
+      if (types.indexOf('scouting_result') !== -1) {
+        effective.payload.finding = clonePlainData(cv.scouting_result.finding);
+        effective.payload.selected_sign_keys = clonePlainData(cv.scouting_result.selected_sign_keys);
+      }
+      if (types.indexOf('scouting_note') !== -1) {
+        if (cv.scouting_note === null) delete effective.payload.note;
+        else effective.payload.note = cv.scouting_note;
+      }
+    }
+    return effective;
+  }
+
+  function canonicalCorrectionValue(value) {
+    if (Array.isArray(value)) {
+      var arr = [];
+      for (var i = 0; i < value.length; i++) arr.push(canonicalCorrectionValue(value[i]));
+      return '[' + arr.join(',') + ']';
+    }
+    if (isPlainObject(value)) {
+      var keys = Object.keys(value).sort();
+      var bits = [];
+      for (var j = 0; j < keys.length; j++) bits.push(JSON.stringify(keys[j]) + ':' + canonicalCorrectionValue(value[keys[j]]));
+      return '{' + bits.join(',') + '}';
+    }
+    return JSON.stringify(value);
+  }
+
+  function observationCorrectionSignature(correction) {
+    var types = correction.correction_types.slice().sort();
+    var bits = [];
+    for (var i = 0; i < types.length; i++) {
+      var correctionType = types[i];
+      var keys = OBSERVATION_CORRECTION_TYPE_KEYS[correctionType];
+      for (var j = 0; j < keys.length; j++) {
+        var key = keys[j];
+        bits.push(key + ':' + canonicalCorrectionValue(correction.corrected_values[key]));
+      }
+    }
+    return types.join(',') + '|' + bits.join('|');
+  }
+
+  function validateGroupedObservationCorrectionBatches(batches, observationGroups) {
+    var batchIds = Object.keys(batches);
+    for (var b = 0; b < batchIds.length; b++) {
+      var batch = batches[batchIds[b]];
+      var members = observationGroups[batch.groupId] || [];
+      if (members.length < 2) return ['observation_group_id ' + batch.groupId + ' grouped correction requires multiple members'];
+      var expected = Object.create(null);
+      for (var m = 0; m < members.length; m++) expected[members[m].observation_id] = true;
+      var seen = Object.create(null);
+      var seenCount = 0;
+      var signature = null;
+      for (var c = 0; c < batch.corrections.length; c++) {
+        var correction = batch.corrections[c];
+        var observationId = correction.original_record_id;
+        if (!expected[observationId]) return ['observation_group_id ' + batch.groupId + ' grouped correction targets non-member'];
+        if (seen[observationId]) return ['observation_group_id ' + batch.groupId + ' has duplicate grouped correction member'];
+        seen[observationId] = true;
+        seenCount++;
+        var currentSignature = observationCorrectionSignature(correction);
+        if (signature === null) signature = currentSignature;
+        else if (signature !== currentSignature) return ['observation_group_id ' + batch.groupId + ' has non-uniform grouped correction'];
+      }
+      if (seenCount !== members.length) return ['observation_group_id ' + batch.groupId + ' has partial grouped correction'];
+    }
+    return [];
+  }
+
+  function validateEffectiveObservationGroups(observations, effectiveByObservationId) {
+    var groups = Object.create(null);
+    for (var i = 0; i < observations.length; i++) {
+      if (!hasOwnKey(observations[i], 'observation_group_id')) continue;
+      var groupId = observations[i].observation_group_id;
+      var effective = effectiveByObservationId[observations[i].observation_id] || observations[i];
+      var payloadKey = observationPayloadGroupKey(effective);
+      if (!groups[groupId]) {
+        groups[groupId] = payloadKey;
+      } else if (groups[groupId] !== payloadKey) {
+        return ['observation_group_id ' + groupId + ' has mixed effective payload'];
+      }
+    }
+    return [];
+  }
+
   function validateAllCorrections(corrections, parsed, catalog) {
     if (!Array.isArray(corrections)) return ['corrections not an array'];
     var activityById = Object.create(null);
+    var observationById = Object.create(null);
+    var observationGroups = Object.create(null);
     var correctionsByActivity = Object.create(null);
+    var correctionsByObservation = Object.create(null);
+    var groupedCorrectionBatches = Object.create(null);
     for (var a = 0; a < parsed.activities.length; a++) {
       activityById[parsed.activities[a].activity_id] = parsed.activities[a];
+    }
+    for (var o = 0; o < parsed.observations.length; o++) {
+      var observation = parsed.observations[o];
+      observationById[observation.observation_id] = observation;
+      if (hasOwnKey(observation, 'observation_group_id')) {
+        if (!observationGroups[observation.observation_group_id]) observationGroups[observation.observation_group_id] = [];
+        observationGroups[observation.observation_group_id].push(observation);
+      }
     }
     var seenCorrectionIds = Object.create(null);
     for (var i = 0; i < corrections.length; i++) {
       var path = 'corrections[' + i + ']';
-      var errs = validateCorrection(corrections[i], parsed, catalog, activityById, path);
+      var errs = validateCorrection(corrections[i], parsed, catalog, activityById, observationById, path);
       if (errs.length > 0) return errs;
       var correctionId = corrections[i].correction_id;
       if (seenCorrectionIds[correctionId]) return ['duplicate correction_id: ' + correctionId];
       seenCorrectionIds[correctionId] = true;
-      var activityId = corrections[i].original_record_id;
-      if (!correctionsByActivity[activityId]) correctionsByActivity[activityId] = [];
-      correctionsByActivity[activityId].push(corrections[i]);
+      if (corrections[i].original_record_type === 'activity') {
+        var activityId = corrections[i].original_record_id;
+        if (!correctionsByActivity[activityId]) correctionsByActivity[activityId] = [];
+        correctionsByActivity[activityId].push(corrections[i]);
+      } else {
+        var observationId = corrections[i].original_record_id;
+        var originalObservation = observationById[observationId];
+        if (!correctionsByObservation[observationId]) correctionsByObservation[observationId] = [];
+        correctionsByObservation[observationId].push(corrections[i]);
+        if (hasOwnKey(originalObservation, 'observation_group_id')) {
+          var batchKey = originalObservation.observation_group_id + '|' + corrections[i].created_at;
+          if (!groupedCorrectionBatches[batchKey]) {
+            groupedCorrectionBatches[batchKey] = {
+              groupId: originalObservation.observation_group_id,
+              corrections: []
+            };
+          }
+          groupedCorrectionBatches[batchKey].corrections.push(corrections[i]);
+        }
+      }
     }
     var activityIds = Object.keys(correctionsByActivity);
     for (var c = 0; c < activityIds.length; c++) {
@@ -7598,6 +7876,19 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       var effectiveErrs = validateActivityCore(effective, parsed, catalog, 'effective activity ' + activityIds[c]);
       if (effectiveErrs.length > 0) return effectiveErrs;
     }
+    var batchErrs = validateGroupedObservationCorrectionBatches(groupedCorrectionBatches, observationGroups);
+    if (batchErrs.length > 0) return batchErrs;
+    var effectiveByObservationId = Object.create(null);
+    var observationIds = Object.keys(correctionsByObservation);
+    for (var e = 0; e < observationIds.length; e++) {
+      var originalObs = observationById[observationIds[e]];
+      var effectiveObs = composeEffectiveObservation(originalObs, correctionsByObservation[observationIds[e]]);
+      var effectiveObsErrs = validateObservation(effectiveObs, parsed, catalog, 'effective observation ' + observationIds[e]);
+      if (effectiveObsErrs.length > 0) return effectiveObsErrs;
+      effectiveByObservationId[observationIds[e]] = effectiveObs;
+    }
+    var effectiveGroupErrs = validateEffectiveObservationGroups(parsed.observations, effectiveByObservationId);
+    if (effectiveGroupErrs.length > 0) return effectiveGroupErrs;
     return [];
   }
 
