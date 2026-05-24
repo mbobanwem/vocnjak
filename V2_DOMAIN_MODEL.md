@@ -210,7 +210,7 @@ Field rules:
 
 - `correction_id` is a string identifier.
 - `original_record_id` references the immutable original record.
-- `original_record_type` is `"activity"` or `"observation"` as the durable vocabulary. Runtime Slice 5 only permits `"activity"` because Observation correction is later-slice scope.
+- `original_record_type` is `"activity"` or `"observation"` as the durable vocabulary. Runtime Slice 5 only permits `"activity"`. Post-S8 Observation correction is documentation-locked below and requires a separate runtime implementation.
 - `correction_types` is a non-empty array with no duplicate values.
 - Runtime Slice 5 allowed `correction_types` values are exactly: `"date"`, `"plant"`, `"window"`, `"status"`, `"notes"`.
 - `corrected_values` is a plain object.
@@ -238,6 +238,81 @@ Rules:
 - A Correction MUST target an original record only. Correction-of-correction is invalid.
 - Multiple Corrections may reference the same original record.
 - Effective display orders Corrections by `created_at`, then `correction_id`; the latest value per corrected field wins.
+
+#### Post-S8 Observation correction docs lock
+
+Observation correction reuses the same additive Correction model. It allows `original_record_type = "observation"` for original Observation records only. This docs lock does not implement runtime.
+
+Supported original Observation kinds:
+
+- `note`
+- `trap`
+- `stage_obs`
+- `scouting`
+
+Original Observation records remain immutable: no delete, no in-place edit, no hiding, no overwriting, and no correction-of-correction. Effective Observation values are derived from the original Observation plus valid Corrections sorted by `created_at`, then `correction_id`; the latest valid value for each corrected field wins.
+
+Post-S8 Observation correction whitelist:
+
+| Observation kind | `correction_type` | Required `corrected_values` key | Grouped allowed? |
+|---|---|---|---|
+| all supported kinds | `"date"` | `observed_on` | no |
+| all supported kinds | `"plant"` | `plant_id` | no |
+| `note` | `"note_text"` | `text` | yes, group-wide only |
+| `trap` | `"trap_count"` | `count` | no |
+| `stage_obs` | `"stage_code"` | `stage_code` | yes, group-wide only |
+| `scouting` | `"scouting_result"` | `scouting_result` | yes, group-wide only |
+| `scouting` | `"scouting_note"` | `scouting_note` | yes, group-wide only |
+
+General Observation correction rules:
+
+- `correction_types` MUST be a non-empty array with no duplicate values.
+- `corrected_values` keys MUST exactly match the required keys for the selected `correction_types`.
+- Orphan corrected values and missing selected values are invalid.
+- `observation_id`, `catalog_version`, `recorded_at`, `provenance`, `kind`, `program_id`, `payload.source_entry_id`, `payload.target_pest_code`, and `observation_group_id` are not correctable.
+- `program_id` MUST remain `null` for the supported free-standing Observation kinds in this scope.
+- Corrections MUST NOT introduce diagnosis, treatment recommendation, product advice, dose advice, pressure/urgency/compliance state, broad target/symptom registry fields, `Observation.symptom`, `symptom_code`, new Observation kinds, or program-attached Observations.
+
+Ungrouped Observation correction rules:
+
+- Ungrouped supported Observations MAY correct date, plant, and kind-specific payload fields from the whitelist.
+- Corrected `observed_on` MUST be valid `YYYY-MM-DD`, MUST NOT be future, and after effective composition MUST be on or before the original `recorded_at` local date. This matches the Activity correction date boundary through effective core validation.
+- Corrected `plant_id` MUST reference an existing Plant. For `trap` and `scouting`, the corrected Plant species MUST remain compatible with the original source entry, and the effective Observation payload MUST pass full Observation validation.
+- If corrected `plant_id` makes the effective payload/source entry invalid, validation fails closed.
+
+Grouped Observation correction follows Strategy A:
+
+- Grouped Observations are correctable only for shared payload fields listed as "grouped allowed" in the whitelist.
+- Grouped Observation correction is group-wide only. One-member payload correction inside a stored group is invalid.
+- Grouped Observations MUST NOT allow date correction, plant correction, group splitting, effective regrouping, duplicate effective-plant handling, or mixed effective payload inside one stored group.
+- Stored `observation_group_id` remains immutable audit metadata and remains the group-membership authority.
+- A group-wide payload correction is represented as one Correction per original Observation in the stored group.
+- All per-member Corrections for one group-wide correction MUST be saved together in one runtime save operation.
+- All per-member Corrections MUST carry the same corrected effective payload value.
+- If any per-member Correction or any resulting effective Observation would fail validation, the entire group-wide save fails closed; no partial group correction save is allowed.
+- No `correction_group_id` is introduced in this docs lock.
+
+Kind-specific payload rules:
+
+- `note_text` corrects `payload.text`; the effective note text MUST be a trimmed non-empty string and cannot be `null` or blank.
+- `trap_count` corrects `payload.count`; the effective count MUST be an integer `>= 0`; grouped trap correction is out of scope.
+- `stage_code` corrects `payload.stage_code`; the effective code MUST resolve in the bounded stage diary vocabulary for the Observation's catalog/source context.
+- `scouting_result` uses the composite shape:
+
+```json
+{
+  "scouting_result": {
+    "finding": { "mode": "presence", "value": true },
+    "selected_sign_keys": ["resin_drops"]
+  }
+}
+```
+
+- `scouting_result.finding.mode` MUST be `"presence"`.
+- `scouting_result.finding.value` MUST be boolean.
+- If `value` is `false`, `selected_sign_keys` MUST be `[]`.
+- If `value` is `true`, `selected_sign_keys` MUST contain at least one valid sign key for the original `source_entry_id`.
+- `scouting_note` corrects optional `payload.note`. The corrected value MAY be a trimmed non-empty string `<= 1000` characters or `null`; `null` means the effective `payload.note` is omitted. Blank string is invalid.
 
 ### 0.7 Overlay identity rule
 
@@ -372,6 +447,8 @@ Activity records (§0.1 item 5) and Observation records (§0.1 item 6) each carr
 9. **Disjoint namespaces.** `activity_group_id` and `observation_group_id` are disjoint identifier namespaces. An Activity never shares an id with an Observation; a real-world capture that produces both an Activity and an Observation uses two distinct group ids if grouping is needed at all.
 
 10. **Display / query semantics.** History display MAY surface a group as one user-visible event collapsing the per-plant records; the model does not dictate display behavior. Queries MAY filter by group id; group membership is determined solely by the stored identifier, not by heuristic timestamp/type matching.
+
+11. **Post-S8 Observation correction group rule.** Observation correction uses Strategy A for grouped Observations: stored `observation_group_id` remains immutable membership metadata, grouped date/plant correction is not allowed, grouped payload correction is group-wide only, and effective display keeps group membership based on the stored group id because first-scope correction does not split or reshape groups.
 
 ---
 

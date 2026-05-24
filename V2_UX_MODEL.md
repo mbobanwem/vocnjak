@@ -3542,7 +3542,8 @@ Stage confirmation records what the grower clearly sees on a plant. It must stay
 - Activity evidence capture
 - Monitoring / Awareness detail
 - record correction flow
-- stage-code correction
+- factual diary stage Observation correction (owned by §17)
+- broader stage-confirmation correction
 - plan upgrade review
 - §12 "Za pregledati" resolution behavior
 - final storage schema
@@ -3755,19 +3756,19 @@ Concise boundaries:
 - §10 Monitoring capture is separate; §11 does not define trap, scouting, symptom, or free-standing observation capture.
 - §15 Monitoring / Awareness detail is separate; §11 is not monitoring/risk detail.
 - §16 Activity evidence capture remains available; stage confirmation is never required before activity logging.
-- §17 Record correction remains separate; current §11 does not define stage-code correction.
+- §17 Record correction remains separate; current §11 does not define factual diary stage Observation correction or broader stage-confirmation correction.
 - §9 Plan upgrade review remains separate; stage confirmation does not explain plan updates.
 - §12 "Za pregledati" may later route to §11, but current §11 does not define §12 behavior.
 - S8/S9 own storage, ids, derived-state behavior, and any plan effects.
 
 ### 11.11 Stage-code correction boundary
 
-Current §11 does not define stage-code correction.
+Current §11 does not define stage-code correction. Post-S8 §17 defines factual diary `stage_obs.payload.stage_code` correction only.
 
 Rules:
 
 - If the grower later realizes the stage was wrong, current app behavior may allow another stage observation later.
-- Formal stage-code correction is future owner-approved correction work.
+- Broader stage-confirmation correction beyond factual diary `stage_obs` records is future owner-approved correction work.
 - Do not define correction flow here.
 - Do not modify §17 from §11.
 - Do not destructively edit or delete the original stage observation.
@@ -3783,7 +3784,7 @@ Dependency notes for S8/S9 or later:
 - derived plan-state effects after stage observations
 - whether future species-specific labels replace or refine the MVP label set
 - future route activation from §5 or §12, if owner-approved
-- formal stage-code correction behavior
+- broader stage-confirmation correction behavior beyond factual diary `stage_obs` correction
 
 These dependencies must not be implemented or specified in §11.
 
@@ -5339,7 +5340,7 @@ Records are immutable. Correction is additive.
 - plant profile edits
 - plant archive correction
 - plan upgrade correction
-- stage-code correction
+- broader phenology or stage-confirmation correction outside the Post-S8 Observation correction whitelist
 - migration/import/export behavior
 
 ### 17.2 Entry point
@@ -5456,7 +5457,7 @@ Rules:
 
 ### 17.6 Observation correction chips
 
-For generic Observation records, use:
+For ungrouped Observation records, use the applicable chips:
 
 ```text
 Krivi datum
@@ -5470,23 +5471,49 @@ For trap Observation records, additionally allow:
 Krivi broj ulova
 ```
 
+For stage Observation records, additionally allow:
+
+```text
+Kriva faza razvoja
+```
+
 For scouting Observation records, additionally allow:
 
 ```text
 Krivi nalaz
+Bilješka pregleda
 ```
 
 Rules:
 
 - `Krivi broj ulova` uses the same user-facing concept as §10:
   - `Broj ulova`
+- `Kriva faza razvoja` uses the bounded diary-stage vocabulary from §10
 - `Krivi nalaz` uses the same user-facing choices as §10:
   - `Primijećeno`
   - `Nije primijećeno`
+- `Bilješka pregleda` corrects the optional scouting note and may remove the effective scouting note through a clear "bez bilješke" choice; it must not imply deletion of the Observation
+- plain `Bilješka` on a note Observation corrects the note text and must not allow an empty effective note
+- `Krivi datum` and `Kriva voćka` are allowed only for ungrouped Observation records
+- grouped Observation records show only group-wide payload chips approved for that kind
 - no treatment advice
 - no threshold interpretation
 - no pressure/severity score
 - no `Nešto drugo`
+
+Grouped Observation helper:
+
+```text
+Ispravak vrijedi za sve voćke u ovom grupnom zapisu.
+```
+
+Grouped Observation rules:
+
+- grouped note correction can correct note text only, group-wide
+- grouped stage Observation correction can correct stage value only, group-wide
+- grouped scouting correction can correct finding/signs or optional scouting note only, group-wide
+- grouped trap Observation correction is not available in the first scope
+- grouped correction must not offer date correction, plant correction, group splitting, or add/remove member behavior
 
 ### 17.7 Date correction
 
@@ -5496,11 +5523,18 @@ Rules:
 
 - past dates are allowed
 - future dates are rejected
+- corrected Observation dates must also remain on or before the original saved date for that Observation record
 
 Future-date error:
 
 ```text
 Datum ne može biti u budućnosti. Ispravak opisuje stvarni događaj koji se već dogodio.
+```
+
+Saved-date error:
+
+```text
+Datum opažanja ne može biti nakon dana kada je izvorni zapis spremljen.
 ```
 
 ### 17.8 Wrong plant / multi-plant boundary
@@ -5513,7 +5547,10 @@ Rules:
 - correction must not silently move history
 - correction must not reshape multi-plant groups
 - correction must not change `activity_group_id`
+- correction must not change `observation_group_id`
 - correction must not add/remove group members
+- Observation plant correction is available only for ungrouped Observation records
+- grouped Observation correction is payload-only and group-wide in the first scope
 - grouped Dnevnik rendering remains §3 responsibility
 - S8/S9 own correction linkage/storage
 
@@ -5580,11 +5617,29 @@ Rules:
 
 ### 17.13 Stage observation boundary
 
-Current §17 may correct date, plant, and note for stage observations if those records exist.
+Current §17 may correct date and plant for ungrouped stage Observation records if those records exist.
 
-Stage value/code correction belongs to §11 Stage confirmation or to a future owner-approved amendment.
+Post-S8 Observation correction allows correction of the bounded diary `stage_obs.payload.stage_code` value described in §10. This is a factual Dnevnik Observation correction only.
 
-§17 does not define stage-code correction.
+Broader stage-confirmation correction, phenology engines, BBCH, plan recalculation, action unlocking/blocking, and per-species phenology remain outside §17.
+
+### 17.13a Observation correction display lock
+
+First-scope display rules:
+
+- Dnevnik and Plant detail render effective Observation values
+- corrected Observation cards show the neutral marker:
+
+```text
+ispravljeno
+```
+
+- Plant detail history filters Observations by effective `plant_id`
+- Dnevnik sorts Observations by effective `observed_on`, then original `recorded_at`, then id
+- grouped Observation cards keep stored `observation_group_id` membership because first-scope grouped correction does not split groups
+- group-wide payload correction displays the corrected shared payload after validation
+- no full before/after detail view is required in the first scope
+- original values remain persisted and exportable
 
 ### 17.14 Delete boundary
 
@@ -5616,7 +5671,7 @@ Concise boundaries:
 - §13 = edits Plant profile, not records
 - §14 = archives Plant, not records
 - §3 = Dnevnik/history rendering
-- §11 = Stage confirmation; stage-code correction not defined in §17
+- §11 = Stage confirmation; §17 only covers factual diary `stage_obs` value correction, not broader stage-confirmation or phenology behavior
 - §9 = Plan upgrade review
 - S8/S9 = correction storage and derived-state effects
 

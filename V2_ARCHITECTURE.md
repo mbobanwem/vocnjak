@@ -349,7 +349,7 @@ Field semantics:
 
 - `correction_id` is the Correction's stable identifier.
 - `original_record_id` references the immutable original Activity or Observation.
-- `original_record_type` is `"activity"` or `"observation"` as durable vocabulary. Runtime Slice 5 only accepts `"activity"` because Observation correction belongs to a later slice.
+- `original_record_type` is `"activity"` or `"observation"` as durable vocabulary. Runtime Slice 5 only accepts `"activity"`. Post-S8 Observation correction is documentation-locked below and requires a separate runtime implementation.
 - `correction_types` declares which fields are being corrected.
 - `corrected_values` stores the new values for the selected correction types.
 - `explanation` is optional user-entered "Bilješka ispravka" text. It explains the correction and does not replace Activity `notes`.
@@ -375,7 +375,7 @@ Rules:
 - No duplicate suppression, merge, hiding, or ignore behavior exists in current S8.A.
 - S9 owns derived effects of corrections.
 - `correction_types` must be a non-empty array, with no duplicate values.
-- Runtime Slice 5 rejects `correction_types` values outside `{date, plant, window, status, notes}`.
+- Runtime Slice 5 rejects `correction_types` values outside `{date, plant, window, status, notes}` for Activity correction. Observation correction adds a record-type-aware whitelist only after the Post-S8 runtime implementation.
 - Keys in `corrected_values` must correspond to `correction_types`.
 - No orphan corrected values are allowed.
 - No selected correction type may be missing its corrected value.
@@ -383,6 +383,61 @@ Rules:
 - User input never selects `action_type` directly.
 - Runtime Slice 5 requires `corrected_values.notes` to be a non-empty string when `"notes"` is present; note removal is deferred.
 - Deterministic effective display orders Corrections by `created_at`, then `correction_id`; the latest value per corrected field wins.
+
+#### Post-S8 Observation correction architecture lock
+
+This docs lock extends the architecture contract for Observation correction only. It does not edit `index.html`, change runtime validators, loosen import/export, or implement a UI.
+
+Validator extension:
+
+- `validateCorrection` / full-store validation must become record-type aware: Activity correction keeps the Runtime Slice 5 whitelist, and Observation correction accepts only `original_record_type = "observation"` targeting an existing original Observation.
+- Supported Observation kinds are exactly `note`, `trap`, `stage_obs`, and `scouting`.
+- Observation correction types and corrected value keys are exactly:
+
+| Observation kind | `correction_type` | Required `corrected_values` key | Grouped allowed? |
+|---|---|---|---|
+| all supported kinds | `"date"` | `observed_on` | no |
+| all supported kinds | `"plant"` | `plant_id` | no |
+| `note` | `"note_text"` | `text` | yes, group-wide only |
+| `trap` | `"trap_count"` | `count` | no |
+| `stage_obs` | `"stage_code"` | `stage_code` | yes, group-wide only |
+| `scouting` | `"scouting_result"` | `scouting_result` | yes, group-wide only |
+| `scouting` | `"scouting_note"` | `scouting_note` | yes, group-wide only |
+
+- Corrected value shape must exactly match selected correction types; no missing selected values and no orphan keys.
+- Correction must reference the original Observation only. Correction-of-correction remains invalid.
+- `observed_on` correction must pass the same date boundary as Activity effective validation: valid `YYYY-MM-DD`, not future, and effective `observed_on` on or before the original `recorded_at` local date.
+- `plant_id` correction is allowed only for ungrouped Observations. For `trap` and `scouting`, the corrected Plant species must remain compatible with the original source entry, and the resulting effective Observation must pass full Observation validation.
+- `scouting_result` is a composite corrected value containing `finding` and `selected_sign_keys`; `finding.mode` must be `"presence"`, `finding.value` must be boolean, false requires `selected_sign_keys = []`, and true requires at least one valid sign key for the original `source_entry_id`.
+- `scouting_note` may be a trimmed non-empty string `<= 1000` characters or `null`; `null` omits effective `payload.note`. Blank string is invalid.
+
+Effective Observation composition:
+
+1. Find the original Observation.
+2. Collect valid Corrections targeting that Observation with `original_record_type = "observation"`.
+3. Sort Corrections by `created_at`, then `correction_id`.
+4. Apply each corrected value to an in-memory effective Observation projection. The original persisted Observation remains unchanged.
+5. Validate the effective Observation with the same strict Observation validator before display, export acceptance, or import acceptance.
+
+Strategy A grouped correction semantics:
+
+- Stored `observation_group_id` remains immutable audit metadata and remains the membership source for Dnevnik grouping.
+- Grouped Observations do not support `date`, `plant`, or `trap_count` correction in the first scope.
+- Grouped payload corrections are allowed only when the whitelist says grouped allowed, and only group-wide.
+- One group-wide correction is persisted as one Correction per original Observation in the stored group.
+- The runtime save operation must create all per-member Corrections atomically.
+- Every per-member Correction in the group-wide save must carry the same corrected effective payload value.
+- Before saving, runtime must validate every per-member Correction and every resulting effective Observation.
+- If any member fails validation, the whole save fails closed and no Correction is saved.
+- No effective regrouping, group splitting, duplicate effective-plant handling, mixed effective payload group, or `correction_group_id` is introduced in this docs lock.
+
+Import/export extension:
+
+- Export includes original Observations and Correction records; it does not export derived effective Observation rows as authority.
+- Old valid stores without Observation corrections remain valid.
+- Backups containing Observation corrections may be rejected by older app versions.
+- Import/full-store validation fails closed when an Observation correction references a missing Observation, uses an invalid correction type for the Observation kind or grouped state, has a `corrected_values` shape mismatch, produces an invalid effective Observation, or represents a partial/non-uniform group-wide correction.
+- Import does not auto-fix, tolerate, merge, relink, substitute source maps, or rewrite original Observations.
 
 ### 1.15 Archive persisted shape
 
@@ -519,6 +574,7 @@ Export rules:
 - Export/import must retain enough source-map version context to resolve Step 4a trap labels later; display labels are not copied into the Observation payload.
 - Export/import must preserve valid Step 5a diary `kind = "stage_obs"` Observations exactly, including `payload.stage_code`, `program_id = null`, `observed_on`, `recorded_at`, catalog/version context, and provenance.
 - Export/import must retain enough diary-vocabulary version context to resolve Step 5a stage labels later; display labels are not copied into the Observation payload.
+- Post-S8 Observation correction export preserves original Observations and Correction records. It does not export derived effective Observation rows as authority.
 - S8 does not define a final JSON schema or runtime code for export.
 
 ### 1.22 Import validation shape
@@ -536,6 +592,7 @@ Validation boundary:
 - malformed `kind = "note"` Observations fail closed
 - malformed Step 4a `kind = "trap"` Observations fail closed after Step 4a runtime is implemented
 - malformed Step 5a diary `kind = "stage_obs"` Observations fail closed after Step 5a runtime is implemented
+- malformed Post-S8 Observation Corrections fail closed after the Observation correction runtime is implemented
 - no catalog-version substitution
 - no duplicate suppression
 - no destructive history cleanup
@@ -552,6 +609,7 @@ Validation must fail when:
 - retained catalog version is missing
 - record references a missing Plant
 - Correction references a missing original Activity or Observation
+- Observation Correction references a missing Observation, uses a correction type invalid for the Observation kind or grouped state, has a `corrected_values` shape mismatch, produces an invalid effective Observation, or represents a partial/non-uniform group-wide correction
 - Observation payload is invalid for its `kind`
 - `kind = "note"` is malformed, has unknown payload fields, has empty/too-long `payload.text`, carries `program_id`, carries `observation_group_id` in S8 Step 2, has future `observed_on`, or has provenance other than `{ "source": "user" }`
 - Step 4a `kind = "trap"` is malformed, has unknown payload fields, has unknown `payload.source_entry_id`, has a mismatched `payload.target_pest_code`, has missing/non-integer/negative `payload.count`, carries `program_id` other than `null`, has future `observed_on`, or has provenance other than `{ "source": "user" }`
