@@ -6682,12 +6682,15 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   var ALLOWED_PLANT_KEYS = [
     'plant_id','catalog_version','stable_order','species','variety','ripening_fallback',
     'display_label','rootstock','planted_at','purchased_at',
-    'source_label','position_label','profile_note'
+    'source_label','position_label','profile_note',
+    'archived_at','archive_reason','archive_note'
   ];
   var REQUIRED_PLANT_KEYS = ['plant_id','catalog_version','stable_order','species'];
   var STRING_OR_UNKNOWN_KEYS = ['rootstock','source_label','position_label'];
   var DATE_OR_UNKNOWN_KEYS = ['planted_at','purchased_at'];
   var STRING_ONLY_KEYS = ['display_label','profile_note'];
+  var ARCHIVE_REASONS = { died: true, removed: true, other: true };
+  var ARCHIVE_NOTE_MAX_LENGTH = 1000;
   var PLANT_ID_RE = /^plant_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z_[0-9a-f]{5}$/;
   var DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
   var ISO_UTC_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/;
@@ -7250,6 +7253,22 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       if (hasOwnKey(p, sk)) {
         if (typeof p[sk] !== 'string' || p[sk].trim().length === 0) return ['plant.' + p.plant_id + '.' + sk + ' must be non-empty string'];
       }
+    }
+
+    if (hasOwnKey(p, 'archived_at')) {
+      var archiveDateErr = checkDate(p.archived_at);
+      if (archiveDateErr) return ['plant.' + p.plant_id + '.archived_at ' + archiveDateErr];
+    }
+    if (hasOwnKey(p, 'archive_reason')) {
+      if (!hasOwnKey(p, 'archived_at')) return ['plant.' + p.plant_id + '.archive_reason requires archived_at'];
+      if (typeof p.archive_reason !== 'string' || !ARCHIVE_REASONS[p.archive_reason]) return ['plant.' + p.plant_id + '.archive_reason must be died, removed, or other'];
+    }
+    if (hasOwnKey(p, 'archive_note')) {
+      if (!hasOwnKey(p, 'archived_at')) return ['plant.' + p.plant_id + '.archive_note requires archived_at'];
+      if (typeof p.archive_note !== 'string') return ['plant.' + p.plant_id + '.archive_note must be a string'];
+      if (p.archive_note !== p.archive_note.trim()) return ['plant.' + p.plant_id + '.archive_note must be stored trimmed'];
+      if (p.archive_note.length === 0) return ['plant.' + p.plant_id + '.archive_note must be omitted when blank'];
+      if (p.archive_note.length > ARCHIVE_NOTE_MAX_LENGTH) return ['plant.' + p.plant_id + '.archive_note must be 1000 characters or less'];
     }
 
     return [];
@@ -8307,6 +8326,13 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   };
 
   var BAND_LABEL_HR = { early: 'rana', mid: 'srednja', late: 'kasna' };
+  var ARCHIVE_REASON_LABEL_HR = {
+    died: 'Osušila se / uginula',
+    removed: 'Uklonjena iz voćnjaka',
+    other: 'Drugo'
+  };
+  var ARCHIVE_REASON_VALUES = ['died','removed','other'];
+  var ARCHIVE_NOTE_MAX_LENGTH = 1000;
 
   function hasOwnKey(obj, key) {
     return obj !== null && typeof obj === 'object' && hasOwn.call(obj, key);
@@ -8360,6 +8386,29 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   function bandLabel(v) {
     if (isUnknownTag(v)) return 'ne znam';
     return BAND_LABEL_HR[v] || humanizeKey(v);
+  }
+
+  function archiveReasonLabel(reason) {
+    return ARCHIVE_REASON_LABEL_HR[reason] || '';
+  }
+
+  function isPlantArchived(plant) {
+    return !!(plant && typeof plant.archived_at === 'string' && plant.archived_at.length > 0);
+  }
+
+  function activePlants(plants) {
+    if (!Array.isArray(plants)) return [];
+    return plants.filter(function (plant) { return !isPlantArchived(plant); });
+  }
+
+  function archivedPlants(plants) {
+    if (!Array.isArray(plants)) return [];
+    return plants.filter(isPlantArchived);
+  }
+
+  function plantTitleWithArchiveMarker(plant) {
+    var title = plantTitle(plant);
+    return isPlantArchived(plant) ? title + ' (arhivirana)' : title;
   }
 
   function formatDateYmd(s) {
@@ -8665,7 +8714,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   }
 
   function sortedObservationScopePlants(plants, currentPlant) {
-    var source = Array.isArray(plants) ? plants.slice() : [];
+    var source = activePlants(plants);
     var currentId = currentPlant && currentPlant.plant_id;
     var seen = Object.create(null);
     var out = [];
@@ -8674,7 +8723,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       seen[source[i].plant_id] = true;
       out.push(source[i]);
     }
-    if (currentPlant && currentId && !seen[currentId]) out.push(currentPlant);
+    if (currentPlant && currentId && !isPlantArchived(currentPlant) && !seen[currentId]) out.push(currentPlant);
     out.sort(function (a, b) {
       if (a.plant_id === currentId) return -1;
       if (b.plant_id === currentId) return 1;
@@ -8730,14 +8779,15 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
   function plantEligibleForScoutingSource(plant, source, todayYmd) {
     if (!plant || !source || plant.species !== source.species) return false;
+    if (isPlantArchived(plant)) return false;
     if (isYoungTreeRelevanceMode(plant, todayYmd) && YOUNG_TREE_FRUITING_ONLY_B2_SOURCE_ROWS[source.source_row]) return false;
     return true;
   }
 
   function eligiblePlantsForScoutingSource(plants, currentPlant, source) {
     var todayYmd = localTodayYmd();
-    var pool = Array.isArray(plants) ? plants.slice() : [];
-    if (currentPlant) pool.push(currentPlant);
+    var pool = activePlants(plants);
+    if (currentPlant && !isPlantArchived(currentPlant)) pool.push(currentPlant);
     var seen = Object.create(null);
     var eligible = [];
     for (var i = 0; i < pool.length; i++) {
@@ -8978,9 +9028,14 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       return;
     }
 
+    var activeList = activePlants(plants);
+    var archivedList = archivedPlants(plants);
     var list = makeEl('div', 'v2-plants-list');
-    for (var i = 0; i < plants.length; i++) {
-      var plant = plants[i];
+    if (activeList.length === 0) {
+      listView.appendChild(makeEl('p', 'v2-plants-empty', 'Nema aktivnih voćki.'));
+    }
+    for (var i = 0; i < activeList.length; i++) {
+      var plant = activeList[i];
       var row = makeEl('button', 'v2-plants-row');
       row.type = 'button';
       row.dataset.plantId = plant.plant_id;
@@ -8996,7 +9051,30 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       if (bits.length > 0) row.appendChild(makeEl('span', 'v2-plants-row-meta', bits.join(' · ')));
       list.appendChild(row);
     }
-    listView.appendChild(list);
+    if (activeList.length > 0) listView.appendChild(list);
+
+    if (archivedList.length > 0) {
+      var archiveSection = makeEl('section', 'v2-plants-section');
+      archiveSection.appendChild(makeEl('h3', '', 'Arhivirane voćke'));
+      var archiveRows = makeEl('div', 'v2-plants-list');
+      for (var a = 0; a < archivedList.length; a++) {
+        var archived = archivedList[a];
+        var archiveRow = makeEl('button', 'v2-plants-row');
+        archiveRow.type = 'button';
+        archiveRow.dataset.plantId = archived.plant_id;
+        archiveRow.addEventListener('click', function (event) {
+          location.hash = plantDetailRoute(event.currentTarget.dataset.plantId);
+        });
+        archiveRow.appendChild(makeEl('span', 'v2-plants-row-title', plantTitleWithArchiveMarker(archived)));
+        var archiveBits = ['Arhivirana: ' + formatDateYmd(archived.archived_at)];
+        var reason = archiveReasonLabel(archived.archive_reason);
+        if (reason) archiveBits.push(reason);
+        archiveRow.appendChild(makeEl('span', 'v2-plants-row-meta', archiveBits.join(' · ')));
+        archiveRows.appendChild(archiveRow);
+      }
+      archiveSection.appendChild(archiveRows);
+      listView.appendChild(archiveSection);
+    }
   }
 
   function addKartonRow(parent, label, value) {
@@ -9534,6 +9612,189 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     detailView.appendChild(makeEl('p', 'v2-plants-empty', 'Voćka nije pronađena.'));
   }
 
+  function appendArchivedPlantMarker(parent, plant) {
+    var section = makeEl('section', 'v2-plants-section');
+    section.appendChild(makeEl('h3', '', 'Arhivirana'));
+    section.appendChild(makeEl('p', 'v2-seasonal-note', 'Ova voćka nije u aktivnom voćnjaku. Povijest i Dnevnik ostaju sačuvani.'));
+    var meta = makeEl('div', 'v2-plants-karton');
+    addKartonRow(meta, 'Datum arhiviranja', formatDateYmd(plant.archived_at));
+    var reason = archiveReasonLabel(plant.archive_reason);
+    if (reason) addKartonRow(meta, 'Razlog', reason);
+    if (typeof plant.archive_note === 'string') addKartonRow(meta, 'Bilješka', plant.archive_note);
+    section.appendChild(meta);
+    parent.appendChild(section);
+  }
+
+  function archiveValidationMessage(error) {
+    if (error.indexOf('.archived_at in the future') !== -1) return 'datum arhiviranja ne može biti u budućnosti';
+    if (error.indexOf('.archived_at invalid format') !== -1 || error.indexOf('.archived_at not a real date') !== -1) return 'datum arhiviranja nije valjan';
+    if (error.indexOf('.archive_reason') !== -1) return 'razlog arhiviranja nije valjan';
+    if (error.indexOf('.archive_note') !== -1) return 'bilješka arhiviranja ne može biti prazna i može imati najviše 1000 znakova';
+    return error;
+  }
+
+  function savePlantArchive(plantId, fields) {
+    fields.message.hidden = true;
+    var current = readValidStore();
+    if (!current.ok) {
+      fields.message.textContent = current.error;
+      fields.message.hidden = false;
+      return;
+    }
+    var plant = findPlant(current.store.plants, plantId);
+    if (!plant) {
+      fields.message.textContent = 'Voćka nije pronađena.';
+      fields.message.hidden = false;
+      return;
+    }
+    if (isPlantArchived(plant)) {
+      fields.message.textContent = 'Voćka je već arhivirana.';
+      fields.message.hidden = false;
+      return;
+    }
+    var archiveDate = fields.dateInput.value;
+    if (!archiveDate) {
+      fields.message.textContent = 'Datum arhiviranja je obavezan.';
+      fields.message.hidden = false;
+      return;
+    }
+    if (!parseYmd(archiveDate)) {
+      fields.message.textContent = 'Datum arhiviranja nije valjan.';
+      fields.message.hidden = false;
+      return;
+    }
+    if (archiveDate > localTodayYmd()) {
+      fields.message.textContent = 'Datum ne može biti u budućnosti. Arhiviranje opisuje stvarni događaj.';
+      fields.message.hidden = false;
+      return;
+    }
+    var reason = fields.reasonSelect.value;
+    if (reason && !ARCHIVE_REASON_LABEL_HR[reason]) {
+      fields.message.textContent = 'Razlog arhiviranja nije valjan.';
+      fields.message.hidden = false;
+      return;
+    }
+    var note = fields.note.value.trim();
+    if (note.length > ARCHIVE_NOTE_MAX_LENGTH) {
+      fields.message.textContent = 'Bilješka može imati najviše 1000 znakova.';
+      fields.message.hidden = false;
+      return;
+    }
+
+    var nextPlants = [];
+    for (var i = 0; i < current.store.plants.length; i++) {
+      var source = current.store.plants[i];
+      if (source.plant_id !== plantId) {
+        nextPlants.push(source);
+        continue;
+      }
+      var archived = {};
+      var keys = Object.keys(source);
+      for (var k = 0; k < keys.length; k++) archived[keys[k]] = source[keys[k]];
+      archived.archived_at = archiveDate;
+      if (reason) archived.archive_reason = reason;
+      if (note) archived.archive_note = note;
+      nextPlants.push(archived);
+    }
+
+    var nextStore = {
+      meta: current.store.meta,
+      catalogs: current.store.catalogs,
+      plants: nextPlants,
+      plan_instances: current.store.plan_instances,
+      plan_overlays: current.store.plan_overlays,
+      activities: current.store.activities,
+      observations: current.store.observations,
+      corrections: current.store.corrections,
+      review_state: current.store.review_state
+    };
+
+    var errors = window.v2ValidateForBackup(nextStore);
+    if (errors.length > 0) {
+      fields.message.textContent = 'Voćka nije arhivirana: ' + archiveValidationMessage(errors[0]) + '.';
+      fields.message.hidden = false;
+      return;
+    }
+    try {
+      localStorage.setItem('vocnjak_v2', JSON.stringify(nextStore));
+    } catch (e) {
+      fields.message.textContent = 'Pohranu nije moguće zapisati.';
+      fields.message.hidden = false;
+      return;
+    }
+    pendingDetailStatus = 'Voćka arhivirana.';
+    render();
+  }
+
+  function appendArchiveSection(parent, plant) {
+    var section = makeEl('section', 'v2-plants-section');
+    section.appendChild(makeEl('h3', '', 'Životni vijek voćke'));
+    var opener = makeEl('button', 'v2-plants-secondary', 'Arhiviraj voćku');
+    opener.type = 'button';
+    section.appendChild(opener);
+
+    var form = document.createElement('form');
+    form.className = 'v2-plants-form';
+    form.noValidate = true;
+    form.hidden = true;
+    form.appendChild(makeEl('p', 'v2-seasonal-note', 'Ovo je za voćku koja više nije u aktivnom voćnjaku. Povijest i Dnevnik ostaju sačuvani. Buduće sezonske radnje i praćenje za ovu voćku više se neće prikazivati u aktivnom planu.'));
+    var message = makeEl('p', 'v2-plants-error');
+    message.hidden = true;
+    form.appendChild(message);
+
+    var dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.value = localTodayYmd();
+    appendField(form, 'v2ArchiveDate_' + plant.plant_id, 'Datum arhiviranja', dateInput);
+
+    var reasonSelect = document.createElement('select');
+    reasonSelect.appendChild(makeOption('', 'Bez razloga'));
+    for (var i = 0; i < ARCHIVE_REASON_VALUES.length; i++) {
+      reasonSelect.appendChild(makeOption(ARCHIVE_REASON_VALUES[i], archiveReasonLabel(ARCHIVE_REASON_VALUES[i])));
+    }
+    appendField(form, 'v2ArchiveReason_' + plant.plant_id, 'Razlog', reasonSelect);
+
+    var note = document.createElement('textarea');
+    note.maxLength = ARCHIVE_NOTE_MAX_LENGTH;
+    appendField(form, 'v2ArchiveNote_' + plant.plant_id, 'Bilješka — neobavezno', note);
+
+    var actions = makeEl('div', 'v2-plants-actions');
+    var save = makeEl('button', 'v2-plants-primary', 'Arhiviraj voćku');
+    save.type = 'submit';
+    var cancel = makeEl('button', 'v2-plants-secondary', 'Odustani');
+    cancel.type = 'button';
+    actions.appendChild(save);
+    actions.appendChild(cancel);
+    form.appendChild(actions);
+
+    opener.addEventListener('click', function () {
+      opener.hidden = true;
+      form.hidden = false;
+      dateInput.value = localTodayYmd();
+      reasonSelect.value = '';
+    });
+    cancel.addEventListener('click', function () {
+      form.reset();
+      dateInput.value = localTodayYmd();
+      reasonSelect.value = '';
+      message.hidden = true;
+      form.hidden = true;
+      opener.hidden = false;
+    });
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      savePlantArchive(plant.plant_id, {
+        dateInput: dateInput,
+        reasonSelect: reasonSelect,
+        note: note,
+        message: message
+      });
+    });
+
+    section.appendChild(form);
+    parent.appendChild(section);
+  }
+
   function renderDetail(route) {
     var result = readValidStore();
     if (!result.ok || route.malformed) {
@@ -9558,6 +9819,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       pendingDetailStatus = '';
     }
     detailView.appendChild(makeEl('h2', '', plantTitle(plant)));
+    var archived = isPlantArchived(plant);
+    if (archived) appendArchivedPlantMarker(detailView, plant);
 
     var section = makeEl('section', 'v2-plants-section');
     section.appendChild(makeEl('h3', '', 'Karton voćke'));
@@ -9580,33 +9843,37 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     detailView.appendChild(section);
 
     var todayYmd = localTodayYmd();
-    appendYoungTreePlantDetailSection(detailView, plant, todayYmd);
+    if (!archived) {
+      appendArchiveSection(detailView, plant);
+      appendYoungTreePlantDetailSection(detailView, plant, todayYmd);
 
-    try {
-      var snapshot = buildSeasonalSnapshot(result.store, result.catalog, todayYmd);
-      var currentActions = currentPlantSeasonalOccurrences(snapshot, plant.plant_id, result.catalog).filter(function (occurrence) {
-        return occurrenceVisibleForYoungTreeRelevance(occurrence, snapshot.today);
-      });
-      if (currentActions.length > 0) {
-        var seasonal = makeEl('section', 'v2-plants-section');
-        seasonal.appendChild(makeEl('h3', '', 'Trenutne sezonske radnje'));
-        var seasonalList = makeEl('div', 'v2-seasonal-list');
-        for (var i = 0; i < currentActions.length; i++) {
-          appendPlantSeasonalActionCard(seasonalList, currentActions[i], result.catalog, snapshot);
+      try {
+        var snapshot = buildSeasonalSnapshot(result.store, result.catalog, todayYmd);
+        var currentActions = currentPlantSeasonalOccurrences(snapshot, plant.plant_id, result.catalog).filter(function (occurrence) {
+          return occurrenceVisibleForYoungTreeRelevance(occurrence, snapshot.today);
+        });
+        if (currentActions.length > 0) {
+          var seasonal = makeEl('section', 'v2-plants-section');
+          seasonal.appendChild(makeEl('h3', '', 'Trenutne sezonske radnje'));
+          var seasonalList = makeEl('div', 'v2-seasonal-list');
+          for (var i = 0; i < currentActions.length; i++) {
+            appendPlantSeasonalActionCard(seasonalList, currentActions[i], result.catalog, snapshot);
+          }
+          seasonal.appendChild(seasonalList);
+          detailView.appendChild(seasonal);
         }
-        seasonal.appendChild(seasonalList);
-        detailView.appendChild(seasonal);
+      } catch (e) {
+        renderSeasonalSnapshotFailure(detailView, e);
       }
-    } catch (e) {
-      renderSeasonalSnapshotFailure(detailView, e);
-    }
 
-    var b2Preview = typeof b2PlantDetailPreview === 'function' ? b2PlantDetailPreview(plant) : { monitoring: [], riskAwareness: [] };
-    b2Preview = filterB2PlantDetailPreviewForYoungTree(plant, b2Preview, todayYmd);
-    appendPlantDetailB2Section(detailView, 'Praćenje', b2Preview.monitoring, plant, result.store.plants);
-    appendPlantDetailB2Section(detailView, 'Sezonske napomene', b2Preview.riskAwareness, plant, result.store.plants);
-    appendNoteObservationCaptureSection(detailView, plant, result.store.plants);
-    appendPlantDetailTrapAdvisorySection(detailView, plant, result);
+      var activePlantList = activePlants(result.store.plants);
+      var b2Preview = typeof b2PlantDetailPreview === 'function' ? b2PlantDetailPreview(plant) : { monitoring: [], riskAwareness: [] };
+      b2Preview = filterB2PlantDetailPreviewForYoungTree(plant, b2Preview, todayYmd);
+      appendPlantDetailB2Section(detailView, 'Praćenje', b2Preview.monitoring, plant, activePlantList);
+      appendPlantDetailB2Section(detailView, 'Sezonske napomene', b2Preview.riskAwareness, plant, activePlantList);
+      appendNoteObservationCaptureSection(detailView, plant, activePlantList);
+      appendPlantDetailTrapAdvisorySection(detailView, plant, result);
+    }
 
     var diary = makeEl('section', 'v2-plants-section');
     diary.appendChild(makeEl('h3', '', 'Dnevnik ove voćke'));
@@ -10064,6 +10331,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     for (var i = 0; i < selected.length; i++) {
       var plant = findPlant(current.store.plants, selected[i]);
       if (!plant) return { ok: false, error: 'Voćka nije pronađena.' };
+      if (isPlantArchived(plant)) return { ok: false, error: 'Arhivirana voćka nije aktivna za novo opažanje.' };
       var observationId = nextUniqueId('observation', current.store.observations.concat(observations), 'observation_id');
       if (!observationId) return { ok: false, error: 'Greška pri generaciji identifikatora.' };
       var observation = {
@@ -10123,6 +10391,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   function buildTrapObservation(current, plantId, fields) {
     var plant = findPlant(current.store.plants, plantId);
     if (!plant) return { ok: false, error: 'Voćka nije pronađena.' };
+    if (isPlantArchived(plant)) return { ok: false, error: 'Arhivirana voćka nije aktivna za novo opažanje.' };
     if (!fields.dateInput.value) return { ok: false, error: 'Datum opažanja je obavezan.' };
     if (fields.dateInput.value > localTodayYmd()) return { ok: false, error: 'Datum ne može biti u budućnosti.' };
     var source = typeof trapCaptureSourceById === 'function' ? trapCaptureSourceById(fields.sourceSelect.value) : null;
@@ -10223,6 +10492,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     for (var i = 0; i < selected.length; i++) {
       var plant = findPlant(current.store.plants, selected[i]);
       if (!plant) return { ok: false, error: 'Voćka nije pronađena.' };
+      if (isPlantArchived(plant)) return { ok: false, error: 'Arhivirana voćka nije aktivna za novo opažanje.' };
       if (!plantEligibleForScoutingSource(plant, source, localTodayYmd())) return { ok: false, error: 'Odabrani vizualni pregled nije valjan za ovu voćku.' };
       var observationId = nextUniqueId('observation', current.store.observations.concat(observations), 'observation_id');
       if (!observationId) return { ok: false, error: 'Greška pri generaciji identifikatora.' };
@@ -10304,6 +10574,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     for (var i = 0; i < selected.length; i++) {
       var plant = findPlant(current.store.plants, selected[i]);
       if (!plant) return { ok: false, error: 'Voćka nije pronađena.' };
+      if (isPlantArchived(plant)) return { ok: false, error: 'Arhivirana voćka nije aktivna za novo opažanje.' };
       var observationId = nextUniqueId('observation', current.store.observations.concat(observations), 'observation_id');
       if (!observationId) return { ok: false, error: 'Greška pri generaciji identifikatora.' };
       var observation = {
@@ -10454,9 +10725,9 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       currentActivityFields = null;
       return;
     }
-    var plants = result.store.plants.slice().sort(function (a, b) { return a.stable_order - b.stable_order; });
+    var plants = activePlants(result.store.plants).sort(function (a, b) { return a.stable_order - b.stable_order; });
     if (plants.length === 0) {
-      activityForm.appendChild(makeEl('p', 'v2-plants-empty', 'Prije evidencije dodaj barem jednu voćku.'));
+      activityForm.appendChild(makeEl('p', 'v2-plants-empty', 'Prije evidencije dodaj barem jednu aktivnu voćku.'));
       currentActivityFields = null;
       return;
     }
@@ -10561,6 +10832,12 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     var groupId = selected.length > 1 ? generateStoreId('activity_group') : null;
     var notes = optionalString(fields.notes);
     for (var i = 0; i < selected.length; i++) {
+      var selectedPlant = findPlant(current.store.plants, selected[i]);
+      if (!selectedPlant || isPlantArchived(selectedPlant)) {
+        fields.message.textContent = 'Arhivirana voćka nije aktivna za novu evidenciju.';
+        fields.message.hidden = false;
+        return;
+      }
       var activityId = nextUniqueId('activity', current.store.activities.concat(newActivities), 'activity_id');
       if (!activityId) {
         fields.message.textContent = 'Greška pri generaciji identifikatora.';
@@ -10826,7 +11103,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     assertSeasonalCatalog(catalog);
     var todayYear = Number(today.slice(0, 4));
     if (!todayYear || String(todayYear).length !== 4) throw seasonalSnapshotError(['today invalid: ' + today]);
-    var plants = store.plants.slice().sort(function (a, b) { return a.stable_order - b.stable_order; });
+    var plants = activePlants(store.plants).sort(function (a, b) { return a.stable_order - b.stable_order; });
     var entries = effectiveActivityEntries(store, catalog);
     var occurrences = [];
     for (var d = 0; d < catalog.action_window_definitions.length; d++) {
@@ -11472,16 +11749,17 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       renderSeasonalSnapshotFailure(pregledView, e);
       return;
     }
-    if (result.store.plants.length === 0) {
-      pregledView.appendChild(makeEl('p', 'v2-plants-empty', 'Dodaj voćku kako bi se prikazale sezonske radnje.'));
+    var activePlantList = activePlants(result.store.plants);
+    if (activePlantList.length === 0) {
+      pregledView.appendChild(makeEl('p', 'v2-plants-empty', result.store.plants.length === 0 ? 'Dodaj voćku kako bi se prikazale sezonske radnje.' : 'Nema aktivnih voćki za sezonski prikaz.'));
       return;
     }
 
     var displayGroups = filterSeasonalGroupsForYoungTreeRelevance(snapshot.groups, snapshot.today);
     pregledView.appendChild(makeEl('p', 'v2-plants-status', seasonalStatusSentence(snapshot, displayGroups)));
-    var youngTreeCurrentGroups = youngTreeCurrentContextGroups(result.store.plants, snapshot.today);
+    var youngTreeCurrentGroups = youngTreeCurrentContextGroups(activePlantList, snapshot.today);
     appendYoungTreePregledSection(pregledView, youngTreeCurrentGroups);
-    var b2Visibility = filterB2VisibilityForYoungTreeRelevance(b2VisibilityForPlants(result.store.plants, snapshot.today), snapshot.today);
+    var b2Visibility = filterB2VisibilityForYoungTreeRelevance(b2VisibilityForPlants(activePlantList, snapshot.today), snapshot.today);
     appendB2PregledSection(pregledView, b2Visibility.current);
     var currentGroups = displayGroups.filter(groupHasLiveState);
     var missedGroups = displayGroups.filter(groupHasMissedState);
@@ -11526,11 +11804,12 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       renderSeasonalSnapshotFailure(calendarView, e);
       return;
     }
+    var activePlantList = activePlants(result.store.plants);
     var displayGroups = filterSeasonalGroupsForYoungTreeRelevance(snapshot.groups, snapshot.today);
-    var b2Visibility = filterB2VisibilityForYoungTreeRelevance(b2VisibilityForPlants(result.store.plants, snapshot.today), snapshot.today);
-    var youngTreeContextGroups = buildYoungTreeContextGroups(result.store.plants, snapshot.today);
-    if (result.store.plants.length === 0) {
-      calendarView.appendChild(makeEl('p', 'v2-plants-empty', 'Dodaj voćku kako bi se prikazao sezonski kalendar.'));
+    var b2Visibility = filterB2VisibilityForYoungTreeRelevance(b2VisibilityForPlants(activePlantList, snapshot.today), snapshot.today);
+    var youngTreeContextGroups = buildYoungTreeContextGroups(activePlantList, snapshot.today);
+    if (activePlantList.length === 0) {
+      calendarView.appendChild(makeEl('p', 'v2-plants-empty', result.store.plants.length === 0 ? 'Dodaj voćku kako bi se prikazao sezonski kalendar.' : 'Nema aktivnih voćki za sezonski kalendar.'));
       return;
     }
 
@@ -11691,7 +11970,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     card.appendChild(title);
     var plantNames = group.map(function (entry) {
       var plant = findPlant(result.store.plants, entry.effective.plant_id);
-      return plant ? plantTitle(plant) : entry.effective.plant_id;
+      return plant ? plantTitleWithArchiveMarker(plant) : entry.effective.plant_id;
     });
     var plantMeta = group.length === 1 ? plantNames[0] : plantCountText(group.length);
     card.appendChild(makeEl('span', 'v2-diary-meta', statusLabel(sample.status) + ' · ' + plantMeta));
@@ -11847,7 +12126,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   function appendNoteObservationCard(parent, entry, result, options) {
     var observation = entry.effective;
     var plant = findPlant(result.store.plants, observation.plant_id);
-    var plantLabel = plant ? plantTitle(plant) : observation.plant_id;
+    var plantLabel = plant ? plantTitleWithArchiveMarker(plant) : observation.plant_id;
     var card = makeEl('article', 'v2-diary-card');
     var title = makeEl('p', 'v2-diary-title', formatDateYmd(observation.observed_on) + ' · Opažanje');
     appendObservationCorrectedMarker(title, entry.corrected);
@@ -11863,7 +12142,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     for (var i = 0; i < entries.length; i++) {
       var plantId = entries[i].effective.plant_id;
       var plant = findPlant(result.store.plants, plantId);
-      names.push(plant ? plantTitle(plant) : plantId);
+      names.push(plant ? plantTitleWithArchiveMarker(plant) : plantId);
     }
     if (names.length === 1) return names[0];
     return plantCountText(names.length) + ' · ' + names.join(', ');
@@ -11884,7 +12163,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   function appendTrapObservationCard(parent, entry, result, options) {
     var observation = entry.effective;
     var plant = findPlant(result.store.plants, observation.plant_id);
-    var plantLabel = plant ? plantTitle(plant) : observation.plant_id;
+    var plantLabel = plant ? plantTitleWithArchiveMarker(plant) : observation.plant_id;
     var source = typeof trapCaptureSourceById === 'function' ? trapCaptureSourceById(observation.payload.source_entry_id) : null;
     var targetLabel = source ? source.target_label_hr : observation.payload.source_entry_id;
     var card = makeEl('article', 'v2-diary-card');
@@ -11952,7 +12231,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   function appendScoutingObservationCard(parent, entry, result, options) {
     var observation = entry.effective;
     var plant = findPlant(result.store.plants, observation.plant_id);
-    var plantLabel = plant ? plantTitle(plant) : observation.plant_id;
+    var plantLabel = plant ? plantTitleWithArchiveMarker(plant) : observation.plant_id;
     var source = typeof scoutingCaptureSourceById === 'function' ? scoutingCaptureSourceById(observation.payload.source_entry_id) : null;
     var targetLabel = source ? source.target_label_hr : observation.payload.source_entry_id;
     var card = makeEl('article', 'v2-diary-card');
@@ -11981,7 +12260,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   function appendStageObservationCard(parent, entry, result, options) {
     var observation = entry.effective;
     var plant = findPlant(result.store.plants, observation.plant_id);
-    var plantLabel = plant ? plantTitle(plant) : observation.plant_id;
+    var plantLabel = plant ? plantTitleWithArchiveMarker(plant) : observation.plant_id;
     var stageEntry = typeof stageDiaryEntryByCode === 'function' ? stageDiaryEntryByCode(observation.payload.stage_code) : null;
     var label = stageEntry ? stageEntry.label_hr : observation.payload.stage_code;
     var card = makeEl('article', 'v2-diary-card');
@@ -12037,7 +12316,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
         diaryView.appendChild(makeEl('p', 'v2-plants-empty', 'Voćka nije pronađena.'));
         return;
       }
-      diaryView.appendChild(makeEl('p', 'v2-diary-meta', plantTitle(scopedPlant)));
+      diaryView.appendChild(makeEl('p', 'v2-diary-meta', plantTitleWithArchiveMarker(scopedPlant)));
     }
     var diaryItems = diaryItemsForResult(result, plantScoped ? route.plant_id : null);
     if (diaryItems.length === 0) {
@@ -12087,7 +12366,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     var effective = entry.effective;
     var effectivePlant = findPlant(result.store.plants, effective.plant_id);
     var effectiveDef = findActionWindow(result.catalog, effective.window_def_id);
-    correctionForm.appendChild(makeEl('p', 'v2-diary-meta', formatDateYmd(effective.occurred_on) + ' · ' + actionWindowLabel(effectiveDef, result.catalog) + ' · ' + (effectivePlant ? plantTitle(effectivePlant) : '')));
+    correctionForm.appendChild(makeEl('p', 'v2-diary-meta', formatDateYmd(effective.occurred_on) + ' · ' + actionWindowLabel(effectiveDef, result.catalog) + ' · ' + (effectivePlant ? plantTitleWithArchiveMarker(effectivePlant) : '')));
 
     function addCorrectionCheck(labelText) {
       var label = makeEl('label', 'v2-plants-check');
@@ -12108,7 +12387,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     var plantCheck = addCorrectionCheck('Kriva voćka');
     var plantSelect = document.createElement('select');
     for (var p = 0; p < result.store.plants.length; p++) {
-      plantSelect.appendChild(makeOption(result.store.plants[p].plant_id, plantTitle(result.store.plants[p])));
+      plantSelect.appendChild(makeOption(result.store.plants[p].plant_id, plantTitleWithArchiveMarker(result.store.plants[p])));
     }
     plantSelect.value = effective.plant_id;
     appendField(correctionForm, 'v2CorrectionPlant', 'Nova voćka', plantSelect);
@@ -12224,7 +12503,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     var scope = entries && entries.length > 1 ? observationPlantScopeText(entries, result) : '';
     if (!scope) {
       var plant = findPlant(result.store.plants, observation.plant_id);
-      scope = plant ? plantTitle(plant) : observation.plant_id;
+      scope = plant ? plantTitleWithArchiveMarker(plant) : observation.plant_id;
     }
     if (observation.kind === 'trap') {
       var trapSource = typeof trapCaptureSourceById === 'function' ? trapCaptureSourceById(observation.payload.source_entry_id) : null;
@@ -12465,7 +12744,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       fields.plantSelect = document.createElement('select');
       var plantOptions = observationCorrectionPlantOptions(result, sampleEntry.original, sample.plant_id);
       for (var p = 0; p < plantOptions.length; p++) {
-        fields.plantSelect.appendChild(makeOption(plantOptions[p].plant_id, plantTitle(plantOptions[p])));
+        fields.plantSelect.appendChild(makeOption(plantOptions[p].plant_id, plantTitleWithArchiveMarker(plantOptions[p])));
       }
       fields.plantSelect.value = sample.plant_id;
       appendField(correctionForm, 'v2ObservationCorrectionPlant', 'Nova voćka', fields.plantSelect);
