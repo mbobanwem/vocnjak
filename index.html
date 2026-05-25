@@ -503,7 +503,7 @@
   /* END V2 ACTIVITIES — Slice 5 */
 </style>
 <!-- BEGIN V2 SHELL — Slice 0 -->
-<script>if(location.hash==='#v2'||location.hash.indexOf('#v2/')===0)document.documentElement.classList.add('v2-active');</script>
+<script>if(location.hash!=='#legacy')document.documentElement.classList.add('v2-active');</script>
 <!-- END V2 SHELL — Slice 0 -->
 </head>
 <body>
@@ -3610,7 +3610,7 @@ if ('serviceWorker' in navigator) {
 
   var btn = document.getElementById('v2ExitBtn');
   if (btn) btn.addEventListener('click', function () {
-    history.replaceState(null, '', location.pathname + location.search);
+    history.replaceState(null, '', location.pathname + location.search + '#legacy');
     location.reload();
   });
 })();
