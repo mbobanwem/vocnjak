@@ -2102,13 +2102,18 @@ Rules:
 
 - Archived plants should not appear in the default active Biljke list.
 - Archived plants should remain reachable through Dnevnik/history/archive access.
+- Biljke should provide a simple archive list/filter for archived plants.
 - Archived plants should not generate future/current seasonal actions after archive date.
+- Pregled, Kalendar, Plant active seasonal context, monitoring active context, and active orchard aggregates exclude archived plants after archive date.
+- New active Activity/Observation capture should not be offered for archived plants.
+- Historical Activity/Observation correction remains allowed for records tied to archived plants.
 - Historical records before archive date remain preserved and visible.
+- Archived Plant detail still opens and shows archived marker/date/reason/note.
 - Past records must retain plant identity labels, including display label and disambiguators where available.
-- Archive must not rewrite or delete Activity or Observation records.
-- Restore/replacement behavior is future flow scope.
+- Archive must not rewrite or delete Activity, Observation, Correction, catalog, Plan instance, Plan overlay, Dnevnik, or legacy records.
+- Restore/unarchive and replacement behavior are future owner-approved flow scope, not A1.
 
-S6 does not define storage fields, archive confirmation, restore mechanics, or migration behavior.
+S6/S7 now defer exact storage validation to S8/S9, with the A1 field lock recorded as `archived_at`, `archive_reason`, and `archive_note`.
 
 ### 4.15 Future dependency table
 
@@ -2126,11 +2131,11 @@ Do not implement these as schema changes in S6.
 | `profile_note` / `Bilješka` | S7/S8 | edit behavior, import/export | `## 13. Plant profile management flow` + S8 data/storage |
 | per-field unknown state | S7/S8 | `nije upisano` vs `ne znam` representation | `## 13. Plant profile management flow` + S8 data/storage |
 | `archived_at` / archive state | S7/S8/S9 | active vs archived scope, archive date, generated action exclusion | `## 14. Plant lifecycle / archive flow` + S8/S9 |
-| archive reason, if used | S7/S8 | whether it exists, copy, import/export | `## 14. Plant lifecycle / archive flow` |
+| `archive_reason` / `archive_note` | S7/S8 | optional reason enum/copy, optional note, import/export | `## 14. Plant lifecycle / archive flow` |
 | stable app/orchard order source | S7/S8 | initial order, reorder policy, import/export | `## 13. Plant profile management flow` + S8 data/storage |
 | `Dodaj voćku` | S7/S8 | add flow, initial plan generation, validation | `## 13. Plant profile management flow` |
 | `Uredi karton voćke` | S7/S8 | edit flow, validation, data preservation | `## 13. Plant profile management flow` |
-| `Arhiviraj voćku` | S7/S8/S9 | archive flow, history preservation, restore/replacement | `## 14. Plant lifecycle / archive flow` |
+| `Arhiviraj voćku` | S7/S8/S9 | archive flow, history preservation, no restore/replacement in A1 | `## 14. Plant lifecycle / archive flow` |
 | `Dnevnik ove voćke` | S6/S7 | plant filter, year/month navigation, archived access | `## 3. Dnevnik` |
 | `Ažuriranje plana dostupno` | S7/S9 | review-before-apply, overlay preservation, no regeneration | `## 9. Plan upgrade review flow` |
 | `Sezonski rizici` tap destination | S6/S7 | risk-awareness detail, no treatment pipeline | `## 15. Monitoring / Awareness detail` |
@@ -2162,7 +2167,7 @@ S8 owns:
 
 - stored plant profile shape
 - missing/unknown representation
-- archive state storage
+- `archived_at` / `archive_reason` / `archive_note` storage
 - import/export implications
 - stable order storage
 - migration/storage architecture
@@ -4387,7 +4392,6 @@ Archive is not delete.
 - optional archive reason/note UX
 - post-archive UX
 - non-destructive archive copy
-- replacement pointer, if shown
 - dependency notes for S8/S9
 
 §14 does not own:
@@ -4403,6 +4407,13 @@ Archive is not delete.
 - migration/import/export
 - replacement plant linking
 - catalog/template behavior
+
+A1 field lock:
+
+- `archived_at` is the only archive state field. Missing means active; present means archived from that date forward.
+- `archive_reason` is optional and must be one of `died`, `removed`, `other`.
+- `archive_note` is optional, trimmed, non-empty if present, and limited to 1000 characters.
+- A1 has no status/lifecycle enum, deleted flag, replacement reason enum, replacement Plant reference, unarchive field, or restore flow.
 
 ### 14.2 Entry point
 
@@ -4505,15 +4516,17 @@ Archive reason is optional.
 Use chips:
 
 ```text
-Osušila se
-Izvađena
-Zamijenjena
+Osušila se / uginula
+Uklonjena iz voćnjaka
+Drugo
 ```
 
-Do not include:
+Reason value mapping:
 
 ```text
-Drugo
+died -> Osušila se / uginula
+removed -> Uklonjena iz voćnjaka
+other -> Drugo
 ```
 
 Use optional note:
@@ -4522,48 +4535,53 @@ Use optional note:
 Bilješka — neobavezno
 ```
 
-Notes cover all other cases.
+If note is stored, it is trimmed, non-empty after trim, and at most 1000 characters.
 
 ### 14.6 Post-archive state
 
 After save:
 
 - user stays on Plant detail in archived state
-- archived state uses neutral copy
+- archived state uses neutral copy and shows archived marker/date/reason/note when present
 - history remains visible
 - `Dnevnik ove voćke` remains accessible
 - archived plant does not appear as an active work target
 - future seasonal actions and monitoring no longer show in the active plan for this plant
+- new active Activity/Observation capture is not offered for this archived plant
 - §14 does not define the active-scope algorithm
 
 Dnevnik rendering remains governed by §3:
 
 - archived plant records remain visible in Dnevnik
-- archive must not delete or rewrite Activities or Observations
+- archive must not delete or rewrite Activities, Observations, Corrections, catalogs, Plan instances, Plan overlays, or history
 - archived plants may appear in Dnevnik filters and rows with a neutral `(arhivirana)` suffix
 
-### 14.7 Replacement pointer
+Corrections remain governed by §17:
 
-If the user archived because a new plant was planted, archived Plant detail may show neutral pointer copy:
+- historical Activity/Observation correction remains allowed for records tied to archived plants
+- archive itself is not corrected through §17 in A1
+
+### 14.7 Replacement boundary
+
+A1 does not include replacement-tree logic.
+
+Do not include:
 
 ```text
-Ako je posađena nova voćka, dodaj je kao novu voćku.
-```
-
-CTA:
-
-```text
-Dodaj novu voćku
+Zamijenjena
 ```
 
 Rules:
 
-- routes to §13 Add plant flow
+- no replacement reason enum
+- no replacement Plant reference
+- no graft/replant model
+- no automatic recreation
 - no prefilled fields
 - no auto-copy of position/label
 - no old/new identity link
 - no history merge
-- replacement linking is out of current §14
+- replacement linking is out of A1 and requires future owner approval if ever opened
 
 ### 14.8 Restore / mistaken archive boundary
 
@@ -4600,7 +4618,12 @@ Archive must never delete:
 - Plant identity/history
 - Activity records
 - Observation records
+- Correction records
+- catalog references
+- Plan instances
+- Plan overlays
 - Dnevnik records
+- protected legacy keys or legacy records
 
 ### 14.10 Relationship to other sections
 
@@ -4617,9 +4640,9 @@ Concise boundaries:
 
 Dependency notes for S8/S9 or later:
 
-- archive state storage is S8/S9
-- archive date storage is S8/S9
-- archive reason/note storage is S8/S9
+- archive state/date storage is `archived_at`
+- archive reason storage is optional `archive_reason` with values `died`, `removed`, `other`
+- archive note storage is optional `archive_note`, trimmed non-empty when present, max 1000 characters
 - active vs archived scope derivation is S9
 - exclusion from future/current active plan surfaces after archive date is S9
 - migration/import/export impact is S8/S9
@@ -4635,12 +4658,12 @@ Dependency notes for S8/S9 or later:
 - plan regeneration / recalculation language
 - archive as task/compliance action
 - coverage/progress metrics
-- technical schema copy
+- technical schema copy in user-facing UI
 - automatic replacement linking
 - automatic field copy to new plant
 - Dnevnik row-format redefinition
 
-Forbidden examples:
+Forbidden user-facing examples:
 
 ```text
 Obriši voćku
@@ -4652,8 +4675,6 @@ Regeneriraj plan
 Plan se ponovno generira
 Vrati u aktivne (forbidden in current §14 only; future owner-approved restore/admin recovery flow may define this later)
 restore / unarchive (forbidden in current §14 only; future owner-approved restore/admin recovery flow may define this later)
-archived_at
-active scope
 entity state
 plan instance
 overlay

@@ -89,7 +89,7 @@ Plant storage represents one real plant in the orchard.
 | Profile fields | `rootstock`, `planted_at`, `purchased_at`, `source_label`, `position_label`, `profile_note`, and display-name/profile fields required by §13 |
 | Missing vs unknown | each applicable profile field must preserve the difference between not entered (`nije upisano`) and explicitly unknown (`ne znam`) |
 | Stable order | a stable orchard-order value used by Biljke default ordering |
-| Archive | archive state/date/reason/note fields from §14 |
+| Archive | `archived_at`, `archive_reason`, and `archive_note` fields from §14 / A1 |
 
 Missing/unknown representation:
 
@@ -98,17 +98,17 @@ Missing/unknown representation:
 - Unknown is not treated as an error and is not a value that S8 prompts on.
 - Derived behavior from missing or unknown data belongs to S9 only when a locked model later permits it.
 
-Archive fields:
+Archive fields (A1 lock):
 
-- archive state
-- archive date
-- optional reason chip
-- optional note
+- `archived_at?` — optional `YYYY-MM-DD`. Absence means active; presence means archived from that date forward.
+- `archive_reason?` — optional enum: `died`, `removed`, `other`. Valid only when `archived_at` is present.
+- `archive_note?` — optional trimmed non-empty string, `<= 1000` characters. Valid only when `archived_at` is present.
 
 Archive rules:
 
 - Archive is not delete.
 - Plant identity and history remain preserved.
+- No status / lifecycle enum, deleted flag, replacement Plant reference, or unarchive field is stored for A1.
 - No restore flow is defined in current S8.A.
 - Active-scope derivation belongs to S9.
 
@@ -445,16 +445,26 @@ Archive state is stored on the Plant record and summarized here for the lifecycl
 
 Stored boundary:
 
-- archive status
-- archive date
-- optional reason chip
-- optional note
+- `archived_at?` — optional `YYYY-MM-DD`. Missing means active. Present means archived from that date forward. Future dates are invalid in A1.
+- `archive_reason?` — optional enum, valid values only: `died`, `removed`, `other`. Invalid unless `archived_at` is present.
+- `archive_note?` — optional string, stored trimmed, non-empty after trim, maximum 1000 characters. Invalid unless `archived_at` is present.
+
+A1 explicitly does not store:
+
+- status / lifecycle enum
+- deleted flag
+- replacement reason enum
+- replacement Plant reference
+- unarchive / restore field
 
 Rules:
 
+- Archived Plants remain in `plants`.
 - Archived plants remain queryable for history.
 - Dnevnik remains available for archived plants.
-- Archive never deletes Plant, Activity, Observation, Correction, catalog, or plan history.
+- Archive never deletes Plant, Activity, Observation, Correction, catalog, Plan instance, Plan overlay, or plan history.
+- Export/import preserves archive fields.
+- Import/full-store validation fails closed for malformed archive fields, including invalid date, future `archived_at`, unknown `archive_reason`, archive reason/note without `archived_at`, blank or too-long `archive_note`, or unexpected archive-like fields.
 - No restore flow is defined in current S8.A.
 - Active/future exclusion is S9 derived behavior.
 
@@ -631,7 +641,7 @@ No auto-repair, auto-merge, relinking, substitution, or cleanup is defined in S8
 | Activity storage | Immutable Activity records and group ids. | Evidence matching and derived window state. | Legacy Activity migration/import preservation, if opened. |
 | Observation storage | Immutable Observation records, payloads, and `program_id` boundary. | Monitoring state, stage effects, and Observation-derived rendering. | Legacy/import Observation preservation, if opened. |
 | Correction storage | Additive Correction records linked to originals. | Derived effects of corrections and Dnevnik correction rendering. | Correction migration/import preservation, if opened. |
-| Archive storage | Plant archive status/date/reason/note. | Active/future exclusion and archived-scope rendering. | Restore/admin recovery or migration mechanics, if later approved. |
+| Archive storage | Plant `archived_at`, optional `archive_reason`, optional `archive_note`. | Active/future exclusion and archived-scope rendering. | Restore/admin recovery or migration mechanics, if later approved. |
 | Review state storage | User review interaction state only. | Availability trigger, diff content, and apply effects. | Import/migration preservation, if opened. |
 | Cue state storage | Optional user interaction state only. | Cue generation, ordering, disappearance, and derived visibility. | Import/migration preservation, if opened. |
 | Dnevnik history support | Durable references for historical query and resolution. | Row rendering, markers, grouping display, and filters. | Legacy history migration and restore mechanics, if opened. |
@@ -1208,7 +1218,9 @@ Derived active-scope rule:
 
 - From the archive date forward, archived Plants are excluded from active/future plan surfaces.
 - Archived Plants do not contribute to current/future Pregled, Kalendar, Biljke active list, Plant active seasonal context, monitoring active context, or active orchard aggregates.
+- New active Activity or Observation capture must not be offered for archived Plants.
 - Historical records remain visible through Dnevnik/history and archived Plant routes.
+- Historical Activity and Observation correction remains allowed for records tied to archived Plants.
 
 Rules:
 

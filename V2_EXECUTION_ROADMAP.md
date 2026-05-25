@@ -49,7 +49,7 @@ Recommended order to V2 Done:
 
 0. **Roadmap / documentation consolidation - complete.** Purpose: record this path so future agents stop inventing next steps. User-visible behavior: none. Hard boundaries: no runtime implementation, no `index.html`, no schema/model change, no Plan Templates edit.
 1. **A2 - Default V2 / remove `#v2` gate - complete.** Purpose achieved: the normal/original URL and empty hash load V2, `#v2` and `#v2/...` remain backward-compatible aliases, `#legacy` is the temporary legacy fallback, and the V2 old-app button routes to `#legacy`. The implementation did not delete legacy data, migrate/delete protected legacy keys, change schema/model, edit Plan Templates, or change `manifest.json` / `sw.js`.
-2. **A1 - Archive / lifecycle baseline.** Purpose: let the owner remove a plant from the active orchard without losing identity or history. Why after A2: the owner chose A2 first, then A1, and A2 is now complete. Example user-visible behavior: Plant detail offers `Arhiviraj voćku`; after archive, the plant leaves active Biljke/Pregled/Kalendar scope while Dnevnik/history remains visible with neutral archived labeling. Likely files/surfaces in a later session: `index.html` Plant detail lifecycle UI, Plant archive fields, validation/import/export, active-scope filters in Pregled/Kalendar/Biljke/Plant detail, Dnevnik archived-history display. Owner decision needed: explicit approval of archive baseline scope and copy; if any restore/unarchive/admin recovery is desired, it requires separate explicit owner approval because `V2_UX_MODEL.md §14` and `V2_ARCHITECTURE.md §1.15/§4.10` currently define no restore/unarchive flow. Hard boundaries: no delete, no destructive behavior, no record/history rewrite, no unarchive/restore unless separately approved, no legacy delete paths, no schema expansion beyond the already documented archive fields unless owner-approved.
+2. **A1 - Archive / lifecycle baseline.** Purpose: let the owner remove a plant from the active orchard without losing identity or history. Why after A2: the owner chose A2 first, then A1, and A2 is now complete. Example user-visible behavior: Plant detail offers `Arhiviraj voćku`; after archive, the plant leaves active Biljke/Pregled/Kalendar scope while Dnevnik/history remains visible with neutral archived labeling. Exact field lock: `archived_at?` optional `YYYY-MM-DD`; `archive_reason?` optional enum `died | removed | other`; `archive_note?` optional trimmed non-empty string, max 1000 characters; absence of `archived_at` means active, presence means archived; reason/note are valid only when `archived_at` is present. Likely files/surfaces in a later session: `index.html` Plant detail lifecycle UI, Plant archive field writes, validation/import/export, active-scope filters in Pregled/Kalendar/Biljke/Plant detail, Dnevnik archived-history display. Owner decision needed: explicit approval to implement the archive baseline; if any restore/unarchive/admin recovery is desired, it requires separate explicit owner approval because `V2_UX_MODEL.md §14` and `V2_ARCHITECTURE.md §1.15/§4.10` define no restore/unarchive flow. Hard boundaries: no delete, no destructive behavior, no record/history rewrite, no unarchive/restore, no replacement-tree/graft/replant model, no legacy delete paths, no deleted flag/status enum/replacement Plant reference/unarchive field, and no schema expansion beyond the documented archive fields unless owner-approved.
 3. **Plan Templates runtime fidelity / content parity session.** Purpose: verify and fix that `V2_ORCHARD_PLAN_TEMPLATES.md` content is represented in the app in the correct place and correct form, without opening engines or broad new models. Why after A2 and A1: default routing and lifecycle scope should be stable before checking every runtime Plan Templates surface. Why before UX/design and audit: design should polish the faithful runtime, and the audit should verify the final parity state. Example user-visible behavior: seasonal action detail and related action-window surfaces show the correct labels, periods, purpose, notes, execution-condition text, safety/label/karenca wording where present, and read-only monitoring guidance such as `Što gledati`, `Što sada`, and safe next steps to photograph/bring a sample/ask a local agricultural pharmacy, agronomist, or expert; the app still does not diagnose or decide treatment. Likely files/surfaces in a later session: `index.html` V2 projection/rendering surfaces for seasonal action detail, Pregled, Kalendar, Plant detail, Dnevnik guidance cards, Plan Templates source-row adapters, and verification notes. Owner decision needed: approve the parity checklist and whether identified missing/misplaced guidance should be fixed in app or classified as future owner-approved model work. Hard boundaries: no `V2_ORCHARD_PLAN_TEMPLATES.md` edit unless separately approved, no BBCH, no phenology engine, no automatic regional offset, no automatic date shifting, no plan recalculation, no urgency/overdue/compliance, no treatment recommendation, no product/dose advice beyond existing source-backed safety/label wording, no `Observation.symptom`, no `symptom_code`, no broad symptom registry, no program-attached observations, no AI diagnosis, and no S8 reopening.
 4. **UX/design polish session.** Purpose: make V2 feel ready for daily iPhone/PWA use without changing behavior. Why after A2, A1, and Plan Templates runtime fidelity: default behavior, lifecycle baseline, and source-backed content representation should be stable before visual polish; the owner requires UX/design before V2 Done. Example user-visible behavior: clearer spacing, navigation, card/list hierarchy, outdoor readability, neutral monitoring/risk presentation, and polished Dnevnik rows, while the same records and routes behave the same. Likely files/surfaces in a later session: `POLISH_BACKLOG.md` review first, especially the Claude Design section near the bottom; then bounded presentation-layer edits in `index.html` CSS/markup/classes only if approved. Owner decision needed: approve the specific UXR sub-session and which POLISH_BACKLOG recommendations enter scope. Hard boundaries: no new data model, no routing/default change, no persistence/localStorage/key changes, no validator/snapshot/monitoring semantics changes, no new framework/build pipeline, no PWA/service-worker changes, no implementation outside the approved design slice.
 5. **V2 Done audit.** Purpose: verify that V2 can be considered Done for the current owner-approved baseline. Why last: it must verify the final default route, archive baseline, Plan Templates runtime fidelity, and polish state together. Example user-visible behavior: owner can open normal URL, manage plants, log/correct Activities and supported Observations, export/import backups, read Plan Templates guidance, and return to legacy if needed, with no blocked PWA/cache/deployment issue. Likely files/surfaces in a later session: verification notes/docs, local browser/PWA checks, import/export round-trip, protected legacy-key checks, default URL behavior, Plan Templates coverage representation, service-worker/deployment smoke. Owner decision needed: approve the audit checklist and accept or reject the Done verdict. Hard boundaries: audit does not add new features; failures become separate owner-approved fix sessions.
@@ -846,7 +846,7 @@ S11.C2 binds:
 
 - S2 domain model (Activity §0.6, Observation §0.6a, group identity §0.11, no inferred state)
 - S6 / S7 UX surfaces (Pregled §1, Kalendar §2, Dnevnik §3, Detalj sezonske radnje §5, monitoring capture §10, stage confirmation §11, plant lifecycle §14, monitoring detail §15, evidence capture §16, record correction §17)
-- S8 storage (immutable Activity / Observation / Correction; Plant archive flag; export / import shape)
+- S8 storage (immutable Activity / Observation / Correction; Plant `archived_at` / `archive_reason` / `archive_note`; export / import shape)
 - S9.A derived state (active-window snapshot §4); S9.B upgrade diff and overlay reconciliation are out of S11.C2
 - S10 clean V2 transition (legacy keys untouched, no migration)
 - S11.A safety boundaries (§7 git rules, §8 runtime safety, §9 deferrals, §10 tracker timing)
@@ -1552,10 +1552,11 @@ Allowed touch points for the later A1 implementation session:
 
 - `index.html` only, inside the V2 region.
 - Plant detail lifecycle entry and archive confirmation UI.
-- Plant archive flag/date/reason/note write path using the documented archive fields.
+- Plant `archived_at` / `archive_reason` / `archive_note` write path using the documented archive fields.
 - Validation/import/export support for archive fields.
 - Active-scope filtering in Biljke, Pregled, Kalendar, Plant detail seasonal context, monitoring/risk context, and active orchard aggregates.
 - Dnevnik/history rendering for archived plants.
+- Historical Activity/Observation correction remains allowed for records tied to archived plants.
 
 Must not touch:
 
@@ -1565,6 +1566,7 @@ Must not touch:
 - Legacy keys or legacy plant-archive UX.
 - Destructive delete behavior.
 - Restore/unarchive/admin recovery unless the owner explicitly opens that as a separate decision.
+- Replacement-tree logic, graft/replant model, replacement Plant reference, deleted flag, status/lifecycle enum, or unarchive field.
 
 Depends on:
 
@@ -1575,9 +1577,11 @@ Depends on:
 
 Produces:
 
-- Archive / lifecycle baseline per `V2_UX_MODEL.md §14`, `V2_UX_MODEL.md §4.14/§4.16`, and `V2_ARCHITECTURE.md §1.15/§4.10`: archive flag + date + optional reason/note on Plant.
+- Archive / lifecycle baseline per `V2_UX_MODEL.md §14`, `V2_UX_MODEL.md §4.14/§4.16`, and `V2_ARCHITECTURE.md §1.15/§4.10`: `archived_at` plus optional `archive_reason` / `archive_note` on Plant.
 - Archived plants are excluded from active orchard scope from the archive date forward.
 - Archived plant history remains queryable in Dnevnik/history and archived Plant routes.
+- New active Activity/Observation capture is not offered for archived Plants.
+- Historical Activity/Observation correction remains allowed for records tied to archived Plants.
 - Neutral archived labeling such as `(arhivirana)` where the UX model defines it.
 - No delete and no destructive rewrite of Plant, Activity, Observation, Correction, catalog, Plan instance, Plan overlay, or Dnevnik history.
 
@@ -1588,6 +1592,9 @@ Manual verification for the later A1 session:
 - Archived plant history remains visible in Dnevnik/history with neutral archived labeling.
 - Export -> JSON contains archive fields and all prior records.
 - Round-trip import -> archive state and history are preserved.
+- Malformed archive fields fail closed: invalid/future `archived_at`, unknown `archive_reason`, reason/note without `archived_at`, blank or too-long `archive_note`, and unexpected archive-like fields.
+- New active Activity/Observation capture is not offered for the archived plant.
+- Activity/Observation correction still works for historical records tied to the archived plant.
 - Protected legacy key VALUES remain unchanged.
 - No restore/unarchive UI appears unless that exact behavior was separately owner-approved for the A1 session.
 

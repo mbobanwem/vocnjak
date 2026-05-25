@@ -9,7 +9,7 @@
 ### 0.1 Top-level entities (stored)
 
 1. **Plant** — a real plant in the user's orchard.
-   - `plant_id`, `species`, `variety?`, `planted_at?`
+   - `plant_id`, `species`, `variety?`, `planted_at?`, `archived_at?`, `archive_reason?`, `archive_note?`
 2. **Catalog template** — expert-authored, versioned plan template per species. Action-window definitions live as a child collection of the catalog template; they are not a separate top-level entity.
    - `catalog_id`, `species`, `catalog_version`
 3. **Plan instance** — pinned per plant to exactly one catalog version.
@@ -23,6 +23,26 @@
    - `catalog_version` — required. Pinned at write-time to the plant's then-current pinned `catalog_version`. Every catalog-backed reference on this Observation (`program_id` against §1.7; `payload.stage_code` against §2.2; `payload.symptom_code` against the catalog's symptom registry once declared) is resolved against this pinned version, not against the plant's current pinning. Immutable like all other Observation fields.
    - `program_id?` — optional link to a declared `monitoring_program` (§1.7). When present, attaches the Observation to that program's history and its `cycle_year` per §6.8. When absent, the Observation is **free-standing** and is a first-class plant-history entry that is permanently disjoint from any monitoring program (§1.7.7). Immutable like all other Observation fields.
 7. **Monitoring program** — catalog-authored declaration of a season-long informational campaign per target per plant. Child collection of the catalog template, defined in §1.7. State (`pre_season`, `active`, `ended`) is derived per `(plant_id, program_id, cycle_year)` per §6.8; no state is stored. Absence of observations during any program state is neutral (§1.7.6).
+
+### 0.1a Plant archive lifecycle fields — A1 lock
+
+Archive is Plant lifecycle state, not deletion.
+
+Plant archive fields:
+
+- `archived_at?` — optional `YYYY-MM-DD`. Absence means the Plant is active. Presence means the Plant is archived from that date forward.
+- `archive_reason?` — optional enum, valid values: `died`, `removed`, `other`. Valid only when `archived_at` is present.
+- `archive_note?` — optional string. Valid only when `archived_at` is present. If present, it MUST be stored trimmed, non-empty after trim, and `<= 1000` characters.
+
+A1 does not define or allow:
+
+- status / lifecycle enum
+- deleted flag
+- replacement reason enum
+- replacement Plant reference
+- unarchive / restore field
+
+Archive never deletes or rewrites Plant identity, Activity records, Observation records, Correction records, catalogs, plan instances, plan overlays, or Dnevnik/history.
 
 ### 0.2 Action-window definition (child of Catalog template)
 

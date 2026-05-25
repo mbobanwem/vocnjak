@@ -27,7 +27,7 @@ A2 default V2 / remove `#v2` gate is also complete. Normal/original URL and empt
 Current immediate next step:
 
 ```text
-A2 — Default V2 / remove the #v2 gate is complete. Normal/original URL and empty hash now load V2; #v2 and #v2/... remain backward-compatible aliases; #legacy is the temporary legacy fallback. The next implementation session should be A1 — archive/lifecycle baseline after owner approval. Do not implement A1, Plan Templates runtime fidelity, UX polish, or any future/parked item until the owner explicitly opens that session.
+A2 — Default V2 / remove the #v2 gate is complete. Normal/original URL and empty hash now load V2; #v2 and #v2/... remain backward-compatible aliases; #legacy is the temporary legacy fallback. The next implementation session should be A1 — archive/lifecycle baseline after owner approval, using only archived_at / archive_reason / archive_note as the Plant archive fields. Do not implement A1, Plan Templates runtime fidelity, UX polish, or any future/parked item until the owner explicitly opens that session.
 ```
 
 ### V2 Done path after Post-S8 Observation correction
@@ -46,7 +46,7 @@ Minimum sequence to V2 Done:
 
 1. Roadmap/doc consolidation — complete.
 2. A2 — Default V2 / remove `#v2` gate — complete.
-3. A1 — Archive/lifecycle baseline. Archive only; no delete and no destructive behavior. `V2_UX_MODEL.md §14` and `V2_ARCHITECTURE.md §1.15/§4.10` currently define no restore/unarchive flow, so restore/unarchive requires separate explicit owner approval if ever opened.
+3. A1 — Archive/lifecycle baseline. Archive only; no delete and no destructive behavior. The docs lock the exact Plant fields as `archived_at?` (`YYYY-MM-DD`), `archive_reason?` (`died | removed | other`), and `archive_note?` (trimmed non-empty string, max 1000 characters); absence of `archived_at` means active, presence means archived. `V2_UX_MODEL.md §14` and `V2_ARCHITECTURE.md §1.15/§4.10` define no restore/unarchive flow, no status/lifecycle enum, no deleted flag, and no replacement-tree/graft/replant model for A1.
 4. Plan Templates runtime fidelity / content parity session. Verify and fix that `V2_ORCHARD_PLAN_TEMPLATES.md` content is represented in the app in the correct place and form, including action-window labels/periods/purpose/notes, execution-condition guidance, monitoring/observation guidance, species/variety-specific content, and source-backed fallback/harvest timing where defined. This is a V2 Done blocker, not broader phenology and not S8 reopening.
 5. UX/design polish session. Read `POLISH_BACKLOG.md` first, especially the Claude Design section near the bottom; translate only approved design logic into bounded presentation polish after the Plan Templates runtime fidelity pass.
 6. V2 Done audit. Verify core user flows, backup/import/export, Plan Templates guidance representation, default URL behavior, legacy fallback/protected-key preservation, and PWA/cache/deployment implications.
