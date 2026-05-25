@@ -11,7 +11,7 @@ Post-S8 Observation correction completion record:
 3. UI/display implementation using deterministic effective Observation composition in Dnevnik and Plant detail: `6d5b19d`.
 4. Tracker sync: current documentation-only package.
 
-Observation correction should no longer be treated as the next open package. Next work requires owner decision from remaining Post-S8 carry-forward and must not be selected or implemented automatically.
+Observation correction should no longer be treated as the next open package. Current path to V2 Done is defined in §0: roadmap consolidation, then A2 default V2 after explicit owner approval, then A1 archive/lifecycle baseline, then Plan Templates runtime fidelity / content parity, then UX/design polish, then V2 Done audit. Remaining Post-S8 carry-forward items are future owner-decision work unless the owner explicitly changes the path.
 
 Locked first-scope boundaries: Strategy A grouped Observation correction only, no grouped date/plant correction, no group splitting, no effective regrouping, no `correction_group_id`, no new Observation kinds, no program-attached Observations, no broad scouting/symptom registry, no diagnosis, no treatment/product/dose advice, no pressure/urgency/compliance logic, no Plan Templates changes, and no S8 reopening.
 
@@ -30,6 +30,62 @@ Examples:
 - Winter pruning may have a calendar baseline, but execution guidance such as dry weather, after strongest frosts, and before strong vegetation start where present must remain visible. The app informs; it does not predict frost, move pruning dates, create BBCH logic, or show "you are late" behavior.
 
 ---
+
+## 0. Current roadmap from Post-S8 to V2 Done
+
+This section is the current controlling roadmap after Runtime Slice 8 closure and Post-S8 Observation correction. It supersedes older "next work from Post-S8 carry-forward" wording and older Slice 9 wording where those imply that Observation correction is still open or that the next implementation should be chosen ad hoc from the carry-forward queue.
+
+Current factual state:
+
+- Runtime Slices 0-8 are complete for their approved scopes.
+- Post-S8 Observation correction is complete for the approved scope (`1ef2009`, `60cc32c`, `6d5b19d`).
+- Plan Templates execution-condition guidance is clarified and locked as read-only guidance: Zagreb / continental Croatia planning windows remain visible; warmer regions such as Dalmatia may be roughly two weeks or more earlier in real life; no BBCH, phenology engine, regional offsets, automatic date shifting, urgency, overdue, compliance, treatment recommendation, or product/dose logic is authorized.
+- A focused Plan Templates runtime fidelity / content parity session is required before UX/design polish and before the V2 Done audit. It verifies and fixes whether approved `V2_ORCHARD_PLAN_TEMPLATES.md` content is actually represented in the app in the correct place and form; it is not broader phenology and does not reopen S8.
+- The normal/original URL still loads the legacy app. V2 remains behind `#v2`; the current runtime proof is the Slice 0 activation gate in `index.html` that adds `v2-active` only when `location.hash === '#v2' || location.hash.indexOf('#v2/') === 0`.
+- Broad scouting expansion, `Observation.symptom`, program-attached observations, broader phenology-aware stage confirmation, regional adaptation, AI, and paid/subscription ideas remain future owner-decision work.
+
+Recommended order to V2 Done:
+
+0. **Roadmap / documentation consolidation.** Purpose: record this path so future agents stop inventing next steps. Why now: S8 and Observation correction are closed, and old roadmap wording still points to generic carry-forward selection. User-visible behavior: none. Likely files/surfaces: docs only, primarily `V2_CURRENT_STATE.md`, `V2_EXECUTION_ROADMAP.md`, and handoff docs. Owner decision before implementation: owner review/approval of the consolidated roadmap. Hard boundaries: no runtime implementation, no `index.html`, no schema/model change, no Plan Templates edit, no commit/push until owner approval.
+1. **A2 - Default V2 / remove `#v2` gate.** Purpose: make the normal/original URL load V2 and keep legacy available behind an old-app path/entry. Why now: the owner prioritizes default V2, and S8 plus Observation correction have made the V2 baseline usable enough to cut over deliberately. Example user-visible behavior: opening `index.html` or the PWA start URL shows V2; legacy remains reachable for reference without deleting legacy data. Likely files/surfaces in a later session: `index.html` route activation/default boot, V2 exit/old-app entry behavior, manifest `start_url` review if needed, `sw.js`/service-worker cache behavior only if owner-approved default-flip verification proves a cache bump is needed, deployment/PWA verification notes. Owner decision needed: explicit approval to analyze and then implement the default flip, including the legacy fallback path and PWA/cache/deployment verification plan. Hard boundaries: no legacy data deletion, no destructive legacy cleanup, no automatic legacy migration, no protected legacy-key rewrites as V2 data, no schema/model change, no Plan Templates edit, no service-worker cache bump unless the default-flip session explicitly approves it.
+2. **A1 - Archive / lifecycle baseline.** Purpose: let the owner remove a plant from the active orchard without losing identity or history. Why after A2: the owner chose A2 first, then A1. Example user-visible behavior: Plant detail offers `Arhiviraj voćku`; after archive, the plant leaves active Biljke/Pregled/Kalendar scope while Dnevnik/history remains visible with neutral archived labeling. Likely files/surfaces in a later session: `index.html` Plant detail lifecycle UI, Plant archive fields, validation/import/export, active-scope filters in Pregled/Kalendar/Biljke/Plant detail, Dnevnik archived-history display. Owner decision needed: explicit approval of archive baseline scope and copy; if any restore/unarchive/admin recovery is desired, it requires separate explicit owner approval because `V2_UX_MODEL.md §14` and `V2_ARCHITECTURE.md §1.15/§4.10` currently define no restore/unarchive flow. Hard boundaries: no delete, no destructive behavior, no record/history rewrite, no unarchive/restore unless separately approved, no legacy delete paths, no schema expansion beyond the already documented archive fields unless owner-approved.
+3. **Plan Templates runtime fidelity / content parity session.** Purpose: verify and fix that `V2_ORCHARD_PLAN_TEMPLATES.md` content is represented in the app in the correct place and correct form, without opening engines or broad new models. Why after A2 and A1: default routing and lifecycle scope should be stable before checking every runtime Plan Templates surface. Why before UX/design and audit: design should polish the faithful runtime, and the audit should verify the final parity state. Example user-visible behavior: seasonal action detail and related action-window surfaces show the correct labels, periods, purpose, notes, execution-condition text, safety/label/karenca wording where present, and read-only monitoring guidance such as `Što gledati`, `Što sada`, and safe next steps to photograph/bring a sample/ask a local agricultural pharmacy, agronomist, or expert; the app still does not diagnose or decide treatment. Likely files/surfaces in a later session: `index.html` V2 projection/rendering surfaces for seasonal action detail, Pregled, Kalendar, Plant detail, Dnevnik guidance cards, Plan Templates source-row adapters, and verification notes. Owner decision needed: approve the parity checklist and whether identified missing/misplaced guidance should be fixed in app or classified as future owner-approved model work. Hard boundaries: no `V2_ORCHARD_PLAN_TEMPLATES.md` edit unless separately approved, no BBCH, no phenology engine, no automatic regional offset, no automatic date shifting, no plan recalculation, no urgency/overdue/compliance, no treatment recommendation, no product/dose advice beyond existing source-backed safety/label wording, no `Observation.symptom`, no `symptom_code`, no broad symptom registry, no program-attached observations, no AI diagnosis, and no S8 reopening.
+4. **UX/design polish session.** Purpose: make V2 feel ready for daily iPhone/PWA use without changing behavior. Why after A2, A1, and Plan Templates runtime fidelity: default behavior, lifecycle baseline, and source-backed content representation should be stable before visual polish; the owner requires UX/design before V2 Done. Example user-visible behavior: clearer spacing, navigation, card/list hierarchy, outdoor readability, neutral monitoring/risk presentation, and polished Dnevnik rows, while the same records and routes behave the same. Likely files/surfaces in a later session: `POLISH_BACKLOG.md` review first, especially the Claude Design section near the bottom; then bounded presentation-layer edits in `index.html` CSS/markup/classes only if approved. Owner decision needed: approve the specific UXR sub-session and which POLISH_BACKLOG recommendations enter scope. Hard boundaries: no new data model, no routing/default change, no persistence/localStorage/key changes, no validator/snapshot/monitoring semantics changes, no new framework/build pipeline, no PWA/service-worker changes, no implementation outside the approved design slice.
+5. **V2 Done audit.** Purpose: verify that V2 can be considered Done for the current owner-approved baseline. Why last: it must verify the final default route, archive baseline, Plan Templates runtime fidelity, and polish state together. Example user-visible behavior: owner can open normal URL, manage plants, log/correct Activities and supported Observations, export/import backups, read Plan Templates guidance, and return to legacy if needed, with no blocked PWA/cache/deployment issue. Likely files/surfaces in a later session: verification notes/docs, local browser/PWA checks, import/export round-trip, protected legacy-key checks, default URL behavior, Plan Templates coverage representation, service-worker/deployment smoke. Owner decision needed: approve the audit checklist and accept or reject the Done verdict. Hard boundaries: audit does not add new features; failures become separate owner-approved fix sessions.
+
+The Plan Templates runtime fidelity / content parity session must verify at minimum:
+
+- action windows are represented with correct labels, periods, purpose, and notes;
+- execution-condition text is preserved as read-only guidance where present, including plant state / phenophase, dormancy, bud swelling, bloom / open flowers, after petal fall, young fruit, dry weather, rain, frost, wind, label constraints, bee safety, karenca / safety wording, and skip / delay / do-not-duplicate logic;
+- monitoring / observation guidance is represented where present, including `Što gledati`, `Što sada`, and the safe next step to photograph / bring a sample / ask a local agricultural pharmacy, agronomist, or expert, while the app does not diagnose and does not decide treatment;
+- species/variety-specific Plan Templates content is not flattened into generic species-only text where the source is more specific;
+- fallback / variety harvest timing remains source-backed where Plan Templates defines it;
+- every missing or misplaced Plan Templates guidance item is either fixed in the app within the approved runtime/content parity scope or explicitly classified as future owner-approved model work.
+
+Do not call this session broader phenology, and do not defer it because BBCH, automation, or broader models remain deferred.
+
+Items explicitly not blocking V2 Done unless the owner reopens them:
+
+- broad/general scouting registry or capture beyond Step 7c;
+- `Observation.symptom`, `symptom_code`, and symptom registry/source map;
+- program-attached observations;
+- broader phenology-aware stage confirmation, BBCH, phenology engine, plan recalculation, regional offsets, or automatic date shifting;
+- orphan-code fallback display and outside-period disclosure polish;
+- `Bez zapisa` / `Zadnji zapis` monitoring record-status semantics beyond the approved neutral behavior;
+- optional trap numeric extensions for rows without source-backed thresholds;
+- Plan upgrade review, Za pregledati cues, Settings/Postavke split, sync/cloud/iCal/AES-GCM redesign, native storage engine selection, legacy retirement, fig/citrus expansion, regional adaptation, AI/photo analysis, paid/subscription/paywall work, push notifications.
+
+After V2 Done:
+
+- Revisit `V2_FUTURE_ROADMAP.md` under its promotion rule.
+- Revisit parked V1/future store-readiness concepts, including `archive/future/STORE_READY_ROADMAP_V1.md` Sessions 19, 20, and later items, as concept references only. They are not active V2 implementation authority.
+- Keep archived V1 roadmaps historical unless a future owner-approved session promotes a specific idea into the active V2 docs.
+
+Minimum set of steps to V2 Done:
+
+```text
+docs consolidation -> owner approves A2 -> implement/verify default V2 -> owner approves A1 -> implement/verify no-delete archive baseline -> owner approves Plan Templates runtime fidelity -> implement/verify content parity fixes -> owner approves UX/design polish -> implement/verify bounded polish -> V2 Done audit
+```
 
 ## 1. Purpose
 
@@ -1367,7 +1423,7 @@ Closure evidence: B2 read-only source-row guidance coverage is complete for S8 p
 
 Post-S8 selection rule:
 
-1. Next work after S8 closure must be selected from the Post-S8 Carry-forward Action Map, not invented ad hoc.
+1. Current next work after S8 closure and Post-S8 Observation correction is governed by §0. Do not select ad hoc from the Post-S8 Carry-forward Action Map; carry-forward items remain future owner-decision backlog unless the owner explicitly changes the V2 Done path.
 2. Post-S8 Observation correction is complete for the approved scope: docs lock at `1ef2009`, validator/model runtime at `60cc32c`, and UI/display runtime at `6d5b19d`.
 3. Broad/general durable scouting target identifiers still require owner approval before `Observation.scouting` writes outside the bounded Step 7c source-row-backed adapter.
 4. Multi-plant grouping for free-standing `note` / `stage_obs` Observations is complete in Step 6; bounded multi-plant visual scouting capture is complete in Step 7c; source-backed display-only guidance for those visual scouting rows is complete in Step 7d; bounded read-only `Što gledati` parity for monitoring-only B2 rows is complete in Step 7e; future structured scouting/symptom Observation grouping beyond Step 7c still requires owner approval.
@@ -1480,64 +1536,85 @@ Parallelization notes:
 
 ---
 
-## 37. Slice 9 — Observation correction and archive/lifecycle baseline
+## 37. Remaining lifecycle scope — archive baseline after Observation correction
+
+Status:
+
+- Observation correction is complete for the approved Post-S8 scope (`1ef2009`, `60cc32c`, `6d5b19d`) and must not be treated as open Slice 9 work.
+- The remaining lifecycle item before V2 Done is A1 archive/lifecycle baseline, but the owner-selected order is A2 default V2 first, then A1.
 
 Purpose:
 
-Close correction and lifecycle in V2. Owner can correct Observation records (including stage observations) using additive Correction records. Owner can archive plants without losing history.
+Implement non-destructive plant archive behavior after the default V2 cutover is separately approved and verified. Archive lets the owner remove a plant from the active orchard without losing Plant identity or history.
 
-Allowed touch points:
+Allowed touch points for the later A1 implementation session:
 
-- `index.html` only, inside the V2 region. Observation correction entry, Correction write reusing the Slice 5 shape, Plant archive flag UI, archive-state filtering in snapshot consumers.
+- `index.html` only, inside the V2 region.
+- Plant detail lifecycle entry and archive confirmation UI.
+- Plant archive flag/date/reason/note write path using the documented archive fields.
+- Validation/import/export support for archive fields.
+- Active-scope filtering in Biljke, Pregled, Kalendar, Plant detail seasonal context, monitoring/risk context, and active orchard aggregates.
+- Dnevnik/history rendering for archived plants.
 
 Must not touch:
 
-- Plan upgrade review or Za pregledati cues (post-usable).
+- Default-route behavior unless the owner explicitly combines A1 with a later routing patch. Current recommended order keeps A2 separate and first.
+- Plan upgrade review or Za pregledati cues.
 - Legacy delete paths.
-- Legacy keys.
-- Legacy plant-archive UX (read-only).
+- Legacy keys or legacy plant-archive UX.
+- Destructive delete behavior.
+- Restore/unarchive/admin recovery unless the owner explicitly opens that as a separate decision.
 
 Depends on:
 
-- Slice 5 (Correction record shape — Slice 9 reuses it for Observation correction; one Correction shape per S8 §1.24).
-- Slice 8 (Observation records to correct; stage observation records).
-- S11.C1 Slice 4 (Plant identity for archive flag).
+- A2 default V2 / `#v2` cutover being separately approved and landed first.
+- S11.C1 Slice 4 (stable Plant identity).
+- S8/S9 documented archive storage and active-scope rules (`V2_UX_MODEL.md §14`, `V2_ARCHITECTURE.md §1.15` and §4.10).
+- Current completed Observation correction for supported Observation kinds, only as existing history behavior; A1 must not reopen Observation correction.
 
 Produces:
 
-- Observation correction per V2_UX_MODEL.md §17 + §11.11: additive Correction record linked to the original Observation; original is not mutated; Dnevnik / Detalj / Plant detail render the corrected version with the §3.9 correction marker.
-- Stage-code correction per §11.11 using the same Correction shape.
-- Archive / lifecycle per V2_UX_MODEL.md §14 + §4.14 + §4.16 + V2_ARCHITECTURE.md §4.10: archive flag + date + reason on Plant; archived plants excluded from active orchard scope (Pregled, Kalendar, current actions) but visible for historical query (Dnevnik archived plants per §3.12, archived-scope rendering per §4.10).
-- No-delete invariant per §14: archive is reversible; no Plant record is ever physically removed; history of archived plants remains queryable.
+- Archive / lifecycle baseline per `V2_UX_MODEL.md §14`, `V2_UX_MODEL.md §4.14/§4.16`, and `V2_ARCHITECTURE.md §1.15/§4.10`: archive flag + date + optional reason/note on Plant.
+- Archived plants are excluded from active orchard scope from the archive date forward.
+- Archived plant history remains queryable in Dnevnik/history and archived Plant routes.
+- Neutral archived labeling such as `(arhivirana)` where the UX model defines it.
+- No delete and no destructive rewrite of Plant, Activity, Observation, Correction, catalog, Plan instance, Plan overlay, or Dnevnik history.
 
-Manual verification:
+Manual verification for the later A1 session:
 
-- Correct an Observation date → Correction record written; original Observation bytes unchanged; Plant detail / Dnevnik / Detalj show corrected date with §3.9 marker.
-- Correct a stage code → same pattern; snapshot stage effect updated per §4.11.
-- Archive a plant → archive flag set; plant disappears from Biljke active list (§4.14) and from Pregled / Kalendar active scope (§4.10); plant remains visible in archived view; Dnevnik history preserved.
-- Unarchive a plant → archive flag cleared; plant returns to active scope.
-- Export → JSON contains correction records and archive flags.
-- Round-trip import → all corrections and archive states preserved.
-- Legacy `vocnjak_v4` VALUE byte-equal across session.
+- Archive a plant -> archive fields are written; no Plant record is removed.
+- Archived plant disappears from active Biljke/Pregled/Kalendar/current seasonal scope after the archive date.
+- Archived plant history remains visible in Dnevnik/history with neutral archived labeling.
+- Export -> JSON contains archive fields and all prior records.
+- Round-trip import -> archive state and history are preserved.
+- Protected legacy key VALUES remain unchanged.
+- No restore/unarchive UI appears unless that exact behavior was separately owner-approved for the A1 session.
 
 Stop conditions:
 
-- Observation correction would mutate the original record.
 - Archive would delete records.
-- Archive would silently rewrite history.
-- Slice 9 would touch plan upgrade review or Za pregledati cues.
-- Slice 9 would require any new persistent storage key.
-- Slice 9 would diverge the Correction record shape from Slice 5.
+- Archive would silently rewrite or hide history.
+- Archive would introduce destructive delete copy or UI.
+- A1 would implement restore/unarchive without explicit owner approval.
+- A1 would touch plan upgrade review, Za pregledati cues, default-route behavior, legacy delete paths, or protected legacy keys.
+- A1 would require a new persistent storage key beyond `vocnjak_v2`.
 
 Parallelization notes:
 
-- Within Slice 9, Observation correction and archive are independent — may be drafted in parallel by two implementers, commit serially as one slice or as 2 sub-unit commits within one owner-approved scope.
+- A1 is a single owner-approved lifecycle baseline session. Do not pair it with default-route work, UX polish, or future parked items unless the owner explicitly changes the sequence.
 
 ---
 
 ## 38. C2 default-readiness boundary
 
 S11.C2 itself does not flip the default. The actual "V2 becomes default" decision belongs to S11.D milestone gating (§17 V2 activation strategy + S11.D verification gates).
+
+Current status after S8 + Observation correction:
+
+- The recommended default-readiness prerequisite (Slice 8 complete and approved) is satisfied for the approved S8 scope.
+- Post-S8 Observation correction is also complete.
+- Therefore default V2 / removing the `#v2` gate is eligible to be opened as A2, but it is not already authorized. A2 requires an explicit owner-approved analysis and implementation session.
+- A2 must verify normal URL behavior, legacy fallback/old-app access, protected legacy data/key preservation, V2 export/import posture, PWA start URL behavior, service-worker/cache implications, and deployment/hard-refresh behavior.
 
 Recommended minimum for default:
 
@@ -1759,7 +1836,7 @@ Slice 8 — Plant detail B2 preview first, then observations/stage:
 - Runtime Slice 8 is closed for the approved S8 scope; Step 7 coverage is complete and no unresolved S8 blocker row remains
 - Post-S8 Observation correction is complete: docs lock at `1ef2009`, validator/model runtime at `60cc32c`, and UI/display runtime at `6d5b19d`
 - Post-S8 / owner-approved future work remains: broader scouting capture beyond Step 7c; symptom capture / `Observation.symptom`; owner-approved symptom source map / registry before any `symptom_code`; program-attached observations; broader phenology-aware stage confirmation beyond Step 5a diary capture; low-risk fallback/display polish; AI-assisted image analysis or paid/subscription AI; and any diagnosis/treatment recommendation system only if separately owner-approved with strict guardrails
-- Next work requires owner decision from remaining Post-S8 carry-forward; do not select or implement automatically
+- Current path to V2 Done is §0; do not select from remaining Post-S8 carry-forward unless the owner explicitly changes the path
 
 Slice 9 — Observation correction, archive / lifecycle:
 
@@ -1817,6 +1894,12 @@ Default-flip behavior:
 - The flip does not delete legacy data, legacy keys, or legacy code paths.
 - The flip may require a service worker `CACHE_NAME` bump (see §47); this is the only sanctioned place to bump `CACHE_NAME`.
 - The flip should be reversible: the owner can flip back to legacy default if a regression is found.
+
+Current A2 clarification:
+
+- Runtime Slices 0-8 and Post-S8 Observation correction are complete enough to open A2 next after owner approval.
+- Current runtime still loads legacy at the normal/original URL and V2 at `#v2`; this is intentional historical behavior, not the desired final default.
+- This roadmap consolidation does not itself approve the default flip. A later A2 session must analyze the route behavior, implement only after owner approval, preserve legacy data and protected keys, and verify PWA/cache/deployment implications.
 
 ---
 
@@ -1934,4 +2017,4 @@ Runtime Slice 0 rules (re-stated for the handoff):
 
 Runtime implementation still requires explicit owner approval after S11 is closed. Even with this roadmap complete, no runtime work begins until the owner explicitly opens runtime Slice 0.
 
-Post-S8 closure tracker note: Runtime Slices 0–7 are complete through `d61cc90 Harden S7 seasonal action detail display`, B2 metadata-only projection boundary is complete, Runtime Slice 8 Step 1 is complete as Plant detail-only read-only B2 monitoring/risk preview, Runtime Slice 8 Step 2 is complete as Plant detail free-standing note Observation capture plus Dnevnik / plant-history evidence under `Opažanja`, Runtime Slice 8 Step 3 is complete as read-only Pregled/Kalendar B2 monitoring/risk visibility, Runtime Slice 8 Step 4a is complete as Plant-detail-only free-standing trap count capture plus Dnevnik / plant-history evidence under `Opažanja`, Runtime Slice 8 Step 5a is complete as bounded free-standing `stage_obs` diary capture, Runtime Slice 8 Step 6 is complete for multi-plant free-standing `note` / `stage_obs`, Runtime Slice 8 Step 7 numeric advisory covers 654, 860, 1596, and 1643, Runtime Slice 8 Step 7b context-only advisory covers 337, 2455, 2949, and 2977, Runtime Slice 8 Step 7c is complete as bounded Plan Templates-backed visual scouting capture at `588e413` after docs lock at `7e388c5`, Runtime Slice 8 Step 7d is complete as source-backed read-only `Što sada` scouting guidance at `5f64257`, and Runtime Slice 8 Step 7e is complete as bounded read-only `Što gledati` guidance parity at `36433aa Add Step 7e monitoring guidance parity`. Step 7e extended only `B2_READONLY_GUIDANCE_BY_SOURCE_ROW` with 21 source-backed beginner visible-sign entries for monitoring-only B2 rows. It did not add schema, validators, payload fields, storage, routes, renderer changes, source maps, `symptom_code`, `Observation.symptom`, broad registries, diagnosis, treatment/product/dose advice, pressure/urgency/compliance logic, risk-awareness checklist rows, trap/scouting capture changes, or Step 7d `Što sada` changes. B2 source-row guidance coverage is complete for read-only S8 purposes: 14 previously existing `Što gledati` rows, 21 Step 7e monitoring-only rows, and 6 risk-awareness rows intentionally seasonal context rather than checklist rows. Runtime Slice 8 is closed for the approved S8 scope; Step 7 coverage is complete and no unresolved S8 blocker row remains. The seasonal snapshot remains private, read-time, derived, and non-persisted. Post-S8 Observation correction is complete: docs lock at `1ef2009`, validator/model runtime at `60cc32c`, and UI/display runtime at `6d5b19d`. Next work requires owner decision from remaining Post-S8 carry-forward and must not be selected or implemented automatically.
+Post-S8 closure tracker note: Runtime Slices 0–7 are complete through `d61cc90 Harden S7 seasonal action detail display`, B2 metadata-only projection boundary is complete, Runtime Slice 8 Step 1 is complete as Plant detail-only read-only B2 monitoring/risk preview, Runtime Slice 8 Step 2 is complete as Plant detail free-standing note Observation capture plus Dnevnik / plant-history evidence under `Opažanja`, Runtime Slice 8 Step 3 is complete as read-only Pregled/Kalendar B2 monitoring/risk visibility, Runtime Slice 8 Step 4a is complete as Plant-detail-only free-standing trap count capture plus Dnevnik / plant-history evidence under `Opažanja`, Runtime Slice 8 Step 5a is complete as bounded free-standing `stage_obs` diary capture, Runtime Slice 8 Step 6 is complete for multi-plant free-standing `note` / `stage_obs`, Runtime Slice 8 Step 7 numeric advisory covers 654, 860, 1596, and 1643, Runtime Slice 8 Step 7b context-only advisory covers 337, 2455, 2949, and 2977, Runtime Slice 8 Step 7c is complete as bounded Plan Templates-backed visual scouting capture at `588e413` after docs lock at `7e388c5`, Runtime Slice 8 Step 7d is complete as source-backed read-only `Što sada` scouting guidance at `5f64257`, and Runtime Slice 8 Step 7e is complete as bounded read-only `Što gledati` guidance parity at `36433aa Add Step 7e monitoring guidance parity`. Step 7e extended only `B2_READONLY_GUIDANCE_BY_SOURCE_ROW` with 21 source-backed beginner visible-sign entries for monitoring-only B2 rows. It did not add schema, validators, payload fields, storage, routes, renderer changes, source maps, `symptom_code`, `Observation.symptom`, broad registries, diagnosis, treatment/product/dose advice, pressure/urgency/compliance logic, risk-awareness checklist rows, trap/scouting capture changes, or Step 7d `Što sada` changes. B2 source-row guidance coverage is complete for read-only S8 purposes: 14 previously existing `Što gledati` rows, 21 Step 7e monitoring-only rows, and 6 risk-awareness rows intentionally seasonal context rather than checklist rows. Runtime Slice 8 is closed for the approved S8 scope; Step 7 coverage is complete and no unresolved S8 blocker row remains. The seasonal snapshot remains private, read-time, derived, and non-persisted. Post-S8 Observation correction is complete: docs lock at `1ef2009`, validator/model runtime at `60cc32c`, and UI/display runtime at `6d5b19d`. Current path to V2 Done is §0: owner review of roadmap consolidation, then A2 default V2, then A1 archive/lifecycle baseline, then Plan Templates runtime fidelity / content parity, then UX/design polish, then V2 Done audit. Remaining Post-S8 carry-forward items are future owner-decision work unless the owner explicitly changes the V2 Done path.

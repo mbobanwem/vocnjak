@@ -115,12 +115,13 @@ This section is **documentation only**. It is NOT a session, NOT a current backl
 ## Status
 
 - **Not active.** This is a future direction, not in-flight work.
-- **Sequencing prerequisite:** must come AFTER S7, B2, S8, and V2 stabilization.
-- Current remaining priority order is unchanged:
-  1. complete B2 (monitoring / risk projection)
-  2. implement Runtime Slice 8 (Monitoring UI: Kalendar Praćenje, Pregled Praćenje, Plant detail monitoring, stage confirmation)
-  3. stabilize V2 baseline (default cutover, regression pass)
-  4. THEN open this visual refresh as a dedicated session
+- **Sequencing prerequisite:** must come AFTER S7, B2, S8, the owner-approved A2/A1 baseline decisions, and the Plan Templates runtime fidelity / content parity session in `V2_EXECUTION_ROADMAP.md §0`.
+- Current V2 Done order:
+  1. complete B2 / Runtime Slice 8 / Post-S8 Observation correction (done)
+  2. A2 default V2 / remove `#v2` gate after owner approval
+  3. A1 archive/lifecycle baseline after owner approval
+  4. Plan Templates runtime fidelity / content parity session after owner approval
+  5. THEN open this visual refresh as a dedicated session before the V2 Done audit
 - No agent may begin visual-refresh implementation work without explicit per-session owner approval after the above is complete.
 
 ---
