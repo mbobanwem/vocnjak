@@ -7948,6 +7948,10 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     correctionSort: correctionSort,
     findActionWindowById: findActionWindowById
   };
+  window.v2ObservationHelpers = {
+    composeEffectiveObservation: composeEffectiveObservation,
+    correctionSort: correctionSort
+  };
 
   function exportV2() {
     var raw = localStorage.getItem('vocnjak_v2');
@@ -8220,6 +8224,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   ];
   var hasOwn = Object.prototype.hasOwnProperty;
   var activityHelpers = window.v2ActivityHelpers;
+  var observationHelpers = window.v2ObservationHelpers;
   var b2PlantDetailPreview = V2_B2_PRIVATE.plantDetailPreview;
   var b2SeasonalVisibility = V2_B2_PRIVATE.seasonalVisibility;
   var trapCaptureSourceById = V2_B2_PRIVATE.trapCaptureSourceById;
@@ -8452,6 +8457,14 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
   function activityCorrectionRoute(activityId) {
     return '#v2/activity/' + encodeURIComponent(activityId) + '/correct';
+  }
+
+  function observationCorrectionRoute(observationId) {
+    return '#v2/observation/' + encodeURIComponent(observationId) + '/correct';
+  }
+
+  function observationGroupCorrectionRoute(groupId) {
+    return '#v2/observation-group/' + encodeURIComponent(groupId) + '/correct';
   }
 
   function localTodayYmd() {
@@ -8842,7 +8855,25 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     if (h.indexOf(correctionPrefix) === 0 && h.slice(-correctionSuffix.length) === correctionSuffix) {
       var correctionRaw = h.slice(correctionPrefix.length, -correctionSuffix.length);
       try {
-        return { name: 'correction', activity_id: decodeURIComponent(correctionRaw) };
+        return { name: 'correction', record_type: 'activity', activity_id: decodeURIComponent(correctionRaw) };
+      } catch (e) {
+        return { name: 'diary' };
+      }
+    }
+    var observationCorrectionPrefix = '#v2/observation/';
+    if (h.indexOf(observationCorrectionPrefix) === 0 && h.slice(-correctionSuffix.length) === correctionSuffix) {
+      var observationCorrectionRaw = h.slice(observationCorrectionPrefix.length, -correctionSuffix.length);
+      try {
+        return { name: 'correction', record_type: 'observation', observation_id: decodeURIComponent(observationCorrectionRaw) };
+      } catch (e) {
+        return { name: 'diary' };
+      }
+    }
+    var observationGroupCorrectionPrefix = '#v2/observation-group/';
+    if (h.indexOf(observationGroupCorrectionPrefix) === 0 && h.slice(-correctionSuffix.length) === correctionSuffix) {
+      var observationGroupCorrectionRaw = h.slice(observationGroupCorrectionPrefix.length, -correctionSuffix.length);
+      try {
+        return { name: 'correction', record_type: 'observation_group', observation_group_id: decodeURIComponent(observationGroupCorrectionRaw) };
       } catch (e) {
         return { name: 'diary' };
       }
@@ -8873,6 +8904,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     }
     if (typeof window.v2ValidateForBackup !== 'function') return { ok: false, error: 'Validator sigurnosne kopije nije dostupan.' };
     if (!activityHelpers) return { ok: false, error: 'Pomoćne provjere evidencije nisu dostupne.' };
+    if (!observationHelpers) return { ok: false, error: 'Pomoćne provjere opažanja nisu dostupne.' };
     var errors = window.v2ValidateForBackup(parsed);
     if (errors.length > 0) return { ok: false, error: 'Pohrana ne prolazi validaciju: ' + errors[0] + '.' };
     return { ok: true, store: parsed, catalog: parsed.catalogs.catalog_v1 };
@@ -9583,7 +9615,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       diary.appendChild(makeEl('p', 'v2-plants-empty', 'Još nema zapisa u dnevniku ove voćke.'));
     } else {
       var preview = makeEl('div', 'v2-diary-list');
-      appendDiaryItems(preview, plantDiaryItems, result, { showCorrectionActions: false });
+      appendDiaryItems(preview, plantDiaryItems, result, { showCorrectionActions: false, showObservationCorrectionActions: true });
       diary.appendChild(preview);
     }
     var fullDiary = makeEl('button', 'v2-plants-secondary', 'Prikaži cijeli dnevnik voćke');
@@ -9956,6 +9988,10 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       corrections: nextCorrections,
       review_state: current.store.review_state
     };
+  }
+
+  function correctionStoreCandidate(current, nextCorrections) {
+    return activityStoreCandidate(current, current.store.activities, nextCorrections);
   }
 
   function noteObservationValidationMessage(error) {
@@ -10633,6 +10669,63 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       });
     }
     return entries;
+  }
+
+  function isSupportedObservationKind(kind) {
+    return kind === 'note' || kind === 'trap' || kind === 'stage_obs' || kind === 'scouting';
+  }
+
+  function effectiveObservationEntries(store) {
+    var byObservation = Object.create(null);
+    for (var c = 0; c < store.corrections.length; c++) {
+      var correction = store.corrections[c];
+      if (correction.original_record_type !== 'observation') continue;
+      if (!byObservation[correction.original_record_id]) byObservation[correction.original_record_id] = [];
+      byObservation[correction.original_record_id].push(correction);
+    }
+    var entries = [];
+    for (var i = 0; i < store.observations.length; i++) {
+      if (!isSupportedObservationKind(store.observations[i].kind)) continue;
+      var corrections = byObservation[store.observations[i].observation_id] || [];
+      var effective = observationHelpers.composeEffectiveObservation(store.observations[i], corrections);
+      entries.push({
+        original: store.observations[i],
+        effective: effective,
+        corrections: corrections.slice().sort(observationHelpers.correctionSort),
+        corrected: corrections.length > 0
+      });
+    }
+    return entries;
+  }
+
+  function findEffectiveObservationEntry(entries, observationId) {
+    for (var i = 0; i < entries.length; i++) {
+      if (entries[i].original.observation_id === observationId) return entries[i];
+    }
+    return null;
+  }
+
+  function findEffectiveObservationGroup(entries, groupId) {
+    var group = [];
+    for (var i = 0; i < entries.length; i++) {
+      if (hasOwnKey(entries[i].original, 'observation_group_id') && entries[i].original.observation_group_id === groupId) {
+        group.push(entries[i]);
+      }
+    }
+    group.sort(function (a, b) {
+      return a.original.observation_id.localeCompare(b.original.observation_id);
+    });
+    return group;
+  }
+
+  function groupedObservationCorrectionAvailable(entries) {
+    if (!entries || entries.length < 2) return false;
+    var kind = entries[0].original.kind;
+    if (kind !== 'note' && kind !== 'stage_obs' && kind !== 'scouting') return false;
+    for (var i = 0; i < entries.length; i++) {
+      if (entries[i].original.kind !== kind) return false;
+    }
+    return true;
   }
 
   function seasonalSnapshotError(details) {
@@ -11631,13 +11724,14 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     }
   }
 
-  function historyObservationsForPlant(observations, plantId) {
-    return observations.filter(function (observation) {
-      return (observation.kind === 'note' || observation.kind === 'trap' || observation.kind === 'stage_obs' || observation.kind === 'scouting') && (!plantId || observation.plant_id === plantId);
+  function historyObservationEntriesForPlant(entries, plantId) {
+    return entries.filter(function (entry) {
+      return !plantId || entry.effective.plant_id === plantId;
     });
   }
 
-  function observationDiaryItem(observation) {
+  function observationDiaryItem(entry) {
+    var observation = entry.effective;
     var obsType;
     if (observation.kind === 'trap') obsType = 'trap_observation';
     else if (observation.kind === 'stage_obs') obsType = 'stage_observation';
@@ -11646,39 +11740,39 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return {
       type: obsType,
       date: observation.observed_on,
-      recorded_at: observation.recorded_at,
-      id: observation.observation_id,
-      observation: observation
+      recorded_at: entry.original.recorded_at,
+      id: entry.original.observation_id,
+      entry: entry
     };
   }
 
   function groupedObservationDiaryItem(group) {
-    var sample = group[0];
+    var sample = group[0].effective;
     var groupType = 'note_observation_group';
     if (sample.kind === 'stage_obs') groupType = 'stage_observation_group';
     if (sample.kind === 'scouting') groupType = 'scouting_observation_group';
     return {
       type: groupType,
       date: sample.observed_on,
-      recorded_at: sample.recorded_at,
-      id: sample.observation_group_id,
-      observations: group
+      recorded_at: group[0].original.recorded_at,
+      id: group[0].original.observation_group_id,
+      entries: group
     };
   }
 
-  function observationDiaryItems(observations, plantId) {
-    if (plantId) return observations.map(observationDiaryItem);
+  function observationDiaryItems(entries, plantId) {
+    if (plantId) return entries.map(observationDiaryItem);
     var groups = Object.create(null);
     var items = [];
-    for (var i = 0; i < observations.length; i++) {
-      var observation = observations[i];
+    for (var i = 0; i < entries.length; i++) {
+      var observation = entries[i].original;
       var groupable = (observation.kind === 'note' || observation.kind === 'stage_obs' || observation.kind === 'scouting') && hasOwnKey(observation, 'observation_group_id');
       if (!groupable) {
-        items.push(observationDiaryItem(observation));
+        items.push(observationDiaryItem(entries[i]));
         continue;
       }
       if (!groups[observation.observation_group_id]) groups[observation.observation_group_id] = [];
-      groups[observation.observation_group_id].push(observation);
+      groups[observation.observation_group_id].push(entries[i]);
     }
     var groupIds = Object.keys(groups);
     for (var g = 0; g < groupIds.length; g++) {
@@ -11703,8 +11797,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
         group: group
       };
     });
-    var observations = historyObservationsForPlant(result.store.observations, plantId);
-    items = items.concat(observationDiaryItems(observations, plantId));
+    var observationEntries = historyObservationEntriesForPlant(effectiveObservationEntries(result.store), plantId);
+    items = items.concat(observationDiaryItems(observationEntries, plantId));
     items.sort(function (a, b) {
       if (a.date !== b.date) return b.date.localeCompare(a.date);
       if (a.recorded_at !== b.recorded_at) return b.recorded_at.localeCompare(a.recorded_at);
@@ -11713,44 +11807,93 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return items;
   }
 
-  function appendNoteObservationCard(parent, observation, result) {
+  function shouldShowObservationCorrectionActions(options) {
+    if (options && options.showObservationCorrectionActions === true) return true;
+    if (options && options.showObservationCorrectionActions === false) return false;
+    return !options || options.showCorrectionActions !== false;
+  }
+
+  function appendObservationCorrectionAction(card, entry, options) {
+    if (!shouldShowObservationCorrectionActions(options)) return;
+    if (hasOwnKey(entry.original, 'observation_group_id')) return;
+    var actions = makeEl('div', 'v2-diary-plant-actions');
+    var button = makeEl('button', 'v2-plants-secondary', 'Ispravi zapis');
+    button.type = 'button';
+    button.dataset.observationId = entry.original.observation_id;
+    button.addEventListener('click', function (event) {
+      location.hash = observationCorrectionRoute(event.currentTarget.dataset.observationId);
+    });
+    actions.appendChild(button);
+    card.appendChild(actions);
+  }
+
+  function appendObservationGroupCorrectionAction(card, entries, options) {
+    if (!shouldShowObservationCorrectionActions(options) || !groupedObservationCorrectionAvailable(entries)) return;
+    var actions = makeEl('div', 'v2-diary-plant-actions');
+    var button = makeEl('button', 'v2-plants-secondary', 'Ispravi zapis');
+    button.type = 'button';
+    button.dataset.observationGroupId = entries[0].original.observation_group_id;
+    button.addEventListener('click', function (event) {
+      location.hash = observationGroupCorrectionRoute(event.currentTarget.dataset.observationGroupId);
+    });
+    actions.appendChild(button);
+    card.appendChild(actions);
+  }
+
+  function appendObservationCorrectedMarker(title, corrected) {
+    if (corrected) title.appendChild(makeEl('span', 'v2-diary-corrected', 'ispravljeno'));
+  }
+
+  function appendNoteObservationCard(parent, entry, result, options) {
+    var observation = entry.effective;
     var plant = findPlant(result.store.plants, observation.plant_id);
     var plantLabel = plant ? plantTitle(plant) : observation.plant_id;
     var card = makeEl('article', 'v2-diary-card');
-    card.appendChild(makeEl('p', 'v2-diary-title', formatDateYmd(observation.observed_on) + ' · Opažanje'));
+    var title = makeEl('p', 'v2-diary-title', formatDateYmd(observation.observed_on) + ' · Opažanje');
+    appendObservationCorrectedMarker(title, entry.corrected);
+    card.appendChild(title);
     card.appendChild(makeEl('span', 'v2-diary-meta', 'Opažanja'));
     card.appendChild(makeEl('span', 'v2-diary-note', plantLabel + ' — ' + observation.payload.text));
+    appendObservationCorrectionAction(card, entry, options);
     parent.appendChild(card);
   }
 
-  function observationPlantScopeText(observations, result) {
+  function observationPlantScopeText(entries, result) {
     var names = [];
-    for (var i = 0; i < observations.length; i++) {
-      var plant = findPlant(result.store.plants, observations[i].plant_id);
-      names.push(plant ? plantTitle(plant) : observations[i].plant_id);
+    for (var i = 0; i < entries.length; i++) {
+      var plantId = entries[i].effective.plant_id;
+      var plant = findPlant(result.store.plants, plantId);
+      names.push(plant ? plantTitle(plant) : plantId);
     }
     if (names.length === 1) return names[0];
     return plantCountText(names.length) + ' · ' + names.join(', ');
   }
 
-  function appendNoteObservationGroupCard(parent, observations, result) {
-    var sample = observations[0];
+  function appendNoteObservationGroupCard(parent, entries, result, options) {
+    var sample = entries[0].effective;
     var card = makeEl('article', 'v2-diary-card');
-    card.appendChild(makeEl('p', 'v2-diary-title', formatDateYmd(sample.observed_on) + ' · Opažanje'));
-    card.appendChild(makeEl('span', 'v2-diary-meta', 'Opažanja · ' + observationPlantScopeText(observations, result)));
+    var title = makeEl('p', 'v2-diary-title', formatDateYmd(sample.observed_on) + ' · Opažanje');
+    appendObservationCorrectedMarker(title, entries.some(function (entry) { return entry.corrected; }));
+    card.appendChild(title);
+    card.appendChild(makeEl('span', 'v2-diary-meta', 'Opažanja · ' + observationPlantScopeText(entries, result)));
     card.appendChild(makeEl('span', 'v2-diary-note', sample.payload.text));
+    appendObservationGroupCorrectionAction(card, entries, options);
     parent.appendChild(card);
   }
 
-  function appendTrapObservationCard(parent, observation, result) {
+  function appendTrapObservationCard(parent, entry, result, options) {
+    var observation = entry.effective;
     var plant = findPlant(result.store.plants, observation.plant_id);
     var plantLabel = plant ? plantTitle(plant) : observation.plant_id;
     var source = typeof trapCaptureSourceById === 'function' ? trapCaptureSourceById(observation.payload.source_entry_id) : null;
     var targetLabel = source ? source.target_label_hr : observation.payload.source_entry_id;
     var card = makeEl('article', 'v2-diary-card');
-    card.appendChild(makeEl('p', 'v2-diary-title', formatDateYmd(observation.observed_on) + ' · Klopka — ' + targetLabel));
+    var title = makeEl('p', 'v2-diary-title', formatDateYmd(observation.observed_on) + ' · Klopka — ' + targetLabel);
+    appendObservationCorrectedMarker(title, entry.corrected);
+    card.appendChild(title);
     card.appendChild(makeEl('span', 'v2-diary-meta', 'Opažanja · ' + plantLabel));
     card.appendChild(makeEl('span', 'v2-diary-note', 'Ulov: ' + observation.payload.count));
+    appendObservationCorrectionAction(card, entry, options);
     parent.appendChild(card);
   }
 
@@ -11792,60 +11935,74 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     if (guidance) card.appendChild(makeEl('span', 'v2-diary-note', 'Što sada: ' + guidance));
   }
 
-  function appendScoutingObservationGroupCard(parent, observations, result) {
-    var sample = observations[0];
+  function appendScoutingObservationGroupCard(parent, entries, result, options) {
+    var sample = entries[0].effective;
     var source = typeof scoutingCaptureSourceById === 'function' ? scoutingCaptureSourceById(sample.payload.source_entry_id) : null;
     var targetLabel = source ? source.target_label_hr : sample.payload.source_entry_id;
     var card = makeEl('article', 'v2-diary-card');
-    card.appendChild(makeEl('p', 'v2-diary-title', formatDateYmd(sample.observed_on) + ' · Vizualni pregled — ' + targetLabel));
-    card.appendChild(makeEl('span', 'v2-diary-meta', 'Opažanja · ' + observationPlantScopeText(observations, result)));
+    var title = makeEl('p', 'v2-diary-title', formatDateYmd(sample.observed_on) + ' · Vizualni pregled — ' + targetLabel);
+    appendObservationCorrectedMarker(title, entries.some(function (entry) { return entry.corrected; }));
+    card.appendChild(title);
+    card.appendChild(makeEl('span', 'v2-diary-meta', 'Opažanja · ' + observationPlantScopeText(entries, result)));
     appendScoutingObservationDetails(card, sample);
+    appendObservationGroupCorrectionAction(card, entries, options);
     parent.appendChild(card);
   }
 
-  function appendScoutingObservationCard(parent, observation, result) {
+  function appendScoutingObservationCard(parent, entry, result, options) {
+    var observation = entry.effective;
     var plant = findPlant(result.store.plants, observation.plant_id);
     var plantLabel = plant ? plantTitle(plant) : observation.plant_id;
     var source = typeof scoutingCaptureSourceById === 'function' ? scoutingCaptureSourceById(observation.payload.source_entry_id) : null;
     var targetLabel = source ? source.target_label_hr : observation.payload.source_entry_id;
     var card = makeEl('article', 'v2-diary-card');
-    card.appendChild(makeEl('p', 'v2-diary-title', formatDateYmd(observation.observed_on) + ' · Vizualni pregled — ' + targetLabel));
+    var title = makeEl('p', 'v2-diary-title', formatDateYmd(observation.observed_on) + ' · Vizualni pregled — ' + targetLabel);
+    appendObservationCorrectedMarker(title, entry.corrected);
+    card.appendChild(title);
     card.appendChild(makeEl('span', 'v2-diary-meta', 'Opažanja · ' + plantLabel));
     appendScoutingObservationDetails(card, observation);
+    appendObservationCorrectionAction(card, entry, options);
     parent.appendChild(card);
   }
 
-  function appendStageObservationGroupCard(parent, observations, result) {
-    var sample = observations[0];
-    var entry = typeof stageDiaryEntryByCode === 'function' ? stageDiaryEntryByCode(sample.payload.stage_code) : null;
-    var label = entry ? entry.label_hr : sample.payload.stage_code;
+  function appendStageObservationGroupCard(parent, entries, result, options) {
+    var sample = entries[0].effective;
+    var stageEntry = typeof stageDiaryEntryByCode === 'function' ? stageDiaryEntryByCode(sample.payload.stage_code) : null;
+    var label = stageEntry ? stageEntry.label_hr : sample.payload.stage_code;
     var card = makeEl('article', 'v2-diary-card');
-    card.appendChild(makeEl('p', 'v2-diary-title', formatDateYmd(sample.observed_on) + ' · Faza razvoja — ' + label));
-    card.appendChild(makeEl('span', 'v2-diary-meta', 'Opažanja · ' + observationPlantScopeText(observations, result)));
+    var title = makeEl('p', 'v2-diary-title', formatDateYmd(sample.observed_on) + ' · Faza razvoja — ' + label);
+    appendObservationCorrectedMarker(title, entries.some(function (entry) { return entry.corrected; }));
+    card.appendChild(title);
+    card.appendChild(makeEl('span', 'v2-diary-meta', 'Opažanja · ' + observationPlantScopeText(entries, result)));
+    appendObservationGroupCorrectionAction(card, entries, options);
     parent.appendChild(card);
   }
 
-  function appendStageObservationCard(parent, observation, result) {
+  function appendStageObservationCard(parent, entry, result, options) {
+    var observation = entry.effective;
     var plant = findPlant(result.store.plants, observation.plant_id);
     var plantLabel = plant ? plantTitle(plant) : observation.plant_id;
-    var entry = typeof stageDiaryEntryByCode === 'function' ? stageDiaryEntryByCode(observation.payload.stage_code) : null;
-    var label = entry ? entry.label_hr : observation.payload.stage_code;
+    var stageEntry = typeof stageDiaryEntryByCode === 'function' ? stageDiaryEntryByCode(observation.payload.stage_code) : null;
+    var label = stageEntry ? stageEntry.label_hr : observation.payload.stage_code;
     var card = makeEl('article', 'v2-diary-card');
-    card.appendChild(makeEl('p', 'v2-diary-title', formatDateYmd(observation.observed_on) + ' · Faza razvoja — ' + label));
+    var title = makeEl('p', 'v2-diary-title', formatDateYmd(observation.observed_on) + ' · Faza razvoja — ' + label);
+    appendObservationCorrectedMarker(title, entry.corrected);
+    card.appendChild(title);
     card.appendChild(makeEl('span', 'v2-diary-meta', 'Opažanja · ' + plantLabel));
+    appendObservationCorrectionAction(card, entry, options);
     parent.appendChild(card);
   }
 
   function appendDiaryItems(parent, items, result, options) {
     for (var i = 0; i < items.length; i++) {
       if (items[i].type === 'activity_group') appendDiaryGroupCard(parent, items[i].group, result, options);
-      else if (items[i].type === 'note_observation') appendNoteObservationCard(parent, items[i].observation, result);
-      else if (items[i].type === 'note_observation_group') appendNoteObservationGroupCard(parent, items[i].observations, result);
-      else if (items[i].type === 'trap_observation') appendTrapObservationCard(parent, items[i].observation, result);
-      else if (items[i].type === 'scouting_observation') appendScoutingObservationCard(parent, items[i].observation, result);
-      else if (items[i].type === 'scouting_observation_group') appendScoutingObservationGroupCard(parent, items[i].observations, result);
-      else if (items[i].type === 'stage_observation') appendStageObservationCard(parent, items[i].observation, result);
-      else if (items[i].type === 'stage_observation_group') appendStageObservationGroupCard(parent, items[i].observations, result);
+      else if (items[i].type === 'note_observation') appendNoteObservationCard(parent, items[i].entry, result, options);
+      else if (items[i].type === 'note_observation_group') appendNoteObservationGroupCard(parent, items[i].entries, result, options);
+      else if (items[i].type === 'trap_observation') appendTrapObservationCard(parent, items[i].entry, result, options);
+      else if (items[i].type === 'scouting_observation') appendScoutingObservationCard(parent, items[i].entry, result, options);
+      else if (items[i].type === 'scouting_observation_group') appendScoutingObservationGroupCard(parent, items[i].entries, result, options);
+      else if (items[i].type === 'stage_observation') appendStageObservationCard(parent, items[i].entry, result, options);
+      else if (items[i].type === 'stage_observation_group') appendStageObservationGroupCard(parent, items[i].entries, result, options);
     }
   }
 
@@ -11900,7 +12057,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return null;
   }
 
-  function renderCorrection(route) {
+  function renderActivityCorrection(route) {
     setViews('correction');
     clearNode(correctionForm);
 
@@ -11910,6 +12067,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     back.addEventListener('click', function () { location.hash = '#v2/diary'; });
     correctionForm.appendChild(back);
     correctionForm.appendChild(makeEl('h2', '', 'Ispravi zapis'));
+    correctionForm.appendChild(makeEl('p', 'v2-diary-meta', 'Ispravak se sprema kao novi zapis. Originalni zapis ostaje vidljiv u Dnevniku.'));
     var message = makeEl('p', 'v2-plants-error');
     message.hidden = true;
     correctionForm.appendChild(message);
@@ -11985,6 +12143,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     correctionForm.appendChild(actions);
 
     currentCorrectionFields = {
+      recordType: 'activity',
       store: result.store,
       catalog: result.catalog,
       original: entry.original,
@@ -12035,7 +12194,340 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     refreshEnabled();
   }
 
-  function saveCurrentCorrection() {
+  function appendCorrectionCheck(parent, labelText) {
+    var label = makeEl('label', 'v2-plants-check');
+    var input = document.createElement('input');
+    input.type = 'checkbox';
+    label.appendChild(input);
+    label.appendChild(document.createTextNode(labelText));
+    parent.appendChild(label);
+    return input;
+  }
+
+  function cloneCorrectionValues(value) {
+    if (Array.isArray(value)) {
+      var arr = [];
+      for (var i = 0; i < value.length; i++) arr.push(cloneCorrectionValues(value[i]));
+      return arr;
+    }
+    if (value && typeof value === 'object') {
+      var out = {};
+      var keys = Object.keys(value);
+      for (var j = 0; j < keys.length; j++) out[keys[j]] = cloneCorrectionValues(value[keys[j]]);
+      return out;
+    }
+    return value;
+  }
+
+  function observationCorrectionTitle(entry, result, entries) {
+    var observation = entry.effective;
+    var scope = entries && entries.length > 1 ? observationPlantScopeText(entries, result) : '';
+    if (!scope) {
+      var plant = findPlant(result.store.plants, observation.plant_id);
+      scope = plant ? plantTitle(plant) : observation.plant_id;
+    }
+    if (observation.kind === 'trap') {
+      var trapSource = typeof trapCaptureSourceById === 'function' ? trapCaptureSourceById(observation.payload.source_entry_id) : null;
+      return formatDateYmd(observation.observed_on) + ' · Klopka — ' + (trapSource ? trapSource.target_label_hr : observation.payload.source_entry_id) + ' · ' + scope;
+    }
+    if (observation.kind === 'stage_obs') {
+      var stageEntry = typeof stageDiaryEntryByCode === 'function' ? stageDiaryEntryByCode(observation.payload.stage_code) : null;
+      return formatDateYmd(observation.observed_on) + ' · Faza razvoja — ' + (stageEntry ? stageEntry.label_hr : observation.payload.stage_code) + ' · ' + scope;
+    }
+    if (observation.kind === 'scouting') {
+      var scoutingSource = typeof scoutingCaptureSourceById === 'function' ? scoutingCaptureSourceById(observation.payload.source_entry_id) : null;
+      return formatDateYmd(observation.observed_on) + ' · Vizualni pregled — ' + (scoutingSource ? scoutingSource.target_label_hr : observation.payload.source_entry_id) + ' · ' + scope;
+    }
+    return formatDateYmd(observation.observed_on) + ' · Opažanje · ' + scope;
+  }
+
+  function observationCorrectionPlantOptions(result, observation, effectivePlantId) {
+    var candidates = [];
+    var source = null;
+    if (observation.kind === 'trap') source = typeof trapCaptureSourceById === 'function' ? trapCaptureSourceById(observation.payload.source_entry_id) : null;
+    if (observation.kind === 'scouting') source = typeof scoutingCaptureSourceById === 'function' ? scoutingCaptureSourceById(observation.payload.source_entry_id) : null;
+    for (var i = 0; i < result.store.plants.length; i++) {
+      var plant = result.store.plants[i];
+      if (source && plant.species !== source.species) continue;
+      candidates.push(plant);
+    }
+    candidates.sort(function (a, b) {
+      if (a.plant_id === effectivePlantId) return -1;
+      if (b.plant_id === effectivePlantId) return 1;
+      var orderA = typeof a.stable_order === 'number' && isFinite(a.stable_order) ? a.stable_order : Number.MAX_SAFE_INTEGER;
+      var orderB = typeof b.stable_order === 'number' && isFinite(b.stable_order) ? b.stable_order : Number.MAX_SAFE_INTEGER;
+      if (orderA !== orderB) return orderA - orderB;
+      return plantTitle(a).localeCompare(plantTitle(b), 'hr');
+    });
+    return candidates;
+  }
+
+  function appendStageCorrectionSelect(parent, value) {
+    var stageSelect = document.createElement('select');
+    var entries = typeof stageDiaryEntries === 'function' ? stageDiaryEntries() : [];
+    for (var i = 0; i < entries.length; i++) {
+      stageSelect.appendChild(makeOption(entries[i].stage_code, entries[i].label_hr));
+    }
+    stageSelect.value = value;
+    appendField(parent, 'v2ObservationCorrectionStage', 'Nova faza razvoja', stageSelect);
+    return stageSelect;
+  }
+
+  function appendScoutingResultCorrectionControls(parent, source, observation) {
+    var radioName = 'v2ObservationCorrectionFinding_' + observation.observation_id;
+    var noneChoice = makeEl('label', 'v2-plants-check');
+    var noneRadio = document.createElement('input');
+    noneRadio.type = 'radio';
+    noneRadio.name = radioName;
+    noneRadio.value = 'none';
+    noneRadio.checked = !observation.payload.finding.value;
+    noneChoice.appendChild(noneRadio);
+    noneChoice.appendChild(document.createTextNode('Nije primijećeno'));
+    parent.appendChild(noneChoice);
+
+    var presentChoice = makeEl('label', 'v2-plants-check');
+    var presentRadio = document.createElement('input');
+    presentRadio.type = 'radio';
+    presentRadio.name = radioName;
+    presentRadio.value = 'present';
+    presentRadio.checked = observation.payload.finding.value;
+    presentChoice.appendChild(presentRadio);
+    presentChoice.appendChild(document.createTextNode('Primijećeno'));
+    parent.appendChild(presentChoice);
+
+    var selected = Object.create(null);
+    for (var s = 0; s < observation.payload.selected_sign_keys.length; s++) selected[observation.payload.selected_sign_keys[s]] = true;
+    var signWrap = makeEl('div', 'v2-plants-field');
+    signWrap.appendChild(makeEl('label', '', 'Vidljivi znakovi'));
+    var signInputs = [];
+    var choices = source && Array.isArray(source.sign_choices) ? source.sign_choices : [];
+    for (var i = 0; i < choices.length; i++) {
+      var sign = choices[i];
+      var signChoice = makeEl('label', 'v2-plants-check');
+      var signInput = document.createElement('input');
+      signInput.type = 'checkbox';
+      signInput.name = 'v2ObservationCorrectionSigns_' + observation.observation_id;
+      signInput.value = sign.sign_key;
+      signInput.checked = !!selected[sign.sign_key];
+      signChoice.appendChild(signInput);
+      signChoice.appendChild(document.createTextNode(sign.label_hr));
+      signWrap.appendChild(signChoice);
+      signInputs.push(signInput);
+    }
+    parent.appendChild(signWrap);
+    return {
+      noneRadio: noneRadio,
+      presentRadio: presentRadio,
+      signWrap: signWrap,
+      signInputs: signInputs
+    };
+  }
+
+  function appendScoutingNoteCorrectionControls(parent, observation) {
+    var radioName = 'v2ObservationCorrectionScoutingNote_' + observation.observation_id;
+    var hasNote = hasOwnKey(observation.payload, 'note');
+    var textChoice = makeEl('label', 'v2-plants-check');
+    var textRadio = document.createElement('input');
+    textRadio.type = 'radio';
+    textRadio.name = radioName;
+    textRadio.value = 'text';
+    textRadio.checked = hasNote;
+    textChoice.appendChild(textRadio);
+    textChoice.appendChild(document.createTextNode('Nova bilješka'));
+    parent.appendChild(textChoice);
+
+    var noneChoice = makeEl('label', 'v2-plants-check');
+    var noneRadio = document.createElement('input');
+    noneRadio.type = 'radio';
+    noneRadio.name = radioName;
+    noneRadio.value = 'none';
+    noneRadio.checked = !hasNote;
+    noneChoice.appendChild(noneRadio);
+    noneChoice.appendChild(document.createTextNode('Bez bilješke'));
+    parent.appendChild(noneChoice);
+
+    var noteText = document.createElement('textarea');
+    noteText.maxLength = 1000;
+    noteText.value = hasNote ? observation.payload.note : '';
+    appendField(parent, 'v2ObservationCorrectionScoutingNoteText', 'Bilješka pregleda', noteText);
+    return {
+      textRadio: textRadio,
+      noneRadio: noneRadio,
+      noteText: noteText
+    };
+  }
+
+  function selectedCorrectionSignKeys(inputs) {
+    var selected = [];
+    for (var i = 0; i < inputs.length; i++) {
+      if (inputs[i].checked) selected.push(inputs[i].value);
+    }
+    return selected;
+  }
+
+  function refreshObservationCorrectionEnabled(fields) {
+    if (fields.dateInput) fields.dateInput.disabled = !fields.dateCheck.checked;
+    if (fields.plantSelect) fields.plantSelect.disabled = !fields.plantCheck.checked;
+    if (fields.noteText) fields.noteText.disabled = !fields.noteTextCheck.checked;
+    if (fields.trapCountInput) fields.trapCountInput.disabled = !fields.trapCountCheck.checked;
+    if (fields.stageSelect) fields.stageSelect.disabled = !fields.stageCheck.checked;
+    if (fields.scoutingNoneRadio) {
+      var resultEnabled = fields.scoutingResultCheck.checked;
+      fields.scoutingNoneRadio.disabled = !resultEnabled;
+      fields.scoutingPresentRadio.disabled = !resultEnabled;
+      var signsEnabled = resultEnabled && fields.scoutingPresentRadio.checked;
+      fields.scoutingSignWrap.hidden = !signsEnabled;
+      for (var s = 0; s < fields.scoutingSignInputs.length; s++) fields.scoutingSignInputs[s].disabled = !signsEnabled;
+    }
+    if (fields.scoutingNoteTextRadio) {
+      var noteEnabled = fields.scoutingNoteCheck.checked;
+      fields.scoutingNoteTextRadio.disabled = !noteEnabled;
+      fields.scoutingNoteNoneRadio.disabled = !noteEnabled;
+      fields.scoutingNoteText.disabled = !noteEnabled || !fields.scoutingNoteTextRadio.checked;
+    }
+  }
+
+  function bindObservationCorrectionRefresh(fields) {
+    var checks = ['dateCheck','plantCheck','noteTextCheck','trapCountCheck','stageCheck','scoutingResultCheck','scoutingNoteCheck'];
+    for (var i = 0; i < checks.length; i++) {
+      if (fields[checks[i]]) fields[checks[i]].addEventListener('change', function () { refreshObservationCorrectionEnabled(fields); });
+    }
+    if (fields.scoutingNoneRadio) fields.scoutingNoneRadio.addEventListener('change', function () { refreshObservationCorrectionEnabled(fields); });
+    if (fields.scoutingPresentRadio) fields.scoutingPresentRadio.addEventListener('change', function () { refreshObservationCorrectionEnabled(fields); });
+    if (fields.scoutingNoteTextRadio) fields.scoutingNoteTextRadio.addEventListener('change', function () { refreshObservationCorrectionEnabled(fields); });
+    if (fields.scoutingNoteNoneRadio) fields.scoutingNoteNoneRadio.addEventListener('change', function () { refreshObservationCorrectionEnabled(fields); });
+    refreshObservationCorrectionEnabled(fields);
+  }
+
+  function renderObservationCorrection(route) {
+    setViews('correction');
+    clearNode(correctionForm);
+
+    var result = readValidStore();
+    var back = makeEl('button', 'v2-plants-secondary', 'Natrag na Dnevnik');
+    back.type = 'button';
+    back.addEventListener('click', function () { location.hash = '#v2/diary'; });
+    correctionForm.appendChild(back);
+    correctionForm.appendChild(makeEl('h2', '', 'Ispravi zapis'));
+    correctionForm.appendChild(makeEl('p', 'v2-diary-meta', 'Ispravak se sprema kao novi zapis. Originalni zapis ostaje vidljiv u Dnevniku.'));
+    var message = makeEl('p', 'v2-plants-error');
+    message.hidden = true;
+    correctionForm.appendChild(message);
+    if (!result.ok) {
+      message.textContent = result.error;
+      message.hidden = false;
+      currentCorrectionFields = null;
+      return;
+    }
+
+    var allEntries = effectiveObservationEntries(result.store);
+    var grouped = route.record_type === 'observation_group';
+    var entries;
+    if (grouped) {
+      entries = findEffectiveObservationGroup(allEntries, route.observation_group_id);
+      if (!groupedObservationCorrectionAvailable(entries)) {
+        correctionForm.appendChild(makeEl('p', 'v2-plants-empty', 'Ispravak nije dostupan za ovaj grupni zapis.'));
+        currentCorrectionFields = null;
+        return;
+      }
+    } else {
+      var entry = findEffectiveObservationEntry(allEntries, route.observation_id);
+      if (!entry || hasOwnKey(entry.original, 'observation_group_id')) {
+        correctionForm.appendChild(makeEl('p', 'v2-plants-empty', 'Zapis nije pronađen.'));
+        currentCorrectionFields = null;
+        return;
+      }
+      entries = [entry];
+    }
+
+    var sampleEntry = entries[0];
+    var sample = sampleEntry.effective;
+    correctionForm.appendChild(makeEl('p', 'v2-diary-meta', observationCorrectionTitle(sampleEntry, result, entries)));
+    if (grouped) correctionForm.appendChild(makeEl('p', 'v2-plants-hint', 'Ispravak vrijedi za sve voćke u ovom grupnom zapisu.'));
+
+    var fields = {
+      recordType: grouped ? 'observation_group' : 'observation',
+      grouped: grouped,
+      groupId: grouped ? sampleEntry.original.observation_group_id : null,
+      observationId: grouped ? null : sampleEntry.original.observation_id,
+      kind: sample.kind,
+      message: message
+    };
+
+    if (!grouped) {
+      fields.dateCheck = appendCorrectionCheck(correctionForm, 'Krivi datum');
+      fields.dateInput = document.createElement('input');
+      fields.dateInput.type = 'date';
+      fields.dateInput.value = sample.observed_on;
+      appendField(correctionForm, 'v2ObservationCorrectionDate', 'Novi datum', fields.dateInput);
+
+      fields.plantCheck = appendCorrectionCheck(correctionForm, 'Kriva voćka');
+      fields.plantSelect = document.createElement('select');
+      var plantOptions = observationCorrectionPlantOptions(result, sampleEntry.original, sample.plant_id);
+      for (var p = 0; p < plantOptions.length; p++) {
+        fields.plantSelect.appendChild(makeOption(plantOptions[p].plant_id, plantTitle(plantOptions[p])));
+      }
+      fields.plantSelect.value = sample.plant_id;
+      appendField(correctionForm, 'v2ObservationCorrectionPlant', 'Nova voćka', fields.plantSelect);
+    }
+
+    if (sample.kind === 'note') {
+      fields.noteTextCheck = appendCorrectionCheck(correctionForm, 'Bilješka');
+      fields.noteText = document.createElement('textarea');
+      fields.noteText.value = sample.payload.text;
+      appendField(correctionForm, 'v2ObservationCorrectionNoteText', 'Nova bilješka', fields.noteText);
+    } else if (sample.kind === 'trap' && !grouped) {
+      fields.trapCountCheck = appendCorrectionCheck(correctionForm, 'Krivi broj ulova');
+      fields.trapCountInput = document.createElement('input');
+      fields.trapCountInput.type = 'number';
+      fields.trapCountInput.min = '0';
+      fields.trapCountInput.step = '1';
+      fields.trapCountInput.inputMode = 'numeric';
+      fields.trapCountInput.value = String(sample.payload.count);
+      appendField(correctionForm, 'v2ObservationCorrectionTrapCount', 'Broj ulova', fields.trapCountInput);
+    } else if (sample.kind === 'stage_obs') {
+      fields.stageCheck = appendCorrectionCheck(correctionForm, 'Kriva faza razvoja');
+      fields.stageSelect = appendStageCorrectionSelect(correctionForm, sample.payload.stage_code);
+    } else if (sample.kind === 'scouting') {
+      var source = typeof scoutingCaptureSourceById === 'function' ? scoutingCaptureSourceById(sample.payload.source_entry_id) : null;
+      fields.scoutingResultCheck = appendCorrectionCheck(correctionForm, 'Krivi nalaz');
+      var resultControls = appendScoutingResultCorrectionControls(correctionForm, source, sample);
+      fields.scoutingNoneRadio = resultControls.noneRadio;
+      fields.scoutingPresentRadio = resultControls.presentRadio;
+      fields.scoutingSignWrap = resultControls.signWrap;
+      fields.scoutingSignInputs = resultControls.signInputs;
+
+      fields.scoutingNoteCheck = appendCorrectionCheck(correctionForm, 'Bilješka pregleda');
+      var noteControls = appendScoutingNoteCorrectionControls(correctionForm, sample);
+      fields.scoutingNoteTextRadio = noteControls.textRadio;
+      fields.scoutingNoteNoneRadio = noteControls.noneRadio;
+      fields.scoutingNoteText = noteControls.noteText;
+    }
+
+    var explanation = document.createElement('textarea');
+    appendField(correctionForm, 'v2ObservationCorrectionExplanation', 'Bilješka ispravka', explanation, 'Što si točno ispravio/la i zašto? Neobavezno.');
+    fields.explanation = explanation;
+
+    var actions = makeEl('div', 'v2-plants-actions');
+    var save = makeEl('button', 'v2-plants-primary', 'Spremi ispravak');
+    save.type = 'submit';
+    var cancel = makeEl('button', 'v2-plants-secondary', 'Odustani');
+    cancel.type = 'button';
+    cancel.addEventListener('click', function () { location.hash = '#v2/diary'; });
+    actions.appendChild(save);
+    actions.appendChild(cancel);
+    correctionForm.appendChild(actions);
+
+    currentCorrectionFields = fields;
+    bindObservationCorrectionRefresh(fields);
+  }
+
+  function renderCorrection(route) {
+    if (route.record_type === 'observation' || route.record_type === 'observation_group') renderObservationCorrection(route);
+    else renderActivityCorrection(route);
+  }
+
+  function saveCurrentActivityCorrection() {
     var fields = currentCorrectionFields;
     if (!fields) return;
     fields.message.hidden = true;
@@ -12125,6 +12617,185 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     correctionForm.reset();
     pendingDiaryStatus = 'Ispravak spremljen.';
     location.hash = '#v2/diary';
+  }
+
+  function observationCorrectionValidationMessage(error) {
+    if (error.indexOf('.corrected_values.observed_on in the future') !== -1 || error.indexOf('.observed_on in the future') !== -1) {
+      return 'Datum ne može biti u budućnosti. Ispravak opisuje stvarni događaj koji se već dogodio.';
+    }
+    if (error.indexOf('.corrected_values.observed_on must be on or before original recorded_at local calendar date') !== -1 ||
+        error.indexOf('.observed_on must be on or before recorded_at local calendar date') !== -1) {
+      return 'Datum opažanja ne može biti nakon dana kada je izvorni zapis spremljen.';
+    }
+    if (error.indexOf('.corrected_values.plant_id') !== -1 || error.indexOf('.plant_id must reference') !== -1 ||
+        error.indexOf('.payload.source_entry_id not valid for plant species') !== -1) {
+      return 'Odabrana voćka nije kompatibilna s izvornim zapisom.';
+    }
+    if (error.indexOf('.corrected_values.text') !== -1 || error.indexOf('.payload.text') !== -1) {
+      return 'Bilješka ne može biti prazna i može imati najviše 1000 znakova.';
+    }
+    if (error.indexOf('.corrected_values.count') !== -1 || error.indexOf('.payload.count') !== -1) {
+      return 'Broj ulova mora biti cijeli broj 0 ili veći.';
+    }
+    if (error.indexOf('.corrected_values.stage_code') !== -1 || error.indexOf('.payload.stage_code') !== -1) {
+      return 'Odabrana faza razvoja nije valjana.';
+    }
+    if (error.indexOf('.corrected_values.scouting_result') !== -1 || error.indexOf('.payload.finding') !== -1 ||
+        error.indexOf('.payload.selected_sign_keys') !== -1) {
+      return 'Nalaz pregleda nije valjan. Ako je primijećeno, odaberi barem jedan vidljivi znak.';
+    }
+    if (error.indexOf('.corrected_values.scouting_note') !== -1 || error.indexOf('.payload.note') !== -1) {
+      return 'Bilješka pregleda mora biti ne-prazna, spremljena bez praznina na početku ili kraju, ili odaberi Bez bilješke.';
+    }
+    if (error.indexOf('observation_group_id') !== -1) {
+      return 'Grupni ispravak nije spremljen jer grupa ne prolazi provjeru.';
+    }
+    if (error.indexOf('.correction_types') !== -1 || error.indexOf('.corrected_values keys') !== -1) {
+      return 'Odabrani ispravak nije dostupan za ovaj zapis.';
+    }
+    return error + '.';
+  }
+
+  function currentObservationCorrectionEntries(fields, current) {
+    var entries = effectiveObservationEntries(current.store);
+    if (fields.recordType === 'observation_group') {
+      var group = findEffectiveObservationGroup(entries, fields.groupId);
+      if (!groupedObservationCorrectionAvailable(group)) return { ok: false, error: 'Ispravak nije dostupan za ovaj grupni zapis.' };
+      return { ok: true, entries: group };
+    }
+    var entry = findEffectiveObservationEntry(entries, fields.observationId);
+    if (!entry || hasOwnKey(entry.original, 'observation_group_id')) return { ok: false, error: 'Zapis nije pronađen.' };
+    return { ok: true, entries: [entry] };
+  }
+
+  function buildObservationCorrectionValues(fields) {
+    var types = [];
+    var values = {};
+    if (fields.dateCheck && fields.dateCheck.checked) {
+      if (!fields.dateInput.value) return { ok: false, error: 'Novi datum je obavezan.' };
+      types.push('date');
+      values.observed_on = fields.dateInput.value;
+    }
+    if (fields.plantCheck && fields.plantCheck.checked) {
+      if (!fields.plantSelect.value) return { ok: false, error: 'Odaberi novu voćku.' };
+      types.push('plant');
+      values.plant_id = fields.plantSelect.value;
+    }
+    if (fields.noteTextCheck && fields.noteTextCheck.checked) {
+      var noteText = fields.noteText.value.trim();
+      if (!noteText) return { ok: false, error: 'Bilješka ne može biti prazna.' };
+      if (noteText.length > 1000) return { ok: false, error: 'Bilješka može imati najviše 1000 znakova.' };
+      types.push('note_text');
+      values.text = noteText;
+    }
+    if (fields.trapCountCheck && fields.trapCountCheck.checked) {
+      if (!/^[0-9]+$/.test(fields.trapCountInput.value)) return { ok: false, error: 'Broj ulova mora biti cijeli broj 0 ili veći.' };
+      types.push('trap_count');
+      values.count = Number(fields.trapCountInput.value);
+    }
+    if (fields.stageCheck && fields.stageCheck.checked) {
+      var stageEntry = typeof stageDiaryEntryByCode === 'function' ? stageDiaryEntryByCode(fields.stageSelect.value) : null;
+      if (!stageEntry) return { ok: false, error: 'Odabrana faza razvoja nije valjana.' };
+      types.push('stage_code');
+      values.stage_code = fields.stageSelect.value;
+    }
+    if (fields.scoutingResultCheck && fields.scoutingResultCheck.checked) {
+      var findingValue;
+      if (fields.scoutingNoneRadio.checked) findingValue = false;
+      else if (fields.scoutingPresentRadio.checked) findingValue = true;
+      else return { ok: false, error: 'Odaberi nalaz pregleda.' };
+      var signKeys = findingValue ? selectedCorrectionSignKeys(fields.scoutingSignInputs || []) : [];
+      if (findingValue && signKeys.length === 0) return { ok: false, error: 'Ako je primijećeno, odaberi barem jedan vidljivi znak.' };
+      types.push('scouting_result');
+      values.scouting_result = {
+        finding: { mode: 'presence', value: findingValue },
+        selected_sign_keys: signKeys
+      };
+    }
+    if (fields.scoutingNoteCheck && fields.scoutingNoteCheck.checked) {
+      if (fields.scoutingNoteNoneRadio.checked) {
+        values.scouting_note = null;
+      } else if (fields.scoutingNoteTextRadio.checked) {
+        var scoutingNote = fields.scoutingNoteText.value.trim();
+        if (!scoutingNote) return { ok: false, error: 'Bilješka pregleda ne može biti prazna. Odaberi Bez bilješke ako zapis treba biti bez bilješke.' };
+        if (scoutingNote.length > 1000) return { ok: false, error: 'Bilješka pregleda može imati najviše 1000 znakova.' };
+        values.scouting_note = scoutingNote;
+      } else {
+        return { ok: false, error: 'Odaberi novu bilješku pregleda ili Bez bilješke.' };
+      }
+      types.push('scouting_note');
+    }
+    if (types.length === 0) return { ok: false, error: 'Odaberi barem jedno polje za ispravak.' };
+    return { ok: true, types: types, values: values };
+  }
+
+  function saveCurrentObservationCorrection() {
+    var fields = currentCorrectionFields;
+    if (!fields) return;
+    fields.message.hidden = true;
+    var current = readValidStore();
+    if (!current.ok) {
+      fields.message.textContent = current.error;
+      fields.message.hidden = false;
+      return;
+    }
+    var target = currentObservationCorrectionEntries(fields, current);
+    if (!target.ok) {
+      fields.message.textContent = target.error;
+      fields.message.hidden = false;
+      return;
+    }
+    var built = buildObservationCorrectionValues(fields);
+    if (!built.ok) {
+      fields.message.textContent = built.error;
+      fields.message.hidden = false;
+      return;
+    }
+    var createdAt = new Date().toISOString();
+    var explanation = optionalString(fields.explanation);
+    var corrections = [];
+    for (var i = 0; i < target.entries.length; i++) {
+      var correctionId = nextUniqueId('correction', current.store.corrections.concat(corrections), 'correction_id');
+      if (!correctionId) {
+        fields.message.textContent = 'Greška pri generaciji identifikatora.';
+        fields.message.hidden = false;
+        return;
+      }
+      var correction = {
+        correction_id: correctionId,
+        original_record_id: target.entries[i].original.observation_id,
+        original_record_type: 'observation',
+        correction_types: built.types.slice(),
+        corrected_values: cloneCorrectionValues(built.values),
+        created_at: createdAt
+      };
+      if (explanation) correction.explanation = explanation;
+      corrections.push(correction);
+    }
+    var nextStore = correctionStoreCandidate(current, current.store.corrections.concat(corrections));
+    var errors = window.v2ValidateForBackup(nextStore);
+    if (errors.length > 0) {
+      fields.message.textContent = 'Ispravak nije spremljen: ' + observationCorrectionValidationMessage(errors[0]);
+      fields.message.hidden = false;
+      return;
+    }
+    try {
+      localStorage.setItem('vocnjak_v2', JSON.stringify(nextStore));
+    } catch (e) {
+      fields.message.textContent = 'Pohranu nije moguće zapisati.';
+      fields.message.hidden = false;
+      return;
+    }
+    correctionForm.reset();
+    pendingDiaryStatus = 'Ispravak spremljen.';
+    location.hash = '#v2/diary';
+  }
+
+  function saveCurrentCorrection() {
+    var fields = currentCorrectionFields;
+    if (!fields) return;
+    if (fields.recordType === 'observation' || fields.recordType === 'observation_group') saveCurrentObservationCorrection();
+    else saveCurrentActivityCorrection();
   }
 
   addForm.addEventListener('submit', function (event) {
