@@ -177,6 +177,8 @@ Guidance rules:
 - Do not infer urgency, pressure, severity, compliance, overdue state, or treatment need from missing observations.
 - Do not recommend products, doses, spraying now, or treatment actions.
 - Do not hide useful source-backed guidance only because structured persistence is blocked.
+- Do not hide Plan Templates action-window execution conditions only because broader phenology / BBCH / plan automation remains deferred. Date windows are Zagreb / continental Croatia baseline planning windows, not hard commands; seasonal action detail should preserve source-backed plant-state, weather, safety, label, karenca, skip/delay, and do-not-duplicate notes as read-only guidance when present.
+- Do not replace source-backed condition notes with generic "ask expert" wording only, and do not invent condition logic not present in Plan Templates.
 - Factual records that do exist belong in Dnevnik / plant history with neutral evidence copy.
 
 Capture waits for the relevant owner-approved identifier and runtime path. Visual scouting needs a durable `target_code` before structured `Observation.scouting` writes. Symptom capture needs an approved `symptom_code` before structured `Observation.symptom` writes.

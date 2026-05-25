@@ -15,6 +15,20 @@ Observation correction should no longer be treated as the next open package. Nex
 
 Locked first-scope boundaries: Strategy A grouped Observation correction only, no grouped date/plant correction, no group splitting, no effective regrouping, no `correction_group_id`, no new Observation kinds, no program-attached Observations, no broad scouting/symptom registry, no diagnosis, no treatment/product/dose advice, no pressure/urgency/compliance logic, no Plan Templates changes, and no S8 reopening.
 
+Calendar baseline / execution-condition guidance clarification:
+
+- Plan Templates date windows are Zagreb / continental Croatia baseline planning windows. They tell the grower when to pay attention; they are not hard commands and not "do this on this date" instructions.
+- Warmer regions such as Dalmatia may be roughly two weeks or more earlier in real life, depending on season, microclimate, exposure, and actual plant state. The app does not calculate or store that shift.
+- Runtime must preserve approved Plan Templates action-window notes as read-only seasonal action detail guidance when they explain plant state / phenophase, dormancy, bud swelling, bloom / open flowers, after petal fall, young fruit, weather conditions, bee safety, label / karenca constraints, skip / delay / do-not-duplicate logic, or local expert / agricultural pharmacy / agronomist guidance.
+- Do not defer source-backed execution-condition text just because broader phenology-aware stage confirmation, BBCH, plan automation, regional adaptation, or structured symptom/scouting models remain deferred.
+- Do not replace source-backed condition text with generic "ask expert" wording only, and do not invent condition logic that is not in Plan Templates.
+- This clarification does not authorize BBCH, a phenology engine, `climateProfile` / `regionProfile` / `offsetDays`, automatic date shifting, plan recalculation, stage-based unlocking/blocking, urgency / overdue / compliance behavior, treatment recommendations, product/dose advice beyond source-backed Plan Templates safety wording, AI diagnosis, AI treatment behavior, schema changes, Plan Templates edits, or runtime implementation.
+
+Examples:
+
+- A Zagreb baseline winter copper / oil window remains the planning reminder. In Dalmatia or another warm exposed location, the relevant dormancy / bud-swell condition may arrive roughly two weeks or more earlier. Seasonal action detail should keep the date window visible and also show the Plan Templates condition text: late dormancy / before vegetation starts, suitable dry calm weather, no rain or strong frost where present, product-label constraints, and spacing / do-not-duplicate rules.
+- Winter pruning may have a calendar baseline, but execution guidance such as dry weather, after strongest frosts, and before strong vegetation start where present must remain visible. The app informs; it does not predict frost, move pruning dates, create BBCH logic, or show "you are late" behavior.
+
 ---
 
 ## 1. Purpose
@@ -1377,7 +1391,7 @@ MEDIUM:
 - Symptom capture / `Observation.symptom` — return condition: after owner-approved symptom source-map / registry and UX copy that avoids diagnosis. No "ovo je bolest X" wording.
 - Owner-approved symptom source map / registry before any `symptom_code` — return condition: explicit owner approval of symptom identifiers and UX copy that avoids diagnosis.
 - Program-attached observations — return condition: after free-standing capture is stable and owner approves program attachment semantics. Free-standing `note` / `trap` / `stage_obs` remain the current shape.
-- Broader phenology-aware stage confirmation beyond the Step 5a diary vocabulary (§11) — return condition: after owner-approved broader phenology vocabulary / plan-effect semantics / BBCH decision. Beyond the Step 5a nine-entry `stage_diary_vocabulary[]`.
+- Broader phenology-aware stage confirmation beyond the Step 5a diary vocabulary (§11) — return condition: after owner-approved broader phenology vocabulary / plan-effect semantics / BBCH decision. Beyond the Step 5a nine-entry `stage_diary_vocabulary[]`. This does not defer approved source-backed plant-state / weather / safety execution-condition text already present in Plan Templates action-window notes; those notes remain read-only seasonal action guidance.
 
 LOW / polish:
 

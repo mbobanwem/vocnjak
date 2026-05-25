@@ -62,6 +62,8 @@ If that proof is missing: STOP.
 
 Before declaring a Plan Templates content gap, inspect the relevant `V2_ORCHARD_PLAN_TEMPLATES.md` row/section. Separate read-only guidance eligibility from structured persistence eligibility. If persistence is blocked, name the exact missing identifier/model/runtime support. Do not hide safe source-backed guidance only because `Observation.scouting` or `Observation.symptom` persistence is not ready.
 
+Do not treat deferred broader phenology, BBCH, regional adaptation, or plan automation as permission to drop Plan Templates execution-condition text. Plan Templates action-window notes may already contain source-backed plant-state, phenophase, weather, safety, label, karenca, skip/delay, do-not-duplicate, and local-expert guidance. That text belongs in V2 as read-only seasonal action detail / action-window note guidance when already approved. Date windows are Zagreb / continental Croatia baseline planning windows, not hard commands; warmer regions such as Dalmatia may be roughly two weeks or more earlier in real life depending on season, microclimate, exposure, and actual plant state. This guardrail does not create BBCH, a phenology engine, regional offset fields, automatic date shifting, plan recalculation, stage-based unlocking/blocking, urgency/overdue/compliance behavior, or treatment/product/dose advice beyond source-backed Plan Templates safety wording.
+
 Do not invent `target_code`, `symptom_code`, registries, treatment/pressure/urgency/compliance logic, or use B2 `projected_id` as persisted target identity. Visual scouting and symptom content are Observations, not Activities or `Klopke`.
 
 ### IN PROGRESS
