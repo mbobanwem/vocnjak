@@ -5503,6 +5503,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     'peach.copper.leaf_curl_buds_closed': note([
       'KRITIČNO ZA BRESKVU - identično kao kod nektarine, vrlo važan preventivni termin.',
       'Primijeniti dok su pupovi zatvoreni ili tek počinju bubriti.',
+      'Taphrina deformans: nakon pojave simptoma mogućnosti su ograničene; naglasak je na prevenciji.',
+      'Ako se u proljeće već vide kovrčavi listovi, preventivni termin je propušten; zabilježiti problem za iduću sezonu umjesto kasnog pokušaja popravljanja tog lista.',
       'Registrirani bakreni pripravak prema etiketi proizvoda.',
       'U vlažnom proljeću drugi tretman razmotriti prema fenofazi, oborinama, etiketi proizvoda i stručnom/lokalnom savjetu.',
       'Ovo prskanje je DODATAK zimskom bakru iz shared bloka.',
@@ -11272,9 +11274,12 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     if (def.action_type === 'fungicide') return 'Namjena: zaštita u osjetljivom razdoblju.';
     if (def.action_type === 'pruning') return 'Namjena: oblikovanje i prozračnost krošnje.';
     if (def.action_type === 'fertilization') return 'Namjena: podrška rastu u sezoni.';
+    if (def.action_type === 'harvest') return 'Namjena: berba u optimalno doba.';
     if (def.label.indexOf('Mreža') !== -1) return 'Namjena: zaštita plodova.';
     if (def.label.indexOf('Krečenje') !== -1) return 'Namjena: zaštita debla.';
     if (def.label.indexOf('Prorjeđivanje') !== -1 || def.label.indexOf('opterećenja') !== -1) return 'Namjena: uravnoteženje roda.';
+    if (def.label.indexOf('Pregled za zimu') !== -1) return 'Namjena: priprema voćnjaka za zimu.';
+    if (def.label.indexOf('Gašenje navodnjavanja') !== -1) return 'Namjena: prilagodba zalijevanja sezoni.';
     return '';
   }
 
@@ -11840,6 +11845,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     }, 0);
   }
 
+  var SEASONAL_DETAIL_BASELINE_NOTE_HR = 'Kalendarski prozor je okvirni podsjetnik. Stvarno stanje voćke, fenofaza i lokalni uvjeti imaju prednost pred datumom: u toplijim krajevima radnje mogu krenuti ranije, a u hladnijim krajevima kasnije.';
+
   function renderSeasonalActionDetail(route) {
     setViews('seasonal_action');
     clearNode(seasonalActionView);
@@ -11875,6 +11882,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
     var summary = makeEl('article', 'v2-seasonal-card');
     summary.appendChild(makeEl('span', 'v2-seasonal-meta', seasonalDetailDateLine(found, snapshot.today)));
+    summary.appendChild(makeEl('span', 'v2-seasonal-meta', SEASONAL_DETAIL_BASELINE_NOTE_HR));
     var stateLine = seasonalDetailStateLine(found);
     if (stateLine) summary.appendChild(makeEl('span', 'v2-seasonal-meta', stateLine));
     summary.appendChild(makeEl('span', 'v2-seasonal-meta', seasonalDetailPlantScopeLine(found)));
