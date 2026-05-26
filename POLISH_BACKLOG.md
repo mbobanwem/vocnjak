@@ -33,6 +33,16 @@ If an item affects data model, execution logic, validation, or plan matching →
 - Minor spacing inconsistencies
 - Copy tweaks (HR text improvements)
 
+## Plan Templates runtime parity — UX/copy follow-ups (after `c9645c4`)
+
+Provenance: owner notes recorded during browser verification of `c9645c4 Implement Plan Templates runtime parity fixes`. Not in-flight; queued for the upcoming UX/design polish session or a separately approved parity-polish micro-session. None are V2 Done blockers. None authorize runtime/model/schema/Plan Templates changes.
+
+- `Namjena: berba u optimalno doba.` may be too generic. Later copy could reference checking ripeness or harvesting when fruit is mature (still informational, not prescriptive; the app does not decide harvest dates).
+- `Namjena: priprema voćnjaka za zimu.` may be too generic. Later copy could reference trunk/ties/rodent protection/mummified-fruit cleanup (mirroring `STANDARD_ACTION_WINDOW_NOTES.winter_inspection` content; still informational, not prescriptive).
+- Peach Springcrest harvest around 25.06 vs bird-net around 10.07 looks suspicious. Classify later as a possible Plan Templates parity issue — investigate whether the source-backed peach Springcrest harvest start and the species `peach.bird_net.pre_harvest` window are aligned to source. Do not touch now; this is owner-decision triage, not implementation.
+
+Hard boundaries for any future micro-session driven by this list: no `V2_ORCHARD_PLAN_TEMPLATES.md` edit unless separately approved; no BBCH; no phenology engine; no regional offset; no automatic date shifting; no plan recalculation; no urgency/overdue/compliance; no diagnosis; no treatment recommendation; no product/dose advice beyond existing source-backed safety wording; no `Observation.symptom`; no `symptom_code`; no symptom registry; no program-attached observations; no broader scouting beyond Step 7c; no AI; no paid/subscription work; no schema/model/storage/validator/import/export change; no S8 reopening; no A1/A2 change.
+
 ## Sync / Settings / Data Utility redesign
 
 Current `Sync / Sinkroniziraj` is a temporary mixed utility/data-management screen, not a long-term core orchard surface. It currently mixes Claude export/import, legacy JSON backup/download/import, v4 JSON export/import, iCal/GitHub reminder sync, Supabase cloud backup/restore, GitHub token/repo setup, Supabase URL / anon key / SQL setup / user key, and usage instructions.
@@ -115,12 +125,12 @@ This section is **documentation only**. It is NOT a session, NOT a current backl
 ## Status
 
 - **Not active.** This is a future direction, not in-flight work.
-- **Sequencing prerequisite:** must come AFTER S7, B2, S8, the owner-approved A2/A1 baseline decisions, and the Plan Templates runtime fidelity / content parity session in `V2_EXECUTION_ROADMAP.md §0`.
+- **Sequencing prerequisite:** must come AFTER S7, B2, S8, the owner-approved A2/A1 baseline decisions, and the Plan Templates runtime fidelity / content parity runtime patch at `c9645c4 Implement Plan Templates runtime parity fixes` per `V2_EXECUTION_ROADMAP.md §0`.
 - Current V2 Done order:
   1. complete B2 / Runtime Slice 8 / Post-S8 Observation correction (done)
-  2. A2 default V2 / remove `#v2` gate after owner approval
-  3. A1 archive/lifecycle baseline after owner approval
-  4. Plan Templates runtime fidelity / content parity session after owner approval
+  2. A2 default V2 / remove `#v2` gate after owner approval (done)
+  3. A1 archive/lifecycle baseline after owner approval (done)
+  4. Plan Templates runtime fidelity / content parity session (done at `c9645c4 Implement Plan Templates runtime parity fixes`)
   5. THEN open this visual refresh as a dedicated session before the V2 Done audit
 - No agent may begin visual-refresh implementation work without explicit per-session owner approval after the above is complete.
 
