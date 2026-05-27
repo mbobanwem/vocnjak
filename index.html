@@ -175,6 +175,89 @@
   .weather-divider { width: 1px; height: 40px; background: #bae6fd; margin: 0 8px; flex-shrink: 0; }
   .weather-warn { background: #fef3c7; border: 1px solid #fde68a; border-radius: var(--r-sm); padding: 8px 12px; margin-top: 10px; font-size: 12px; color: #92400e; line-height: 1.4; }
   /* BEGIN V2 SHELL — Slice 0 */
+  .v2-active {
+    /* Phase B V2 token system - Adriatic / sea. Declared only; consumed in later UXR sessions. */
+    --v2-bg: #e3e8e9;
+    --v2-cream: #f5f7f8;
+    --v2-cream-2: #e8edef;
+    --v2-surface: #ffffff;
+    --v2-pale: #d6e6ec;
+    --v2-tint-warm: #f6e4cf;
+    --v2-tint-cool: #e7f0f4;
+
+    --v2-ink: #142028;
+    --v2-ink-mid: #3d4d56;
+    --v2-ink-mute: #7a8a92;
+    --v2-line: #d6dee2;
+
+    --v2-brand: #3a7a99;
+    --v2-brand-deep: #1f4a5f;
+    --v2-brand-on: #ffffff;
+
+    --v2-peach: #f4d2b3;
+    --v2-peach-ink: #7a3f12;
+    --v2-plum: #ead3dc;
+    --v2-plum-ink: #6b3447;
+    --v2-honey: #e8d9a6;
+
+    --v2-chip-current-bg: var(--v2-pale);
+    --v2-chip-current-fg: var(--v2-brand-deep);
+    --v2-chip-ending-bg: var(--v2-peach);
+    --v2-chip-ending-fg: var(--v2-peach-ink);
+    --v2-chip-upcoming-bg: rgba(226, 236, 213, 0.55);
+    --v2-chip-upcoming-fg: var(--v2-ink-mute);
+    --v2-chip-done-bg: var(--v2-plum);
+    --v2-chip-done-fg: var(--v2-plum-ink);
+    --v2-chip-skipped-bg: var(--v2-cream-2);
+    --v2-chip-skipped-fg: var(--v2-ink-mid);
+    --v2-marker-corrected-fg: var(--v2-brand);
+    --v2-marker-late-fg: var(--v2-peach-ink);
+
+    --v2-radius-xs: 8px;
+    --v2-radius-sm: 10px;
+    --v2-radius-md: 12px;
+    --v2-radius-lg: 14px;
+    --v2-radius-card: 18px;
+    --v2-radius-hero: 20px;
+    --v2-radius-sheet: 24px;
+    --v2-radius-pill: 999px;
+
+    --v2-space-1: 4px;
+    --v2-space-2: 8px;
+    --v2-space-3: 12px;
+    --v2-space-4: 16px;
+    --v2-space-5: 20px;
+    --v2-space-6: 24px;
+    --v2-space-7: 28px;
+    --v2-space-8: 32px;
+    --v2-space-10: 40px;
+
+    --v2-shadow-card: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 4px 14px rgba(36, 74, 42, 0.06);
+    --v2-shadow-raised: 0 2px 12px rgba(26, 51, 32, 0.05);
+    --v2-shadow-banner: 0 4px 16px rgba(31, 74, 95, 0.10);
+    --v2-shadow-hero-text: 0 1px 8px rgba(20, 32, 40, 0.32);
+
+    --v2-display: 'Fraunces', 'Source Serif Pro', Georgia, 'Times New Roman', serif;
+    --v2-body: 'DM Sans', -apple-system, 'Segoe UI', sans-serif;
+    --v2-display-opt: 'opsz' 32, 'SOFT' 50, 'WONK' 0;
+
+    --v2-acc-apple: #9aa849;
+    --v2-acc-sweet_cherry: #b8554c;
+    --v2-acc-sour_cherry: #a64046;
+    --v2-acc-plum: #7a4e6b;
+    --v2-acc-peach: #d9905c;
+    --v2-acc-nectarine: #d9784e;
+    --v2-acc-pear: #a89544;
+    --v2-acc-quince: #c1a64b;
+    --v2-acc-apricot: #d89a4a;
+    --v2-acc-almond: #b18b61;
+    --v2-acc-walnut: #8a6a4f;
+    --v2-acc-hazelnut: #9b7247;
+    --v2-acc-olive: #6f7f45;
+    --v2-acc-pomegranate: #a9444d;
+    --v2-acc-generic: var(--v2-brand);
+  }
+
   .v2-active .header,
   .v2-active #plantTabs,
   .v2-active #mainContent,
