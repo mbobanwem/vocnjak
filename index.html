@@ -6651,6 +6651,24 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   }
 
   if (
+    parsed.meta.active_catalog_version === 'catalog_v1' &&
+    parsed.catalogs &&
+    (!parsed.catalogs.catalog_v1 ||
+     !catalogDeepEquals(parsed.catalogs.catalog_v1, CATALOG_V1))
+  ) {
+    parsed.catalogs.catalog_v1 = CATALOG_V1;
+    try {
+      localStorage.setItem('vocnjak_v2', JSON.stringify(parsed));
+      setCatalogStatus('Slice 2 — katalog je osvježen na kanonski catalog_v1.');
+      console.log('vocnjak: catalog refreshed from canonical catalog_v1');
+    } catch (e) {
+      setCatalogStatus('Slice 2 — katalog nije moguće osvježiti. Vrati se u staru aplikaciju.');
+      console.error('vocnjak: catalog canonical refresh failed:', e && e.message ? e.message : e);
+    }
+    return;
+  }
+
+  if (
     parsed.meta.active_catalog_version !== null ||
     Object.keys(parsed.catalogs || {}).length !== 0
   ) {
@@ -9881,7 +9899,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     diary.appendChild(makeEl('h3', '', 'Dnevnik ove voćke'));
     var plantDiaryItems = diaryItemsForResult(result, plant.plant_id).slice(0, 5);
     if (plantDiaryItems.length === 0) {
-      diary.appendChild(makeEl('p', 'v2-plants-empty', 'Još nema zapisa u dnevniku ove voćke.'));
+      diary.appendChild(makeEl('p', 'v2-plants-empty', 'Još nema evidencije za ovu voćku.'));
     } else {
       var preview = makeEl('div', 'v2-diary-list');
       appendDiaryItems(preview, plantDiaryItems, result, { showCorrectionActions: false, showObservationCorrectionActions: true });
@@ -11274,11 +11292,11 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     if (def.action_type === 'fungicide') return 'Namjena: zaštita u osjetljivom razdoblju.';
     if (def.action_type === 'pruning') return 'Namjena: oblikovanje i prozračnost krošnje.';
     if (def.action_type === 'fertilization') return 'Namjena: podrška rastu u sezoni.';
-    if (def.action_type === 'harvest') return 'Namjena: berba u optimalno doba.';
+    if (def.action_type === 'harvest') return 'Namjena: berba kad plodovi dosegnu zrelost.';
     if (def.label.indexOf('Mreža') !== -1) return 'Namjena: zaštita plodova.';
     if (def.label.indexOf('Krečenje') !== -1) return 'Namjena: zaštita debla.';
     if (def.label.indexOf('Prorjeđivanje') !== -1 || def.label.indexOf('opterećenja') !== -1) return 'Namjena: uravnoteženje roda.';
-    if (def.label.indexOf('Pregled za zimu') !== -1) return 'Namjena: priprema voćnjaka za zimu.';
+    if (def.label.indexOf('Pregled za zimu') !== -1) return 'Namjena: provjera debla, vezica, zaštite od glodavaca i mumificiranih plodova.';
     if (def.label.indexOf('Gašenje navodnjavanja') !== -1) return 'Namjena: prilagodba zalijevanja sezoni.';
     return '';
   }
@@ -11502,7 +11520,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
   function appendYoungTreeCalendarSection(parent, groups) {
     if (!groups || groups.length === 0) return;
-    parent.appendChild(makeEl('p', 'v2-seasonal-meta', 'Mlade voćke'));
+    parent.appendChild(makeEl('h3', '', 'Mlade voćke'));
     var list = makeEl('div', 'v2-seasonal-list');
     for (var i = 0; i < groups.length; i++) appendYoungTreeContextCard(list, groups[i], 'calendar');
     parent.appendChild(list);
@@ -11773,9 +11791,9 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       groups: displayGroups
     };
     var upcomingGroups = upcomingGroupsForPregled(upcomingSnapshot);
-    appendSeasonalSection(pregledView, 'Sada aktualno', currentGroups, 'Trenutno nema aktualnih sezonskih radnji.', 'current', false);
-    appendSeasonalSection(pregledView, 'Za provjeru: nema evidencije', missedGroups, 'Nema prošlih sezonskih radnji bez evidencije u ovom prikazu.', 'missed', false);
-    appendSeasonalSection(pregledView, 'Uskoro', upcomingGroups, 'Nema skorih sezonskih radnji u ovom prikazu.', 'upcoming', false);
+    appendSeasonalSection(pregledView, 'Sada aktualno', currentGroups, 'Trenutno nema aktualnih sezonskih radnji.', 'current', true);
+    appendSeasonalSection(pregledView, 'Za provjeru: nema evidencije', missedGroups, 'Nema sezonskih radnji bez evidencije.', 'missed', true);
+    appendSeasonalSection(pregledView, 'Uskoro', upcomingGroups, 'Nema skorih sezonskih radnji.', 'upcoming', true);
     if (currentGroups.length === 0 && missedGroups.length === 0 && upcomingGroups.length === 0 && b2Visibility.current.length === 0 && youngTreeCurrentGroups.length === 0) {
       pregledView.appendChild(makeEl('p', 'v2-plants-empty', 'Za ovaj dio sezone nema prikazanih sezonskih radnji.'));
     }
@@ -11845,7 +11863,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     }, 0);
   }
 
-  var SEASONAL_DETAIL_BASELINE_NOTE_HR = 'Kalendarski prozor je okvirni podsjetnik. Stvarno stanje voćke, fenofaza i lokalni uvjeti imaju prednost pred datumom: u toplijim krajevima radnje mogu krenuti ranije, a u hladnijim krajevima kasnije.';
+  var SEASONAL_DETAIL_BASELINE_NOTE_HR = 'Datumi su okvirni podsjetnik. Stvarno stanje voćke i lokalni uvjeti imaju prednost pred datumom: u toplijim krajevima radnje mogu krenuti ranije, a u hladnijim krajevima kasnije.';
 
   function renderSeasonalActionDetail(route) {
     setViews('seasonal_action');
@@ -12328,7 +12346,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     }
     var diaryItems = diaryItemsForResult(result, plantScoped ? route.plant_id : null);
     if (diaryItems.length === 0) {
-      diaryView.appendChild(makeEl('p', 'v2-plants-empty', plantScoped ? 'Još nema zapisa za ovu voćku.' : 'Još nema zapisa u Dnevniku.'));
+      diaryView.appendChild(makeEl('p', 'v2-plants-empty', plantScoped ? 'Još nema evidencije za ovu voćku.' : 'Još nema evidencije.'));
       return;
     }
 
