@@ -35,11 +35,13 @@ If an item affects data model, execution logic, validation, or plan matching →
 
 ## Plan Templates runtime parity — UX/copy follow-ups (after `c9645c4`)
 
-Provenance: owner notes recorded during browser verification of `c9645c4 Implement Plan Templates runtime parity fixes`. Not in-flight; queued for the upcoming UX/design polish session or a separately approved parity-polish micro-session. None are V2 Done blockers. None authorize runtime/model/schema/Plan Templates changes.
+Provenance: owner notes recorded during browser verification of `c9645c4 Implement Plan Templates runtime parity fixes`. Items 1 and 2 below were resolved by Phase A UX/copy polish at `cc22d24 Polish V2 UX copy and Pregled click affordance`; owner mobile browser verification passed. Item 3 (Springcrest) remains a future Plan Templates parity / content timing item, NOT UX polish. None are V2 Done blockers. None authorize runtime/model/schema/Plan Templates changes.
 
-- `Namjena: berba u optimalno doba.` may be too generic. Later copy could reference checking ripeness or harvesting when fruit is mature (still informational, not prescriptive; the app does not decide harvest dates).
-- `Namjena: priprema voćnjaka za zimu.` may be too generic. Later copy could reference trunk/ties/rodent protection/mummified-fruit cleanup (mirroring `STANDARD_ACTION_WINDOW_NOTES.winter_inspection` content; still informational, not prescriptive).
-- Peach Springcrest harvest around 25.06 vs bird-net around 10.07 looks suspicious. Classify later as a possible Plan Templates parity issue — investigate whether the source-backed peach Springcrest harvest start and the species `peach.bird_net.pre_harvest` window are aligned to source. Do not touch now; this is owner-decision triage, not implementation.
+- ~~`Namjena: berba u optimalno doba.` may be too generic.~~ Resolved by Phase A `cc22d24`: harvest `purposeCue` rewritten to `Namjena: berba kad plodovi dosegnu zrelost.` — still informational, still pan-species, not prescriptive; the app does not decide harvest dates.
+- ~~`Namjena: priprema voćnjaka za zimu.` may be too generic.~~ Resolved by Phase A `cc22d24`: `Pregled za zimu` `purposeCue` rewritten to `Namjena: provjera debla, vezica, zaštite od glodavaca i mumificiranih plodova.` — mirrors `STANDARD_ACTION_WINDOW_NOTES.winter_inspection` content; still informational, not prescriptive.
+- Peach Springcrest harvest around 25.06 vs bird-net around 10.07 looks suspicious. Classify later as a possible Plan Templates parity issue — investigate whether the source-backed peach Springcrest harvest start and the species `peach.bird_net.pre_harvest` window are aligned to source. Do not touch now; this is owner-decision triage, not implementation. Remains UNRESOLVED; not UX polish.
+
+Phase A also added two adjacent UX fixes outside the original three-item list above, both shipped at `cc22d24`: (a) the universal calendar-window disclaimer constant was rewritten to `Datumi su okvirni podsjetnik. Stvarno stanje voćke i lokalni uvjeti imaju prednost pred datumom: u toplijim krajevima radnje mogu krenuti ranije, a u hladnijim krajevima kasnije.`, dropping the previous `Kalendarski prozor` / unexplained `fenofaza` user-facing copy from the generic calendar disclaimer only (placement on Seasonal action detail unchanged; concrete plant-state guidance in source-backed `Napomene` prose preserved verbatim); (b) Pregled seasonal cards are now clickable to Seasonal action detail, matching Kalendar and Plant detail. Phase A also added a V2 boot canonical-catalog refresh branch that closed the mobile validation regression caused by stale `vocnjak_v2.catalogs.catalog_v1` after `c9645c4`. None of these are V2 Done blockers and none reopened Plan Templates content.
 
 Hard boundaries for any future micro-session driven by this list: no `V2_ORCHARD_PLAN_TEMPLATES.md` edit unless separately approved; no BBCH; no phenology engine; no regional offset; no automatic date shifting; no plan recalculation; no urgency/overdue/compliance; no diagnosis; no treatment recommendation; no product/dose advice beyond existing source-backed safety wording; no `Observation.symptom`; no `symptom_code`; no symptom registry; no program-attached observations; no broader scouting beyond Step 7c; no AI; no paid/subscription work; no schema/model/storage/validator/import/export change; no S8 reopening; no A1/A2 change.
 
@@ -125,13 +127,15 @@ This section is **documentation only**. It is NOT a session, NOT a current backl
 ## Status
 
 - **Not active.** This is a future direction, not in-flight work.
-- **Sequencing prerequisite:** must come AFTER S7, B2, S8, the owner-approved A2/A1 baseline decisions, and the Plan Templates runtime fidelity / content parity runtime patch at `c9645c4 Implement Plan Templates runtime parity fixes` per `V2_EXECUTION_ROADMAP.md §0`.
+- **Sequencing prerequisite:** must come AFTER S7, B2, S8, the owner-approved A2/A1 baseline decisions, the Plan Templates runtime fidelity / content parity runtime patch at `c9645c4 Implement Plan Templates runtime parity fixes`, and the Phase A functional UX/copy polish runtime at `cc22d24 Polish V2 UX copy and Pregled click affordance` per `V2_EXECUTION_ROADMAP.md §0`.
 - Current V2 Done order:
   1. complete B2 / Runtime Slice 8 / Post-S8 Observation correction (done)
   2. A2 default V2 / remove `#v2` gate after owner approval (done)
   3. A1 archive/lifecycle baseline after owner approval (done)
   4. Plan Templates runtime fidelity / content parity session (done at `c9645c4 Implement Plan Templates runtime parity fixes`)
-  5. THEN open this visual refresh as a dedicated session before the V2 Done audit
+  5. Phase A — Functional UX/copy polish runtime (done at `cc22d24 Polish V2 UX copy and Pregled click affordance`; owner mobile browser verification passed)
+  6. THEN open this visual refresh as Phase B planning/challenge before any code lands, and only as a dedicated session before the V2 Done audit
+- Phase A does not close Phase B. Phase A shipped runtime copy and click-affordance fixes plus a V2 boot canonical-catalog refresh branch in `index.html` only; Phase B remains the separately approved visual usability refresh described below (design tokens, typography, branded V2 header, status chips, cards/lists refresh, forms/empty-state polish), still `index.html`-only when later opened, still no framework / build pipeline / `manifest.json` / `sw.js` / schema / Plan Templates / BBCH / urgency / diagnosis / treatment / AI / paid-subscription work.
 - No agent may begin visual-refresh implementation work without explicit per-session owner approval after the above is complete.
 
 ---
