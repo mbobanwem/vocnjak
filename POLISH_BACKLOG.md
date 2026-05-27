@@ -114,29 +114,35 @@ Provenance: V1/legacy UX observation and/or future UXR backlog, not current V2 r
 
 ---
 
-# 🎨 V2 Visual UX Refresh (FUTURE — NOT NOW)
+# 🎨 V2 Visual UX Refresh (PHASE B UXR — ACTIVE)
 
-Provenance: Claude Design recommendation backlog for future UXR/visual refresh sessions, not approved current-slice implementation scope.
+Provenance: Claude Design recommendation backlog and the accepted Phase B UXR plan. Phase B is active, but every UXR implementation session still requires explicit owner approval.
 
-Future visual design slice for V2.
+Visual design slice for V2.
 
-This section is **documentation only**. It is NOT a session, NOT a current backlog item, and NOT eligible for implementation until the prerequisites below are met.
+This section is **documentation/tracking only**. It is not itself an implementation session.
 
 ---
 
 ## Status
 
-- **Not active.** This is a future direction, not in-flight work.
-- **Sequencing prerequisite:** must come AFTER S7, B2, S8, the owner-approved A2/A1 baseline decisions, the Plan Templates runtime fidelity / content parity runtime patch at `c9645c4 Implement Plan Templates runtime parity fixes`, and the Phase A functional UX/copy polish runtime at `cc22d24 Polish V2 UX copy and Pregled click affordance` per `V2_EXECUTION_ROADMAP.md §0`.
+- **Active:** Phase B / UXR is open as a bounded, owner-approved visual usability track.
+- `UXR.0 — Runtime IA + ID audit` is complete at `5ef720d Add Phase B UXR audit`.
+- `UXR.1a — V2-scoped Phase B design tokens` is complete at `8163d1c Add Phase B V2 design tokens`. UXR.1a changed only the `index.html` CSS token block under `.v2-active`; it did not consume tokens and did not change JS, DOM, routes, storage, validators, import/export behavior, Plan Templates, `manifest.json`, or `sw.js`.
+- `Claude-design/` remains local reference material only and is not committed.
+- Next session: `UXR.1b — Fraunces + DM Sans typography link`.
+- Later-session audit notes: runtime uses `plant.species`, not `plant.species_id`, so UXR.3d must map species visuals from `plant.species`; the Pregled section-order discrepancy belongs to UXR.3a/UXR.3b, not UXR.1b; UXR.2a later flips empty hash to Pregled while keeping `#v2` as the Biljke compatibility alias.
+- **Sequencing prerequisite:** Phase B came AFTER S7, B2, S8, the owner-approved A2/A1 baseline decisions, the Plan Templates runtime fidelity / content parity runtime patch at `c9645c4 Implement Plan Templates runtime parity fixes`, and the Phase A functional UX/copy polish runtime at `cc22d24 Polish V2 UX copy and Pregled click affordance` per `V2_EXECUTION_ROADMAP.md §0`.
 - Current V2 Done order:
   1. complete B2 / Runtime Slice 8 / Post-S8 Observation correction (done)
   2. A2 default V2 / remove `#v2` gate after owner approval (done)
   3. A1 archive/lifecycle baseline after owner approval (done)
   4. Plan Templates runtime fidelity / content parity session (done at `c9645c4 Implement Plan Templates runtime parity fixes`)
   5. Phase A — Functional UX/copy polish runtime (done at `cc22d24 Polish V2 UX copy and Pregled click affordance`; owner mobile browser verification passed)
-  6. THEN open this visual refresh as Phase B planning/challenge before any code lands, and only as a dedicated session before the V2 Done audit
-- Phase A does not close Phase B. Phase A shipped runtime copy and click-affordance fixes plus a V2 boot canonical-catalog refresh branch in `index.html` only; Phase B remains the separately approved visual usability refresh described below (design tokens, typography, branded V2 header, status chips, cards/lists refresh, forms/empty-state polish), still `index.html`-only when later opened, still no framework / build pipeline / `manifest.json` / `sw.js` / schema / Plan Templates / BBCH / urgency / diagnosis / treatment / AI / paid-subscription work.
-- No agent may begin visual-refresh implementation work without explicit per-session owner approval after the above is complete.
+  6. Phase B UXR active: UXR.0 audit complete, UXR.1a tokens complete, next UXR.1b
+  7. V2 Done audit after all Phase B UXR sessions are shipped, verified, and owner-accepted
+- Phase A does not close Phase B. Phase A shipped runtime copy and click-affordance fixes plus a V2 boot canonical-catalog refresh branch in `index.html` only; Phase B remains the separately approved visual usability refresh described below (design tokens, typography, branded V2 header, status chips, cards/lists refresh, forms/empty-state polish), still no framework / build pipeline / `manifest.json` / `sw.js` / schema / Plan Templates / BBCH / urgency / diagnosis / treatment / AI / paid-subscription work.
+- No agent may begin the next visual-refresh implementation step without explicit per-session owner approval.
 
 ---
 
@@ -254,7 +260,7 @@ Every primary action must be reachable via a single, visible, predictable contro
 
 ## Suggested future sequence
 
-When this slice is eventually opened, it should run as ordered sub-sessions. Numbering is `UXR.*` to keep it clearly separate from runtime slices.
+Current Phase B session authority is `Claude-design/UXR_FINAL_PLAN.md` as local-only reference material. The older high-level outline below remains historical framing only; do not use it to override the accepted UXR.0/UXR.1a/UXR.1b session sequence.
 
 ### UXR.1 — Visual audit
 
@@ -315,12 +321,12 @@ When this slice is eventually opened, it should run as ordered sub-sessions. Num
 
 ## Out of scope now
 
-- no runtime change
-- no `index.html` edit
-- no CSS edit
+- no unapproved runtime change
+- no unapproved `index.html` edit
+- no unapproved CSS edit
 - no design implementation
 - no screenshots
 - no commits beyond this documentation
 - not part of S7, B2, or S8
 
-Revisit only after V2 baseline is usable and the owner explicitly opens a `UXR.*` session.
+Continue only through the currently opened UXR session. The next implementation session is UXR.1b.
