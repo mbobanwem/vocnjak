@@ -8961,7 +8961,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
   function getRoute() {
     var h = normalizeRouteHash(location.hash);
-    if (h === '#v2' || h === '') return { name: 'list' };
+    if (h === '') return { name: 'pregled' };
+    if (h === '#v2') return { name: 'list' };
     if (h === '#v2/pregled') return { name: 'pregled' };
     if (h === '#v2/kalendar') return { name: 'kalendar' };
     if (h === '#v2/add') return { name: 'add' };
