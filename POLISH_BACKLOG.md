@@ -131,9 +131,10 @@ This section is **documentation/tracking only**. It is not itself an implementat
 - `UXR.1a — V2-scoped Phase B design tokens` is complete at `8163d1c Add Phase B V2 design tokens`. UXR.1a changed only the `index.html` CSS token block under `.v2-active`; it did not consume tokens and did not change JS, DOM, routes, storage, validators, import/export behavior, Plan Templates, `manifest.json`, or `sw.js`.
 - `UXR.1b — Fraunces + DM Sans typography link` is complete at `8702836 Add Phase B typography font loading`. UXR.1b changed only Phase B Google Fonts loading in `index.html` `<head>` and the V2 body font fallback token adjustment, if present; the existing legacy font link was not changed, and no JS, DOM body structure, routes, storage, validators, import/export behavior, Plan Templates, `manifest.json`, or `sw.js` changed.
 - `UXR.2a — Default route flip + alias safety` is complete at `559012cc67357333d60cfcc37ba17afdf3db6ae6 Set Pregled as default V2 route`. Empty hash / no hash now opens Pregled; `#v2` remains the Biljke compatibility alias; `#biljke` remains Biljke; and `#pregled`, `#kalendar`, `#dnevnik`, `#legacy`, and old `#v2/...` routes remain supported. UXR.2a changed only the default route branch in `index.html`; no CSS, DOM, font, storage, validator, import/export, `manifest.json`, or `sw.js` change was made. Backup validator was not available in Browser automation, but the patch was route-only and route smoke checks passed.
-- `Claude-design/` remains local reference material only and is not committed.
-- Next session: `UXR.2b — App shell: top app bar + bottom nav`.
-- Later-session audit notes: runtime uses `plant.species`, not `plant.species_id`, so UXR.3d must map species visuals from `plant.species`; the Pregled section-order discrepancy belongs to UXR.3a/UXR.3b, not UXR.2a.
+- `UXR.2b — App shell: top app bar + bottom nav` is complete at `927555d Add Phase B V2 app shell`. UXR.2b changed only `index.html` and added a sticky V2 top app bar in deep Adriatic, a fixed four-tab bottom nav (Pregled · Kalendar · Biljke · Dnevnik) with frosted-glass surface, a deterministic route-name-only active-tab indicator, and an `#v2Content` wrapper that holds the existing scaffold and screen registry between the new bars. UXR.2b preserved every existing V2 screen root ID, all back/cancel destinations, `#v2` as the Biljke compatibility alias, `#legacy`, every old `#v2/...` deep link, import/export behavior, validators/storage, Plan Templates content, `manifest.json`, and `sw.js`. UXR.2b did NOT implement the Postavke sheet, scaffold relocation, inline import confirm, form hide-bottom-nav behavior, top-bar back chevron, Pregled hero / cards / section-order changes, or species icons. Browser route smoke check, bottom-nav tap navigation for all four tabs, and backup validator (`[]`) passed; no console errors.
+- `Claude-design/` remains local reference material only and is not committed. Transient local `.claude/` preview/config junk used during UXR.2b verification was removed and is not committed.
+- Next session: `UXR.2c — Postavke sheet + scaffold relocation + inline import confirm`.
+- Later-session audit notes: runtime uses `plant.species`, not `plant.species_id`, so UXR.3d must map species visuals from `plant.species`; the Pregled section-order discrepancy belongs to UXR.3a/UXR.3b, not UXR.2b; `activity_add` currently maps the active tab to Biljke via the back-target rule and may be revisited when `Dodaj evidenciju` is demoted in UXR.3c; form routes still show the bottom nav in UXR.2b because hide-on-forms belongs to UXR.2d; scaffold remains visible inside `#v2Content` because relocation belongs to UXR.2c.
 - **Sequencing prerequisite:** Phase B came AFTER S7, B2, S8, the owner-approved A2/A1 baseline decisions, the Plan Templates runtime fidelity / content parity runtime patch at `c9645c4 Implement Plan Templates runtime parity fixes`, and the Phase A functional UX/copy polish runtime at `cc22d24 Polish V2 UX copy and Pregled click affordance` per `V2_EXECUTION_ROADMAP.md §0`.
 - Current V2 Done order:
   1. complete B2 / Runtime Slice 8 / Post-S8 Observation correction (done)
@@ -141,7 +142,7 @@ This section is **documentation/tracking only**. It is not itself an implementat
   3. A1 archive/lifecycle baseline after owner approval (done)
   4. Plan Templates runtime fidelity / content parity session (done at `c9645c4 Implement Plan Templates runtime parity fixes`)
   5. Phase A — Functional UX/copy polish runtime (done at `cc22d24 Polish V2 UX copy and Pregled click affordance`; owner mobile browser verification passed)
-  6. Phase B UXR active: UXR.0 audit complete, UXR.1a tokens complete, UXR.1b typography loading complete, UXR.2a default route flip complete, next UXR.2b
+  6. Phase B UXR active: UXR.0 audit complete, UXR.1a tokens complete, UXR.1b typography loading complete, UXR.2a default route flip complete, UXR.2b app shell complete at `927555d`, next UXR.2c Postavke sheet + scaffold relocation + inline import confirm
   7. V2 Done audit after all Phase B UXR sessions are shipped, verified, and owner-accepted
 - Phase A does not close Phase B. Phase A shipped runtime copy and click-affordance fixes plus a V2 boot canonical-catalog refresh branch in `index.html` only; Phase B remains the separately approved visual usability refresh described below (design tokens, typography, branded V2 header, status chips, cards/lists refresh, forms/empty-state polish), still no framework / build pipeline / `manifest.json` / `sw.js` / schema / Plan Templates / BBCH / urgency / diagnosis / treatment / AI / paid-subscription work.
 - No agent may begin the next visual-refresh implementation step without explicit per-session owner approval.
@@ -262,7 +263,7 @@ Every primary action must be reachable via a single, visible, predictable contro
 
 ## Suggested future sequence
 
-Current Phase B session authority is `Claude-design/UXR_FINAL_PLAN.md` as local-only reference material. The older high-level outline below remains historical framing only; do not use it to override the accepted UXR.0/UXR.1a/UXR.1b/UXR.2a/UXR.2b session sequence.
+Current Phase B session authority is `Claude-design/UXR_FINAL_PLAN.md` as local-only reference material. The older high-level outline below remains historical framing only; do not use it to override the accepted UXR.0/UXR.1a/UXR.1b/UXR.2a/UXR.2b/UXR.2c session sequence.
 
 ### UXR.1 — Visual audit
 
@@ -331,4 +332,4 @@ Current Phase B session authority is `Claude-design/UXR_FINAL_PLAN.md` as local-
 - no commits beyond this documentation
 - not part of S7, B2, or S8
 
-Continue only through the currently opened UXR session. The next implementation session is UXR.2b.
+Continue only through the currently opened UXR session. The next implementation session is UXR.2c — Postavke sheet + scaffold relocation + inline import confirm.
