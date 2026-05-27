@@ -267,8 +267,102 @@
   .v2-active #toast { display: none !important; }
 
   #v2Shell { display: none; padding: 24px 16px; }
-  .v2-active #v2Shell { display: block; }
+  .v2-active #v2Shell { display: block; padding: 0; min-height: 100vh; }
   #v2Shell button { padding: 12px 16px; }
+
+  /* BEGIN V2 APP SHELL — UXR.2b */
+  .v2-active #v2TopBar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--v2-brand-deep);
+    color: var(--v2-brand-on);
+    padding: calc(var(--safe-top) + 14px) 16px 12px;
+    border-bottom: 1px solid rgba(20, 32, 40, 0.15);
+  }
+  .v2-active .v2-topbar-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 32px;
+  }
+  .v2-active .v2-topbar-title {
+    margin: 0;
+    font-family: var(--v2-display);
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    color: var(--v2-brand-on);
+  }
+  .v2-active #v2Content {
+    padding: 16px 16px calc(var(--safe-bottom) + 96px);
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .v2-active #v2BottomNav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    display: flex;
+    background: rgba(245, 247, 248, 0.92);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1px solid rgba(31, 74, 95, 0.12);
+    padding-bottom: var(--safe-bottom);
+  }
+  .v2-active .v2-bottomnav-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 4px;
+    padding: 10px 4px 8px;
+    min-height: 56px;
+    color: var(--v2-ink-mute);
+    font-family: var(--v2-body);
+    font-size: 11px;
+    font-weight: 500;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .v2-active .v2-bottomnav-icon {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .v2-active .v2-bottomnav-label {
+    line-height: 1.1;
+  }
+  .v2-active .v2-bottomnav-tab.active {
+    color: var(--v2-brand);
+  }
+  .v2-active .v2-bottomnav-tab.active .v2-bottomnav-icon {
+    stroke-width: 2;
+  }
+  .v2-active .v2-bottomnav-tab.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 24%;
+    right: 24%;
+    height: 2px;
+    background: var(--v2-brand);
+    border-radius: 0 0 2px 2px;
+  }
+  /* END V2 APP SHELL — UXR.2b */
   /* END V2 SHELL — Slice 0 */
 
   /* BEGIN V2 PLANTS — Slice 4 */
@@ -633,36 +727,65 @@
 
 <!-- BEGIN V2 SHELL — Slice 0 -->
 <div id="v2Shell" aria-hidden="true">
-  <h1>Vocnjak V2</h1>
-  <p>Slice 0 — ljuska</p>
-  <!-- BEGIN V2 STORE — Slice 1 -->
-  <p id="v2StoreStatus"></p>
-  <!-- END V2 STORE — Slice 1 -->
-  <!-- BEGIN V2 CATALOG — Slice 2 -->
-  <p id="v2CatalogStatus"></p>
-  <!-- END V2 CATALOG — Slice 2 -->
-  <!-- BEGIN V2 BACKUP — Slice 3 -->
-  <p id="v2BackupStatus"></p>
-  <button type="button" id="v2ExportBtn">Izvezi V2 sigurnosnu kopiju</button>
-  <button type="button" id="v2ImportBtn">Uvezi V2 sigurnosnu kopiju</button>
-  <input type="file" id="v2ImportFile" accept=".json,application/json" hidden>
-  <!-- END V2 BACKUP — Slice 3 -->
-  <!-- BEGIN V2 PLANTS — Slice 4 -->
-  <section id="v2Plants" aria-live="polite">
-    <section id="v2Pregled" class="v2-seasonal-view" hidden></section>
-    <section id="v2Kalendar" class="v2-seasonal-view" hidden></section>
-    <section id="v2SeasonalAction" class="v2-seasonal-view" hidden></section>
-    <div id="v2PlantsList"></div>
-    <form id="v2PlantsAddForm" class="v2-plants-form" hidden novalidate></form>
-    <article id="v2PlantsDetail" class="v2-plants-detail" hidden></article>
-    <!-- BEGIN V2 ACTIVITIES — Slice 5 -->
-    <form id="v2ActivityCapture" class="v2-plants-form v2-activity-panel" hidden novalidate></form>
-    <section id="v2Diary" class="v2-activity-panel" hidden></section>
-    <form id="v2CorrectionForm" class="v2-plants-form v2-correction-form" hidden novalidate></form>
-    <!-- END V2 ACTIVITIES — Slice 5 -->
-  </section>
-  <!-- END V2 PLANTS — Slice 4 -->
-  <button type="button" id="v2ExitBtn">Natrag na staru aplikaciju</button>
+  <!-- BEGIN V2 APP BAR — UXR.2b -->
+  <header id="v2TopBar" class="v2-topbar" role="banner">
+    <div class="v2-topbar-row">
+      <p id="v2TopBarTitle" class="v2-topbar-title">Pregled</p>
+    </div>
+  </header>
+  <!-- END V2 APP BAR — UXR.2b -->
+  <div id="v2Content" class="v2-content">
+    <h1>Vocnjak V2</h1>
+    <p>Slice 0 — ljuska</p>
+    <!-- BEGIN V2 STORE — Slice 1 -->
+    <p id="v2StoreStatus"></p>
+    <!-- END V2 STORE — Slice 1 -->
+    <!-- BEGIN V2 CATALOG — Slice 2 -->
+    <p id="v2CatalogStatus"></p>
+    <!-- END V2 CATALOG — Slice 2 -->
+    <!-- BEGIN V2 BACKUP — Slice 3 -->
+    <p id="v2BackupStatus"></p>
+    <button type="button" id="v2ExportBtn">Izvezi V2 sigurnosnu kopiju</button>
+    <button type="button" id="v2ImportBtn">Uvezi V2 sigurnosnu kopiju</button>
+    <input type="file" id="v2ImportFile" accept=".json,application/json" hidden>
+    <!-- END V2 BACKUP — Slice 3 -->
+    <!-- BEGIN V2 PLANTS — Slice 4 -->
+    <section id="v2Plants" aria-live="polite">
+      <section id="v2Pregled" class="v2-seasonal-view" hidden></section>
+      <section id="v2Kalendar" class="v2-seasonal-view" hidden></section>
+      <section id="v2SeasonalAction" class="v2-seasonal-view" hidden></section>
+      <div id="v2PlantsList"></div>
+      <form id="v2PlantsAddForm" class="v2-plants-form" hidden novalidate></form>
+      <article id="v2PlantsDetail" class="v2-plants-detail" hidden></article>
+      <!-- BEGIN V2 ACTIVITIES — Slice 5 -->
+      <form id="v2ActivityCapture" class="v2-plants-form v2-activity-panel" hidden novalidate></form>
+      <section id="v2Diary" class="v2-activity-panel" hidden></section>
+      <form id="v2CorrectionForm" class="v2-plants-form v2-correction-form" hidden novalidate></form>
+      <!-- END V2 ACTIVITIES — Slice 5 -->
+    </section>
+    <!-- END V2 PLANTS — Slice 4 -->
+    <button type="button" id="v2ExitBtn">Natrag na staru aplikaciju</button>
+  </div>
+  <!-- BEGIN V2 BOTTOM NAV — UXR.2b -->
+  <nav id="v2BottomNav" class="v2-bottomnav" role="navigation" aria-label="Glavna navigacija">
+    <a class="v2-bottomnav-tab" data-tab="pregled" href="#pregled">
+      <svg class="v2-bottomnav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="3"/><path d="M12 4v3M5 7.5l2 2M19 7.5l-2 2M3 13h2M19 13h2"/></svg>
+      <span class="v2-bottomnav-label">Pregled</span>
+    </a>
+    <a class="v2-bottomnav-tab" data-tab="kalendar" href="#kalendar">
+      <svg class="v2-bottomnav-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg>
+      <span class="v2-bottomnav-label">Kalendar</span>
+    </a>
+    <a class="v2-bottomnav-tab" data-tab="biljke" href="#biljke">
+      <svg class="v2-bottomnav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V12M12 12c0-3 -2 -5 -4 -5c-1 0 -2.5 0.5 -3 2M12 12c0-3 2 -5 4 -5c1 0 2.5 0.5 3 2M9 17c-1.5 0 -2.5 -1 -3 -2.5M15 17c1.5 0 2.5 -1 3 -2.5"/></svg>
+      <span class="v2-bottomnav-label">Biljke</span>
+    </a>
+    <a class="v2-bottomnav-tab" data-tab="dnevnik" href="#dnevnik">
+      <svg class="v2-bottomnav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="13" height="17" rx="1.5"/><line x1="9" y1="9" x2="14" y2="9"/><line x1="9" y1="13" x2="14" y2="13"/></svg>
+      <span class="v2-bottomnav-label">Dnevnik</span>
+    </a>
+  </nav>
+  <!-- END V2 BOTTOM NAV — UXR.2b -->
 </div>
 <!-- END V2 SHELL — Slice 0 -->
 
@@ -8209,6 +8332,9 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   var correctionForm = document.getElementById('v2CorrectionForm');
   if (!plantsRoot || !pregledView || !calendarView || !seasonalActionView || !listView || !addForm || !detailView || !activityForm || !diaryView || !correctionForm) return;
 
+  var topBarTitle = document.getElementById('v2TopBarTitle');
+  var bottomNavTabs = document.querySelectorAll('#v2BottomNav .v2-bottomnav-tab');
+
   var UNKNOWN_SELECT_VALUE = '__unknown__';
   var PLANT_ID_RE = /^plant_\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z_[0-9a-f]{5}$/;
   var ESTIMATED_MID_FALLBACK_TEXT = 'Procjena: koristi se srednje dozrijevanje jer sorta i vrijeme dozrijevanja nisu poznati.';
@@ -13210,8 +13336,49 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     saveCurrentCorrection();
   });
 
+  var TOP_BAR_TITLES = {
+    pregled: 'Pregled',
+    kalendar: 'Kalendar',
+    seasonal_action: 'Kalendar',
+    list: 'Biljke',
+    add: 'Biljke',
+    detail: 'Biljke',
+    activity_add: 'Biljke',
+    diary: 'Dnevnik',
+    plant_diary: 'Dnevnik',
+    correction: 'Dnevnik'
+  };
+  var ACTIVE_TAB_BY_ROUTE = {
+    pregled: 'pregled',
+    kalendar: 'kalendar',
+    seasonal_action: 'kalendar',
+    list: 'biljke',
+    add: 'biljke',
+    detail: 'biljke',
+    activity_add: 'biljke',
+    diary: 'dnevnik',
+    plant_diary: 'dnevnik',
+    correction: 'dnevnik'
+  };
+
+  function updateShellChrome(route) {
+    if (topBarTitle) {
+      var title = TOP_BAR_TITLES[route.name];
+      topBarTitle.textContent = typeof title === 'string' ? title : '';
+    }
+    if (bottomNavTabs && bottomNavTabs.length) {
+      var activeTab = ACTIVE_TAB_BY_ROUTE[route.name] || null;
+      for (var i = 0; i < bottomNavTabs.length; i++) {
+        var tab = bottomNavTabs[i];
+        if (activeTab && tab.dataset.tab === activeTab) tab.classList.add('active');
+        else tab.classList.remove('active');
+      }
+    }
+  }
+
   function render() {
     var route = getRoute();
+    updateShellChrome(route);
     if (route.name === 'pregled') renderPregled();
     else if (route.name === 'kalendar') renderKalendar();
     else if (route.name === 'seasonal_action') renderSeasonalActionDetail(route);
