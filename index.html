@@ -8866,8 +8866,16 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     });
   }
 
+  function normalizeRouteHash(hash) {
+    if (hash === '#pregled') return '#v2/pregled';
+    if (hash === '#kalendar') return '#v2/kalendar';
+    if (hash === '#biljke') return '#v2';
+    if (hash === '#dnevnik') return '#v2/diary';
+    return hash;
+  }
+
   function getRoute() {
-    var h = location.hash;
+    var h = normalizeRouteHash(location.hash);
     if (h === '#v2' || h === '') return { name: 'list' };
     if (h === '#v2/pregled') return { name: 'pregled' };
     if (h === '#v2/kalendar') return { name: 'kalendar' };
