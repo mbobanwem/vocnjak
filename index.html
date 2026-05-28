@@ -980,6 +980,140 @@
   }
   /* END UXR.3a — Pregled hero */
 
+  /* BEGIN UXR.3b — Pregled cards / chips / Praćenje / list */
+  .v2-active #v2Pregled .v2-seasonal-section {
+    border-top: 0;
+    padding-top: 0;
+  }
+  .v2-active #v2Pregled .v2-seasonal-list {
+    gap: 12px;
+  }
+  .v2-active #v2Pregled .v2-seasonal-card,
+  .v2-active #v2Pregled .v2-seasonal-card-button {
+    border: 1px solid var(--v2-line, #d6dee2);
+    border-radius: 18px;
+    background: var(--v2-surface, #ffffff);
+    padding: 16px 18px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 4px 14px rgba(31, 74, 95, 0.08);
+  }
+  .v2-active #v2Pregled .v2-seasonal-card-button {
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    color: var(--v2-ink, #142028);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .v2-active #v2Pregled .v2-seasonal-card-button:active {
+    transform: translateY(1px);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.6) inset,
+      0 2px 8px rgba(31, 74, 95, 0.08);
+  }
+  .v2-active #v2Pregled .v2-seasonal-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .v2-active #v2Pregled .v2-seasonal-card-top .v2-seasonal-card-title {
+    flex: 1;
+    margin: 0;
+  }
+  .v2-active #v2Pregled .v2-seasonal-card-title {
+    margin: 0 0 6px;
+    font-family: var(--v2-body, 'DM Sans', -apple-system, sans-serif);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.32;
+    letter-spacing: -0.005em;
+    color: var(--v2-ink, #142028);
+  }
+  .v2-active #v2Pregled .v2-seasonal-meta {
+    color: var(--v2-ink-mid, #3d4d56);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .v2-active #v2Pregled .v2-seasonal-card .v2-seasonal-meta + .v2-seasonal-meta,
+  .v2-active #v2Pregled .v2-seasonal-card-button .v2-seasonal-meta + .v2-seasonal-meta {
+    margin-top: 2px;
+  }
+  .v2-active #v2Pregled .v2-seasonal-note {
+    color: var(--v2-ink-mute, #7a8a92);
+    font-size: 13px;
+    line-height: 1.5;
+    margin-top: 4px;
+  }
+  .v2-active #v2Pregled .v2-seasonal-status {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: var(--v2-chip-current-bg);
+    color: var(--v2-chip-current-fg);
+    font-family: var(--v2-body, 'DM Sans', -apple-system, sans-serif);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    line-height: 1;
+    white-space: nowrap;
+    text-transform: none;
+  }
+  .v2-active #v2Pregled .v2-seasonal-status--aktualno {
+    background: var(--v2-chip-current-bg);
+    color: var(--v2-chip-current-fg);
+  }
+  .v2-active #v2Pregled .v2-seasonal-status--pri-kraju {
+    background: var(--v2-chip-ending-bg);
+    color: var(--v2-chip-ending-fg);
+  }
+  .v2-active #v2Pregled .v2-seasonal-status--uskoro {
+    background: var(--v2-chip-upcoming-bg);
+    color: var(--v2-chip-upcoming-fg);
+  }
+  .v2-active #v2Pregled .v2-pregled-monitoring-card {
+    background: var(--v2-pale, #d6e6ec);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 0;
+  }
+  .v2-active #v2Pregled .v2-pregled-monitoring-card > .v2-seasonal-meta {
+    margin: 0 0 4px;
+    color: var(--v2-ink-mid, #3d4d56);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .v2-active #v2Pregled .v2-pregled-monitoring-card > .v2-seasonal-note {
+    margin: 0;
+    color: var(--v2-ink-mute, #7a8a92);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .v2-active #v2Pregled .v2-seasonal-section > .v2-seasonal-meta {
+    margin: 0 0 6px;
+    color: var(--v2-ink-mid, #3d4d56);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .v2-active #v2Pregled .v2-seasonal-section > .v2-seasonal-note {
+    margin: 0;
+    color: var(--v2-ink-mute, #7a8a92);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .v2-active #v2Pregled .v2-plants-empty {
+    margin: 0;
+    color: var(--v2-ink-mute, #7a8a92);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  /* END UXR.3b */
+
   /* BEGIN V2 ACTIVITIES — Slice 5 */
   .v2-activity-panel,
   .v2-correction-form {
@@ -12031,6 +12165,13 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return '';
   }
 
+  function pregledStatusChipVariant(label) {
+    if (label === 'Aktualno') return 'aktualno';
+    if (label === 'Pri kraju') return 'pri-kraju';
+    if (label === 'Uskoro') return 'uskoro';
+    return 'neutral';
+  }
+
   function plantOccurrenceIsCurrent(snapshot, occurrence) {
     return occurrence.effective_open <= snapshot.today && occurrence.effective_close >= snapshot.today;
   }
@@ -12142,9 +12283,16 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       node.type = 'button';
       node.addEventListener('click', function () { location.hash = seasonalActionRoute(group); });
     }
-    node.appendChild(makeEl('p', 'v2-seasonal-card-title', actionWindowLabel(group.def, group.catalog)));
     var status = groupStatusLabel(group, context);
-    if (status) node.appendChild(makeEl('span', 'v2-seasonal-status', status));
+    if (context === 'current' || context === 'upcoming' || context === 'missed') {
+      var top = makeEl('div', 'v2-seasonal-card-top');
+      top.appendChild(makeEl('p', 'v2-seasonal-card-title', actionWindowLabel(group.def, group.catalog)));
+      if (status) top.appendChild(makeEl('span', 'v2-seasonal-status v2-seasonal-status--' + pregledStatusChipVariant(status), status));
+      node.appendChild(top);
+    } else {
+      node.appendChild(makeEl('p', 'v2-seasonal-card-title', actionWindowLabel(group.def, group.catalog)));
+      if (status) node.appendChild(makeEl('span', 'v2-seasonal-status', status));
+    }
     node.appendChild(makeEl('span', 'v2-seasonal-meta', groupDateLine(group, context)));
     node.appendChild(makeEl('span', 'v2-seasonal-meta', 'Primjenjuje se na ' + plantCountText(group.occurrences.length) + '.'));
     var cue = purposeCue(group.def);
@@ -12192,11 +12340,13 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     if (plantCount === 0) return;
     var section = makeEl('section', 'v2-seasonal-section');
     section.appendChild(makeEl('h3', '', 'Praćenje'));
+    var card = makeEl('div', 'v2-pregled-monitoring-card');
     var sentence = plantCount === 1
       ? 'Trenutno postoji sezonska napomena za ' + plantCountText(plantCount) + '.'
       : 'Trenutno postoje sezonske napomene za ' + plantCountText(plantCount) + '.';
-    section.appendChild(makeEl('p', 'v2-seasonal-meta', sentence));
-    section.appendChild(makeEl('p', 'v2-seasonal-note', 'Detalji su na kartonu voćke.'));
+    card.appendChild(makeEl('p', 'v2-seasonal-meta', sentence));
+    card.appendChild(makeEl('p', 'v2-seasonal-note', 'Detalji su na kartonu voćke.'));
+    section.appendChild(card);
     parent.appendChild(section);
   }
 
