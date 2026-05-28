@@ -289,12 +289,21 @@
   }
   .v2-active .v2-topbar-title {
     margin: 0;
+    flex: 1;
+    min-width: 0;
+    text-align: left;
     font-family: var(--v2-display);
     font-weight: 500;
     font-size: 20px;
     letter-spacing: -0.01em;
     line-height: 1.1;
     color: var(--v2-brand-on);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .v2-active .v2-topbar-title:empty {
+    display: none;
   }
   .v2-active #v2Content {
     padding: 16px 16px calc(var(--safe-bottom) + 96px);
@@ -570,6 +579,52 @@
     }
   }
   /* END V2 POSTAVKE — UXR.2c */
+
+  /* BEGIN V2 ROUTE SHELL — UXR.2d */
+  .v2-active .v2-topbar-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 40px;
+    padding: 4px 8px 4px 0;
+    background: transparent;
+    border: none;
+    color: var(--v2-brand-on);
+    font-family: var(--v2-body);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .v2-active .v2-topbar-back-icon {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+  .v2-active .v2-topbar-back-label {
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .v2-active .v2-topbar-back[hidden] {
+    display: none;
+  }
+  html.v2-active.v2-route-form #v2BottomNav {
+    display: none;
+  }
+  html.v2-active.v2-route-form #v2TopBarPostavkeBtn {
+    display: none;
+  }
+  html.v2-active.v2-route-form #v2Content {
+    padding-bottom: calc(var(--safe-bottom) + 24px);
+  }
+  /* END V2 ROUTE SHELL — UXR.2d */
   /* END V2 SHELL — Slice 0 */
 
   /* BEGIN V2 PLANTS — Slice 4 */
@@ -934,9 +989,16 @@
 
 <!-- BEGIN V2 SHELL — Slice 0 -->
 <div id="v2Shell" aria-hidden="true">
-  <!-- BEGIN V2 APP BAR — UXR.2b, extended in UXR.2c -->
+  <!-- BEGIN V2 APP BAR — UXR.2b, extended in UXR.2c and UXR.2d -->
   <header id="v2TopBar" class="v2-topbar" role="banner">
     <div class="v2-topbar-row">
+      <button type="button" id="v2TopBarBackBtn" class="v2-topbar-back" hidden
+              aria-label="Natrag">
+        <svg class="v2-topbar-back-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        <span id="v2TopBarBackLabel" class="v2-topbar-back-label">Natrag</span>
+      </button>
       <p id="v2TopBarTitle" class="v2-topbar-title">Pregled</p>
       <button type="button" id="v2TopBarPostavkeBtn" class="v2-topbar-btn"
               aria-label="Postavke" aria-haspopup="dialog" aria-controls="v2Postavke"
@@ -949,7 +1011,7 @@
       </button>
     </div>
   </header>
-  <!-- END V2 APP BAR — UXR.2b, extended in UXR.2c -->
+  <!-- END V2 APP BAR — UXR.2b, extended in UXR.2c and UXR.2d -->
   <div id="v2Content" class="v2-content">
     <!-- BEGIN V2 PLANTS — Slice 4 -->
     <section id="v2Plants" aria-live="polite">
@@ -8642,6 +8704,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   if (!plantsRoot || !pregledView || !calendarView || !seasonalActionView || !listView || !addForm || !detailView || !activityForm || !diaryView || !correctionForm) return;
 
   var topBarTitle = document.getElementById('v2TopBarTitle');
+  var topBarBackBtn = document.getElementById('v2TopBarBackBtn');
+  var topBarBackLabel = document.getElementById('v2TopBarBackLabel');
   var bottomNavTabs = document.querySelectorAll('#v2BottomNav .v2-bottomnav-tab');
 
   var UNKNOWN_SELECT_VALUE = '__unknown__';
@@ -13645,17 +13709,22 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     saveCurrentCorrection();
   });
 
+  // UXR.2d: route-name-only classification + per-class top-bar chrome.
+  // Primary routes show title + Postavke. Detail routes show text-back + (no center title) + Postavke.
+  // Form routes show text-back + form title (no Postavke). Bottom nav hidden on form routes only.
   var TOP_BAR_TITLES = {
     pregled: 'Pregled',
     kalendar: 'Kalendar',
-    seasonal_action: 'Kalendar',
     list: 'Biljke',
-    add: 'Biljke',
-    detail: 'Biljke',
-    activity_add: 'Biljke',
     diary: 'Dnevnik',
-    plant_diary: 'Dnevnik',
-    correction: 'Dnevnik'
+    // detail routes intentionally render no center title — back-text-label carries the parent context
+    seasonal_action: '',
+    detail: '',
+    plant_diary: '',
+    // form routes use the existing in-app action heading
+    add: 'Dodaj voćku',
+    activity_add: 'Dodaj evidenciju',
+    correction: 'Korekcija'
   };
   var ACTIVE_TAB_BY_ROUTE = {
     pregled: 'pregled',
@@ -13669,6 +13738,53 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     plant_diary: 'dnevnik',
     correction: 'dnevnik'
   };
+  var ROUTE_CLASS = {
+    pregled: 'primary',
+    kalendar: 'primary',
+    list: 'primary',
+    diary: 'primary',
+    seasonal_action: 'detail',
+    detail: 'detail',
+    plant_diary: 'detail',
+    add: 'form',
+    activity_add: 'form',
+    correction: 'form'
+  };
+  var BACK_LABEL_BY_ROUTE = {
+    detail: 'Biljke',
+    seasonal_action: 'Kalendar',
+    plant_diary: 'Biljke',
+    add: 'Biljke',
+    activity_add: 'Biljke',
+    correction: 'Dnevnik'
+  };
+
+  function backTargetForRoute(route) {
+    switch (route.name) {
+      case 'seasonal_action':
+        return '#v2/kalendar';
+      case 'correction':
+        return '#v2/diary';
+      case 'plant_diary':
+        if (route.plant_id && PLANT_ID_RE.test(route.plant_id)) {
+          return plantDetailRoute(route.plant_id);
+        }
+        return '#v2';
+      case 'detail':
+      case 'add':
+      case 'activity_add':
+        return '#v2';
+      default:
+        return null;
+    }
+  }
+
+  function backLabelForRoute(route) {
+    if (route.name === 'plant_diary' && route.plant_id && PLANT_ID_RE.test(route.plant_id)) {
+      return 'Voćka';
+    }
+    return BACK_LABEL_BY_ROUTE[route.name] || 'Natrag';
+  }
 
   function updateShellChrome(route) {
     if (topBarTitle) {
@@ -13683,6 +13799,35 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
         else tab.classList.remove('active');
       }
     }
+    var cls = ROUTE_CLASS[route.name] || 'primary';
+    if (topBarBackBtn) {
+      if (cls === 'detail' || cls === 'form') {
+        var target = backTargetForRoute(route);
+        if (target) {
+          topBarBackBtn.hidden = false;
+          topBarBackBtn.dataset.backTarget = target;
+          if (topBarBackLabel) topBarBackLabel.textContent = backLabelForRoute(route);
+        } else {
+          topBarBackBtn.hidden = true;
+          delete topBarBackBtn.dataset.backTarget;
+        }
+      } else {
+        topBarBackBtn.hidden = true;
+        delete topBarBackBtn.dataset.backTarget;
+      }
+    }
+    var root = document.documentElement;
+    if (cls === 'form') root.classList.add('v2-route-form');
+    else root.classList.remove('v2-route-form');
+    if (cls === 'detail' || cls === 'form') root.classList.add('v2-route-back');
+    else root.classList.remove('v2-route-back');
+  }
+
+  if (topBarBackBtn) {
+    topBarBackBtn.addEventListener('click', function () {
+      var target = topBarBackBtn.dataset.backTarget;
+      if (target) location.hash = target;
+    });
   }
 
   function render() {
