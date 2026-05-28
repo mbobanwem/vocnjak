@@ -363,6 +363,213 @@
     border-radius: 0 0 2px 2px;
   }
   /* END V2 APP SHELL — UXR.2b */
+
+  /* BEGIN V2 POSTAVKE — UXR.2c */
+  .v2-active .v2-topbar-btn {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: var(--v2-brand-on);
+    cursor: pointer;
+    border-radius: 50%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .v2-active .v2-topbar-icon {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+  html.v2-active.v2-postavke-locked,
+  html.v2-active.v2-postavke-locked body {
+    overflow: hidden;
+  }
+  .v2-active #v2Postavke {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .v2-active .v2-postavke-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 32, 40, 0.45);
+    opacity: 0;
+    transition: opacity 200ms ease;
+    cursor: pointer;
+  }
+  .v2-active #v2Postavke.open .v2-postavke-backdrop {
+    opacity: 1;
+  }
+  .v2-active .v2-postavke-sheet {
+    position: relative;
+    z-index: 1;
+    background: var(--v2-cream);
+    color: var(--v2-ink);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    max-height: 88vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    padding-bottom: calc(var(--safe-bottom) + 16px);
+    box-shadow: 0 -8px 32px rgba(20, 32, 40, 0.18);
+  }
+  .v2-active #v2Postavke.open .v2-postavke-sheet {
+    transform: translateY(0);
+  }
+  .v2-active .v2-postavke-header {
+    position: sticky;
+    top: 0;
+    background: var(--v2-cream);
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--v2-line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    z-index: 1;
+  }
+  .v2-active .v2-postavke-title {
+    margin: 0;
+    font-family: var(--v2-display);
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    color: var(--v2-ink);
+  }
+  .v2-active .v2-postavke-done {
+    background: transparent;
+    border: none;
+    color: var(--v2-brand-deep);
+    font-family: var(--v2-body);
+    font-size: 16px;
+    font-weight: 500;
+    padding: 4px 8px;
+    min-height: 36px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .v2-active .v2-postavke-body {
+    padding: 8px 20px 24px;
+  }
+  .v2-active .v2-postavke-section {
+    margin-top: 24px;
+  }
+  .v2-active .v2-postavke-section:first-child {
+    margin-top: 8px;
+  }
+  .v2-active .v2-postavke-section + .v2-postavke-section {
+    margin-top: 28px;
+  }
+  .v2-active .v2-postavke-section-title {
+    margin: 0 0 10px;
+    font-family: var(--v2-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--v2-ink-mute);
+  }
+  .v2-active .v2-postavke-action {
+    display: block;
+    width: 100%;
+    margin: 0 0 8px;
+    padding: 14px 16px;
+    min-height: 48px;
+    background: var(--v2-surface);
+    border: 1px solid var(--v2-line);
+    border-radius: 12px;
+    color: var(--v2-ink);
+    font-family: var(--v2-body);
+    font-size: 15px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .v2-active .v2-postavke-action:last-child {
+    margin-bottom: 0;
+  }
+  .v2-active .v2-postavke-action-primary {
+    background: var(--v2-brand-deep);
+    border-color: var(--v2-brand-deep);
+    color: var(--v2-brand-on);
+  }
+  .v2-active .v2-postavke-confirm {
+    background: var(--v2-cream-2);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin: 0 0 8px;
+  }
+  .v2-active .v2-postavke-confirm-text {
+    margin: 0 0 10px;
+    font-family: var(--v2-body);
+    font-size: 14px;
+    color: var(--v2-ink-mid);
+  }
+  .v2-active .v2-postavke-confirm-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .v2-active .v2-postavke-confirm-actions .v2-postavke-action {
+    flex: 1;
+    margin: 0;
+    text-align: center;
+  }
+  .v2-active .v2-postavke-status {
+    margin: 8px 0 0;
+    font-family: var(--v2-body);
+    font-size: 13px;
+    color: var(--v2-ink-mute);
+    white-space: pre-wrap;
+  }
+  .v2-active .v2-postavke-status:empty {
+    display: none;
+  }
+  .v2-active .v2-postavke-version {
+    margin: 0 0 4px;
+    font-family: var(--v2-body);
+    font-size: 14px;
+    color: var(--v2-ink-mid);
+  }
+  .v2-active .v2-postavke-diagnostics {
+    margin-top: 12px;
+  }
+  .v2-active .v2-postavke-diagnostics > summary {
+    padding: 8px 0;
+    font-family: var(--v2-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--v2-ink-mid);
+    cursor: pointer;
+  }
+  .v2-active .v2-postavke-diagnostics-h1 {
+    margin: 8px 0 2px;
+    font-family: var(--v2-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--v2-ink-mute);
+  }
+  .v2-active .v2-postavke-diagnostics-note {
+    margin: 0;
+    font-family: var(--v2-body);
+    font-size: 13px;
+    color: var(--v2-ink-mute);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .v2-active .v2-postavke-backdrop,
+    .v2-active .v2-postavke-sheet {
+      transition: none;
+    }
+  }
+  /* END V2 POSTAVKE — UXR.2c */
   /* END V2 SHELL — Slice 0 */
 
   /* BEGIN V2 PLANTS — Slice 4 */
@@ -727,28 +934,23 @@
 
 <!-- BEGIN V2 SHELL — Slice 0 -->
 <div id="v2Shell" aria-hidden="true">
-  <!-- BEGIN V2 APP BAR — UXR.2b -->
+  <!-- BEGIN V2 APP BAR — UXR.2b, extended in UXR.2c -->
   <header id="v2TopBar" class="v2-topbar" role="banner">
     <div class="v2-topbar-row">
       <p id="v2TopBarTitle" class="v2-topbar-title">Pregled</p>
+      <button type="button" id="v2TopBarPostavkeBtn" class="v2-topbar-btn"
+              aria-label="Postavke" aria-haspopup="dialog" aria-controls="v2Postavke"
+              aria-expanded="false">
+        <svg class="v2-topbar-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="5" cy="12" r="1.6"/>
+          <circle cx="12" cy="12" r="1.6"/>
+          <circle cx="19" cy="12" r="1.6"/>
+        </svg>
+      </button>
     </div>
   </header>
-  <!-- END V2 APP BAR — UXR.2b -->
+  <!-- END V2 APP BAR — UXR.2b, extended in UXR.2c -->
   <div id="v2Content" class="v2-content">
-    <h1>Vocnjak V2</h1>
-    <p>Slice 0 — ljuska</p>
-    <!-- BEGIN V2 STORE — Slice 1 -->
-    <p id="v2StoreStatus"></p>
-    <!-- END V2 STORE — Slice 1 -->
-    <!-- BEGIN V2 CATALOG — Slice 2 -->
-    <p id="v2CatalogStatus"></p>
-    <!-- END V2 CATALOG — Slice 2 -->
-    <!-- BEGIN V2 BACKUP — Slice 3 -->
-    <p id="v2BackupStatus"></p>
-    <button type="button" id="v2ExportBtn">Izvezi V2 sigurnosnu kopiju</button>
-    <button type="button" id="v2ImportBtn">Uvezi V2 sigurnosnu kopiju</button>
-    <input type="file" id="v2ImportFile" accept=".json,application/json" hidden>
-    <!-- END V2 BACKUP — Slice 3 -->
     <!-- BEGIN V2 PLANTS — Slice 4 -->
     <section id="v2Plants" aria-live="polite">
       <section id="v2Pregled" class="v2-seasonal-view" hidden></section>
@@ -764,7 +966,6 @@
       <!-- END V2 ACTIVITIES — Slice 5 -->
     </section>
     <!-- END V2 PLANTS — Slice 4 -->
-    <button type="button" id="v2ExitBtn">Natrag na staru aplikaciju</button>
   </div>
   <!-- BEGIN V2 BOTTOM NAV — UXR.2b -->
   <nav id="v2BottomNav" class="v2-bottomnav" role="navigation" aria-label="Glavna navigacija">
@@ -786,6 +987,62 @@
     </a>
   </nav>
   <!-- END V2 BOTTOM NAV — UXR.2b -->
+  <!-- BEGIN V2 POSTAVKE — UXR.2c -->
+  <aside id="v2Postavke" class="v2-postavke" hidden aria-hidden="true"
+         role="dialog" aria-modal="true" aria-labelledby="v2PostavkeTitle">
+    <div class="v2-postavke-backdrop" data-postavke-close aria-hidden="true"></div>
+    <div class="v2-postavke-sheet" role="document">
+      <header class="v2-postavke-header">
+        <h2 id="v2PostavkeTitle" class="v2-postavke-title">Postavke</h2>
+        <button type="button" id="v2PostavkeDoneBtn" class="v2-postavke-done"
+                data-postavke-close>Gotovo</button>
+      </header>
+      <div class="v2-postavke-body">
+
+        <!-- BEGIN V2 BACKUP — Slice 3, relocated in UXR.2c -->
+        <section class="v2-postavke-section">
+          <h3 class="v2-postavke-section-title">Podaci i sigurnost</h3>
+          <button type="button" id="v2ExportBtn" class="v2-postavke-action">Izvezi sigurnosnu kopiju</button>
+          <button type="button" id="v2ImportBtn" class="v2-postavke-action">Uvezi sigurnosnu kopiju</button>
+          <input type="file" id="v2ImportFile" accept=".json,application/json" hidden>
+          <div id="v2ImportConfirm" class="v2-postavke-confirm" hidden role="group"
+               aria-label="Potvrda uvoza">
+            <p class="v2-postavke-confirm-text">Cijela V2 pohrana bit će zamijenjena.</p>
+            <div class="v2-postavke-confirm-actions">
+              <button type="button" id="v2ImportConfirmYes"
+                      class="v2-postavke-action v2-postavke-action-primary">Da, uvezi</button>
+              <button type="button" id="v2ImportConfirmCancel"
+                      class="v2-postavke-action">Odustani</button>
+            </div>
+          </div>
+          <p id="v2BackupStatus" class="v2-postavke-status" aria-live="polite"></p>
+        </section>
+        <!-- END V2 BACKUP — Slice 3, relocated in UXR.2c -->
+
+        <section class="v2-postavke-section">
+          <h3 class="v2-postavke-section-title">O aplikaciji</h3>
+          <p class="v2-postavke-version">Vocnjak V2 · Phase B</p>
+          <details class="v2-postavke-diagnostics">
+            <summary>Dijagnostika</summary>
+            <h1 class="v2-postavke-diagnostics-h1">Vocnjak V2</h1>
+            <p class="v2-postavke-diagnostics-note">Slice 0 — ljuska</p>
+            <!-- BEGIN V2 STORE — Slice 1, relocated in UXR.2c -->
+            <p id="v2StoreStatus" class="v2-postavke-status"></p>
+            <!-- END V2 STORE — Slice 1, relocated in UXR.2c -->
+            <!-- BEGIN V2 CATALOG — Slice 2, relocated in UXR.2c -->
+            <p id="v2CatalogStatus" class="v2-postavke-status"></p>
+            <!-- END V2 CATALOG — Slice 2, relocated in UXR.2c -->
+          </details>
+        </section>
+
+        <section class="v2-postavke-section">
+          <h3 class="v2-postavke-section-title">Napredno</h3>
+          <button type="button" id="v2ExitBtn" class="v2-postavke-action">Otvori staru verziju</button>
+        </section>
+      </div>
+    </div>
+  </aside>
+  <!-- END V2 POSTAVKE — UXR.2c -->
 </div>
 <!-- END V2 SHELL — Slice 0 -->
 
@@ -8250,18 +8507,43 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     }
   }
 
+  // UXR.2c: pending validated import payload, held in memory only between validation success
+  // and explicit user confirmation in the Postavke sheet. Never written to localStorage before
+  // the user taps "Da, uvezi".
+  var pendingImportPayload = null;
+
+  function clearImportConfirm() {
+    pendingImportPayload = null;
+    var panel = document.getElementById('v2ImportConfirm');
+    if (panel) panel.hidden = true;
+    var input = document.getElementById('v2ImportFile');
+    if (input) input.value = '';
+  }
+
+  function discardPendingImport() {
+    if (pendingImportPayload !== null) {
+      setStatus('Slice 3 — uvoz prekinut.');
+    }
+    clearImportConfirm();
+  }
+
   function handleImportFile(file) {
+    // a fresh file pick always supersedes any stale pending payload
+    if (pendingImportPayload !== null) pendingImportPayload = null;
     if (!file) {
       setStatus('Slice 3 — datoteka nije odabrana.');
+      clearImportConfirm();
       return;
     }
     if (file.size > MAX_FILE_SIZE) {
       setStatus('Slice 3 — datoteka prevelika (max 1 MB).');
+      clearImportConfirm();
       return;
     }
     var reader = new FileReader();
     reader.onerror = function () {
       setStatus('Slice 3 — greška pri čitanju datoteke.');
+      clearImportConfirm();
     };
     reader.onload = function () {
       var parsed;
@@ -8270,6 +8552,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       } catch (e) {
         setStatus('Slice 3 — neispravan JSON.');
         console.error('vocnjak: V2 import parse failed:', e && e.message ? e.message : e);
+        clearImportConfirm();
         return;
       }
       var normalizedForImport = normalizeStoreCatalogForCurrentCanonical(parsed);
@@ -8278,21 +8561,14 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       if (errors.length > 0) {
         setStatus('Slice 3 — uvoz nije prošao validaciju: ' + errors[0] + '.');
         console.error('vocnjak: V2 import validation failed:', errors);
+        clearImportConfirm();
         return;
       }
-      var ok = window.confirm('Cijela V2 pohrana bit će zamijenjena. Uvoz ne spaja s postojećim podacima i ne popravlja datoteku. Nastaviti?');
-      if (!ok) {
-        setStatus('Slice 3 — uvoz prekinut.');
-        return;
-      }
-      try {
-        localStorage.setItem('vocnjak_v2', JSON.stringify(parsed));
-        setStatus('Slice 3 — uvoz uspješan. Osvježi stranicu da bi promjene bile vidljive.');
-        console.log('vocnjak: V2 import succeeded; reload to re-run boot validation');
-      } catch (e) {
-        setStatus('Slice 3 — uvoz nije moguće zapisati. Vrati se i pokušaj ponovno.');
-        console.error('vocnjak: V2 import setItem failed:', e && e.message ? e.message : e);
-      }
+      // validation passed — hold the parsed payload in memory and ask the user to confirm
+      pendingImportPayload = parsed;
+      var panel = document.getElementById('v2ImportConfirm');
+      if (panel) panel.hidden = false;
+      setStatus('Slice 3 — datoteka spremna. Potvrdite zamjenu V2 pohrane.');
     };
     reader.readAsText(file);
   }
@@ -8310,7 +8586,40 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       var files = event.target.files;
       var file = files && files.length > 0 ? files[0] : null;
       handleImportFile(file);
-      event.target.value = '';
+      // input.value is reset by clearImportConfirm in every terminal path within handleImportFile.
+      // On the success-pending path, the value is retained so the same file can be re-confirmed
+      // without re-picking; clearImportConfirm runs when the user confirms, cancels, or closes
+      // Postavke.
+    });
+  }
+
+  var confirmYes = document.getElementById('v2ImportConfirmYes');
+  if (confirmYes) confirmYes.addEventListener('click', function () {
+    if (pendingImportPayload === null) return;
+    var payload = pendingImportPayload;
+    try {
+      localStorage.setItem('vocnjak_v2', JSON.stringify(payload));
+      setStatus('Slice 3 — uvoz uspješan. Osvježi stranicu da bi promjene bile vidljive.');
+      console.log('vocnjak: V2 import succeeded; reload to re-run boot validation');
+    } catch (e) {
+      setStatus('Slice 3 — uvoz nije moguće zapisati. Vrati se i pokušaj ponovno.');
+      console.error('vocnjak: V2 import setItem failed:', e && e.message ? e.message : e);
+    }
+    clearImportConfirm();
+  });
+
+  var confirmCancel = document.getElementById('v2ImportConfirmCancel');
+  if (confirmCancel) confirmCancel.addEventListener('click', function () {
+    setStatus('Slice 3 — uvoz prekinut.');
+    clearImportConfirm();
+  });
+
+  // Bridge to the Postavke sheet: when the sheet closes, discard any pending import payload.
+  // This is a narrow, scoped DOM-event handshake — no global state, no shared namespace.
+  var postavkeSheet = document.getElementById('v2Postavke');
+  if (postavkeSheet) {
+    postavkeSheet.addEventListener('v2-postavke-close', function () {
+      discardPendingImport();
     });
   }
 })();
@@ -13394,6 +13703,92 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   render();
 })();
 // END V2 PLANTS — Slice 4
+
+// BEGIN V2 POSTAVKE — UXR.2c
+(function () {
+  if (!document.documentElement.classList.contains('v2-active')) return;
+  var sheet = document.getElementById('v2Postavke');
+  var openBtn = document.getElementById('v2TopBarPostavkeBtn');
+  var doneBtn = document.getElementById('v2PostavkeDoneBtn');
+  if (!sheet || !openBtn) return;
+
+  var reducedMotion = false;
+  try {
+    reducedMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  } catch (e) {}
+
+  var lastFocus = null;
+  var hideTimer = null;
+
+  function clearHideTimer() {
+    if (hideTimer !== null) {
+      clearTimeout(hideTimer);
+      hideTimer = null;
+    }
+  }
+  function isOpen() {
+    return !sheet.hidden && sheet.classList.contains('open');
+  }
+  function dispatchCloseEvent() {
+    try {
+      sheet.dispatchEvent(new CustomEvent('v2-postavke-close', { bubbles: false }));
+    } catch (e) {
+      // CustomEvent is supported in all V2 target browsers; ignore for very old engines
+    }
+  }
+  function actuallyHide() {
+    sheet.hidden = true;
+    hideTimer = null;
+  }
+  function openSheet() {
+    if (isOpen()) return;
+    clearHideTimer();
+    lastFocus = (document.activeElement && document.activeElement !== document.body) ? document.activeElement : openBtn;
+    sheet.hidden = false;
+    // force reflow so the CSS transition actually runs
+    void sheet.offsetWidth;
+    sheet.classList.add('open');
+    sheet.setAttribute('aria-hidden', 'false');
+    openBtn.setAttribute('aria-expanded', 'true');
+    document.documentElement.classList.add('v2-postavke-locked');
+    document.addEventListener('keydown', onKey);
+    if (doneBtn && typeof doneBtn.focus === 'function') doneBtn.focus();
+  }
+  function closeSheet() {
+    if (sheet.hidden) return;
+    // tell Slice 3 to discard any pending import payload before we tear down the sheet
+    dispatchCloseEvent();
+    sheet.classList.remove('open');
+    sheet.setAttribute('aria-hidden', 'true');
+    openBtn.setAttribute('aria-expanded', 'false');
+    document.documentElement.classList.remove('v2-postavke-locked');
+    document.removeEventListener('keydown', onKey);
+    clearHideTimer();
+    if (reducedMotion) {
+      actuallyHide();
+    } else {
+      hideTimer = setTimeout(actuallyHide, 240);
+    }
+    var target = (lastFocus && document.contains(lastFocus)) ? lastFocus : openBtn;
+    if (target && typeof target.focus === 'function') target.focus();
+    lastFocus = null;
+  }
+  function onKey(e) {
+    if (e.key === 'Escape' || e.keyCode === 27) {
+      e.preventDefault();
+      closeSheet();
+    }
+  }
+
+  openBtn.addEventListener('click', function () {
+    if (isOpen()) closeSheet(); else openSheet();
+  });
+  sheet.addEventListener('click', function (e) {
+    var t = e.target;
+    if (t && typeof t.closest === 'function' && t.closest('[data-postavke-close]')) closeSheet();
+  });
+})();
+// END V2 POSTAVKE — UXR.2c
 </script>
 </body>
 </html>
