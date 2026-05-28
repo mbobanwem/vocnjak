@@ -866,6 +866,120 @@
   }
   /* END V2 PLANTS — Slice 4 */
 
+  /* BEGIN UXR.3a — Pregled hero */
+  .v2-active .v2-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .v2-active .v2-pregled-hero {
+    position: relative;
+    margin: -24px -16px 24px;
+    padding: 28px 22px 32px;
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    box-sizing: border-box;
+    max-width: 100%;
+    background: linear-gradient(180deg, var(--v2-brand-deep, #1f4a5f) 0%, var(--v2-brand, #3a7a99) 55%, #d99060 100%);
+  }
+  .v2-active .v2-pregled-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      radial-gradient(ellipse 200px 100px at 80% 28%, rgba(255, 235, 200, 0.5) 0%, transparent 70%),
+      radial-gradient(ellipse 380px 180px at 30% 75%, rgba(31, 74, 95, 0.3) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .v2-active .v2-pregled-horizon {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 96px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .v2-active .v2-pregled-horizon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .v2-active .v2-pregled-month-chip {
+    position: relative;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    align-self: flex-start;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    font-family: var(--v2-body, 'DM Sans', sans-serif);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 16px;
+  }
+  .v2-active .v2-pregled-month-chip::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #f3d09a;
+    box-shadow: 0 0 8px rgba(243, 208, 154, 0.7);
+  }
+  .v2-active .v2-pregled-status {
+    position: relative;
+    z-index: 3;
+    margin: 0;
+    max-width: 94%;
+    font-family: var(--v2-display, 'Fraunces', serif);
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.22;
+    letter-spacing: -0.018em;
+    color: #ffffff;
+    text-shadow: var(--v2-shadow-hero-text, 0 1px 8px rgba(20, 32, 40, 0.32));
+  }
+  .v2-active .v2-pregled-status .v2-pregled-status-accent {
+    font-style: normal;
+    font-weight: 500;
+  }
+  .v2-active #v2Pregled .v2-seasonal-section {
+    margin: 0;
+  }
+  .v2-active #v2Pregled .v2-seasonal-section h3 {
+    font-family: var(--v2-display, 'Fraunces', serif);
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    color: var(--v2-ink, #142028);
+    margin: 28px 0 12px;
+  }
+  .v2-active #v2Pregled .v2-seasonal-section:first-of-type h3 {
+    margin-top: 4px;
+  }
+  /* END UXR.3a — Pregled hero */
+
   /* BEGIN V2 ACTIVITIES — Slice 5 */
   .v2-activity-panel,
   .v2-correction-form {
@@ -12348,10 +12462,56 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     parent.appendChild(makeEl('p', 'v2-plants-error', SEASONAL_SNAPSHOT_ERROR_TEXT));
   }
 
+  // V2_PREGLED_HERO_MONTH_QUALIFIER_HR — hero display copy only.
+  // Zagreb / continental baseline visual labels for the Pregled month chip.
+  // Must NOT be used for scheduling, phenology logic, urgency, plant-state
+  // decisions, action-window timing, or recommendations. Visual copy only.
+  var V2_PREGLED_HERO_MONTH_QUALIFIER_HR = [
+    'zima','kasna zima','rano proljeće','proljeće','kasno proljeće','rano ljeto',
+    'ljeto','kasno ljeto','rana jesen','jesen','kasna jesen','rana zima'
+  ];
+
+  function buildHeroStatusElement(snapshot, displayGroups) {
+    var text = seasonalStatusSentence(snapshot, displayGroups);
+    var p = makeEl('p', 'v2-pregled-status');
+    var current = countCurrentGroups(displayGroups);
+    if (current === 0) { p.textContent = text; return p; }
+    var accent = current === 1 ? '1 sezonska radnja' : current + ' sezonske radnje';
+    var idx = text.indexOf(accent);
+    if (idx === -1) { p.textContent = text; return p; }
+    p.appendChild(document.createTextNode(text.slice(0, idx)));
+    p.appendChild(makeEl('span', 'v2-pregled-status-accent', accent));
+    p.appendChild(document.createTextNode(text.slice(idx + accent.length)));
+    return p;
+  }
+
+  function appendPregledHero(parent, snapshot, displayGroups) {
+    var monthIdx = Number(snapshot.today.slice(5, 7)) - 1;
+    var monthLabel = MONTH_NAMES_HR[monthIdx] + ' · ' + V2_PREGLED_HERO_MONTH_QUALIFIER_HR[monthIdx];
+
+    var section = makeEl('section', 'v2-pregled-hero');
+    section.setAttribute('role', 'region');
+    section.setAttribute('aria-label', 'Sezonski pregled');
+    section.appendChild(makeEl('h1', 'v2-sr-only', 'Pregled'));
+    section.appendChild(makeEl('span', 'v2-pregled-month-chip', monthLabel));
+    section.appendChild(buildHeroStatusElement(snapshot, displayGroups));
+
+    var horizon = makeEl('div', 'v2-pregled-horizon');
+    horizon.setAttribute('aria-hidden', 'true');
+    horizon.innerHTML =
+      '<svg viewBox="0 0 400 96" preserveAspectRatio="none">' +
+        '<path d="M0 96 L0 64 Q40 52 80 62 Q120 70 160 56 L200 50 L210 48 L218 56 L226 50 L240 58 Q280 68 320 54 Q360 44 400 56 L400 96 Z" fill="#1a3a4a" opacity="0.85"/>' +
+        '<path d="M180 56 L180 36 M180 44 L172 38 M180 46 L188 38 M180 50 L174 44 M180 52 L186 44" stroke="#0e2632" stroke-width="1.2" stroke-linecap="round"/>' +
+        '<path d="M212 50 L212 32 M212 38 L206 32 M212 40 L218 32 M212 44 L208 38 M212 46 L216 38" stroke="#0e2632" stroke-width="1.2" stroke-linecap="round"/>' +
+        '<path d="M244 60 L244 42 M244 48 L238 42 M244 50 L250 42 M244 54 L240 48" stroke="#0e2632" stroke-width="1.2" stroke-linecap="round"/>' +
+      '</svg>';
+    section.appendChild(horizon);
+    parent.appendChild(section);
+  }
+
   function renderPregled() {
     setViews('pregled');
     clearNode(pregledView);
-    appendSeasonalHeader(pregledView, 'Pregled', 'pregled');
 
     var result = readValidStore();
     if (!result.ok) {
@@ -12372,11 +12532,9 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     }
 
     var displayGroups = filterSeasonalGroupsForYoungTreeRelevance(snapshot.groups, snapshot.today);
-    pregledView.appendChild(makeEl('p', 'v2-plants-status', seasonalStatusSentence(snapshot, displayGroups)));
+    appendPregledHero(pregledView, snapshot, displayGroups);
     var youngTreeCurrentGroups = youngTreeCurrentContextGroups(activePlantList, snapshot.today);
-    appendYoungTreePregledSection(pregledView, youngTreeCurrentGroups);
     var b2Visibility = filterB2VisibilityForYoungTreeRelevance(b2VisibilityForPlants(activePlantList, snapshot.today), snapshot.today);
-    appendB2PregledSection(pregledView, b2Visibility.current);
     var currentGroups = displayGroups.filter(groupHasLiveState);
     var missedGroups = displayGroups.filter(groupHasMissedState);
     var upcomingSnapshot = {
@@ -12387,6 +12545,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     appendSeasonalSection(pregledView, 'Sada aktualno', currentGroups, 'Trenutno nema aktualnih sezonskih radnji.', 'current', true);
     appendSeasonalSection(pregledView, 'Za provjeru: nema evidencije', missedGroups, 'Nema sezonskih radnji bez evidencije.', 'missed', true);
     appendSeasonalSection(pregledView, 'Uskoro', upcomingGroups, 'Nema skorih sezonskih radnji.', 'upcoming', true);
+    appendB2PregledSection(pregledView, b2Visibility.current);
+    appendYoungTreePregledSection(pregledView, youngTreeCurrentGroups);
     if (currentGroups.length === 0 && missedGroups.length === 0 && upcomingGroups.length === 0 && b2Visibility.current.length === 0 && youngTreeCurrentGroups.length === 0) {
       pregledView.appendChild(makeEl('p', 'v2-plants-empty', 'Za ovaj dio sezone nema prikazanih sezonskih radnji.'));
     }
