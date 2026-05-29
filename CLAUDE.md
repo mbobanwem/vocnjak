@@ -298,6 +298,105 @@ When coding:
 
 ---
 
+## PLANNING & APPROVAL PROTOCOL
+
+This protocol reduces repeated permission/approval interruptions while preserving owner control over implementation and commits. It complements — and never weakens — the COMMIT RULE above and the GIT / BRANCH RULE below.
+
+### Plan / analysis permission
+
+When the owner asks for a plan, review, challenge, audit, or investigation, Claude is PRE-APPROVED to run the read-only and local verification commands needed to produce a complete plan, WITHOUT asking the owner for approval for each command.
+
+Pre-approved during planning/analysis:
+- `git branch --show-current`
+- `git status --short`
+- `git log`
+- `git diff`
+- `git show`
+- `git pull --ff-only`
+- `grep`
+- `sed`
+- `awk`
+- `cat`
+- `head`
+- `tail`
+- `wc`
+- `find` for inspection only, never for deletion
+- `ls`
+- `node` / `python` syntax or static checks
+- local preview server commands when needed for visual/browser verification
+- browser / preview checks when available
+
+Claude may create temporary local preview files/directories needed for verification, but MUST remove them before final status.
+
+Claude may run: `rm -rf .claude`
+
+Claude must NOT run destructive broad cleanup commands, including:
+- `git clean`
+- `git reset --hard`
+- `rm -rf *`
+- `rm -rf /`
+- `rm -rf ~`
+- `find . -delete`
+
+If unexpected tracked or untracked files appear, Claude must STOP and report them before staging or committing.
+
+### Plan Mode behavior
+
+In Plan Mode:
+- Claude may investigate freely using the pre-approved read-only commands above.
+- Claude may write or update the designated plan file if Plan Mode requires it.
+- Claude must NOT edit runtime files.
+- Claude must NOT edit tracker docs unless explicitly asked.
+- Claude must NOT commit.
+- Claude must NOT push.
+- Claude must BATCH all product/design questions into the plan instead of asking them one by one during investigation.
+- If there is a genuine blocker, Claude states the recommended default decision in the plan instead of interrupting repeatedly.
+
+### Implementation approval levels
+
+Owner approval phrases have these exact meanings:
+
+1. "Approve plan" / "Plan approved"
+   - The plan is accepted.
+   - Does NOT automatically allow commit unless the owner also says commit.
+   - Claude may proceed to implementation ONLY if the owner wording clearly asks for implementation.
+
+2. "Approved for implementation, no commit"
+   - Claude may edit files within the approved scope.
+   - Claude may run verification.
+   - Claude must NOT commit.
+   - Claude must stop with exact diff/status and ask for commit approval.
+
+3. "Approved for commit"
+   - Claude may implement the approved scope.
+   - Claude may run verification.
+   - Claude may make the runtime commit and the tracker commit.
+   - Claude may push to `origin/main`.
+   - Claude must use targeted `git add` only.
+   - Claude must stop if unexpected files appear.
+
+### Scope discipline
+
+Approval NEVER allows scope expansion.
+
+- If Claude discovers a small issue INSIDE the approved scope: fix it within the same implementation only if it is necessary for the approved scope to work correctly, and document it in the final report.
+- If Claude discovers an issue OUTSIDE the approved scope: do NOT fix it; report it as follow-up.
+- If design/source documents conflict: do NOT guess silently; either choose the safest minimal interpretation and document it in the plan, or stop only if implementation would be unsafe.
+
+### Commit rule remains strict
+
+No commit and no push unless the owner explicitly approves commit/push.
+
+Even with the planning permission above:
+- no commit in Plan Mode;
+- no commit after analysis-only tasks;
+- no commit if unexpected files are present;
+- no commit of `.claude/` (including `.claude/settings.json` and `.claude/worktrees`);
+- no commit of `Claude-design/`;
+- no commit of unrelated files.
+
+---
+
 ## POLISH RULE
 
 - `POLISH_BACKLOG.md` is for non-critical improvements
