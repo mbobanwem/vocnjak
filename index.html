@@ -747,6 +747,17 @@
     flex-wrap: wrap;
     margin-top: 4px;
   }
+  /* UXR.4: sticky bottom action bar on true form routes only (add, activity_add, correction).
+     Scoped to v2-route-form so Plant detail inline capture rows (detail route) are unaffected. */
+  html.v2-active.v2-route-form .v2-plants-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    margin-top: 8px;
+    padding: 12px 0 calc(var(--safe-bottom) + 12px);
+    background: #fff;
+    border-top: 1px solid #e2e8f0;
+  }
   .v2-plants-detail {
     display: grid;
     gap: 18px;
@@ -8977,14 +8988,14 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   function exportV2() {
     var raw = localStorage.getItem('vocnjak_v2');
     if (raw === null) {
-      setStatus('Slice 3 — V2 pohrana ne postoji.');
+      setStatus('Nema spremljenih podataka za izvoz.');
       return;
     }
     var parsed;
     try {
       parsed = JSON.parse(raw);
     } catch (e) {
-      setStatus('Slice 3 — V2 pohrana je neispravna.');
+      setStatus('Spremljeni podaci su oštećeni pa izvoz nije moguć.');
       console.error('vocnjak: V2 export parse failed:', e && e.message ? e.message : e);
       return;
     }
@@ -8992,7 +9003,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     parsed = normalizedForExport.store;
     var errors = validateForBackup(parsed);
     if (errors.length > 0) {
-      setStatus('Slice 3 — V2 pohrana ne prolazi validaciju: ' + errors[0] + '.');
+      setStatus('Podaci ne prolaze provjeru: ' + errors[0] + '.');
       console.error('vocnjak: V2 export validation failed:', errors);
       return;
     }
@@ -9017,9 +9028,9 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      setStatus('Slice 3 — izvoz: ' + filename);
+      setStatus('Sigurnosna kopija spremljena: ' + filename);
     } catch (e) {
-      setStatus('Slice 3 — izvoz nije moguć.');
+      setStatus('Izvoz nije uspio. Pokušaj ponovno.');
       console.error('vocnjak: V2 export blob failed:', e && e.message ? e.message : e);
     }
   }
@@ -9039,7 +9050,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
   function discardPendingImport() {
     if (pendingImportPayload !== null) {
-      setStatus('Slice 3 — uvoz prekinut.');
+      setStatus('Uvoz je prekinut.');
     }
     clearImportConfirm();
   }
@@ -9048,18 +9059,18 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     // a fresh file pick always supersedes any stale pending payload
     if (pendingImportPayload !== null) pendingImportPayload = null;
     if (!file) {
-      setStatus('Slice 3 — datoteka nije odabrana.');
+      setStatus('Datoteka nije odabrana.');
       clearImportConfirm();
       return;
     }
     if (file.size > MAX_FILE_SIZE) {
-      setStatus('Slice 3 — datoteka prevelika (max 1 MB).');
+      setStatus('Datoteka je prevelika (najviše 1 MB).');
       clearImportConfirm();
       return;
     }
     var reader = new FileReader();
     reader.onerror = function () {
-      setStatus('Slice 3 — greška pri čitanju datoteke.');
+      setStatus('Datoteku nije moguće pročitati.');
       clearImportConfirm();
     };
     reader.onload = function () {
@@ -9067,7 +9078,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       try {
         parsed = JSON.parse(reader.result);
       } catch (e) {
-        setStatus('Slice 3 — neispravan JSON.');
+        setStatus('Datoteka nije ispravna sigurnosna kopija.');
         console.error('vocnjak: V2 import parse failed:', e && e.message ? e.message : e);
         clearImportConfirm();
         return;
@@ -9076,7 +9087,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       parsed = normalizedForImport.store;
       var errors = validateForBackup(parsed);
       if (errors.length > 0) {
-        setStatus('Slice 3 — uvoz nije prošao validaciju: ' + errors[0] + '.');
+        setStatus('Uvoz ne prolazi provjeru: ' + errors[0] + '.');
         console.error('vocnjak: V2 import validation failed:', errors);
         clearImportConfirm();
         return;
@@ -9085,7 +9096,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       pendingImportPayload = parsed;
       var panel = document.getElementById('v2ImportConfirm');
       if (panel) panel.hidden = false;
-      setStatus('Slice 3 — datoteka spremna. Potvrdite zamjenu V2 pohrane.');
+      setStatus('Datoteka je spremna. Potvrdi zamjenu svih podataka.');
     };
     reader.readAsText(file);
   }
@@ -9116,10 +9127,10 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     var payload = pendingImportPayload;
     try {
       localStorage.setItem('vocnjak_v2', JSON.stringify(payload));
-      setStatus('Slice 3 — uvoz uspješan. Osvježi stranicu da bi promjene bile vidljive.');
+      setStatus('Uvoz je uspješan. Osvježi stranicu da vidiš promjene.');
       console.log('vocnjak: V2 import succeeded; reload to re-run boot validation');
     } catch (e) {
-      setStatus('Slice 3 — uvoz nije moguće zapisati. Vrati se i pokušaj ponovno.');
+      setStatus('Uvoz nije moguće spremiti. Pokušaj ponovno.');
       console.error('vocnjak: V2 import setItem failed:', e && e.message ? e.message : e);
     }
     clearImportConfirm();
@@ -9127,7 +9138,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
   var confirmCancel = document.getElementById('v2ImportConfirmCancel');
   if (confirmCancel) confirmCancel.addEventListener('click', function () {
-    setStatus('Slice 3 — uvoz prekinut.');
+    setStatus('Uvoz je prekinut.');
     clearImportConfirm();
   });
 
