@@ -1499,6 +1499,92 @@
   }
   /* END UXR.5b */
 
+  /* BEGIN UXR.5c — Dnevnik timeline */
+  .v2-active #v2Diary .v2-diary-month {
+    margin: 0 0 24px;
+  }
+  .v2-active #v2Diary .v2-diary-month:last-child {
+    margin-bottom: 0;
+  }
+  .v2-active #v2Diary .v2-diary-month-head {
+    position: sticky;
+    top: calc(var(--safe-top) + 67px);
+    z-index: 5;
+    background: var(--v2-cream);
+    border-bottom: 1px solid var(--v2-line);
+    padding: 12px 0 8px;
+    margin-bottom: 6px;
+  }
+  .v2-active #v2Diary .v2-diary-month-head h3 {
+    margin: 0;
+    font-family: var(--v2-display);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+    color: var(--v2-ink);
+  }
+  .v2-active #v2Diary .v2-diary-month-head h3 .v2-diary-month-year {
+    margin-left: 6px;
+    font-weight: 400;
+    color: var(--v2-ink-mute);
+  }
+  .v2-active #v2Diary .v2-diary-month .v2-diary-list {
+    gap: 0;
+  }
+  .v2-active #v2Diary .v2-diary-card {
+    position: relative;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 14px 0 14px 22px;
+  }
+  .v2-active #v2Diary .v2-diary-card::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--v2-line);
+  }
+  .v2-active #v2Diary .v2-diary-card::after {
+    content: '';
+    position: absolute;
+    left: 1px;
+    top: 18px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--v2-brand);
+    border: 2px solid var(--v2-cream);
+  }
+  .v2-active #v2Diary .v2-diary-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    line-height: 1;
+  }
+  .v2-active #v2Diary .v2-diary-status--done {
+    background: var(--v2-chip-done-bg);
+    color: var(--v2-chip-done-fg);
+  }
+  .v2-active #v2Diary .v2-diary-status--skipped {
+    background: var(--v2-chip-skipped-bg);
+    color: var(--v2-chip-skipped-fg);
+  }
+  .v2-active #v2Diary .v2-diary-corrected {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--v2-marker-corrected-fg);
+  }
+  /* END UXR.5c */
+
   /* BEGIN V2 ACTIVITIES — Slice 5 */
   .v2-activity-panel,
   .v2-correction-form {
@@ -13364,7 +13450,14 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       return plant ? plantTitleWithArchiveMarker(plant) : entry.effective.plant_id;
     });
     var plantMeta = group.length === 1 ? plantNames[0] : plantCountText(group.length);
-    card.appendChild(makeEl('span', 'v2-diary-meta', statusLabel(sample.status) + ' · ' + plantMeta));
+    if (options && options.statusChips === true) {
+      var statusMeta = makeEl('span', 'v2-diary-meta');
+      statusMeta.appendChild(makeEl('span', 'v2-diary-status v2-diary-status--' + sample.status, statusLabel(sample.status)));
+      statusMeta.appendChild(document.createTextNode(' · ' + plantMeta));
+      card.appendChild(statusMeta);
+    } else {
+      card.appendChild(makeEl('span', 'v2-diary-meta', statusLabel(sample.status) + ' · ' + plantMeta));
+    }
     if (hasOwnKey(sample, 'notes')) card.appendChild(makeEl('span', 'v2-diary-note', 'Bilješka: ' + sample.notes));
     var estimated = group.some(function (entry) {
       var plant = findPlant(result.store.plants, entry.effective.plant_id);
@@ -13715,9 +13808,24 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       return;
     }
 
-    var list = makeEl('div', 'v2-diary-list');
-    appendDiaryItems(list, diaryItems, result, { showCorrectionActions: true });
-    diaryView.appendChild(list);
+    var currentMonthKey = null;
+    var currentMonthList = null;
+    for (var d = 0; d < diaryItems.length; d++) {
+      var monthKey = diaryItems[d].date.slice(0, 7);
+      if (monthKey !== currentMonthKey) {
+        currentMonthKey = monthKey;
+        var monthSection = makeEl('div', 'v2-diary-month');
+        var monthHead = makeEl('div', 'v2-diary-month-head');
+        var monthTitle = makeEl('h3', '', MONTH_NAMES_HR[Number(monthKey.slice(5, 7)) - 1]);
+        monthTitle.appendChild(makeEl('span', 'v2-diary-month-year', monthKey.slice(0, 4) + '.'));
+        monthHead.appendChild(monthTitle);
+        monthSection.appendChild(monthHead);
+        currentMonthList = makeEl('div', 'v2-diary-list');
+        monthSection.appendChild(currentMonthList);
+        diaryView.appendChild(monthSection);
+      }
+      appendDiaryItems(currentMonthList, [diaryItems[d]], result, { showCorrectionActions: true, statusChips: true });
+    }
   }
 
   function findEffectiveEntry(entries, activityId) {
