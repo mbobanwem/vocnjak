@@ -1416,6 +1416,89 @@
   }
   /* END UXR.5a */
 
+  /* BEGIN UXR.5b — Plant detail rhythm */
+  .v2-active #v2PlantsDetail .v2-pd-meta {
+    margin: 6px 0 0;
+    color: var(--v2-ink-mute);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .v2-active #v2PlantsDetail .v2-plants-section {
+    border-top: 1px solid var(--v2-line);
+    padding-top: 24px;
+    margin-top: 8px;
+  }
+  .v2-active #v2PlantsDetail .v2-plants-section h3 {
+    margin: 0 0 14px;
+    font-family: var(--v2-display);
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--v2-ink);
+  }
+  .v2-active #v2PlantsDetail .v2-plants-karton {
+    gap: 0;
+  }
+  .v2-active #v2PlantsDetail .v2-plants-karton-row {
+    grid-template-columns: minmax(110px, 150px) 1fr;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--v2-line);
+  }
+  .v2-active #v2PlantsDetail .v2-plants-karton-row:last-child {
+    border-bottom: 0;
+  }
+  .v2-active #v2PlantsDetail .v2-plants-karton-label {
+    color: var(--v2-ink-mute);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+  }
+  .v2-active #v2PlantsDetail .v2-seasonal-card-button {
+    border: 1px solid var(--v2-line);
+    border-radius: 18px;
+    background: var(--v2-surface);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 4px 14px rgba(31, 74, 95, 0.08);
+    padding: 16px 18px;
+  }
+  .v2-active #v2PlantsDetail .v2-seasonal-card-button .v2-seasonal-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--v2-ink);
+  }
+  .v2-active #v2PlantsDetail .v2-seasonal-card-button .v2-seasonal-status {
+    background: var(--v2-chip-current-bg);
+    color: var(--v2-chip-current-fg);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .v2-active #v2PlantsDetail .v2-pd-mlada {
+    border-top: 0;
+    padding-top: 8px;
+  }
+  .v2-active #v2PlantsDetail .v2-pd-mlada > h3 {
+    font-family: var(--v2-display);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--v2-ink-mute);
+    margin: 0 0 8px;
+  }
+  .v2-active #v2PlantsDetail .v2-pd-mlada > .v2-seasonal-note {
+    margin: 0;
+    padding: 14px 16px;
+    background: var(--v2-pale);
+    border-radius: 14px;
+    font-family: var(--v2-display);
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--v2-ink-mid);
+  }
+  /* END UXR.5b */
+
   /* BEGIN V2 ACTIVITIES — Slice 5 */
   .v2-activity-panel,
   .v2-correction-form {
@@ -10481,7 +10564,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     var section = makeEl('section', 'v2-plants-section');
     section.appendChild(makeEl('h3', '', 'Opažanja'));
 
-    var opener = makeEl('button', 'v2-plants-primary', 'Dodaj opažanje');
+    var opener = makeEl('button', 'v2-plants-secondary', 'Dodaj opažanje');
     opener.type = 'button';
     section.appendChild(opener);
 
@@ -11010,6 +11093,17 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     parent.appendChild(section);
   }
 
+  function plantDetailMetaLine(plant) {
+    var parts = [];
+    if (typeof plant.rootstock === 'string' && plant.rootstock) parts.push(plant.rootstock);
+    if (typeof plant.planted_at === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(plant.planted_at)) {
+      var n = Number(localTodayYmd().slice(0, 4)) - Number(plant.planted_at.slice(0, 4)) + 1;
+      if (n >= 1) parts.push('godina ' + n + ' od sadnje');
+    }
+    if (typeof plant.source_label === 'string' && plant.source_label) parts.push(plant.source_label);
+    return parts.join(' · ');
+  }
+
   function renderDetail(route) {
     var result = readValidStore();
     if (!result.ok || route.malformed) {
@@ -11025,10 +11119,6 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     setViews('detail');
     clearNode(detailView);
 
-    var back = makeEl('button', 'v2-plants-secondary v2-plants-detail-back', '← Natrag na popis');
-    back.type = 'button';
-    back.addEventListener('click', function () { location.hash = '#v2'; });
-    detailView.appendChild(back);
     if (pendingDetailStatus) {
       detailView.appendChild(makeEl('p', 'v2-plants-status', pendingDetailStatus));
       pendingDetailStatus = '';
@@ -11040,6 +11130,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     banner.appendChild(bannerArt);
     banner.appendChild(makeEl('h2', '', plantTitle(plant)));
     detailView.appendChild(banner);
+    var heroMeta = plantDetailMetaLine(plant);
+    if (heroMeta) detailView.appendChild(makeEl('p', 'v2-pd-meta', heroMeta));
     var archived = isPlantArchived(plant);
     if (archived) appendArchivedPlantMarker(detailView, plant);
 
@@ -11065,7 +11157,6 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
     var todayYmd = localTodayYmd();
     if (!archived) {
-      appendArchiveSection(detailView, plant);
       appendYoungTreePlantDetailSection(detailView, plant, todayYmd);
 
       try {
@@ -11111,6 +11202,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     fullDiary.addEventListener('click', function () { location.hash = plantDiaryRoute(plant.plant_id); });
     diary.appendChild(fullDiary);
     detailView.appendChild(diary);
+
+    if (!archived) appendArchiveSection(detailView, plant);
   }
 
   function appendField(parent, id, labelText, control, hintText) {
@@ -12746,7 +12839,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   function appendYoungTreePlantDetailSection(parent, plant, todayYmd) {
     if (!isYoungTreeRelevanceMode(plant, todayYmd)) return;
     var current = youngTreeCurrentContextGroups([plant], todayYmd);
-    var section = makeEl('section', 'v2-plants-section');
+    var section = makeEl('section', 'v2-plants-section v2-pd-mlada');
     section.appendChild(makeEl('h3', '', 'Mlada voćka'));
     section.appendChild(makeEl('p', 'v2-seasonal-note', 'Kod mladih i nerodnih voćki plodonosne radnje nisu prikazane kao trenutni fokus. Sada je važnija uspostava, zdrav rast, formiranje krošnje i relevantno praćenje listova ili izbojaka.'));
     if (current.length > 0) {
