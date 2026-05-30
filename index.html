@@ -1332,6 +1332,90 @@
   .v2-active #v2PlantsDetail .v2-species-banner.v2-species--breskva { background: linear-gradient(135deg, #f5dfce 0%, #eec1a1 100%); }
   /* END UXR.3d */
 
+  /* BEGIN UXR.5a — Kalendar season timeline */
+  .v2-active #v2Kalendar .v2-kal-season {
+    margin: 0 0 18px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--v2-ink-mute);
+  }
+  .v2-active #v2Kalendar .v2-calendar-month {
+    border: 0;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    margin-bottom: 28px;
+    scroll-margin-top: 76px;
+  }
+  .v2-active #v2Kalendar .v2-kal-month-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    border-bottom: 1px solid var(--v2-line);
+    padding-bottom: 8px;
+    margin-bottom: 14px;
+  }
+  .v2-active #v2Kalendar .v2-kal-month-head--current {
+    border-bottom-color: var(--v2-brand);
+  }
+  .v2-active #v2Kalendar .v2-kal-month-head h3 {
+    margin: 0;
+    font-family: var(--v2-display);
+    font-size: 26px;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--v2-ink);
+  }
+  .v2-active #v2Kalendar .v2-kal-count {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--v2-ink-mute);
+  }
+  .v2-active #v2Kalendar .v2-seasonal-list {
+    gap: 12px;
+  }
+  .v2-active #v2Kalendar .v2-seasonal-card,
+  .v2-active #v2Kalendar .v2-seasonal-card-button {
+    border: 1px solid var(--v2-line);
+    border-radius: 18px;
+    background: var(--v2-surface);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 4px 14px rgba(31, 74, 95, 0.08);
+    padding: 16px 18px;
+  }
+  .v2-active #v2Kalendar .v2-seasonal-card-title {
+    margin: 0 0 6px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--v2-ink);
+  }
+  .v2-active #v2Kalendar .v2-seasonal-status {
+    margin: 6px 0;
+    background: var(--v2-chip-current-bg);
+    color: var(--v2-chip-current-fg);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .v2-active #v2Kalendar .v2-seasonal-meta {
+    color: var(--v2-ink-mid);
+  }
+  .v2-active #v2Kalendar .v2-seasonal-note {
+    color: var(--v2-ink-mute);
+  }
+  .v2-active #v2Kalendar .v2-calendar-month > h3 {
+    margin: 18px 0 10px;
+    font-family: var(--v2-display);
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--v2-ink);
+  }
+  /* END UXR.5a */
+
   /* BEGIN V2 ACTIVITIES — Slice 5 */
   .v2-activity-panel,
   .v2-correction-form {
@@ -12988,11 +13072,18 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return group.effective_open <= end && group.effective_close >= start;
   }
 
+  function kalRadnjaCountText(count) {
+    if (count === 1) return '1 radnja';
+    if (count > 1 && count < 5) return count + ' radnje';
+    return count + ' radnji';
+  }
+
   function renderKalendar() {
     setViews('kalendar');
     clearNode(calendarView);
     var year = Number(localTodayYmd().slice(0, 4));
-    appendSeasonalHeader(calendarView, 'Kalendar', 'kalendar', 'Sezona ' + year + '.');
+    calendarView.appendChild(makeEl('h1', 'v2-sr-only', 'Kalendar'));
+    calendarView.appendChild(makeEl('p', 'v2-kal-season', 'Sezona ' + year + '.'));
 
     var result = readValidStore();
     if (!result.ok) {
@@ -13015,12 +13106,15 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       return;
     }
 
+    var currentMonth = Number(localTodayYmd().slice(5, 7));
     for (var m = 1; m <= 12; m++) {
       var month = makeEl('section', 'v2-calendar-month');
       month.id = 'v2CalendarMonth' + m;
-      month.appendChild(makeEl('h3', '', MONTH_NAMES_HR[m - 1]));
-      month.appendChild(makeEl('p', 'v2-seasonal-meta', 'Sezonske radnje'));
+      var head = makeEl('div', 'v2-kal-month-head' + (m === currentMonth ? ' v2-kal-month-head--current' : ''));
+      head.appendChild(makeEl('h3', '', MONTH_NAMES_HR[m - 1]));
       var monthGroups = displayGroups.filter(function (group) { return groupOverlapsMonth(group, m); });
+      if (monthGroups.length > 0) head.appendChild(makeEl('span', 'v2-kal-count', kalRadnjaCountText(monthGroups.length)));
+      month.appendChild(head);
       if (monthGroups.length === 0) {
         month.appendChild(makeEl('p', 'v2-plants-empty', 'Nema sezonskih radnji u ovom mjesecu.'));
       } else {
@@ -13035,7 +13129,6 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       calendarView.appendChild(month);
     }
 
-    var currentMonth = Number(localTodayYmd().slice(5, 7));
     setTimeout(function () {
       var node = document.getElementById('v2CalendarMonth' + currentMonth);
       if (node && typeof node.scrollIntoView === 'function') node.scrollIntoView({ block: 'start' });
