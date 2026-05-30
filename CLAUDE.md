@@ -489,6 +489,36 @@ In this role Claude MUST:
 
 ---
 
+## Approved plan execution protocol
+
+Goal: reduce unnecessary owner questions after a plan has been approved.
+
+- The planning phase is read-only by default.
+- Do NOT create plan files in the repo unless explicitly asked.
+- Present the complete plan in chat.
+- Resolve canon-safe implementation choices yourself and list them under `Defaults applied`.
+- After the owner approves a plan with wording such as `Approved for implementation` or `Proceed`, execute the approved implementation end-to-end WITHOUT asking additional non-blocking questions.
+- During implementation, stop ONLY for:
+  1. a true Bucket-B conflict:
+     - product semantics change,
+     - storage/schema/import/export/validator change,
+     - new model/registry/concept,
+     - roadmap/session scope change,
+     - deletion/degradation of approved functionality,
+     - unresolved locked-doc conflict;
+  2. explicit commit/push approval.
+- Do NOT ask owner approval for:
+  - CSS scoping,
+  - preserving helpers,
+  - browser verification,
+  - safe mockup-aligned defaults,
+  - temporary preview tooling,
+  - implementation details already covered by the approved plan.
+- If a safe default exists, apply it and document it in the implementation report.
+- Commit/push still requires explicit owner approval.
+
+---
+
 ## POLISH RULE
 
 - `POLISH_BACKLOG.md` is for non-critical improvements
