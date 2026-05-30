@@ -460,6 +460,35 @@ In this role Claude MUST:
 
 ---
 
+## Implementation defaults vs true owner decisions
+
+- If a choice is resolvable from the visual mockup, locked docs, shipped UXR precedent, or existing runtime structure, resolve it yourself and proceed.
+- Do NOT ask owner approval for implementation defaults such as:
+  - CSS scoping;
+  - preserving shared helpers;
+  - preserving existing approved content such as Plan Templates, B2/Praćenje, Mlade voćke, monitoring/risk context, capture/history flows;
+  - running browser verification;
+  - choosing the safest mockup-aligned visual default.
+- List those decisions under `Defaults applied`, not under `Owner decisions`.
+- Ask the owner ONLY for true blocking decisions:
+  - product semantics changes;
+  - storage/schema/import/export/validator changes;
+  - new model/registry/concept;
+  - roadmap/session scope changes;
+  - deletion/degradation of approved functionality;
+  - or unresolved conflict between locked docs that cannot be resolved by precedence rules.
+- If a blocking decision is required, format it exactly as:
+  1. Exact conflict
+  2. Why canon/defaults cannot resolve it
+  3. Options
+  4. Recommendation
+  5. Consequence if unanswered
+- Do NOT ask FYI questions.
+- Do NOT stop implementation because of minor UI interpretation if a safe default exists.
+- Run verification yourself and report results.
+
+---
+
 ## POLISH RULE
 
 - `POLISH_BACKLOG.md` is for non-critical improvements
