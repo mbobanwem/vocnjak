@@ -732,6 +732,7 @@
   .v2-plants-field {
     display: grid;
     gap: 6px;
+    min-width: 0;
   }
   .v2-plants-field label {
     font-weight: 700;
@@ -740,6 +741,7 @@
   .v2-plants-field select,
   .v2-plants-field textarea {
     width: 100%;
+    min-width: 0;
     min-height: 44px;
     box-sizing: border-box;
     border: 1px solid #cbd5e1;
@@ -934,7 +936,7 @@
     justify-content: flex-end;
     overflow: hidden;
     box-sizing: border-box;
-    max-width: 100%;
+    max-width: none;
     background: linear-gradient(180deg, var(--v2-brand-deep, #1f4a5f) 0%, var(--v2-brand, #3a7a99) 55%, #d99060 100%);
   }
   .v2-active .v2-pregled-hero::before {
@@ -14812,6 +14814,27 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     window.setTimeout(apply, 0);
   }
 
+  function scrollKalendarToCurrentMonth() {
+    function apply() {
+      var m = Number(localTodayYmd().slice(5, 7));
+      var monthEl = document.getElementById('v2CalendarMonth' + m);
+      if (!monthEl) {
+        window.scrollTo(0, 0);
+        return;
+      }
+      var topBar = document.getElementById('v2TopBar');
+      var offset = topBar ? topBar.getBoundingClientRect().height : 0;
+      var y = monthEl.getBoundingClientRect().top + window.pageYOffset - offset - 8;
+      if (y < 0) y = 0;
+      window.scrollTo(0, y);
+    }
+    apply();
+    if (typeof window.requestAnimationFrame === 'function') {
+      window.requestAnimationFrame(apply);
+    }
+    window.setTimeout(apply, 0);
+  }
+
   function render() {
     var routeKey = routeScrollKey();
     var shouldResetScroll = routeKey !== lastRenderedRouteKey;
@@ -14827,7 +14850,10 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     else if (route.name === 'detail') renderDetail(route);
     else renderList();
     lastRenderedRouteKey = routeKey;
-    if (shouldResetScroll) resetRouteScrollToTop();
+    if (shouldResetScroll) {
+      if (route.name === 'kalendar') scrollKalendarToCurrentMonth();
+      else resetRouteScrollToTop();
+    }
   }
 
   window.addEventListener('hashchange', render);
