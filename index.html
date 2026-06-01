@@ -212,7 +212,7 @@
     --v2-chip-done-fg: var(--v2-plum-ink);
     --v2-chip-skipped-bg: var(--v2-cream-2);
     --v2-chip-skipped-fg: var(--v2-ink-mid);
-    --v2-marker-corrected-fg: var(--v2-brand);
+    --v2-marker-corrected-fg: var(--v2-brand-deep);
     --v2-marker-late-fg: var(--v2-peach-ink);
 
     --v2-radius-xs: 8px;
@@ -753,6 +753,16 @@
   .v2-plants-field textarea {
     min-height: 88px;
     resize: vertical;
+  }
+  .v2-plants-field select {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%23647079'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpolyline%20points='6%209%2012%2015%2018%209'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+    padding-right: 36px;
   }
   .v2-plants-check {
     display: inline-flex;
@@ -11385,7 +11395,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     setViews('add');
     clearNode(addForm);
 
-    addForm.appendChild(makeEl('h2', '', 'Dodaj voćku'));
+    addForm.appendChild(makeEl('h1', 'v2-sr-only', 'Dodaj voćku'));
     var message = makeEl('p', 'v2-plants-error');
     message.setAttribute('role', 'alert');
     message.hidden = true;
@@ -12170,7 +12180,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     back.type = 'button';
     back.addEventListener('click', function () { location.hash = '#v2'; });
     activityForm.appendChild(back);
-    activityForm.appendChild(makeEl('h2', '', 'Dodaj evidenciju'));
+    activityForm.appendChild(makeEl('h1', 'v2-sr-only', 'Dodaj evidenciju'));
     var message = makeEl('p', 'v2-plants-error');
     message.setAttribute('role', 'alert');
     message.hidden = true;
@@ -13841,7 +13851,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     clearNode(diaryView);
 
     var topbar = makeEl('div', 'v2-plants-topbar');
-    topbar.appendChild(makeEl('h2', '', plantScoped ? 'Dnevnik ove voćke' : 'Dnevnik'));
+    topbar.appendChild(plantScoped ? makeEl('h2', '', 'Dnevnik ove voćke') : makeEl('h1', 'v2-sr-only', 'Dnevnik'));
     var actions = makeEl('div', 'v2-plants-actions');
     var back = makeEl('button', 'v2-plants-secondary', plantScoped ? 'Natrag na voćku' : 'Natrag na popis');
     back.type = 'button';
