@@ -14782,7 +14782,29 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     });
   }
 
+  var lastRenderedRouteKey = null;
+
+  function routeScrollKey() {
+    return normalizeRouteHash(location.hash) || '#v2/pregled';
+  }
+
+  function resetRouteScrollToTop() {
+    function apply() {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+      if (v2Content) v2Content.scrollTop = 0;
+    }
+    apply();
+    if (typeof window.requestAnimationFrame === 'function') {
+      window.requestAnimationFrame(apply);
+    }
+    window.setTimeout(apply, 0);
+  }
+
   function render() {
+    var routeKey = routeScrollKey();
+    var shouldResetScroll = routeKey !== lastRenderedRouteKey;
     var route = getRoute();
     updateShellChrome(route);
     if (route.name === 'pregled') renderPregled();
@@ -14794,6 +14816,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     else if (route.name === 'correction') renderCorrection(route);
     else if (route.name === 'detail') renderDetail(route);
     else renderList();
+    lastRenderedRouteKey = routeKey;
+    if (shouldResetScroll) resetRouteScrollToTop();
   }
 
   window.addEventListener('hashchange', render);
