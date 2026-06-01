@@ -189,7 +189,7 @@
 
     --v2-ink: #142028;
     --v2-ink-mid: #3d4d56;
-    --v2-ink-mute: #7a8a92;
+    --v2-ink-mute: #647079;
     --v2-line: #d6dee2;
 
     --v2-brand: #3a7a99;
@@ -373,10 +373,25 @@
   }
   /* END V2 APP SHELL — UXR.2b */
 
+  /* BEGIN UXR.6 — keyboard focus visibility */
+  .v2-active button:focus-visible,
+  .v2-active a:focus-visible,
+  .v2-active input:focus-visible,
+  .v2-active select:focus-visible,
+  .v2-active textarea:focus-visible {
+    outline: 2px solid var(--v2-brand-deep);
+    outline-offset: 2px;
+  }
+  .v2-active .v2-topbar-btn:focus-visible,
+  .v2-active .v2-topbar-back:focus-visible {
+    outline-color: var(--v2-brand-on);
+  }
+  /* END UXR.6 — keyboard focus visibility */
+
   /* BEGIN V2 POSTAVKE — UXR.2c */
   .v2-active .v2-topbar-btn {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -577,6 +592,13 @@
     .v2-active .v2-postavke-sheet {
       transition: none;
     }
+    .v2-active *,
+    .v2-active *::before,
+    .v2-active *::after {
+      transition: none !important;
+      animation: none !important;
+      scroll-behavior: auto !important;
+    }
   }
   /* END V2 POSTAVKE — UXR.2c */
 
@@ -585,7 +607,7 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    min-height: 40px;
+    min-height: 44px;
     padding: 4px 8px 4px 0;
     background: transparent;
     border: none;
@@ -1101,7 +1123,7 @@
   }
   .v2-active #v2Pregled .v2-pregled-monitoring-card > .v2-seasonal-note {
     margin: 0;
-    color: var(--v2-ink-mute, #7a8a92);
+    color: var(--v2-ink-mid, #3d4d56);
     font-size: 13px;
     line-height: 1.5;
   }
@@ -10526,6 +10548,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     form.hidden = true;
 
     var message = makeEl('p', 'v2-plants-error');
+    message.setAttribute('role', 'alert');
     message.hidden = true;
     form.appendChild(message);
 
@@ -10660,6 +10683,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     form.hidden = true;
 
     var message = makeEl('p', 'v2-plants-error');
+    message.setAttribute('role', 'alert');
     message.hidden = true;
     form.appendChild(message);
 
@@ -10734,6 +10758,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     form.hidden = true;
 
     var message = makeEl('p', 'v2-plants-error');
+    message.setAttribute('role', 'alert');
     message.hidden = true;
     form.appendChild(message);
 
@@ -10842,6 +10867,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     form.hidden = true;
 
     var message = makeEl('p', 'v2-plants-error');
+    message.setAttribute('role', 'alert');
     message.hidden = true;
     form.appendChild(message);
 
@@ -11123,6 +11149,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     form.hidden = true;
     form.appendChild(makeEl('p', 'v2-seasonal-note', 'Ovo je za voćku koja više nije u aktivnom voćnjaku. Povijest i Dnevnik ostaju sačuvani. Buduće sezonske radnje i praćenje za ovu voćku više se neće prikazivati u aktivnom planu.'));
     var message = makeEl('p', 'v2-plants-error');
+    message.setAttribute('role', 'alert');
     message.hidden = true;
     form.appendChild(message);
 
@@ -11331,6 +11358,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
     addForm.appendChild(makeEl('h2', '', 'Dodaj voćku'));
     var message = makeEl('p', 'v2-plants-error');
+    message.setAttribute('role', 'alert');
     message.hidden = true;
     addForm.appendChild(message);
 
@@ -12115,6 +12143,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     activityForm.appendChild(back);
     activityForm.appendChild(makeEl('h2', '', 'Dodaj evidenciju'));
     var message = makeEl('p', 'v2-plants-error');
+    message.setAttribute('role', 'alert');
     message.hidden = true;
     activityForm.appendChild(message);
 
@@ -12795,9 +12824,11 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     var nav = makeEl('div', 'v2-seasonal-nav');
     var pregled = makeEl('button', active === 'pregled' ? 'v2-plants-primary' : 'v2-plants-secondary', 'Pregled');
     pregled.type = 'button';
+    if (active === 'pregled') pregled.setAttribute('aria-current', 'page');
     pregled.addEventListener('click', function () { location.hash = '#v2/pregled'; });
     var calendar = makeEl('button', active === 'kalendar' ? 'v2-plants-primary' : 'v2-plants-secondary', 'Kalendar');
     calendar.type = 'button';
+    if (active === 'kalendar') calendar.setAttribute('aria-current', 'page');
     calendar.addEventListener('click', function () { location.hash = '#v2/kalendar'; });
     var plants = makeEl('button', 'v2-plants-secondary', 'Biljke');
     plants.type = 'button';
@@ -13847,6 +13878,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     correctionForm.appendChild(makeEl('h2', '', 'Ispravi zapis'));
     correctionForm.appendChild(makeEl('p', 'v2-diary-meta', 'Ispravak se sprema kao novi zapis. Originalni zapis ostaje vidljiv u Dnevniku.'));
     var message = makeEl('p', 'v2-plants-error');
+    message.setAttribute('role', 'alert');
     message.hidden = true;
     correctionForm.appendChild(message);
     if (!result.ok) {
@@ -14189,6 +14221,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     correctionForm.appendChild(makeEl('h2', '', 'Ispravi zapis'));
     correctionForm.appendChild(makeEl('p', 'v2-diary-meta', 'Ispravak se sprema kao novi zapis. Originalni zapis ostaje vidljiv u Dnevniku.'));
     var message = makeEl('p', 'v2-plants-error');
+    message.setAttribute('role', 'alert');
     message.hidden = true;
     correctionForm.appendChild(message);
     if (!result.ok) {
@@ -14675,8 +14708,13 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       var activeTab = ACTIVE_TAB_BY_ROUTE[route.name] || null;
       for (var i = 0; i < bottomNavTabs.length; i++) {
         var tab = bottomNavTabs[i];
-        if (activeTab && tab.dataset.tab === activeTab) tab.classList.add('active');
-        else tab.classList.remove('active');
+        if (activeTab && tab.dataset.tab === activeTab) {
+          tab.classList.add('active');
+          tab.setAttribute('aria-current', 'page');
+        } else {
+          tab.classList.remove('active');
+          tab.removeAttribute('aria-current');
+        }
       }
     }
     var cls = ROUTE_CLASS[route.name] || 'primary';
