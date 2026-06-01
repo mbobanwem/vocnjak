@@ -420,6 +420,9 @@
     flex-direction: column;
     justify-content: flex-end;
   }
+  .v2-active #v2Postavke[hidden] {
+    display: none !important;
+  }
   .v2-active .v2-postavke-backdrop {
     position: absolute;
     inset: 0;
@@ -1685,7 +1688,33 @@
   /* END V2 ACTIVITIES — Slice 5 */
 </style>
 <!-- BEGIN V2 SHELL — Slice 0 -->
-<script>if(location.hash!=='#legacy')document.documentElement.classList.add('v2-active');</script>
+<script>
+(function () {
+  var root = document.documentElement;
+  var cleanV2Aliases = {
+    '#pregled': true,
+    '#kalendar': true,
+    '#biljke': true,
+    '#dnevnik': true
+  };
+
+  function isV2Hash(hash) {
+    return hash === '' || hash.indexOf('#v2') === 0 || cleanV2Aliases[hash] === true;
+  }
+
+  if (location.hash !== '#legacy') root.classList.add('v2-active');
+
+  window.addEventListener('hashchange', function () {
+    var hash = location.hash;
+    var isV2Active = root.classList.contains('v2-active');
+    if (isV2Active && hash === '#legacy') {
+      location.reload();
+      return;
+    }
+    if (!isV2Active && isV2Hash(hash)) location.reload();
+  });
+})();
+</script>
 <!-- END V2 SHELL — Slice 0 -->
 </head>
 <body>
