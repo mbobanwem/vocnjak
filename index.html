@@ -12876,6 +12876,12 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     appendSeasonalNav(parent, active);
   }
 
+  function appendSeasonalDetailTitle(parent, title) {
+    var topbar = makeEl('div', 'v2-plants-topbar');
+    topbar.appendChild(makeEl('h2', '', title));
+    parent.appendChild(topbar);
+  }
+
   function appendSeasonalCard(parent, group, context, clickable) {
     var node = clickable ? makeEl('button', 'v2-seasonal-card-button') : makeEl('article', 'v2-seasonal-card');
     if (clickable) {
@@ -13382,7 +13388,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
     var result = readValidStore();
     if (!result.ok) {
-      appendSeasonalHeader(seasonalActionView, 'Sezonska radnja', 'kalendar');
+      appendSeasonalDetailTitle(seasonalActionView, 'Sezonska radnja');
       renderSeasonalReadFailure(seasonalActionView, result);
       return;
     }
@@ -13393,25 +13399,27 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       found = findSeasonalGroup(snapshot, route);
       found = filterSeasonalGroupsForYoungTreeRelevance(found ? [found] : [], snapshot.today)[0] || null;
     } catch (e) {
-      appendSeasonalHeader(seasonalActionView, 'Sezonska radnja', 'kalendar');
+      appendSeasonalDetailTitle(seasonalActionView, 'Sezonska radnja');
       renderSeasonalSnapshotFailure(seasonalActionView, e);
       return;
     }
     if (!found) {
-      appendSeasonalHeader(seasonalActionView, 'Sezonska radnja', 'kalendar');
+      appendSeasonalDetailTitle(seasonalActionView, 'Sezonska radnja');
       seasonalActionView.appendChild(makeEl('p', 'v2-plants-empty', 'Sezonska radnja nije pronađena.'));
       return;
     }
 
-    appendSeasonalHeader(seasonalActionView, actionWindowLabel(found.def, result.catalog), 'kalendar');
-    var back = makeEl('button', 'v2-plants-secondary', 'Natrag na Kalendar');
-    back.type = 'button';
-    back.addEventListener('click', function () { location.hash = '#v2/kalendar'; });
-    seasonalActionView.appendChild(back);
+    appendSeasonalDetailTitle(seasonalActionView, actionWindowLabel(found.def, result.catalog));
 
+    appendCanonicalTextSection(seasonalActionView, 'Napomene', canonicalTextLines(found.def.notes));
+    if (isSprayActionType(found.def.action_type) && Array.isArray(result.catalog.spray_safety_notes)) {
+      appendCanonicalTextSection(seasonalActionView, 'Sigurnost prskanja', result.catalog.spray_safety_notes.slice());
+    }
+
+    var timing = makeEl('section', 'v2-seasonal-section');
+    timing.appendChild(makeEl('h3', '', 'Kada'));
     var summary = makeEl('article', 'v2-seasonal-card');
     summary.appendChild(makeEl('span', 'v2-seasonal-meta', seasonalDetailDateLine(found, snapshot.today)));
-    summary.appendChild(makeEl('span', 'v2-seasonal-meta', SEASONAL_DETAIL_BASELINE_NOTE_HR));
     var stateLine = seasonalDetailStateLine(found);
     if (stateLine) summary.appendChild(makeEl('span', 'v2-seasonal-meta', stateLine));
     summary.appendChild(makeEl('span', 'v2-seasonal-meta', seasonalDetailPlantScopeLine(found)));
@@ -13419,16 +13427,13 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     if (evidenceSummary) summary.appendChild(makeEl('span', 'v2-seasonal-note', evidenceSummary));
     var gate = uniformGateState(found);
     if (gate) summary.appendChild(makeEl('span', 'v2-seasonal-note', 'Uvjet: ' + gate + '.'));
+    summary.appendChild(makeEl('span', 'v2-seasonal-note', SEASONAL_DETAIL_BASELINE_NOTE_HR));
     var capture = makeEl('button', 'v2-plants-primary', 'Dodaj evidenciju');
     capture.type = 'button';
     capture.addEventListener('click', function () { location.hash = activityAddRoute(found); });
     summary.appendChild(capture);
-    seasonalActionView.appendChild(summary);
-
-    appendCanonicalTextSection(seasonalActionView, 'Napomene', canonicalTextLines(found.def.notes));
-    if (isSprayActionType(found.def.action_type) && Array.isArray(result.catalog.spray_safety_notes)) {
-      appendCanonicalTextSection(seasonalActionView, 'Sigurnost prskanja', result.catalog.spray_safety_notes.slice());
-    }
+    timing.appendChild(summary);
+    seasonalActionView.appendChild(timing);
 
     var entries = effectiveActivityEntries(result.store, result.catalog);
     var evidence = makeEl('section', 'v2-seasonal-section');
