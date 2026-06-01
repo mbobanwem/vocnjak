@@ -268,9 +268,35 @@
 
   #v2Shell { display: none; padding: 24px 16px; }
   .v2-active #v2Shell { display: block; padding: 0; min-height: 100vh; }
-  /* iOS-safe horizontal containment for the full-bleed hero: clip (unlike overflow:hidden)
-     does not force overflow-y to auto, so the sticky top bar and calendar month heads are preserved. */
-  html.v2-active body { overflow-x: clip; }
+  /* iOS-safe horizontal containment for full-bleed/sticky V2 surfaces. Clip (unlike
+     overflow:hidden) does not force overflow-y to auto, preserving sticky headers. */
+  html.v2-active,
+  html.v2-active body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+    overscroll-behavior-x: none;
+  }
+  html.v2-active body {
+    position: relative;
+  }
+  .v2-active #v2Shell,
+  .v2-active #v2Content,
+  .v2-active #v2TopBar,
+  .v2-active #v2BottomNav {
+    box-sizing: border-box;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+  .v2-active #v2Shell,
+  .v2-active #v2Content {
+    width: 100%;
+    min-width: 0;
+  }
+  .v2-active #v2Shell,
+  .v2-active #v2BottomNav {
+    touch-action: pan-y;
+  }
   #v2Shell button { padding: 12px 16px; }
 
   /* BEGIN V2 APP SHELL — UXR.2b */
@@ -289,6 +315,8 @@
     justify-content: space-between;
     gap: 12px;
     min-height: 32px;
+    min-width: 0;
+    max-width: 100%;
   }
   .v2-active .v2-topbar-title {
     margin: 0;
@@ -328,6 +356,7 @@
   }
   .v2-active .v2-bottomnav-tab {
     flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -731,6 +760,8 @@
   .v2-plants-form {
     display: grid;
     gap: 14px;
+    min-width: 0;
+    max-width: 100%;
   }
   .v2-plants-field {
     display: grid;
@@ -786,6 +817,8 @@
     gap: 10px;
     flex-wrap: wrap;
     margin-top: 4px;
+    min-width: 0;
+    max-width: 100%;
   }
   /* UXR.4: sticky bottom action bar on true form routes only (add, activity_add, correction).
      Scoped to v2-route-form so Plant detail inline capture rows (detail route) are unaffected. */
@@ -793,6 +826,8 @@
     position: sticky;
     bottom: 0;
     z-index: 5;
+    width: 100%;
+    box-sizing: border-box;
     margin-top: 8px;
     padding: 12px 0 calc(var(--safe-bottom) + 12px);
     background: #fff;
@@ -12608,7 +12643,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
         occurrence.evidence = findOccurrenceEvidence(entries, occurrence);
         occurrence.state = deriveOccurrenceState(today, occurrence, occurrence.evidence);
         var existenceYmd = plantExistenceYmd(plant);
-        if (existenceYmd && occurrence.state === 'missed' && occurrence.effective_close < existenceYmd) continue;
+        if (existenceYmd && occurrence.state === 'missed' && occurrence.effective_open < existenceYmd) continue;
         occurrences.push(occurrence);
       }
     }
