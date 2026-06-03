@@ -8,6 +8,8 @@ This document is not source of truth, not schema, not runtime behavior, not impl
 
 It tracks current phase, completed documentation milestones, next sessions, future roadmap pointers, and stop conditions so agents do not reopen closed work or drift from the owner-approved path.
 
+V2 Done remains the current baseline. Post-V2 follow-up planning is consolidated in `POST_V2_ROADMAP.md`.
+
 If this document conflicts with locked/core documents, locked/core documents win.
 
 This document should be updated after relevant documentation/session commits.
@@ -94,7 +96,7 @@ Post-V2 non-blocking follow-ups, only if the owner explicitly opens follow-up pl
 After V2 Done:
 
 - Revisit `V2_FUTURE_ROADMAP.md` under its promotion rule.
-- Revisit parked V1/future store-readiness concepts, including `archive/future/STORE_READY_ROADMAP_V1.md` Sessions 19, 20, and later items, as concept references only.
+- Revisit parked V1/future store-readiness concepts as concept references only through `POST_V2_ROADMAP.md`.
 - Do not let parked future items block V2 Done or re-open S8 by implication.
 
 ### Calendar baseline / execution-condition guidance clarification

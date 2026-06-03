@@ -14,6 +14,10 @@ Before any V2 catalog, domain, catalog-audit, or S3 work, read:
 
 This file is a routing document only. It does not override locked source-of-truth documents. Its purpose is to tell agents which documents to read for the current phase and prevent context drift.
 
+## POST-V2 ROADMAP RULE
+
+V2 is Done. After V2, use `POST_V2_ROADMAP.md` as the canonical owner-gated roadmap. Do not resume old V1 Sessions 20-26 directly. Do not treat archived roadmaps as active authority. Post-V2 sessions require explicit owner approval before implementation.
+
 ### LOCKED CORE
 
 - `PRODUCT_VISION.md`
@@ -218,7 +222,7 @@ Rule:
 - S3-S5 = audit and validation
 - S6-S10 = system definition
 - S11 = execution roadmap
-- only after S11 = return to implementation (Sessions 19-23)
+- after V2 Done = use `POST_V2_ROADMAP.md`; old V1 session numbers are retired and archival only
 
 Rules:
 - this is the only valid project path

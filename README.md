@@ -20,6 +20,7 @@ Orchard-first PWA for managing fruit trees, activities, and seasonal plans.
 
 The project is in a V2 reset. Active documentation (repo root):
 
+- `POST_V2_ROADMAP.md` — canonical owner-gated roadmap for what comes after V2 Done
 - `V2_PRINCIPLES.md` — product identity and locked principles
 - `V2_DOMAIN_MODEL.md` — schemas, vocabulary, enums
 - `V2_UX_MODEL.md` — surfaces and flows

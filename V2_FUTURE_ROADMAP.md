@@ -6,6 +6,8 @@
 
 This document is a **non-binding idea container**.
 
+Future themes are now consolidated in `POST_V2_ROADMAP.md`. This document remains background/reference unless the owner explicitly promotes a specific item.
+
 It exists to:
 - preserve useful ideas from V1, archive, and past discussions
 - prevent loss of valuable thinking
