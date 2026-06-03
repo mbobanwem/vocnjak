@@ -89,7 +89,7 @@ Objective: resolve known content follow-ups before broader public expansion.
 
 Known candidates:
 
-- Springcrest bird-net timing;
+- Springcrest bird-net timing — resolved by S1.1 note clarification for early peach/nectarine varieties;
 - hazelnut pollination awareness;
 - olive cross-year pruning;
 - quince/almond post-bloom projection;

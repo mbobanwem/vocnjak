@@ -1156,6 +1156,7 @@ Kalendarski prozori su Zagreb / kontinentalni baseline. U toplijim krajevima raz
   dayEnd: 5
   notes: >
     Postaviti kada plodovi počnu mijenjati boju (žuto-narančasta osnova vidljiva).
+    Rane sorte dozrijevaju ranije — mrežu tada postaviti ranije, prema stanju ploda, a ne prema datumu.
     Kos i drozd napadaju nektarinu agresivno pred berbu.
     Veličina mreže: min. 4×4 m. Tip s bočnim zipperom preporučen.
     Skinuti odmah nakon berbe.
@@ -1311,6 +1312,7 @@ Kalendarski prozori su Zagreb / kontinentalni baseline. U toplijim krajevima raz
   dayEnd: 25
   notes: >
     Postaviti kada plodovi počnu mijenjati boju (ružičasto-crvena osnova).
+    Rane sorte (npr. Springcrest) dozrijevaju ranije — mrežu tada postaviti ranije, prema stanju ploda, a ne prema datumu.
     Kos i drozd napadaju breskvu pred berbu.
     Veličina: min. 4×4 m. Skinuti odmah nakon berbe.
     Za mlada stabla god. 1–2 bez uroda: nije potrebno.
