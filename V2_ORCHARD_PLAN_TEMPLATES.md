@@ -174,6 +174,8 @@ Agronomic interpretation only. Not schema fields.
     Veće rane zaštititi sredstvom za zaštitu rana, ako je prikladno, prema preporuci stručnjaka ili etiketi proizvoda (za rezove iznad 2 cm).
     Za mlada stabla god. 1–2: fokus na formiranje uzgojnog oblika —
     vaza (koštičave) ili vreteno/spindle (jabuka, kruška). Ne rezati rodno drvo.
+    Kod vaze u koštičavih obično se biraju 3–4 jača izboja ili grane, dobro raspoređene oko debla i pod širim kutom.
+    Kod vretena/provodnice kod jabuke i kruške čuva se provodnica, a bočne grane biraju se tako da ne konkuriraju vrhu.
 
 ---
 
@@ -209,6 +211,8 @@ Agronomic interpretation only. Not schema fields.
     Ne gnojiti automatski ako je stablo već vrlo bujno, ako je tlo dobro opskrbljeno ili ako stručni savjet/analiza tla kaže drukčije.
     Ne pretjerivati s dušikom, posebno kod bujnih stabala ili kasno u sezoni.
     Za mlada stabla: cilj je umjeren rast i razvoj krošnje, ne forsiranje roda.
+    Za mlada stabla god. 1: ako se pojave cvjetovi ili zametnu plodići, bolje ih je ukloniti da se energija usmjeri u korijen i krošnju.
+    Za mlada stabla god. 2: ako je stablo snažno i dobro raste, može se ostaviti samo pokoji plod; ako je slabo ili se grane savijaju, ukloniti većinu ili sve plodiće.
 
 ---
 
@@ -244,6 +248,7 @@ Agronomic interpretation only. Not schema fields.
     Uklanjanje vodopija i pregustih ljetnih izbojaka.
     Cilj: bolja osvijetljenost krošnje, kontrola bujnosti.
     Rezati kada novi izdanci dosegnu 10–20 cm.
+    Kod mladih stabala taj je stadij dobar trenutak za početak izbora budućih nosivih grana: za vazu se ostavlja nekoliko dobro raspoređenih jačih izboja, a kod vretena se čuva provodnica.
     Ne rezati po ekstremnim vrućinama iznad 30°C.
 
 ---

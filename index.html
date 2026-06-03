@@ -6711,7 +6711,9 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       'Cilj: prozračna krošnja, kontrolirana visina stabla.',
       'Rezati po suhom vremenu. Alat dezinficirati između stabala.',
       'Veće rane zaštititi sredstvom za zaštitu rana, ako je prikladno, prema preporuci stručnjaka ili etiketi proizvoda (za rezove iznad 2 cm).',
-      'Za mlada stabla god. 1-2: fokus na formiranje uzgojnog oblika - vaza (koštičave) ili vreteno/spindle (jabuka, kruška). Ne rezati rodno drvo.'
+      'Za mlada stabla god. 1-2: fokus na formiranje uzgojnog oblika - vaza (koštičave) ili vreteno/spindle (jabuka, kruška). Ne rezati rodno drvo.',
+      'Kod vaze u koštičavih obično se biraju 3-4 jača izboja ili grane, dobro raspoređene oko debla i pod širim kutom.',
+      'Kod vretena/provodnice kod jabuke i kruške čuva se provodnica, a bočne grane biraju se tako da ne konkuriraju vrhu.'
     ]),
     'copper.pruning_wounds': note([
       'Ako je rezidba obavljena u kasnoj dormanciji i registrirani bakreni tretman je prikladan prema etiketi proizvoda i fenofazi, bakar može pokriti svježe rezne rane prije otvaranja pupova.',
@@ -6724,12 +6726,15 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       'Primijeniti prema stanju stabla, bujnosti, starosti, analizi tla ako postoji i uputama gnojiva.',
       'Ne gnojiti automatski ako je stablo već vrlo bujno, ako je tlo dobro opskrbljeno ili ako stručni savjet/analiza tla kaže drukčije.',
       'Ne pretjerivati s dušikom, posebno kod bujnih stabala ili kasno u sezoni.',
-      'Za mlada stabla: cilj je umjeren rast i razvoj krošnje, ne forsiranje roda.'
+      'Za mlada stabla: cilj je umjeren rast i razvoj krošnje, ne forsiranje roda.',
+      'Za mlada stabla god. 1: ako se pojave cvjetovi ili zametnu plodići, bolje ih je ukloniti da se energija usmjeri u korijen i krošnju.',
+      'Za mlada stabla god. 2: ako je stablo snažno i dobro raste, može se ostaviti samo pokoji plod; ako je slabo ili se grane savijaju, ukloniti većinu ili sve plodiće.'
     ]),
     'pruning.summer': note([
       'Uklanjanje vodopija i pregustih ljetnih izbojaka.',
       'Cilj: bolja osvijetljenost krošnje, kontrola bujnosti.',
       'Rezati kada novi izdanci dosegnu 10-20 cm.',
+      'Kod mladih stabala taj je stadij dobar trenutak za početak izbora budućih nosivih grana: za vazu se ostavlja nekoliko dobro raspoređenih jačih izboja, a kod vretena se čuva provodnica.',
       'Ne rezati po ekstremnim vrućinama iznad 30 °C.'
     ]),
     irrigation_shutdown: note([
@@ -9569,15 +9574,23 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       key: 'standard.formative_winter_pruning',
       species: YOUNG_TREE_STANDARD_SPECIES,
       title: 'Formiranje uzgojnog oblika',
-      note: 'God. 1-2: fokus je formiranje uzgojnog oblika - vaza kod koštičavih ili vreteno kod jabuke i kruške. Ne rezati rodno drvo.',
+      note: 'God. 1-2: fokus je formiranje uzgojnog oblika - vaza kod koštičavih ili vreteno kod jabuke i kruške. Za vazu se obično biraju 3-4 jača izboja ili grane dobro raspoređene oko debla i pod širim kutom; kod vretena se čuva provodnica. Ne rezati rodno drvo.',
       monthStart: 3, dayStart: 1, monthEnd: 3, dayEnd: 15,
       sourceRows: [169, 175]
+    },
+    {
+      key: 'standard.first_flowers_fruitlets',
+      species: YOUNG_TREE_STANDARD_SPECIES,
+      title: 'Prvi cvjetovi i plodići',
+      note: 'God. 1: ako se pojave cvjetovi ili zametnu plodići, bolje ih je ukloniti da stablo usmjeri snagu u korijen i krošnju. God. 2: ako je stablo snažno i dobro raste, može se ostaviti samo pokoji plod; ako je slabo ili se grane savijaju, ukloniti većinu ili sve plodiće.',
+      monthStart: 4, dayStart: 1, monthEnd: 5, dayEnd: 31,
+      sourceRows: [207, 211]
     },
     {
       key: 'standard.summer_shoot_care',
       species: YOUNG_TREE_STANDARD_SPECIES,
       title: 'Ljetna njega mladih izbojaka',
-      note: 'Uklanjanje vodopija i pregustih ljetnih izbojaka. Rezati kada novi izdanci dosegnu 10-20 cm; ne po ekstremnoj vrućini.',
+      note: 'Kad novi izdanci dosegnu 10-20 cm, dobro je početi birati buduću strukturu: za vazu se ostavlja nekoliko jačih izboja dobro raspoređenih oko debla, a kod vretena se čuva provodnica. Uklanjaju se samo suvišne vodopije i pregusti izbojci; ne po ekstremnoj vrućini.',
       monthStart: 7, dayStart: 1, monthEnd: 7, dayEnd: 15,
       sourceRows: [242, 246]
     },
