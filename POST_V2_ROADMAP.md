@@ -94,6 +94,8 @@ Known candidates:
 - olive cross-year pruning;
 - quince/almond post-bloom projection;
 - adult walnut summer pruning;
+- apple post-bloom runtime parity and source-first beginner clarity;
+- action-window and catalog source/runtime parity guardrail;
 - future catalog/content parity;
 - non-blocking visual/accessibility polish only if the owner prioritizes it.
 

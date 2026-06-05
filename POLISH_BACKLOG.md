@@ -45,6 +45,19 @@ Phase A also added two adjacent UX fixes outside the original three-item list ab
 
 Hard boundaries for any future micro-session driven by this list: no `V2_ORCHARD_PLAN_TEMPLATES.md` edit unless separately approved; no BBCH; no phenology engine; no regional offset; no automatic date shifting; no plan recalculation; no urgency/overdue/compliance; no diagnosis; no treatment recommendation; no product/dose advice beyond existing source-backed safety wording; no `Observation.symptom`; no `symptom_code`; no symptom registry; no program-attached observations; no broader scouting beyond Step 7c; no AI; no paid/subscription work; no schema/model/storage/validator/import/export change; no S8 reopening; no A1/A2 change.
 
+## Phase 1 source/runtime parity and projection guardrail follow-ups
+
+Provenance: accepted findings from the Apple Post-Bloom source/runtime parity audit. These are tracked Phase 1 content reliability items only; they do not authorize implementation in this docs-only update.
+
+- Apple post-bloom runtime parity — MUST FIX NOW in a later implementation session: restore omitted safe source meaning into `SPECIES_ACTION_WINDOW_NOTES['apple.fungicide.post_bloom_scab_mildew']`, including wet / disease-history / first-spots cues and young-tree health applicability. No product, dose, or pesticide-prescription guidance.
+- Apple post-bloom beginner clarity — SHOULD FIX IN PHASE 1: add source-first "Što gledati" symptom description for krastavost / pepelnica, then project to runtime. Keep descriptive and beginner-safe: no diagnosis, no treatment recommendation, no pesticide prescription.
+- Action-window note and Plant Catalog projection guardrail — require a source/runtime projection ledger before any future runtime action-window note edit or runtime catalog / harvest timing edit. Agents must map Plan Templates source sentences and Plant Catalog species / variety / harvest / fallback timing entries to runtime disposition and justify every omission or mismatch.
+- Canonical parity test/tool — future reliability item: verify required Plan Templates note anchors and Plant Catalog harvest / fallback / variety timing anchors remain present in canonical runtime after cleanup or projection work.
+- Shared spray-safety relevance/noise — TRACK SEPARATELY: shared `Sigurnost prskanja` block may show irrelevant lines on specific spray screens such as apple fungicide; do not bundle this with apple post-bloom parity.
+- Fuji harvest timing — TRACK FOR PHASE 1 OWNER/S3-GATED CATALOG DECISION: audit found the current harvest window may be too early or narrow for owner-relevant Fuji behavior. Do not implement now; source/catalog decision first, then runtime projection if approved.
+- Fantasia nectarine harvest timing — TRACK FOR PHASE 1 OWNER/S3-GATED CATALOG DECISION: audit found the current harvest window may be too early or narrow for owner-relevant Fantasia behavior. Do not implement now; source/catalog decision first, then runtime projection if approved.
+- Stanley plum / Kordia cherry harvest timing — checked in the owner-orchard harvest timing audit; no immediate change tracked unless the owner later opts in.
+
 ## Catalog canonical import tolerance / backup compatibility (post-V2 data-safety follow-up)
 
 Provenance: discovered during S1.1 (peach/nectarine bird-net note clarity). Not a V2 Done blocker. Not part of S1.1.
