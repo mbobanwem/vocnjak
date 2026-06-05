@@ -66,6 +66,13 @@ If that proof is missing: STOP.
 
 Before editing `SPECIES_ACTION_WINDOW_NOTES`, produce a projection ledger mapping each relevant `V2_ORCHARD_PLAN_TEMPLATES.md` source sentence / content idea to runtime disposition: `PROJECT_VERBATIM`, `PROJECT_CONDENSED`, `SAFE_TRANSFORM`, `OMIT_UNSAFE`, `DEFER_TO_B2`, `HOLD_FOR_OWNER_DECISION`, `SOURCE_GAP`, or `RUNTIME_OMISSION`. Every omission must be justified. Do not manually summarize Plan Templates into runtime notes without this ledger. If runtime differs from source and no ledger exists, STOP.
 
+Use this ledger shape (one row per source content idea):
+
+| Source file/section | Runtime target | Source content idea | Runtime disposition | Required runtime anchor | Omission reason | Owner decision? | Verification |
+|---|---|---|---|---|---|---|---|
+
+Anchor rule: every `PROJECT_VERBATIM`, `PROJECT_CONDENSED`, or `SAFE_TRANSFORM` row MUST name a required runtime anchor — a short, distinctive phrase that must appear in the runtime note after the edit. Verification MUST prove every named anchor is present in runtime after editing (for example with `grep` against `index.html`). Any content not projected MUST be classified (`OMIT_UNSAFE`, `DEFER_TO_B2`, `HOLD_FOR_OWNER_DECISION`, `SOURCE_GAP`, or `RUNTIME_OMISSION` carried forward) with a stated reason. The same anchor discipline applies to harvest/catalog timing edits.
+
 The same ledger rule applies before editing runtime catalog/species/harvest timing derived from `V2_PLANT_CATALOG.md`. Before changing runtime catalog entries, harvest windows, fallback timing, or variety timing logic, map catalog source entries to runtime disposition such as `CATALOG_MATCH`, `CATALOG_RUNTIME_MISMATCH`, `HARVEST_TIMING_OWNER_DECISION`, or `FALLBACK_TIMING_MISMATCH`. Runtime must not carry harvest timing or variety behavior that differs from `V2_PLANT_CATALOG.md` without owner-approved classification. If catalog/runtime timing differs and no ledger exists, STOP.
 
 Before declaring a Plan Templates content gap, inspect the relevant `V2_ORCHARD_PLAN_TEMPLATES.md` row/section. Separate read-only guidance eligibility from structured persistence eligibility. If persistence is blocked, name the exact missing identifier/model/runtime support. Do not hide safe source-backed guidance only because `Observation.scouting` or `Observation.symptom` persistence is not ready.

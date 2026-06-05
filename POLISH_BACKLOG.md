@@ -49,14 +49,46 @@ Hard boundaries for any future micro-session driven by this list: no `V2_ORCHARD
 
 Provenance: accepted findings from the Apple Post-Bloom source/runtime parity audit. These are tracked Phase 1 content reliability items only; they do not authorize implementation in this docs-only update.
 
-- Apple post-bloom runtime parity — MUST FIX NOW in a later implementation session: restore omitted safe source meaning into `SPECIES_ACTION_WINDOW_NOTES['apple.fungicide.post_bloom_scab_mildew']`, including wet / disease-history / first-spots cues and young-tree health applicability. No product, dose, or pesticide-prescription guidance.
+- Apple post-bloom runtime parity — DONE (Phase 1 Batch 1): restored omitted safe source meaning into `SPECIES_ACTION_WINDOW_NOTES['apple.fungicide.post_bloom_scab_mildew']`, including wet / disease-history / first-spots cues, the insecticide-only-if-justified line, and young-tree health applicability. No product, dose, or pesticide-prescription guidance. Implemented under the projection ledger / runtime-anchor rule.
+- Nectarine copper visible-leaf-curl parity — DONE (Phase 1 Batch 1): restored the missing source caution into `SPECIES_ACTION_WINDOW_NOTES['nectarine.copper.leaf_curl_buds_closed']` ("Vidljiva kovrčavost lista znači da je preventivni termin propušten … iduće godine"), mirroring the existing peach pattern. No date/window/`action_type` change.
 - Apple post-bloom beginner clarity — SHOULD FIX IN PHASE 1: add source-first "Što gledati" symptom description for krastavost / pepelnica, then project to runtime. Keep descriptive and beginner-safe: no diagnosis, no treatment recommendation, no pesticide prescription.
+- Beginner clarity audit — all actions and monitoring (tracker-only Phase 1 follow-up; source-first and owner-gated): every user-facing action/monitoring item should eventually answer, where applicable:
+  - what is this issue/action?
+  - where should the beginner look?
+  - what visible signs should they look for?
+  - what does it look like?
+  - what if the symptom is already visible?
+  - is it relevant for young trees without fruit?
+  - what should the user not do?
+  - when should they ask a local expert / agricultural pharmacy?
+  This must be source-first and owner-gated. No diagnosis, no product/dose, no pesticide prescription. Prioritize owner-relevant plants first: Fuji apple, Fantasia nectarine, Stanley plum, Kordia sweet cherry.
 - Action-window note and Plant Catalog projection guardrail — require a source/runtime projection ledger before any future runtime action-window note edit or runtime catalog / harvest timing edit. Agents must map Plan Templates source sentences and Plant Catalog species / variety / harvest / fallback timing entries to runtime disposition and justify every omission or mismatch.
-- Canonical parity test/tool — future reliability item: verify required Plan Templates note anchors and Plant Catalog harvest / fallback / variety timing anchors remain present in canonical runtime after cleanup or projection work.
+- Canonical parity test/tool — partially addressed (Phase 1 Batch 1): a concrete projection-ledger template and runtime-anchor rule were added to `CLAUDE.md` so future note/timing edits must declare and verify anchors. An automated read-only parity verifier (a script asserting runtime `CATALOG_SPECIES` equals the `V2_PLANT_CATALOG.md` source JSON and that required note/timing anchors are present) remains a tracked future reliability item.
 - Shared spray-safety relevance/noise — TRACK SEPARATELY: shared `Sigurnost prskanja` block may show irrelevant lines on specific spray screens such as apple fungicide; do not bundle this with apple post-bloom parity.
 - Fuji harvest timing — TRACK FOR PHASE 1 OWNER/S3-GATED CATALOG DECISION: audit found the current harvest window may be too early or narrow for owner-relevant Fuji behavior. Do not implement now; source/catalog decision first, then runtime projection if approved.
 - Fantasia nectarine harvest timing — TRACK FOR PHASE 1 OWNER/S3-GATED CATALOG DECISION: audit found the current harvest window may be too early or narrow for owner-relevant Fantasia behavior. Do not implement now; source/catalog decision first, then runtime projection if approved.
 - Stanley plum / Kordia cherry harvest timing — checked in the owner-orchard harvest timing audit; no immediate change tracked unless the owner later opts in.
+
+## Phase 1 execution sequence
+
+S1 — Apple + Nectarine runtime parity restore
+Goal: restore safe source-backed Plan Templates meaning omitted from runtime notes.
+Status: implemented in this batch, pending commit.
+
+S2 — Ledger / anchor parity verifier
+Goal: make source/runtime projection guardrail checkable instead of honor-system only.
+
+S3 — Apple beginner clarity source-first
+Goal: add beginner "Što gledati" for krastavost / pepelnica to Plan Templates first, then project to runtime; this starts the broader "Beginner clarity audit — all actions and monitoring" follow-up, which continues source-first and owner-gated, owner-relevant plants first (Fuji apple, Fantasia nectarine, Stanley plum, Kordia sweet cherry). This beginner-clarity batch runs after S1 apple/nectarine runtime parity restore.
+
+S4 — Broader safe-note parity batch
+Goal: restore additional safe Plan Templates omissions found by the master audit.
+
+S5 — Edge species owner-decision batch
+Goal: hazelnut pollination, walnut summer pruning, quince/almond post-bloom, olive cross-year decisions.
+
+S6 — Catalog timing decision batch
+Goal: Fuji/Fantasia harvest timing source check and owner/S3 catalog decision.
 
 ## Catalog canonical import tolerance / backup compatibility (post-V2 data-safety follow-up)
 
