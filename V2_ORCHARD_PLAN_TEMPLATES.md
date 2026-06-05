@@ -326,10 +326,14 @@ Kalendarski prozori su baseline podsjetnici. U toplijim regijama radnje mogu kre
   monthEnd: 5
   dayEnd: 10
   notes: >
-    Zaštita protiv krastavosti jabuke (Venturia inaequalis) i pepelnice važna je od opadanja latica kroz rani razvoj mladih listova i plodova, osobito nakon kiše i u voćnjacima s poviješću bolesti.
+    Zaštita protiv krastavosti jabuke (Venturia inaequalis) i pepelnice važna je od opadanja latica kroz rani razvoj mladih listova i plodova, osobito nakon kiše i na voćkama koje su ranije imale ove bolesti.
+    Krastavost se na mladim listovima vidi kao maslinastozelene do smeđe-sive pjege nejasnih rubova; jače zaraženi listovi se kovrčaju, suše i otpadaju.
+    Na plodovima krastavost daje tamne, baršunaste kraste; tkivo ispod kraste prestaje rasti pa plod može napuknuti ili biti izobličen.
+    Pepelnica se vidi kao bijelo-pepeljasta prevlaka na mladim listovima i vrhovima izboja; takvi listovi su tvrdi, uspravni i ljevkasto uvijeni, a izboji se mogu sušiti.
     Koristiti samo registrirani fungicid za jabuku i ciljanu bolest prema etiketi proizvoda.
-    Ako je proljeće suho, sorta/nasad nema povijest bolesti i plod nije prioritet, tretman se može smanjiti ili preskočiti.
-    Ako su proljeće i krošnja vlažni, ako je bolest bila jaka prethodnih godina ili se vide prve pjege, pratiti kraći interval s etikete i lokalni/stručni savjet.
+    Ako je proljeće suho, ako na toj voćki ranije nije bilo krastavosti ni pepelnice i plod nije prioritet, tretman se može smanjiti ili preskočiti.
+    Ako su proljeće i krošnja vlažni, ako je na voćki prethodnih godina bila jaka zaraza ili se vide prve pjege, pratiti kraći interval s etikete i lokalni/stručni savjet.
+    Ako se pjege ili bijela prevlaka već vide, zabilježi opažanje na voćki i pažljivije prati listove i plodove; ako nisi siguran što vidiš, fotografiraj list ili plod i pitaj lokalnu poljoprivrednu ljekarnu, agronoma ili stručnjaka. Aplikacija ne određuje tretman.
     Insekticid razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
     Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela. Poštovati doziranje, karencu i lokalne propise.
     Za mlada stabla god. 1–2 bez ploda: zaštita ploda nije prioritet; reagirati samo ako bolest ugrožava zdravlje stabla.
@@ -1039,6 +1043,7 @@ Kalendarski prozori su Zagreb / kontinentalni baseline. U toplijim krajevima raz
     Ako se primijeni prerano i slijedi puno kiše, zaštita se može isprati pa drugi tretman može biti potreban samo prema stanju pupova/lista, oborinama, etiketi proizvoda i stručnom/lokalnom savjetu.
     Prskanje nakon otvaranja pupova nema učinka na kovrčavost lista.
     Prekasno prskanje može biti bez koristi i može oštetiti osjetljive pupove ili cvjetove.
+    Kovrčavost se vidi na mladim listovima: listovi se zadebljaju, naboraju, mjehurasto uviju i često poprime crvenkastu ili žućkastu boju.
     Vidljiva kovrčavost lista znači da je preventivni termin propušten: ne prskati sada zbog tog lista, nego zabilježiti problem i bolje planirati tretman prije otvaranja pupova iduće godine.
     Registrirani bakreni pripravak prema etiketi proizvoda.
     Ovo prskanje je DODATAK zimskom bakru iz shared bloka — primijeniti specifično za nektarinu.
@@ -1205,6 +1210,7 @@ Kalendarski prozori su Zagreb / kontinentalni baseline. U toplijim krajevima raz
     KRITIČNO ZA BRESKVU — identično kao kod nektarine, vrlo važan preventivni termin.
     Primijeniti dok su pupovi zatvoreni ili tek počinju bubriti.
     Taphrina deformans: nakon pojave simptoma mogućnosti su ograničene; naglasak je na prevenciji.
+    Kovrčavost se vidi na mladim listovima: listovi se zadebljaju, naboraju, mjehurasto uviju i često poprime crvenkastu ili žućkastu boju.
     Ako se u proljeće već vide kovrčavi listovi, preventivni termin je propušten; zabilježiti problem za iduću sezonu umjesto kasnog pokušaja popravljanja tog lista.
     Registrirani bakreni pripravak prema etiketi proizvoda.
     U vlažnom proljeću drugi tretman razmotriti prema fenofazi, oborinama, etiketi proizvoda i stručnom/lokalnom savjetu.
