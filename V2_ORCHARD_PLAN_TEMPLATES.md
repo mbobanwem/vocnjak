@@ -1120,17 +1120,18 @@ Kalendarski prozori su Zagreb / kontinentalni baseline. U toplijim krajevima raz
   monthEnd: 5
   dayEnd: 25
   notes: >
-    Primijeniti nakon opadanja latica, kada nema otvorenih cvjetova i aktivnog leta pčela.
-    Svrha je zaštita od monilije nakon faze zaraze cvijeta i mladih grančica te provjera potrebe za reakcijom na rane štetnike poput breskvinog savijača i lisnih ušiju.
-    Tretman ima najviše smisla dok je mlado tkivo još osjetljivo, a prozor je otvoren.
-    Prerano, dok još ima otvorenih cvjetova, tretman može ugroziti pčele i ometati zametanje plodova.
-    Prekasno, zaraza je mogla već nastati i učinak može biti slabiji.
+    Monilija (smeđa trulež, Monilinia laxa) gljivična je bolest koštičavog voća; napada cvijet, mlade grančice i plod.
+    Primijeniti nakon opadanja latica, kada nema otvorenih cvjetova ni aktivnog leta pčela; tada su mladi plodići i vrhovi izboja još nježni i podložni zarazi pa zaštita ima najviše smisla.
+    Preranim prskanjem, dok još ima otvorenih cvjetova, mogu se ugroziti pčele i ometati zametanje plodova; prekasnim prskanjem zaraza je možda već nastala pa je učinak slabiji.
+    Što gledati: na cvatu i grančicama posmeđeni i osušeni cvjetovi koji ostaju pričvršćeni na grančici, sušenje vrhova izboja i smola na zahvaćenim mjestima.
+    Na plodu: mekane smeđe trule pjege, sivi ili bež jastučići spora i mumificirani (smežurani) plodovi; nektarina ima tanku kožicu pa se trulež širi brže, a kljucani plodovi i oštećenja od osa česta su ulazna mjesta.
+    Ako se znakovi već vide: zabilježiti opažanje te, ako je sigurno, ukloniti zaražene i mumificirane dijelove (rez ispod bolesnog mjesta, ukloniti iz voćnjaka sa stabla i s tla).
+    Ako nisi siguran što vidiš, fotografirati plod ili grančicu i pitati lokalnu poljoprivrednu ljekarnu, agronoma ili stručnjaka. Aplikacija ne određuje tretman.
     Koristiti registrirani fungicid za moniliju (Monilinia laxa) prema etiketi proizvoda.
-    Insekticid za breskvinog savijača ili lisne uši razmatrati samo ako monitoring, vidljiva svježa šteta ili stručni/lokalni savjet opravdavaju reakciju.
-    Monitoring pomaže odluci unutar ovog prozora; ne otvara prozor i ne stvara obvezu tretmana.
+    Insekticid protiv ranih štetnika (breskvin savijač, lisne uši) razmatrati samo ako praćenje, vidljiva svježa šteta ili stručni/lokalni savjet opravdavaju reakciju; praćenje pomaže odluci, ali ne stvara obvezu tretmana.
     Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
     Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
-    Za mlada stabla god. 1–2: nije obavezno, ali preporučeno u vlažnim sezonama.
+    Za mlada stabla god. 1–2 bez ploda: nije obavezno, ali korisno u vlažnim sezonama.
 
 ---
 

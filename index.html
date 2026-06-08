@@ -6927,15 +6927,16 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       'Za mlada stabla: primijeniti - posebno važno u prvim godinama.'
     ]),
     'nectarine.fungicide.post_bloom_monilia': note([
-      'Primijeniti nakon opadanja latica, kada nema otvorenih cvjetova i aktivnog leta pčela.',
-      'Svrha je zaštita od monilije nakon faze zaraze cvijeta i mladih grančica te provjera potrebe za reakcijom na rane štetnike poput breskvinog savijača i lisnih ušiju.',
-      'Tretman ima najviše smisla dok je mlado tkivo još osjetljivo, a prozor je otvoren.',
-      'Prerano, dok još ima otvorenih cvjetova, tretman može ugroziti pčele i ometati zametanje plodova.',
-      'Prekasno, zaraza je mogla već nastati i učinak može biti slabiji.',
+      'Monilija (smeđa trulež) napada cvijet, mlade grančice i plod.',
+      'Primijeniti nakon opadanja latica, kada nema otvorenih cvjetova ni aktivnog leta pčela; tada su mladi plodići i vrhovi izboja još nježni i podložni zarazi.',
+      'Preranim prskanjem, dok još ima cvjetova, mogu se ugroziti pčele i ometati zametanje plodova; prekasno je zaraza možda već nastala pa je učinak slabiji.',
+      'Što gledati: posmeđeni i osušeni cvjetovi koji ostaju na grančici, sušenje vrhova izboja i smola, a na plodu mekane smeđe pjege, sivi ili bež jastučići spora i mumificirani plodovi.',
+      'Ako se znakovi već vide: zabilježi opažanje te, ako je sigurno, ukloni zaražene i mumificirane dijelove (rez ispod bolesnog mjesta, ukloniti iz voćnjaka).',
+      'Ako nisi siguran što vidiš, fotografiraj plod ili grančicu i pitaj lokalnu poljoprivrednu ljekarnu, agronoma ili stručnjaka. Aplikacija ne određuje tretman.',
       'Koristiti registrirani fungicid za moniliju prema etiketi proizvoda.',
-      'Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.',
-      'Poštovati etiketu proizvoda, karencu i lokalne propise.',
-      'Za mlada stabla god. 1-2: nije obavezno, ali preporučeno u vlažnim sezonama.'
+      'Insekticid protiv ranih štetnika (breskvin savijač, lisne uši) razmotriti samo ako praćenje ili vidljiva svježa šteta to opravdavaju; praćenje ne stvara obvezu tretmana.',
+      'Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela. Poštovati etiketu proizvoda, karencu i lokalne propise.',
+      'Za mlada stabla god. 1-2 bez ploda: nije obavezno, ali korisno u vlažnim sezonama.'
     ]),
     'nectarine.thinning.fruitlets': note([
       'PREPORUČENO za nektarinu - jako prorodi bez prorjeđivanja.',
@@ -13305,6 +13306,43 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return actionType === 'oil' || actionType === 'copper' || actionType === 'fungicide' || actionType === 'insecticide';
   }
 
+  // Display-only relevance filtering for the shared Sigurnost prskanja block.
+  // The stored canonical spray_safety_notes array is NOT changed; this only
+  // selects which of its existing lines are shown for the current window's
+  // action context. Lines are classified by stable substring of the canonical
+  // Croatian text; anything unrecognised falls back to 'global' (shown).
+  function spraySafetyLineCategory(line) {
+    if (typeof line !== 'string') return 'global';
+    if (line.indexOf('marelice') !== -1) return 'copper_apricot';
+    if (line.indexOf('breskve/nektarine') !== -1) return 'copper_peach_nectarine';
+    if (line.indexOf('ulj') !== -1) return 'copper_oil';
+    if (line.indexOf('Miješanje') !== -1) return 'mixing';
+    if (line.indexOf('Insekticide') !== -1) return 'bees';
+    return 'global';
+  }
+
+  function spraySafetyNotesForWindow(def, storedNotes) {
+    if (!Array.isArray(storedNotes)) return [];
+    var actionType = def && def.action_type;
+    var allowed = { global: true };
+    if (actionType === 'copper' || actionType === 'oil') allowed.copper_oil = true;
+    if (actionType === 'fungicide' || actionType === 'insecticide') {
+      allowed.bees = true;
+      allowed.mixing = true;
+    }
+    if (actionType === 'copper') {
+      var idParts = def && typeof def.window_def_id === 'string' ? def.window_def_id.split('.') : [];
+      var species = idParts.length >= 2 ? idParts[1] : '';
+      if (species === 'apricot') allowed.copper_apricot = true;
+      if (species === 'peach' || species === 'nectarine') allowed.copper_peach_nectarine = true;
+    }
+    var out = [];
+    for (var i = 0; i < storedNotes.length; i++) {
+      if (allowed[spraySafetyLineCategory(storedNotes[i])]) out.push(storedNotes[i]);
+    }
+    return out;
+  }
+
   function renderSeasonalReadFailure(parent, result) {
     if (result.error.indexOf('.action_type') !== -1 || result.error.indexOf('cross-year') !== -1 || result.error.indexOf('month_day') !== -1) {
       console.error('vocnjak: V2 seasonal snapshot validation failed:', result.error);
@@ -13515,7 +13553,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
     appendCanonicalTextSection(seasonalActionView, 'Napomene', canonicalTextLines(found.def.notes));
     if (isSprayActionType(found.def.action_type) && Array.isArray(result.catalog.spray_safety_notes)) {
-      appendCanonicalTextSection(seasonalActionView, 'Sigurnost prskanja', result.catalog.spray_safety_notes.slice());
+      appendCanonicalTextSection(seasonalActionView, 'Sigurnost prskanja', spraySafetyNotesForWindow(found.def, result.catalog.spray_safety_notes));
     }
 
     var timing = makeEl('section', 'v2-seasonal-section');
