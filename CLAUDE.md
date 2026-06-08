@@ -81,6 +81,46 @@ Do not treat deferred broader phenology, BBCH, regional adaptation, or plan auto
 
 Do not invent `target_code`, `symptom_code`, registries, treatment/pressure/urgency/compliance logic, or use B2 `projected_id` as persisted target identity. Visual scouting and symptom content are Observations, not Activities or `Klopke`.
 
+### BEGINNER-CLARITY COPY ORDERING RULE (USER-FACING TEXT)
+
+Before adding or changing user-facing `Napomene`, `Što gledati`, monitoring guidance, or seasonal-action text, agents MUST review the text for beginner clarity and natural Croatian. Correct source-backed agronomic content is not enough on its own: if the order is wrong or the phrasing is machine-like, the note fails this rule and must be revised before implementation. Real-device review has shown that notes can carry correct content yet read poorly because action/treatment timing appears before the user understands the issue, or the text opens with `Primijeniti…` without saying what is being applied.
+
+Where applicable, user-facing text follows this order. Not every note needs all eleven points; include only those that apply, in this sequence:
+
+1. What is this issue/action?
+2. Where should the user look?
+3. What visible signs should they look for?
+4. What does it look like?
+5. What if signs/symptoms are already visible?
+6. When is the action done / when does it make sense?
+7. What is too early / too late, if relevant?
+8. What product/safety/label guidance applies, without product names or doses?
+9. Is it relevant for young trees without fruit?
+10. What should the user not do?
+11. When should they ask a local agricultural pharmacy, agronomist, or expert?
+
+The improved apple post-bloom note is the reference pattern: first what the issue is, then what to look for, then action and safety.
+
+Wording rules (binding for user-facing runtime text):
+
+- Prefer `voćka` over `nasad` for home-orchard user-facing text.
+- Prefer `poljoprivredna ljekarna` over `apoteka`.
+- Avoid vague phrases such as `mlado tkivo`, `prozor je otvoren`, `tretman ima smisla` unless immediately explained in beginner language.
+- Do not start a note with `Primijeniti…` unless the object being applied is already clear.
+- Split `prerano` / `prekasno` guidance into separate, clear sentences.
+- Keep text descriptive, not diagnostic.
+- No product names, no doses, no pesticide prescription.
+- No urgency, overdue, compliance, or pressure language.
+- Source content (`V2_ORCHARD_PLAN_TEMPLATES.md`) may be fuller; runtime text must be natural, readable Croatian for iPhone.
+
+This rule complements, and does not weaken, the PLAN-TEMPLATE PROJECTION HARD STOP above or the projection ledger / runtime-anchor discipline. Source-first remains required: update `V2_ORCHARD_PLAN_TEMPLATES.md` first, then project the same meaning into runtime.
+
+Hard requirement: before the final report for any beginner-clarity implementation, the agent MUST explicitly state all three:
+
+- `Copy review completed`
+- `Order follows beginner-clarity rule or justified exception`
+- `No machine-like agronomic phrasing remains in touched notes`
+
 ### IN PROGRESS
 
 - current target document only
