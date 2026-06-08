@@ -331,9 +331,9 @@ Kalendarski prozori su baseline podsjetnici. U toplijim regijama radnje mogu kre
     Na plodovima krastavost daje tamne, baršunaste kraste; tkivo ispod kraste prestaje rasti pa plod može napuknuti ili biti izobličen.
     Pepelnica se vidi kao bijelo-pepeljasta prevlaka na mladim listovima i vrhovima izboja; takvi listovi su tvrdi, uspravni i ljevkasto uvijeni, a izboji se mogu sušiti.
     Koristiti samo registrirani fungicid za jabuku i ciljanu bolest prema etiketi proizvoda.
-    Ako je proljeće suho, ako na toj voćki ranije nije bilo krastavosti ni pepelnice i plod nije prioritet, tretman se može smanjiti ili preskočiti.
-    Ako su proljeće i krošnja vlažni, ako je na voćki prethodnih godina bila jaka zaraza ili se vide prve pjege, pratiti kraći interval s etikete i lokalni/stručni savjet.
-    Ako se pjege ili bijela prevlaka već vide, zabilježi opažanje na voćki i pažljivije prati listove i plodove; ako nisi siguran što vidiš, fotografiraj list ili plod i pitaj lokalnu poljoprivrednu ljekarnu, agronoma ili stručnjaka. Aplikacija ne određuje tretman.
+    Ako je proljeće suho, a na toj voćki ranije nije bilo krastavosti ni pepelnice i plod nije prioritet, tretman se može smanjiti ili preskočiti.
+    U vlažnom proljeću, osobito ako je voćka ranije imala jaču zarazu ili se vide prve pjege, pratiti kraći interval s etikete i lokalni/stručni savjet.
+    Ako se pjege ili bijela prevlaka već vide, zabilježi opažanje na voćki i pažljivije prati listove i plodove. Ako nisi siguran što vidiš, fotografiraj list ili plod i pitaj lokalnu poljoprivrednu ljekarnu, agronoma ili stručnjaka. Aplikacija ne određuje tretman.
     Insekticid razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
     Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela. Poštovati doziranje, karencu i lokalne propise.
     Za mlada stabla god. 1–2 bez ploda: zaštita ploda nije prioritet; reagirati samo ako bolest ugrožava zdravlje stabla.
@@ -1121,14 +1121,15 @@ Kalendarski prozori su Zagreb / kontinentalni baseline. U toplijim krajevima raz
   dayEnd: 25
   notes: >
     Monilija (smeđa trulež, Monilinia laxa) gljivična je bolest koštičavog voća; napada cvijet, mlade grančice i plod.
-    Primijeniti nakon opadanja latica, kada nema otvorenih cvjetova ni aktivnog leta pčela; tada su mladi plodići i vrhovi izboja još nježni i podložni zarazi pa zaštita ima najviše smisla.
-    Preranim prskanjem, dok još ima otvorenih cvjetova, mogu se ugroziti pčele i ometati zametanje plodova; prekasnim prskanjem zaraza je možda već nastala pa je učinak slabiji.
+    Primijeniti nakon opadanja latica, kada nema otvorenih cvjetova ni aktivnog leta pčela. Tada su mladi plodići i vrhovi izboja još nježni i podložni zarazi pa zaštita ima najviše smisla.
+    Prerano prskanje, dok još ima otvorenih cvjetova, može ugroziti pčele i ometati zametanje plodova.
+    Prekasno prskanje može imati slabiji učinak ako je zaraza već nastala.
     Što gledati: na cvatu i grančicama posmeđeni i osušeni cvjetovi koji ostaju pričvršćeni na grančici, sušenje vrhova izboja i smola na zahvaćenim mjestima.
     Na plodu: mekane smeđe trule pjege, sivi ili bež jastučići spora i mumificirani (smežurani) plodovi; nektarina ima tanku kožicu pa se trulež širi brže, a kljucani plodovi i oštećenja od osa česta su ulazna mjesta.
-    Ako se znakovi već vide: zabilježiti opažanje te, ako je sigurno, ukloniti zaražene i mumificirane dijelove (rez ispod bolesnog mjesta, ukloniti iz voćnjaka sa stabla i s tla).
+    Ako se znakovi već vide, zabilježiti opažanje. Zaražene ili mumificirane dijelove ukloniti samo ako se to može napraviti sigurno: rez ispod bolesnog mjesta i ukloniti iz voćnjaka, sa stabla i s tla.
     Ako nisi siguran što vidiš, fotografirati plod ili grančicu i pitati lokalnu poljoprivrednu ljekarnu, agronoma ili stručnjaka. Aplikacija ne određuje tretman.
     Koristiti registrirani fungicid za moniliju (Monilinia laxa) prema etiketi proizvoda.
-    Insekticid protiv ranih štetnika (breskvin savijač, lisne uši) razmatrati samo ako praćenje, vidljiva svježa šteta ili stručni/lokalni savjet opravdavaju reakciju; praćenje pomaže odluci, ali ne stvara obvezu tretmana.
+    Insekticid protiv ranih štetnika (breskvin savijač, lisne uši) razmatrati samo ako praćenje, vidljiva svježa šteta ili stručni/lokalni savjet opravdavaju reakciju. Praćenje pomaže odluci, ali ne stvara obvezu tretmana.
     Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
     Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
     Za mlada stabla god. 1–2 bez ploda: nije obavezno, ali korisno u vlažnim sezonama.
