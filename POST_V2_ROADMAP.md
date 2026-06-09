@@ -99,6 +99,8 @@ Known candidates:
 - future catalog/content parity;
 - non-blocking visual/accessibility polish only if the owner prioritizes it.
 
+Phase 1 progress (content reliability): S1 apple + nectarine runtime parity restore is complete (`adb2b90`). Apple and stone-fruit post-bloom beginner clarity — apple scab / mildew, nectarine / peach / plum / apricot post-bloom monilia, plum pjegavost lista, apricot mraz-vs-monilija — is complete, with peach / nectarine leaf-curl recognition wording and shared spray-safety relevance filtering (`2ac3701`, `8fa4d58`, `4d06be5`, `f4951c3`, `4502f0c`); the beginner-clarity copy-ordering rule is active (`8846754`). Remaining Phase 1 candidates: the automated source/runtime parity verifier tool, the edge-species owner decisions (hazelnut pollination, adult walnut summer pruning, quince/almond post-bloom projection, olive cross-year pruning), and the Fuji / Fantasia harvest-timing owner decisions. Source-first discipline holds: Plan Templates remain source of truth and may stay fuller than the condensed runtime `Napomene` projection; no source-backed content is removed to match runtime.
+
 Out of scope: broad regionalization, BBCH, hidden offsets, automatic treatment shifting, symptom diagnosis, or AI.
 
 ### Phase 2 - Early decision spikes
