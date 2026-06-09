@@ -1284,12 +1284,19 @@ Kalendarski prozori su Zagreb / kontinentalni baseline. U toplijim krajevima raz
   monthEnd: 5
   dayEnd: 25
   notes: >
-    Nakon cvatnje.
+    Monilija (smeđa trulež, Monilinia laxa) gljivična je bolest koštičavog voća; napada cvijet, mlade grančice i plod.
+    Što gledati: na cvatu i grančicama posmeđeni i osušeni cvjetovi koji ostaju pričvršćeni na grančici, sušenje vrhova mladih izboja i smola na zahvaćenim mjestima.
+    Na plodu: mekane smeđe trule pjege, sivi ili bež jastučići spora i mumificirani (smežurani) plodovi; kljucani plodovi i oštećenja od osa česta su ulazna mjesta zaraze.
+    Ako se znakovi već vide, zabilježiti opažanje. Zaražene ili mumificirane dijelove ukloniti samo ako se to može napraviti sigurno: rez ispod bolesnog mjesta i ukloniti iz voćnjaka, sa stabla i s tla.
+    Zaštita se primjenjuje nakon opadanja latica, kada više nema otvorenih cvjetova ni aktivnog leta pčela. Tada su mladi plodići i vrhovi izboja još osjetljivi na zarazu pa zaštita ima najviše smisla.
+    Prerano prskanje, dok još ima otvorenih cvjetova, može ugroziti pčele i ometati zametanje plodova.
+    Prekasno prskanje može imati slabiji učinak ako je zaraza već nastala.
+    Ako nisi siguran što vidiš, fotografirati plod ili grančicu i pitati lokalnu poljoprivrednu ljekarnu, agronoma ili stručnjaka. Aplikacija ne određuje tretman.
     Koristiti registrirani fungicid za moniliju (Monilinia laxa) prema etiketi proizvoda.
-    Insekticid za breskvinog savijača razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
+    Insekticid protiv ranih štetnika (breskvin savijač, lisne uši) razmatrati samo ako praćenje, vidljiva svježa šteta ili stručni/lokalni savjet opravdavaju reakciju. Praćenje pomaže odluci, ali ne stvara obvezu tretmana.
     Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
     Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
-    Za mlada stabla god. 1–2: nije obavezno, korisno u vlažnim sezonama.
+    Za mlada stabla god. 1–2 bez ploda: nije obavezno, ali u vlažnim sezonama može pomoći očuvanju zdravih mladica i lista.
 
 ---
 
@@ -1538,14 +1545,21 @@ Kalendarski prozori su Zagreb / kontinentalni baseline. U toplijim krajevima raz
   monthEnd: 5
   dayEnd: 15
   notes: >
-    Nakon cvatnje / nakon opadanja latica, nikad tijekom otvorene cvatnje.
-    Marelica cvate ranije — prilagoditi termin prema stanju stabla.
+    Monilija (smeđa trulež, Monilinia laxa) gljivična je bolest koštičavog voća; napada cvijet, mlade grančice i plod. Marelica cvate najranije, pa cvjetove može oštetiti i kasni mraz.
+    Što gledati: na cvatu i grančicama posmeđeni i osušeni cvjetovi koji ostaju pričvršćeni na grančici, sušenje vrhova mladica i smola.
+    Na plodu: mekane smeđe trule pjege, sivi ili bež jastučići spora i mumificirani plodovi.
+    Mraz ili monilija? Mraz je obično nagao nakon vedre hladne noći i šteta se dalje ne širi. Monilija je vjerojatnija nakon vlažnog ili sparnog vremena, cvjetovi ostaju suhi na grančici, vrhovi mladica se suše i šteta se širi kroz vrijeme.
+    Ako se znakovi već vide, zabilježiti opažanje (datum i vidljivu štetu). Trule i mumificirane plodove ukloniti samo ako se to može napraviti sigurno, sa stabla i s tla.
+    Zaštita se primjenjuje nakon opadanja latica, nikad tijekom otvorene cvatnje. Marelica cvate ranije, pa termin prilagoditi stanju stabla, a ne datumu.
+    Prerano prskanje, dok još ima otvorenih cvjetova, može ugroziti pčele i ometati zametanje plodova.
+    Prekasno prskanje može imati slabiji učinak ako je zaraza već nastala.
+    Štetu od mraza prskanje ne može popraviti nakon što je nastala.
+    Ako nisi siguran što vidiš, fotografirati cvijet, plod ili grančicu i pitati lokalnu poljoprivrednu ljekarnu, agronoma ili stručnjaka. Aplikacija ne određuje tretman.
     Koristiti registrirani fungicid za moniliju (Monilinia laxa) prema etiketi proizvoda.
-    Praćenje pomaže odluci unutar ovog prozora.
-    Praćenje ne otvara novi prozor i ne stvara obvezu tretmana.
+    Praćenje pomaže procijeniti ima li razloga za zaštitu, ali samo opažanje ne znači da treba prskati.
     Ne tretirati tijekom aktivnog leta pčela.
     Poštovati etiketu proizvoda, zaštitu pčela, karencu, lokalna pravila i lokalni savjet.
-    Za mlada stabla god. 1–2: nije obavezno, ali može biti važno u vlažnim sezonama.
+    Za mlada stabla god. 1–2 bez ploda: nije obavezno, ali u vlažnim sezonama može biti važno za očuvanje zdravih mladica i lista.
 
 ---
 
@@ -1809,12 +1823,20 @@ Harvest window examples: Čačanska rana (jul–aug), Čačanska najbolja (aug),
   monthEnd: 5
   dayEnd: 25
   notes: >
-    Nakon cvatnje.
+    Monilija (smeđa trulež, Monilinia laxa) gljivična je bolest koštičavog voća; napada cvijet, mlade grančice i plod šljive.
+    Što gledati: na cvatu i grančicama posmeđeni i osušeni cvjetovi koji ostaju pričvršćeni na grančici, sušenje vrhova mladica i smola.
+    Na plodu: mekane smeđe trule pjege, sivi ili bež jastučići spora i mumificirani plodovi.
+    Pjegavost lista pokazuje se kao sitne pjege ili rupice na listu.
+    Ako se znakovi već vide, zabilježiti opažanje. Trule i mumificirane plodove te jasno bolesne mladice ukloniti samo ako se to može napraviti sigurno, čistim rezom, i ukloniti iz voćnjaka, sa stabla i s tla.
+    Zaštita se primjenjuje nakon opadanja latica, kada više nema otvorenih cvjetova ni aktivnog leta pčela.
+    Prerano prskanje, dok još ima otvorenih cvjetova, može ugroziti pčele i ometati zametanje plodova.
+    Prekasno prskanje može imati slabiji učinak ako je zaraza već nastala.
+    Ako nisi siguran što vidiš, fotografirati plod ili list i pitati lokalnu poljoprivrednu ljekarnu, agronoma ili stručnjaka. Aplikacija ne određuje tretman.
     Koristiti registrirani fungicid za moniliju i pjegavost lista prema etiketi proizvoda.
-    Insekticid za šljivinog savijača razmatrati samo ako monitoring, vidljivi štetnici ili stručni savjet opravdavaju reakciju.
+    Insekticid protiv šljivinog savijača razmatrati samo ako praćenje, vidljivi štetnici ili stručni/lokalni savjet opravdavaju reakciju. Praćenje pomaže odluci, ali ne stvara obvezu tretmana.
     Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.
     Poštovati etiketu proizvoda, doziranje, karencu i lokalne propise.
-    Za mlada stabla god. 1–2: nije obavezno.
+    Za mlada stabla god. 1–2 bez ploda: nije obavezno.
 
 ---
 
