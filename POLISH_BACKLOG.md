@@ -91,6 +91,7 @@ Status: DONE — delivered as the beginner-clarity content batch (owner session 
 
 S5 — Edge species owner-decision batch
 Goal: hazelnut pollination, walnut summer pruning, quince/almond post-bloom, olive cross-year decisions.
+Status: S5-A complete at `bcecdf0` — quince post-bloom fungicide projection, almond post-bloom fungicide projection, olive post-harvest pruning (Dec runtime + January note prose SAFE_TRANSFORM); verifier PASS after S5-A. Remaining: hazelnut pollination awareness (external fact-check pending), adult walnut summer pruning (external fact-check pending).
 
 S6 — Catalog timing decision batch
 Goal: Fuji/Fantasia harvest timing source check and owner/S3 catalog decision.
