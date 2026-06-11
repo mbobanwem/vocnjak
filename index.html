@@ -5096,8 +5096,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     'aw.almond.mixed.post_bloom_protection': true,
     'aw.walnut.pruning.summer': true,
     'aw.walnut.copper.early_spring': true,
-    'aw.olive.insecticide.olive_fly_if_needed': true,
-    'aw.olive.pruning.post_harvest': true
+    'aw.olive.insecticide.olive_fly_if_needed': true
   };
   var B2_PROJECTION_SOURCE_FILE = 'V2_ORCHARD_PLAN_TEMPLATES.md';
   var B2_PROJECTION_VISIBILITY = 'hidden_until_slice_8';
@@ -6817,6 +6816,13 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       'Prskati samo kada fenofaza, vrijeme i etiketa proizvoda to dopuštaju.',
       'Koristiti samo registrirani bakreni pripravak prema etiketi proizvoda.'
     ]),
+    'quince.fungicide.post_bloom_protection': note([
+      'Zaštita dunje nakon cvatnje nije rutinska: razmotriti je samo ako praćenje, vidljivi simptomi, povijest bolesti ili stručni savjet opravdavaju reakciju.',
+      'Koristiti registrirani fungicid za ciljanu bolest dunje prema etiketi proizvoda.',
+      'Insekticid razmatrati samo ako praćenje, vidljivi štetnici dunje ili stručni savjet opravdavaju reakciju.',
+      'Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.',
+      'Poštovati etiketu proizvoda, karencu, zaštitu pčela i lokalne propise.'
+    ]),
     'quince.thinning.fruit_load_check': note([
       'Dunja se ne prorjeđuje rutinski kao jabuka.',
       'Ako je stablo mlado, slabo ili se grane jako savijaju pod teretom plodova, ukloniti dio plodova radi sprječavanja loma grana i boljeg razvoja stabla.',
@@ -7015,6 +7021,13 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       'Poštovati razmak od bijelog/mineralnog ulja najmanje 7-10 dana ili dulje ako etiketa proizvoda tako traži.',
       'Koristiti samo registrirani bakreni pripravak prema etiketi proizvoda.'
     ]),
+    'almond.fungicide.post_bloom_protection': note([
+      'Zaštita badema nakon cvatnje nije rutinska: razmotriti je samo ako praćenje, vidljivi simptomi, povijest bolesti ili stručni savjet opravdavaju reakciju.',
+      'Koristiti registrirani fungicid za ciljanu bolest badema prema etiketi proizvoda.',
+      'Insekticid razmatrati samo ako praćenje, vidljivi štetnici badema ili stručni savjet opravdavaju reakciju.',
+      'Ne tretirati tijekom cvatnje ni tijekom aktivnog leta pčela.',
+      'Poštovati etiketu proizvoda, karencu, zaštitu pčela i lokalne propise.'
+    ]),
     'olive.pruning.winter': note([
       'Rezati nakon najhladnijeg dijela zime.',
       'Ukloniti suhare, vodopije i grane prema unutra krošnje.',
@@ -7049,6 +7062,12 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       'Pregledati krošnju: suhe grane, znakovi bolesti.',
       'Mlada stabla: zaštititi deblo agrotekstilom za mrazeve ispod -7 °C.',
       'Ukloniti ostatke plodova s tla.'
+    ]),
+    'olive.pruning.post_harvest': note([
+      'Laka korekcijska rezidba radi se odmah nakon berbe.',
+      'Ukloniti iscrpljene grane i urediti krošnju za sljedeću sezonu.',
+      'Ne rezati agresivno.',
+      'Ako berba završi kasno, lagana korekcija je u redu i početkom siječnja.'
     ]),
     'pomegranate.pruning.winter': note([
       'Šipak raste kao veliki grm ili malo stablo.',
@@ -7351,6 +7370,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     addSpeciesWindow(defs, 'pear', 'bird_net.pre_harvest', 'Mreža protiv ptica — kruška', 'other', 7, 20, 9, 15);
 
     addSpeciesWindow(defs, 'quince', 'copper.fire_blight_pre_bloom', 'Bakar — pred cvatnju dunje', 'copper', 3, 20, 4, 15);
+    addSpeciesWindow(defs, 'quince', 'fungicide.post_bloom_protection', 'Post-cvatnja zaštita — dunja (po potrebi)', 'fungicide', 5, 1, 5, 25);
     addSpeciesWindow(defs, 'quince', 'thinning.fruit_load_check', 'Provjera opterećenja plodovima — dunja', 'other', 5, 20, 6, 20);
 
     addSpeciesWindow(defs, 'sweet_cherry', 'thinning.fruitlets', 'Prorjeđivanje trešnje', 'other', 5, 15, 6, 1);
@@ -7379,6 +7399,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
     addSpeciesWindow(defs, 'almond', 'copper.pre_bloom', 'Bakar — prije cvatnje badema', 'copper', 1, 25, 2, 20);
     addSpeciesWindow(defs, 'almond', 'copper.leaf_curl_buds_closed', 'Bakar — kovrčavost lista', 'copper', 2, 10, 3, 10);
+    addSpeciesWindow(defs, 'almond', 'fungicide.post_bloom_protection', 'Post-cvatnja zaštita — badem (po potrebi)', 'fungicide', 4, 10, 5, 10);
 
     addSpeciesWindow(defs, 'olive', 'pruning.winter', 'Zimska rezidba masline', 'pruning', 2, 1, 3, 15);
     addSpeciesWindow(defs, 'olive', 'copper.pruning_wounds', 'Bakar na rane — maslina', 'copper', 2, 1, 3, 31);
@@ -7386,6 +7407,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     addSpeciesWindow(defs, 'olive', 'pruning.summer_correction', 'Ljetna korekcijska rezidba masline', 'pruning', 6, 1, 7, 15);
     addSpeciesWindow(defs, 'olive', 'harvest', 'Berba maslina', 'harvest', 10, 1, 12, 31);
     addSpeciesWindow(defs, 'olive', 'winter_inspection', 'Pregled masline za zimu', 'other', 10, 15, 11, 30);
+    addSpeciesWindow(defs, 'olive', 'pruning.post_harvest', 'Rezidba masline nakon berbe', 'pruning', 12, 1, 12, 31);
 
     addSpeciesWindow(defs, 'pomegranate', 'pruning.winter', 'Zimska rezidba šipka', 'pruning', 2, 1, 3, 15);
     addSpeciesWindow(defs, 'pomegranate', 'fertilization.spring', 'Gnojidba šipka', 'fertilization', 3, 1, 4, 15);
@@ -8204,8 +8226,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     'aw.almond.mixed.post_bloom_protection': true,
     'aw.walnut.pruning.summer': true,
     'aw.walnut.copper.early_spring': true,
-    'aw.olive.insecticide.olive_fly_if_needed': true,
-    'aw.olive.pruning.post_harvest': true
+    'aw.olive.insecticide.olive_fly_if_needed': true
   };
   var hasOwn = Object.prototype.hasOwnProperty;
 

@@ -15,8 +15,8 @@
 //   - It is NOT a full JavaScript or Markdown parser. It uses string anchors
 //     on purpose: short, distinctive, stable semantic phrases that survive
 //     ordinary copy-polish but break loudly if a source-backed line is dropped.
-//   - The discouraged-wording guard is scoped ONLY to the 7 Phase 1 note
-//     blocks. Legacy / out-of-scope notes (e.g. pear post-bloom, olive copper,
+//   - The discouraged-wording guard is scoped ONLY to the Phase 1 note
+//     blocks listed in PHASE1_NOTE_ANCHORS. Legacy / out-of-scope notes (e.g. pear post-bloom, olive copper,
 //     the shared STANDARD notes) legitimately still use older phrasing such as
 //     a "Primijeniti" opener, so a global ban would false-fail them.
 //   - The catalog species list below is the CURRENT runtime key set, not a
@@ -45,7 +45,7 @@ function read(relPath) {
 // the phrases stable and edit them only intentionally alongside a note change.
 // ---------------------------------------------------------------------------
 
-// Group A: the 7 Phase 1-touched runtime note blocks and the anchors that must
+// Group A: the Phase 1-touched runtime note blocks and the anchors that must
 // appear INSIDE each block (block-scoped, not anywhere in the file).
 const PHASE1_NOTE_ANCHORS = [
   {
@@ -104,13 +104,37 @@ const PHASE1_NOTE_ANCHORS = [
     anchors: [
       'Kovrčavost se vidi na mladim listovima'
     ]
+  },
+  {
+    key: 'quince.fungicide.post_bloom_protection',
+    anchors: [
+      'Zaštita dunje nakon cvatnje nije rutinska',
+      'registrirani fungicid za ciljanu bolest dunje',
+      'Ne tretirati tijekom cvatnje'
+    ]
+  },
+  {
+    key: 'almond.fungicide.post_bloom_protection',
+    anchors: [
+      'Zaštita badema nakon cvatnje nije rutinska',
+      'registrirani fungicid za ciljanu bolest badema',
+      'Ne tretirati tijekom cvatnje'
+    ]
+  },
+  {
+    key: 'olive.pruning.post_harvest',
+    anchors: [
+      'odmah nakon berbe',
+      'Ne rezati agresivno',
+      'početkom siječnja'
+    ]
   }
 ];
 
 // Group A also: split prerano/prekasno guidance must exist somewhere in runtime.
 const RUNTIME_SHARED_ANCHORS = ['Prerano prskanje', 'Prekasno prskanje'];
 
-// Group B: discouraged wording, checked ONLY inside the 7 Phase 1 blocks above.
+// Group B: discouraged wording, checked ONLY inside the Phase 1 blocks above.
 // Note: `prozor` and `obvezu tretmana` are intentionally NOT here — they appear
 // legitimately ("fenološki prozor", "Praćenje ne stvara obvezu tretmana.").
 const DISCOURAGED_SUBSTRINGS = [
@@ -153,7 +177,10 @@ const SOURCE_ANCHORS = [
   'Praćenje pomaže procijeniti',
   'smeđa trulež',
   'Kovrčavost',
-  'Aplikacija ne određuje tretman'
+  'Aplikacija ne određuje tretman',
+  'Post-cvatnja zaštita – dunja',
+  'Post-cvatnja zaštita – badem',
+  'Rezidba masline nakon berbe'
 ];
 
 // ---------------------------------------------------------------------------
@@ -260,7 +287,7 @@ function checkGroupB(html) {
     }
   }
 
-  if (ok) lines.push({ ok: true, text: 'Phase 1 note blocks (7) clean' });
+  if (ok) lines.push({ ok: true, text: 'Phase 1 note blocks (' + PHASE1_NOTE_ANCHORS.length + ') clean' });
   return { ok, lines };
 }
 
