@@ -12,6 +12,8 @@ V2 Done remains the current baseline. Post-V2 follow-up planning is consolidated
 
 Post-V2 Phase 1 progress: S1.1 (Springcrest / peach-nectarine bird-net note clarity) is complete. The peach and nectarine `bird_net.pre_harvest` notes were aligned in source (`V2_ORCHARD_PLAN_TEMPLATES.md`) and runtime (`SPECIES_ACTION_WINDOW_NOTES`) to add an early-variety cue (place the net by fruit state, not date; early varieties colour/ripen earlier). Springcrest is named only for peach; nectarine uses generic early-variety wording. No date/window, schema, storage, import/export, or validator change, and no `ACTION_WINDOW_LAST_REVIEWED_ON` change. The catalog-canonical / backup-import compatibility edge case discovered during S1.1 is tracked in `POLISH_BACKLOG.md` for a future data-safety / import-export audit.
 
+Regionalization decision record (REG-D1) is complete: `REGIONALIZATION_DECISION_RECORD.md` is the canonical regionalization decision record and REG session map. Regionalization is decision-recorded only; nothing is implemented. Runtime remains unchanged: single-catalog `catalog_v1`, no settings/country/region fields, no second pack, no verifier change, no schema change. REG sessions are owner-gated and open only by explicit owner instruction naming the session id (`REG-R1-D` through `REG-CTRY-*`). Owner-approved market/content priority: HR Adriatic → SI → AT → DE → IT → CH → FR → BA/RS/XK later. Next strategic planning topic: native/store distribution architecture (the Phase 2 store/mobile decision spike in `POST_V2_ROADMAP.md`).
+
 If this document conflicts with locked/core documents, locked/core documents win.
 
 This document should be updated after relevant documentation/session commits.

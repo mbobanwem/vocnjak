@@ -18,6 +18,19 @@ This file is a routing document only. It does not override locked source-of-trut
 
 V2 is Done. After V2, use `POST_V2_ROADMAP.md` as the canonical owner-gated roadmap. Do not resume old V1 Sessions 20-26 directly. Do not treat archived roadmaps as active authority. Post-V2 sessions require explicit owner approval before implementation.
 
+## REGIONALIZATION HARD STOP
+
+Regionalization is decision-recorded, not implemented. `REGIONALIZATION_DECISION_RECORD.md` is the canonical regionalization decision record and REG session map. Regionalization work must follow it exactly.
+
+- No regionalization session may start unless the owner explicitly names the REG session id.
+- No runtime numeric offsets, regional formulas, or computed date shifts — ever.
+- No cross-country carry-forward; Croatian dates and Croatian legal/safety wording must never enter foreign packs.
+- No live regional pack without approved source corpus, source dossier, complete regional ledger, pack-aware verifier PASS, and explicit owner activation.
+- No second live catalog before `REG-VER1` and `REG-CATF` are complete.
+- No existing-plant calendar movement before the owner-approved `REG-UPG` adoption flow.
+- Only live countries/regions may appear in UI; registered-but-not-live countries are hidden, never teased.
+- Do not edit `V2_ORCHARD_PLAN_TEMPLATES.md` for regional packs; regional source content lives in sibling per-pack dossiers.
+
 ### LOCKED CORE
 
 - `PRODUCT_VISION.md`

@@ -114,12 +114,14 @@ Store/mobile architecture decision:
 - Owner decisions: PWA-only for now, TWA, Capacitor-bundled, native shell, or native rewrite path; required offline baseline; native permissions; app metadata; store-review expectations.
 - Out of scope: implementation, payment code, broad refactor, or framework migration unless separately approved.
 
-Regionalization / Zagreb baseline decision:
+Regionalization / Zagreb baseline decision — DECIDED (REG-D1):
 
-- Objective: decide how V2 evolves beyond the Zagreb/continental Croatia baseline.
-- Why it matters: Paris, Berlin, southern Italy, coastal Croatia, alpine areas, and local microclimates do not share one reliable calendar.
-- Owner decisions: target countries and launch order; whether/when to add country or region fields; source model; regional content granularity; localization priority.
-- Out of scope: hidden numeric offsets, automatic treatment-window shifting, BBCH/climate engine, or unsupported precision.
+- Detailed decision record: `REGIONALIZATION_DECISION_RECORD.md` (canonical). This roadmap keeps only this compact pointer.
+- The regionalization track is decision-recorded but NOT implemented. No runtime changes are authorized by the record.
+- Each REG session opens only by explicit owner instruction naming the session id.
+- Session track: `REG-D1` (done), `REG-R1-D`, `REG-VER1`, `REG-R1-R`, `REG-CATF`, `REG-PACKS-D`, `REG-A-D`, `REG-A-R`, `REG-UPG-D`, `REG-UPG-R`, `REG-SI-F`, `REG-I18N-F`, `REG-SI-D/R`, `REG-AT-F/D/R`, `REG-CTRY-*`.
+- Owner-approved market/content priority: HR Adriatic → SI → AT → DE → IT → CH → FR → BA/RS/XK later.
+- Hard rules (full list in the record): no numeric offsets or computed date shifts; no cross-country carry-forward; fail-closed import; only live countries/regions in UI; foreign region ids decided only at that country's source-corpus session.
 
 Legacy iCal / notifications decision:
 
@@ -157,6 +159,8 @@ Include:
 ### Phase 5 - Regional content expansion
 
 Objective: move beyond Zagreb/continental Croatia safely.
+
+Execution model, session gates, and country registry: see `REGIONALIZATION_DECISION_RECORD.md`.
 
 Include:
 
@@ -265,8 +269,8 @@ Owner decisions required before implementation:
 Recommended sequence after this docs commit:
 
 1. Phase 1 content reliability / Plan Templates closeout.
-2. Phase 2 decision spike: regionalization / Zagreb baseline.
-3. Phase 2 decision spike: store/mobile architecture.
+2. Regionalization decision: recorded in `REGIONALIZATION_DECISION_RECORD.md` (REG-D1 done); REG sessions remain owner-gated by session id.
+3. Phase 2 decision spike: store/mobile architecture — next strategic planning topic.
 
 Do not implement those in this roadmap session.
 
