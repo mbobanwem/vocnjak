@@ -1,14 +1,32 @@
-# Vocnjak Post-V2 Roadmap
+# Vocnjak Roadmap
 
 ## Status and authority
 
 V2 is Done. V2 is the current product and runtime baseline.
 
-This document is the canonical post-V2 roadmap. It consolidates the V2 Done baseline, the owner's long-term product direction, useful historical intent from old V1 Sessions 20-26, roadmap synthesis findings, regionalization risk, mobile/store direction, notification gaps, and long-term AI/subscription tracks.
+`ROADMAP.md` is the single active roadmap authority. It tells agents what is next, what future session order is allowed, which ideas are completed / absorbed / retired / future-only, and which work remains owner-gated.
 
-Old V1 Sessions 20-26 are not active session numbers. Their useful product intent is preserved here and translated into a V2-owned roadmap. The old numbering is retired.
+`CURRENT_STATE.md` is the chronological state/history record. It is not roadmap authority.
 
-Archived docs remain historical input only. They are not active authority and must not be resumed directly. Post-V2 phases are owner-gated; this document does not authorize implementation by itself.
+Decision records remain the detailed authorities for their tracks:
+
+- `REGIONALIZATION_DECISION_RECORD.md` — regionalization / REG track
+- `DISTRIBUTION_DECISION_RECORD.md` — native/store / STORE/CAP track
+
+Archived V1 and concept docs remain historical input only. They are not active authority and must not be resumed directly. Old V1/concept sessions must not be resumed by number. REG and STORE/CAP are separate future tracks; they are not old Session 19, Session 21, or any other retired V1/concept session.
+
+Broad Markdown hygiene, pointer cleanup beyond this authority rename, and archiving of completed docs are separate future sessions. This roadmap does not authorize implementation by itself.
+
+## What to read first
+
+For new work, read:
+
+1. `CLAUDE.md`
+2. `ROADMAP.md`
+3. `CURRENT_STATE.md`
+4. The relevant decision record if the work touches REG, STORE/CAP, native distribution, notifications, regionalization, sync/cloud, AI/photo, subscription, or payments.
+
+New ideas belong in future roadmap sessions unless the owner explicitly opens an implementation session.
 
 ## Product end goal
 
@@ -65,7 +83,7 @@ Post-V2 work must preserve:
 
 ## Retired V1 Sessions 20-26 mapping
 
-The old numbering is retired. The table below preserves useful intent only.
+The old numbering is retired. The table below preserves useful intent only. REG and STORE/CAP work is governed by the dedicated decision records and must not be inferred from these old session numbers.
 
 | Old V1 item | Post-V2 translation |
 |---|---|
@@ -81,9 +99,9 @@ The old numbering is retired. The table below preserves useful intent only.
 
 ### Phase 0 - Canonical roadmap baseline
 
-Objective: create this document and add minimal pointers from active docs.
+Objective: maintain `ROADMAP.md` as the single active roadmap authority and keep active docs pointed at `ROADMAP.md` / `CURRENT_STATE.md`.
 
-Out of scope: runtime changes, schema changes, storage changes, Plan Templates changes, archive rewrites, or reopening V2.
+Out of scope: runtime changes, schema changes, storage changes, Plan Templates changes, archive rewrites, broad Markdown hygiene, or reopening V2.
 
 ### Phase 1 - Content reliability / Plan Templates closeout
 
@@ -275,9 +293,20 @@ Owner decisions required before implementation:
 - subscription/payment model;
 - legacy app fate.
 
+## Source documents
+
+Roadmap content is grounded in:
+
+- `CURRENT_STATE.md`
+- `REGIONALIZATION_DECISION_RECORD.md`
+- `DISTRIBUTION_DECISION_RECORD.md`
+- `V2_EXECUTION_ROADMAP.md`
+- `archive/v1/EXECUTION_ROADMAP_V1.md`
+- `archive/future/STORE_READY_ROADMAP_V1.md`
+
 ## Immediate next sessions
 
-Recommended sequence after this docs commit:
+Recommended sequence after this authority cleanup:
 
 1. Phase 1 content reliability / Plan Templates closeout.
 2. Regionalization decision: recorded in `REGIONALIZATION_DECISION_RECORD.md` (REG-D1 done); REG sessions remain owner-gated by session id.

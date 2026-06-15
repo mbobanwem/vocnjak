@@ -1,5 +1,7 @@
 # V2 Execution Roadmap
 
+**Authority note:** This document records the completed V2 execution baseline. Active roadmap authority now lives in `ROADMAP.md`; chronological state/history lives in `CURRENT_STATE.md`.
+
 **Status:** S11.A, S11.B, S11.C1, S11.C2, and S11.D complete. Runtime implementation for the current V2 baseline is complete; Runtime Slices 0–8 are complete for their approved scopes. B2 metadata-only projection boundary is complete. Runtime Slice 8 is closed for the approved S8 scope: Step 1, Step 2, Step 3, Step 4a, Step 5a, Step 6, Step 7 numeric-band runtime, Step 7b context-only trap advisory runtime, Step 7c bounded visual scouting runtime, Step 7d source-backed scouting guidance runtime, and Step 7e monitoring guidance parity runtime are complete. Step 7c docs lock was committed at `7e388c5`; Step 7c runtime was committed at `588e413`; Step 7d source-backed scouting guidance runtime was committed at `5f64257 Add Step 7d scouting guidance`; Step 7e monitoring guidance parity runtime was committed at `36433aa Add Step 7e monitoring guidance parity`; tracker sync after Step 7e was committed at `c5521ac Sync trackers after Step 7e guidance parity`. Step 7 coverage is complete and no unresolved S8 blocker row remains. Post-S8 Observation correction is complete for the approved scope: docs lock at `1ef2009`, validator/model runtime at `60cc32c`, and UI/display runtime at `6d5b19d`. A2 default V2 / remove `#v2` gate and A1 archive/lifecycle baseline are complete. Plan Templates runtime fidelity / content parity runtime patch is complete at `c9645c4 Implement Plan Templates runtime parity fixes`. Phase B / UXR is complete through UXR.7 for the V2 Done baseline; UXR.0 (`5ef720d`), UXR.1a (`8163d1c`), UXR.1b (`8702836`), UXR.2a (`559012c`), UXR.2b (`927555d Add Phase B V2 app shell`), UXR.2c (`a78840a Add Phase B settings sheet`), UXR.2d (`17e5439 Refine Phase B detail and form shell`), UXR.3a Pregled hero + section order (`44eff72 Add Phase B Pregled hero`), UXR.3b Cards/chips/list visual system (`9c46712 Refine Phase B Pregled cards`), and UXR.3c Biljke Add Plant pattern / primary actions (`166f26f Refine Phase B Biljke actions`) are complete; the `UXR.4 — Forms + capture flows polish + Postavke label rename` is complete at `9223f81 Refine Phase B form flows` (`index.html`-only: sticky bottom action bar scoped to `html.v2-active.v2-route-form .v2-plants-actions` on the three true form routes `add` / `activity_add` / `correction` only; 15 user-facing `v2BackupStatus` `Slice 3 —` strings rewritten to clean Croatian with behavior/validation/payload unchanged; Postavke button labels + `ne znam` nesting already complete from earlier sessions; Plant detail inline capture forms untouched and deferred to UXR.5b; no top-bar `Spremi` CTA), UXR.3d species identity is complete at `473e1c7`, UXR.5 split-confirmed 5a/5b/5c is complete, UXR.6 accessibility/outdoor usability is complete at `a0cfc93`, and UXR.7 final mobile stabilization is complete through `aa63351`, `3d42e27`, `97585bc`, `f4b97e9`, and `353c6e1`. Young-Tree Formative Completion is complete at `7bf61c0 Complete young-tree formative guidance`; V2 Done audit passed with non-blocking follow-ups; V2 is marked Done. Broader phenology-aware stage confirmation, broad/general scouting beyond Step 7c, symptom capture / `Observation.symptom` / symptom registry, program-attached observations, BBCH/phenology engine, regional offsets, automatic date shifting, plan recalculation, urgency/overdue/compliance, treatment recommendation, diagnosis, and AI/paid/subscription work remain Post-S8 / owner-approved future work and do not block V2 Done.
 
 **Post-UXR runtime stabilization update:** After UXR.6, three focused `index.html`-only runtime fixes were pushed and verified: `0f90de8 Fix V2 shell overlay and legacy navigation`, `06102aa Improve seasonal action detail layout`, and `a2b7a09 Reset V2 scroll position on route changes`. Together they restored closed-Postavke hit testing, same-document `#legacy` / V2 hash transitions, Seasonal action detail mobile information order, and route-keyed scroll-to-top behavior. They did not change storage/model, validators, import/export payloads, B2/S8 monitoring logic, Plan Templates, `manifest.json`, `sw.js`, or route semantics beyond the shell-level legacy bridge and scroll reset on rendered route changes.
@@ -125,7 +127,7 @@ S11 is bound by:
 - `V2_DOMAIN_MODEL.md`
 - `V2_UX_MODEL.md`
 - `V2_ARCHITECTURE.md`
-- `V2_CURRENT_STATE.md`
+- `CURRENT_STATE.md`
 - `CLAUDE.md`
 
 S11 must not override domain, UX, or architecture decisions. S11 only orders, sequences, and gates them.
@@ -294,7 +296,7 @@ Trackers must not be updated during S11.A–S11.C.
 Specifically:
 
 - `CLAUDE.md` must not be edited during S11.A, S11.B, S11.C1, or S11.C2.
-- `V2_CURRENT_STATE.md` must not be edited during S11.A, S11.B, S11.C1, or S11.C2.
+- `CURRENT_STATE.md` must not be edited during S11.A, S11.B, S11.C1, or S11.C2.
 
 Tracker sync happens once after S11.D is complete and approved. That single tracker sync records:
 
@@ -556,7 +558,7 @@ Cross-cutting rules that bind every slice:
 - Legacy boot and any legacy migration code must remain functionally byte-identical. V2 must not suppress, condition, or mutate legacy boot.
 - No service worker `CACHE_NAME` bump, no `manifest.json` change, no weather / Supabase / iCal / AES-GCM refactor.
 - No catalog content edits to `V2_PLANT_CATALOG.md` or `V2_ORCHARD_PLAN_TEMPLATES.md`.
-- No tracker edits to `CLAUDE.md` or `V2_CURRENT_STATE.md` during S11.C1.
+- No tracker edits to `CLAUDE.md` or `CURRENT_STATE.md` during S11.C1.
 
 ---
 
@@ -1378,7 +1380,7 @@ Approved decomposition:
    - Runtime status: Step 7 numeric-band runtime is pushed on main at `905af41 Implement S8 Step 7 trap advisory display`, covering sweet cherry, sour cherry, and plum rows 654/860/1596/1643. Step 7b context-only trap advisory runtime is pushed on main at `b1d840c Add S8 Step 7b context-only trap advisory`, covering apple row 337, olive row 2455, walnut row 2949, and walnut row 2977. Step 7c bounded visual scouting runtime is pushed on main at `588e413 Implement Step 7c visual scouting capture` after docs lock at `7e388c5 Lock Step 7c visual scouting capture model`. Step 7d source-backed scouting guidance runtime is pushed on main at `5f64257 Add Step 7d scouting guidance`. Step 7e monitoring guidance parity runtime is pushed on main at `36433aa Add Step 7e monitoring guidance parity`.
 8. **S8 Step 7b — Trap Advisory Source-Coverage Gap Map.** Recorded; documentation/tracking only.
    - Purpose: prevent silent loss or wrong-surface placement of plan-template monitoring guidance after the Step 7 runtime patches. Trap count is `Observation.kind = trap`; visual scouting is `Observation.kind = scouting`; visible problem signs are `Observation.kind = symptom`; phenology/stage records are `Observation.kind = stage_obs`. Scouting and symptom content are Observations, not Activities.
-   - Historical first action: record the gap map in `V2_CURRENT_STATE.md` under the Runtime Slice 8 tracker area, then have it owner-reviewed.
+   - Historical first action: record the gap map in `CURRENT_STATE.md` under the Runtime Slice 8 tracker area, then have it owner-reviewed.
    - Coverage map species and required next actions:
      - `apple` — codling moth / jabučni savijač: owner-approved context-only advisory runtime implemented at `b1d840c` — source-backed `Sažetak izvora` from row 337 plus shared pest-agnostic `Orijentir za razgovor` block; no numeric bands. Step 7c visual fruit-sign capture is implemented at `588e413` via `scouting_source_337`. Required next action: source-backed numeric trap extension only if concrete numeric treatment thresholds emerge from owner-approved source review; no Step 7c runtime action remains.
      - `pear` — row 516 fruit moth / codling-like monitoring: Row 516 pear remains split-required for trap/advisory vs visual-sign semantics. Step 7c bounded visual fruit-sign capture is implemented at `588e413` via `scouting_source_516`; optional trap/advisory content remains separate. Required next action: no Step 7c runtime action remains; add any `Klopke`/advisory display only for the trap part after owner decision.
@@ -1686,7 +1688,7 @@ S11.D owns:
 - verification gates across S11.C1 and S11.C2 slices
 - usable / default milestone definitions, including the actual default-flip gate (per §38)
 - stop conditions consolidated across S11.A / S11.B / S11.C1 / S11.C2
-- tracker sync timing (`CLAUDE.md` and `V2_CURRENT_STATE.md` sync after S11.D approval, per §10)
+- tracker sync timing (`CLAUDE.md` and `CURRENT_STATE.md` sync after S11.D approval, per §10)
 - service worker `CACHE_NAME` bump decision if testing-window reload friction warrants it
 - public / native release gate via §18 native storage review
 - authorization for any post-usable parallelization policy

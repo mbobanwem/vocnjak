@@ -18,7 +18,7 @@ For any V2 catalog, domain, catalog-audit, or pre-S6 documentation cleanup work,
 
 1. `CLAUDE.md`
 2. `V2_AGENT_ENTRYPOINT.md`
-3. `V2_CURRENT_STATE.md`
+3. `CURRENT_STATE.md`
 4. `PRODUCT_VISION.md`
 5. `V2_PRINCIPLES.md`
 6. `V2_DOMAIN_MODEL.md`
@@ -42,7 +42,7 @@ Historical / supporting reading only:
 
 This routing file does not carry current phase status or the current edit allowlist.
 
-For current phase, open work, approved files, and stop conditions, read `V2_CURRENT_STATE.md` and the active owner request. If this routing file appears to conflict with `V2_CURRENT_STATE.md`, `V2_CURRENT_STATE.md` wins.
+For roadmap authority and future session order, read `ROADMAP.md`. For current phase, chronological state/history, approved files, and stop conditions, read `CURRENT_STATE.md` and the active owner request. If this routing file appears to conflict with `ROADMAP.md` or `CURRENT_STATE.md`, the active authority document wins.
 
 ---
 

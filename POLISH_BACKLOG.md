@@ -4,7 +4,7 @@ Small UX / UI / copy issues.
 Do NOT implement individually.
 Resolve only in batch sessions.
 
-Provenance note: this file is a parking lot for future polish, UX, UXR, and visual-design work. Entries may come from V1/legacy app observations, current review observations, or Claude Design recommendations for future V2 design sessions. They may describe old, current, placeholder, proposed, or future surfaces; they do not prove that equivalent V2 runtime UI currently exists and do not authorize implementation outside the current roadmap/session. Future UXR/design recommendations must wait for dedicated UXR/visual refresh sessions. B2/S8 monitoring and risk behavior remains governed by `V2_UX_MODEL.md` §0, `V2_DOMAIN_MODEL.md`, `V2_CURRENT_STATE.md`, and `V2_EXECUTION_ROADMAP.md`.
+Provenance note: this file is a parking lot for future polish, UX, UXR, and visual-design work. Entries may come from V1/legacy app observations, current review observations, or Claude Design recommendations for future V2 design sessions. They may describe old, current, placeholder, proposed, or future surfaces; they do not prove that equivalent V2 runtime UI currently exists and do not authorize implementation outside the current roadmap/session. Future UXR/design recommendations must wait for dedicated UXR/visual refresh sessions. B2/S8 monitoring and risk behavior remains governed by `V2_UX_MODEL.md` §0, `V2_DOMAIN_MODEL.md`, `CURRENT_STATE.md`, and `V2_EXECUTION_ROADMAP.md`.
 
 ---
 

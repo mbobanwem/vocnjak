@@ -263,9 +263,9 @@ Sync/cloud:
 ## 15. Documentation placement
 
 - This file is the canonical detailed distribution/mobile decision record.
-- `POST_V2_ROADMAP.md` contains compact pointer and session list.
+- `ROADMAP.md` contains compact pointer and session list.
 - `CLAUDE.md` contains only a short hard-stop block.
-- `V2_CURRENT_STATE.md` contains only tracker/status.
+- `CURRENT_STATE.md` contains only tracker/status.
 - Architecture/domain/UX docs are not edited in STORE-D1.
 - Runtime, `sw.js`, and `manifest.json` are not edited in STORE-D1.
 

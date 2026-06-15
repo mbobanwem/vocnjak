@@ -1,14 +1,18 @@
-# VOCNJAK V2 — CURRENT STATE
+# VOCNJAK — CURRENT STATE
 
 ## Status
 
-Operational tracker.
+Chronological state/history record.
 
-This document is not source of truth, not schema, not runtime behavior, not implementation, and not catalog content.
+`CURRENT_STATE.md` is not roadmap authority, not schema, not runtime behavior, not implementation, and not catalog content.
 
-It tracks current phase, completed documentation milestones, next sessions, future roadmap pointers, and stop conditions so agents do not reopen closed work or drift from the owner-approved path.
+It tracks completed documentation milestones, implementation history, decision-record completion, current runtime baseline, open documentation status, and stop conditions so agents do not reopen closed work or drift from the owner-approved path.
 
-V2 Done remains the current baseline. Post-V2 follow-up planning is consolidated in `POST_V2_ROADMAP.md`.
+For what comes next and future session order, read `ROADMAP.md`.
+
+V2 Done remains the current runtime baseline. Post-V2 follow-up planning is consolidated in `ROADMAP.md`.
+
+The authority-rename session changed documentation authority filenames and routing only. No runtime implementation happened in that rename session.
 
 Post-V2 Phase 1 progress: S1.1 (Springcrest / peach-nectarine bird-net note clarity) is complete. The peach and nectarine `bird_net.pre_harvest` notes were aligned in source (`V2_ORCHARD_PLAN_TEMPLATES.md`) and runtime (`SPECIES_ACTION_WINDOW_NOTES`) to add an early-variety cue (place the net by fruit state, not date; early varieties colour/ripen earlier). Springcrest is named only for peach; nectarine uses generic early-variety wording. No date/window, schema, storage, import/export, or validator change, and no `ACTION_WINDOW_LAST_REVIEWED_ON` change. The catalog-canonical / backup-import compatibility edge case discovered during S1.1 is tracked in `POLISH_BACKLOG.md` for a future data-safety / import-export audit.
 
@@ -18,7 +22,7 @@ Distribution decision record (STORE-D1) is complete: `DISTRIBUTION_DECISION_RECO
 
 If this document conflicts with locked/core documents, locked/core documents win.
 
-This document should be updated after relevant documentation/session commits.
+This document should be updated after relevant documentation/session commits. Its historical timeline is retained from the previous current-state tracker.
 
 ---
 
@@ -110,7 +114,7 @@ Phase 1 S2 (content parity verifier) is complete and pushed at `799caae`. A read
 After V2 Done:
 
 - Revisit `V2_FUTURE_ROADMAP.md` under its promotion rule.
-- Revisit parked V1/future store-readiness concepts as concept references only through `POST_V2_ROADMAP.md`.
+- Revisit parked V1/future store-readiness concepts as concept references only through `ROADMAP.md`.
 - Do not let parked future items block V2 Done or re-open S8 by implication.
 
 ### Calendar baseline / execution-condition guidance clarification
@@ -877,7 +881,7 @@ Confirm that:
 
 - `PRODUCT_VISION.md` is clarified
 - `V2_AGENT_ENTRYPOINT.md` is clarified
-- `V2_CURRENT_STATE.md` is updated
+- `CURRENT_STATE.md` is updated
 - `V2_PLANT_CATALOG.md` is stable pre-S3 input
 - `V2_ORCHARD_PLAN_TEMPLATES.md` is stable pre-S3 input
 - no known blocker remains before S3 apple-only dry-run
