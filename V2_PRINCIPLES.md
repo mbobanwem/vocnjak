@@ -59,7 +59,7 @@ Single approver: project owner. No committee, no parallel review.
 - `V2_DOMAIN_MODEL.md` — schemas, enums, vocabulary
 - `V2_UX_MODEL.md` — surfaces and flows
 - `V2_ARCHITECTURE.md` — data model, algorithms, migration
-- `V2_EXECUTION_ROADMAP.md` — implementation session order
+- `archive/v2/V2_EXECUTION_ROADMAP.md` — implementation session order
 - `V2_CATALOG_AUDIT.md` — catalog v1.0 audit status
 - `V2_PLANT_CATALOG.md` — plant catalog content
 - `V2_ORCHARD_PLAN_TEMPLATES.md` — action templates

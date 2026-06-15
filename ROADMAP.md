@@ -300,7 +300,7 @@ Roadmap content is grounded in:
 - `CURRENT_STATE.md`
 - `REGIONALIZATION_DECISION_RECORD.md`
 - `DISTRIBUTION_DECISION_RECORD.md`
-- `V2_EXECUTION_ROADMAP.md`
+- `archive/v2/V2_EXECUTION_ROADMAP.md`
 - `archive/v1/EXECUTION_ROADMAP_V1.md`
 - `archive/future/STORE_READY_ROADMAP_V1.md`
 

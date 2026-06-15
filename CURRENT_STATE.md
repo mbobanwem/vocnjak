@@ -72,7 +72,7 @@ These final mobile fixes did not change docs at commit time, `manifest.json`, `s
 
 ### V2 Done completion after Post-S8 Observation correction
 
-Current completed order is recorded in `V2_EXECUTION_ROADMAP.md §0`.
+Current completed order is recorded in `archive/v2/V2_EXECUTION_ROADMAP.md §0`.
 
 Already complete:
 
@@ -590,7 +590,7 @@ Implementation was forbidden through S11 documentation. After explicit owner app
 
 §0 monitoring constraints remain locked and authoritative.
 
-Legacy data and V1/V3/V4 keys remain protected per `V2_EXECUTION_ROADMAP.md` §8 and §14.
+Legacy data and V1/V3/V4 keys remain protected per `archive/v2/V2_EXECUTION_ROADMAP.md` §8 and §14.
 
 Completed S10:
 - `S10 — Clean V2 transition / migration architecture` in `V2_ARCHITECTURE.md` `## 6. V1 → V2 migration`
@@ -1746,7 +1746,7 @@ No existing legacy data may be deleted or silently rewritten. Legacy material mu
 
 ### S11 — Implementation execution roadmap
 
-Status: DONE — S11.A through S11.D complete in `V2_EXECUTION_ROADMAP.md` §1–§50.
+Status: DONE — S11.A through S11.D complete in `archive/v2/V2_EXECUTION_ROADMAP.md` §1–§50.
 
 Completed S11 patches:
 
