@@ -474,7 +474,7 @@ Even with the planning permission above:
 - no commit after analysis-only tasks;
 - no commit if unexpected files are present;
 - no commit of `.claude/` (including `.claude/settings.json` and `.claude/worktrees`);
-- no commit of `Claude-design/`;
+- no commit of root `Claude-design/` outside an approved archive/import session;
 - no commit of unrelated files.
 
 ---
@@ -494,7 +494,7 @@ When asked for a plan, review, audit, challenge, roadmap decision, implementatio
 In this role Claude MUST:
 
 - read the relevant source-of-truth docs BEFORE proposing a plan;
-- actively check `PRODUCT_VISION.md`, `V2_ARCHITECTURE.md`, `V2_DOMAIN_MODEL.md`, `V2_UX_MODEL.md`, `CURRENT_STATE.md`, `archive/v2/V2_EXECUTION_ROADMAP.md`, `POLISH_BACKLOG.md`, and the relevant `Claude-design/` canon when the task is Phase B / UXR;
+- actively check `PRODUCT_VISION.md`, `V2_ARCHITECTURE.md`, `V2_DOMAIN_MODEL.md`, `V2_UX_MODEL.md`, `CURRENT_STATE.md`, `archive/v2/V2_EXECUTION_ROADMAP.md`, `POLISH_BACKLOG.md`, and the relevant archived `archive/design/Claude-design/` historical design reference when the task is Phase B / UXR;
 - challenge its own plan against product vision, architecture, domain model, UX model, roadmap, design canon, and runtime reality;
 - identify conflicts between docs, runtime, and design canon;
 - propose the safest minimal owner-aligned decision when a decision is not truly blocking;

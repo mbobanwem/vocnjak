@@ -41,6 +41,7 @@ V1 documentation and deferred future-direction docs are preserved under `/archiv
 - `/archive/v1/` — original V1 planning and rules
 - `/archive/v2/` — completed V2 execution baseline and planning history
 - `/archive/future/` — future-facing docs not load-bearing for V2
+- `/archive/design/Claude-design/` — historical redesign artifacts, not active authority
 
 These files are kept for historical rationale. They are **not** the source of truth for V2.
 

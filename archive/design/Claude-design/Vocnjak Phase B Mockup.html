@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<title>Vocnjak V2 — Phase B Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- Phase B V2 token system — Adriatic / sea ---------- */
+:root {
+  /* surfaces — cool off-white, no more cream */
+  --bg:        #e3e8e9;        /* page bg — cool stone */
+  --cream:     #f5f7f8;        /* app bg — cool off-white */
+  --cream-2:   #e8edef;        /* section fill, neutral chip */
+  --surface:   #ffffff;
+  --pale:      #d6e6ec;        /* aktualno chip, monitoring fill — sea pale */
+  --tint-warm: #f6e4cf;
+  --tint-cool: #e7f0f4;
+
+  /* ink — deep teal-leaning */
+  --ink:       #142028;
+  --ink-mid:   #3d4d56;
+  --ink-mute:  #7a8a92;
+  --line:      #d6dee2;
+
+  /* brand — deep Adriatic */
+  --brand:       #3a7a99;
+  --brand-deep:  #1f4a5f;
+  --brand-on:    #ffffff;
+
+  /* warm accents (used sparingly, per-role) */
+  --peach:       #f4d2b3;
+  --peach-ink:   #7a3f12;
+  --plum:        #ead3dc;
+  --plum-ink:    #6b3447;
+  --honey:       #e8d9a6;
+
+  /* per-species plant card accents — based on real fruit color */
+  --acc-jabuka:   #9aa849;
+  --acc-sljiva:   #7a4e6b;
+  --acc-tresnja:  #b8554c;
+  --acc-orah:     #8a6a4f;
+  --acc-kruska:   #a89544;
+  --acc-breskva:  #d9905c;
+  --acc-generic:  var(--brand);
+
+  /* display font */
+  --display: 'Fraunces', Georgia, serif;
+  --display-opt: 'opsz' 32, 'SOFT' 50, 'WONK' 0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  padding: 48px 32px 96px;
+  min-height: 100vh;
+}
+
+.page-head {
+  max-width: 1480px;
+  margin: 0 auto 40px;
+  padding: 0 4px;
+}
+.page-head h1 {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  font-weight: 500;
+  font-size: 38px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.page-head p {
+  font-size: 15px;
+  color: var(--ink-mid);
+  line-height: 1.5;
+  max-width: 720px;
+}
+.page-head .meta {
+  font-size: 12px;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 16px;
+}
+
+/* ---------- Phone grid ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 64px 40px;
+  max-width: 1480px;
+  margin: 0 auto;
+}
+
+.phone-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.phone-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 16px;
+  text-align: center;
+}
+.phone-label .desc {
+  display: block;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-mid);
+  font-size: 13px;
+  margin-top: 6px;
+  max-width: 320px;
+  line-height: 1.45;
+}
+
+/* Phone frame — 393 × 852 (iPhone 15 Pro logical) */
+.phone {
+  width: 393px;
+  height: 852px;
+  background: #0a0a0a;
+  border-radius: 56px;
+  padding: 14px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.18) inset,
+    0 30px 60px -20px rgba(26,51,32,0.30),
+    0 12px 24px -12px rgba(0,0,0,0.25);
+  position: relative;
+  flex-shrink: 0;
+}
+.phone-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 44px;
+  overflow: hidden;
+  background: var(--cream);
+  isolation: isolate;
+}
+
+/* Status bar (minimal — focus is on app, not iOS chrome) */
+.status-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px 0;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: -apple-system, 'SF Pro Text', sans-serif;
+  z-index: 30;
+  pointer-events: none;
+}
+.status-bar.light { color: #fff; }
+.status-bar .right {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px;
+}
+
+/* Dynamic island */
+.di {
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 124px;
+  height: 36px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 25;
+}
+
+/* ---------- App shell ---------- */
+.app-top {
+  background: var(--brand-deep);
+  padding: 64px 20px 12px;
+  position: relative;
+  z-index: 10;
+}
+.app-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 32px;
+}
+.app-top-title {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 32;
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  color: #fff;
+  line-height: 1;
+}
+.app-top-title.long {
+  font-size: 18px;
+  font-style: italic;
+}
+.app-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.app-top-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: none;
+  color: rgba(255,255,255,0.95);
+  cursor: pointer;
+  border-radius: 50%;
+}
+.app-top-btn svg { width: 22px; height: 22px; }
+.app-top-back {
+  display: flex; align-items: center;
+  gap: 4px;
+  color: rgba(255,255,255,0.95);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  background: none;
+  border: none;
+  padding: 4px 6px 4px 0;
+  cursor: pointer;
+}
+.app-top-back svg { width: 18px; height: 18px; }
+.app-top-cta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: none;
+  border: none;
+  padding: 6px 4px;
+  cursor: pointer;
+}
+
+/* ---------- Scroll area ---------- */
+.scroll {
+  position: absolute;
+  top: 100px;        /* below top app bar */
+  bottom: 84px;      /* above bottom nav */
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  background: var(--cream);
+}
+.scroll-inner {
+  padding: 28px 18px 36px;
+}
+
+/* ---------- Bottom nav ---------- */
+.bottom-nav {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 84px;
+  background: rgba(245,247,248,0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid rgba(31,74,95,0.10);
+  display: flex;
+  padding-bottom: 24px;
+  z-index: 10;
+}
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 10px;
+  position: relative;
+  gap: 4px;
+  color: var(--ink-mute);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+}
+.tab svg {
+  width: 24px; height: 24px;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.tab.active {
+  color: var(--brand);
+}
+.tab.active svg {
+  stroke-width: 2;
+}
+.tab.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 24%;
+  right: 24%;
+  height: 2px;
+  background: var(--brand);
+  border-radius: 0 0 2px 2px;
+}
+
+/* ---------- Typography ---------- */
+.hero {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 144, 'SOFT' 100, 'WONK' 0;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin-bottom: 28px;
+  max-width: 100%;
+  text-wrap: pretty;
+}
+.hero .accent { font-style: normal; }
+
+.section-h2 {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 32;
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 28px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-h2.first { margin-top: 4px; }
+.section-h2 .meta-glyph {
+  width: 14px; height: 14px;
+  stroke: var(--ink-mute);
+  stroke-width: 1.5;
+  fill: none;
+}
+
+.label-uc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* ---------- Pregled 2026 hero ---------- */
+.pregled-hero {
+  position: relative;
+  margin: -28px -18px 24px;
+  padding: 28px 22px 32px;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, #1f4a5f 0%, #3a7a99 55%, #d99060 100%);
+}
+.pregled-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 200px 100px at 80% 28%, rgba(255,235,200,0.50) 0%, transparent 70%),
+    radial-gradient(ellipse 380px 180px at 30% 75%, rgba(31,74,95,0.30) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+.pregled-hero .horizon {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  width: 100%;
+  height: 96px;
+  z-index: 2;
+  pointer-events: none;
+}
+.pregled-hero .horizon svg { width: 100%; height: 100%; display: block; }
+.pregled-hero .month-chip {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.28);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.95);
+  margin-bottom: 16px;
+}
+.pregled-hero .month-chip::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #f3d09a;
+  box-shadow: 0 0 8px rgba(243,208,154,0.7);
+}
+.pregled-hero .hero-status {
+  position: relative;
+  z-index: 3;
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 1.22;
+  letter-spacing: -0.018em;
+  color: #ffffff;
+  text-shadow: 0 1px 8px rgba(20,32,40,0.32);
+  max-width: 94%;
+}
+.pregled-hero .hero-status .accent { font-style: normal; font-weight: 500; }
+
+/* Legacy status-sentence kept for empty Pregled */
+.status-sentence {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin-bottom: 24px;
+  text-wrap: pretty;
+}
+.status-sentence .accent {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--brand-deep);
+}
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 4px 14px rgba(36,74,42,0.06);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.card .top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.card .title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.32;
+  flex: 1;
+}
+.card .meta {
+  font-size: 13px;
+  color: var(--ink-mid);
+  line-height: 1.5;
+}
+.card .meta + .meta { margin-top: 2px; }
+.card .scope {
+  font-size: 13px;
+  color: var(--ink-mute);
+  margin-top: 4px;
+}
+
+/* Chips */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  line-height: 1;
+}
+.chip-aktualno  { background: var(--pale);     color: var(--brand-deep); }
+.chip-pri-kraju { background: var(--peach);    color: var(--peach-ink); }
+.chip-uskoro    { background: rgba(226,236,213,0.55); color: var(--ink-mute); }
+.chip-odradjeno { background: var(--plum);     color: var(--plum-ink); }
+.chip-preskoceno{ background: var(--cream-2);  color: var(--ink-mid); }
+
+/* Plant card — with photo thumbnail slot */
+.plant-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px 16px 14px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 4px 14px rgba(36,74,42,0.06);
+  border-left: 4px solid var(--acc-generic);
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+/* Species icon — drawn per fruit, recognizable without a photo */
+.species-icon {
+  width: 56px; height: 56px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cream-2);
+}
+.species-icon svg { width: 40px; height: 40px; display: block; }
+.plant-card .body { flex: 1; min-width: 0; }
+.plant-card.jabuka  { border-left-color: var(--acc-jabuka); }
+.plant-card.jabuka  .species-icon { background: #edf0d6; }
+.plant-card.sljiva  { border-left-color: var(--acc-sljiva); }
+.plant-card.sljiva  .species-icon { background: #ead8e3; }
+.plant-card.tresnja { border-left-color: var(--acc-tresnja); }
+.plant-card.tresnja .species-icon { background: #f3dad6; }
+.plant-card.orah    { border-left-color: var(--acc-orah); }
+.plant-card.orah    .species-icon { background: #e8ddcd; }
+.plant-card.kruska  { border-left-color: var(--acc-kruska); }
+.plant-card.kruska  .species-icon { background: #efe7cc; }
+.plant-card.breskva { border-left-color: var(--acc-breskva); }
+.plant-card.breskva .species-icon { background: #f5dfce; }
+.plant-card .name {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 32;
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  line-height: 1.18;
+  margin-bottom: 4px;
+}
+.plant-card .meta {
+  font-size: 13px;
+  color: var(--ink-mute);
+  line-height: 1.45;
+}
+.plant-card .live {
+  font-size: 13px;
+  color: var(--ink-mid);
+  margin-top: 6px;
+}
+.plant-card .live::before {
+  content: '';
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--brand);
+  margin-right: 6px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.plant-card.jabuka  .live::before { background: var(--acc-jabuka); }
+.plant-card.sljiva  .live::before { background: var(--acc-sljiva); }
+.plant-card.tresnja .live::before { background: var(--acc-tresnja); }
+
+/* Monitoring "Što gledati" card (pale-green fill) */
+.mon-card {
+  background: var(--pale);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.mon-card h4 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand-deep);
+  margin-bottom: 6px;
+}
+.mon-card ul {
+  list-style: none;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-mid);
+}
+.mon-card ul li {
+  padding-left: 14px;
+  position: relative;
+  margin-bottom: 2px;
+}
+.mon-card ul li::before {
+  content: '·';
+  position: absolute;
+  left: 4px;
+  color: var(--brand);
+  font-weight: 700;
+}
+
+/* Trap-advisory card */
+.trap-card {
+  background: var(--cream-2);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.trap-card .top-row {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+}
+.trap-card h4 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.trap-card .last {
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+.trap-card .band {
+  font-size: 13px;
+  color: var(--ink-mid);
+  line-height: 1.5;
+}
+
+/* Risk-awareness card — peach accent (late season warmth, not green) */
+.risk-card {
+  background: var(--cream-2);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--acc-breskva);
+}
+.risk-card h4 {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 32;
+  font-style: italic;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.risk-card p {
+  font-size: 13px;
+  color: var(--ink-mid);
+  line-height: 1.5;
+}
+
+/* Inline action row (Dodaj voćku) */
+.action-row {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 12px rgba(26,51,32,0.05);
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+.action-row .plus {
+  width: 22px; height: 22px;
+  stroke: var(--brand);
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  flex-shrink: 0;
+}
+.action-row .text {
+  display: flex; flex-direction: column;
+}
+.action-row .label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.action-row .helper {
+  font-size: 13px;
+  color: var(--ink-mute);
+  margin-top: 3px;
+}
+
+/* Empty-state branch SVG */
+.empty-art {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 40px 0 32px;
+}
+.empty-art svg {
+  width: 100px; height: 110px;
+  stroke: var(--ink-mute);
+  stroke-width: 1.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.6;
+}
+
+/* Definition rows (Karton voćke) */
+.def-list { margin-bottom: 4px; }
+.def-row {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.def-row:last-child { border-bottom: none; }
+.def-row .label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.def-row .value {
+  font-size: 15px;
+  color: var(--ink);
+}
+.def-row .value.muted {
+  color: var(--ink-mute);
+  font-style: italic;
+}
+
+/* Plant detail hero */
+.plant-hero {
+  margin-bottom: 16px;
+}
+/* Species banner — hero on Plant detail */
+.species-banner {
+  width: 100%;
+  height: 170px;
+  margin-bottom: 16px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(31,74,95,0.10);
+}
+.species-banner svg { width: 96px; height: 96px; position: relative; z-index: 2; }
+.species-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 72% 28%, rgba(255,250,235,0.40) 0%, transparent 55%);
+  pointer-events: none;
+}
+.species-banner.tresnja { background: linear-gradient(135deg, #f3dad6 0%, #e0928c 65%, #a8453d 100%); }
+.species-banner.jabuka  { background: linear-gradient(135deg, #eef2d3 0%, #c9d488 65%, #8a9a3a 100%); }
+.species-banner.sljiva  { background: linear-gradient(135deg, #ead8e3 0%, #b89db2 65%, #6a4060 100%); }
+.species-banner.orah    { background: linear-gradient(135deg, #e8ddcd 0%, #c0a888 65%, #7a5c40 100%); }
+.species-banner.kruska  { background: linear-gradient(135deg, #efe7cc 0%, #d2c282 65%, #8e7a30 100%); }
+.species-banner.breskva { background: linear-gradient(135deg, #f5dfce 0%, #ebbf95 65%, #c47a45 100%); }
+.plant-hero h1 {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 144;
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 1.1;
+  letter-spacing: -0.018em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.plant-hero .meta {
+  font-size: 13px;
+  color: var(--ink-mute);
+}
+
+/* Mlada voćka commentary */
+.mlada-card {
+  background: rgba(226,236,213,0.5);
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(58,110,58,0.12);
+}
+.mlada-card .label-uc { margin-bottom: 8px; display: block; color: var(--brand-deep); }
+.mlada-card p {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 32;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink-mid);
+  letter-spacing: -0.005em;
+}
+
+/* Capture inline button */
+.btn-secondary {
+  background: var(--cream-2);
+  color: var(--ink-mid);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-pair { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Dnevnik timeline */
+.dnevnik-month {
+  position: sticky;
+  top: 0;
+  background: var(--cream);
+  padding: 14px 0 10px;
+  z-index: 2;
+  margin-top: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.dnevnik-month h3 {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 144;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.dnevnik-month h3 .year {
+  font-weight: 400;
+  color: var(--ink-mute);
+  margin-left: 6px;
+}
+.dnevnik-row {
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  gap: 12px;
+  padding: 10px 0;
+}
+.dnevnik-row .rail {
+  position: relative;
+}
+.dnevnik-row .rail::before {
+  content: '';
+  position: absolute;
+  left: 5px; top: 0; bottom: -10px;
+  width: 2px;
+  background: var(--line);
+}
+.dnevnik-row .rail::after {
+  content: '';
+  position: absolute;
+  top: 6px; left: 2px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--brand);
+  border: 2px solid var(--cream);
+}
+.dnevnik-row .date {
+  font-size: 12px;
+  color: var(--ink-mute);
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  margin-bottom: 4px;
+}
+.dnevnik-row .event {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.35;
+  margin-bottom: 4px;
+}
+.dnevnik-row .second {
+  display: flex; gap: 8px; align-items: center;
+  font-size: 12px;
+  color: var(--ink-mute);
+}
+.dnevnik-row .marker {
+  font-style: italic;
+}
+
+/* Kalendar month section */
+.kal-month {
+  margin-bottom: 28px;
+}
+.kal-month-head {
+  display: flex; align-items: baseline; gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+}
+.kal-month-head.current {
+  border-bottom: 1px solid var(--brand);
+}
+.kal-month-head h3 {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 144;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.kal-month-head .count {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* Postavke sheet overlay */
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(20,32,40,0.42);
+  z-index: 40;
+}
+.sheet {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: var(--cream);
+  border-radius: 24px 24px 0 0;
+  z-index: 41;
+  height: 75%;
+  padding-bottom: 24px;
+  overflow: hidden;
+}
+.sheet-grab {
+  width: 38px;
+  height: 4px;
+  background: var(--line);
+  border-radius: 999px;
+  margin: 10px auto 0;
+}
+.sheet-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.sheet-head h2 {
+  font-family: var(--display);
+  font-variation-settings: 'opsz' 32;
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.sheet-done {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--brand);
+  border: none; background: none; cursor: pointer;
+}
+.sheet-body { padding: 16px 20px; }
+.sheet-group { margin-bottom: 18px; }
+.sheet-group-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 8px;
+}
+.sheet-list {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.sheet-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  font-size: 15px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.sheet-row:last-child { border-bottom: none; }
+.sheet-row .chev {
+  width: 18px; height: 18px;
+  stroke: var(--ink-mute);
+  stroke-width: 1.8;
+  fill: none;
+}
+.sheet-row .right {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px;
+  color: var(--ink-mute);
+}
+.sheet-row.muted-row { color: var(--ink-mid); font-size: 13px; }
+
+/* Notes row at bottom of Plant detail */
+.archive-link {
+  display: block;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-mute);
+  margin-top: 16px;
+  padding: 12px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--line);
+}
+
+/* Note showing it's not real interaction */
+.note-banner {
+  max-width: 1480px;
+  margin: 0 auto 32px;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--ink-mid);
+  line-height: 1.55;
+}
+.note-banner strong { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <h1>Vocnjak V2 — Phase B vizualni mockup</h1>
+  <p>Statički prikaz predloženog smjera "Mirna voćnjak bilježnica". Sedam ekrana, iPhone 15 Pro mjere (393 × 852). Nije interaktivan — sve kartice i tabovi su namjerno mrtvi. Cilj: vidjeti dizajn jezik prije Codex izazova i prije UXR.0 audita.</p>
+  <p class="meta">Boje · tipografija · hijerarhija · status čipovi · empty stateovi · bottom nav · postavke sheet</p>
+</div>
+
+<div class="note-banner">
+  <strong>Adriatic / morski smjer + 2026 hero.</strong> Pregled (ekran 01) sad ima full-width sezonski hero banner s gradijentom (duboko Jadran → sredina dana → topla zora) + ambient horizon silueta stabala + month-chip + status sentence preko. Per-species ilustracije ostaju. Topli kontrasti zadržani.
+</div>
+
+<div class="grid">
+
+  <!-- ============================================ -->
+  <!-- 1. PREGLED — populated -->
+  <!-- ============================================ -->
+  <div class="phone-wrap">
+    <div class="phone-label">01 · Pregled<span class="desc">Defaultni front-door (uz default-route flip). Hero status sentence u Playfair italic.</span></div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="di"></div>
+        <div class="status-bar light"><span>9:41</span><span class="right">●●●  ⌃  ▣</span></div>
+
+        <div class="app-top">
+          <div class="app-top-row">
+            <div class="app-top-title">Pregled</div>
+            <div class="app-top-actions">
+              <button class="app-top-btn" aria-label="Postavke">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <circle cx="5" cy="12" r="1.5" fill="currentColor"/>
+                  <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+                  <circle cx="19" cy="12" r="1.5" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scroll">
+          <div class="scroll-inner">
+
+            <div class="pregled-hero">
+              <span class="month-chip">Veljača · kasna zima</span>
+              <p class="hero-status">Trenutno su aktualne <span class="accent">3 sezonske radnje</span>. Jedna je pri kraju.</p>
+              <div class="horizon" aria-hidden="true">
+                <svg viewBox="0 0 400 96" preserveAspectRatio="none">
+                  <path d="M0 96 L0 64 Q40 52 80 62 Q120 70 160 56 L200 50 L210 48 L218 56 L226 50 L240 58 Q280 68 320 54 Q360 44 400 56 L400 96 Z" fill="#1a3a4a" opacity="0.85"/>
+                  <path d="M180 56 L180 36 M180 44 L172 38 M180 46 L188 38 M180 50 L174 44 M180 52 L186 44" stroke="#0e2632" stroke-width="1.2" stroke-linecap="round"/>
+                  <path d="M212 50 L212 32 M212 38 L206 32 M212 40 L218 32 M212 44 L208 38 M212 46 L216 38" stroke="#0e2632" stroke-width="1.2" stroke-linecap="round"/>
+                  <path d="M244 60 L244 42 M244 48 L238 42 M244 50 L250 42 M244 54 L240 48" stroke="#0e2632" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+
+            <h2 class="section-h2 first">Sada aktualno</h2>
+
+            <div class="card">
+              <div class="top-row">
+                <p class="title">Bakar — zimska zaštita</p>
+                <span class="chip chip-aktualno">Aktualno</span>
+              </div>
+              <p class="meta">Aktualno od 15.2. do 28.2.</p>
+              <p class="meta">Primjenjuje se na 6 voćki.</p>
+              <p class="scope">Namjena: preventivna zaštita pred bubrenje pupova.</p>
+            </div>
+
+            <div class="card">
+              <div class="top-row">
+                <p class="title">Bijelo mineralno ulje</p>
+                <span class="chip chip-pri-kraju">Pri kraju</span>
+              </div>
+              <p class="meta">Aktualno do 28.2. — pri kraju.</p>
+              <p class="meta">Primjenjuje se na 3 voćke.</p>
+              <p class="scope">Evidentirano za 1/3 voćke.</p>
+            </div>
+
+            <h2 class="section-h2">Za provjeru: nema evidencije</h2>
+
+            <div class="card">
+              <div class="top-row">
+                <p class="title">Krečenje debla</p>
+              </div>
+              <p class="meta">Bilo je aktualno od 15.1. do 10.2.</p>
+              <p class="meta">Primjenjuje se na 8 voćki.</p>
+              <p class="scope">Nema evidencije za 8 voćki.</p>
+            </div>
+
+            <h2 class="section-h2">Uskoro</h2>
+
+            <div class="card" style="opacity:0.92">
+              <div class="top-row">
+                <p class="title">Bakar na rane nakon rezidbe</p>
+                <span class="chip chip-uskoro">Uskoro</span>
+              </div>
+              <p class="meta">Počinje 1.3.</p>
+            </div>
+
+            <h2 class="section-h2">
+              Praćenje
+              <svg class="meta-glyph" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v0.1"/></svg>
+            </h2>
+
+            <div class="mon-card">
+              <h4>Lisne uši (jabuka)</h4>
+              <ul>
+                <li>Kovrčanje mladog vrha listova i ljepljivost.</li>
+                <li>Provjeri donju stranu lista i mlade izboje.</li>
+                <li>Mravi pomažu — jak promet po stablu može značiti uši.</li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <nav class="bottom-nav">
+          <div class="tab active">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="3"/><path d="M12 4v3M5 7.5l2 2M19 7.5l-2 2M3 13h2M19 13h2"/></svg>
+            <span>Pregled</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg>
+            <span>Kalendar</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><path d="M12 22V12M12 12c0-3 -2 -5 -4 -5c-1 0 -2.5 0.5 -3 2M12 12c0-3 2 -5 4 -5c1 0 2.5 0.5 3 2M9 17c-1.5 0 -2.5 -1 -3 -2.5M15 17c1.5 0 2.5 -1 3 -2.5"/></svg>
+            <span>Biljke</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><rect x="5" y="4" width="13" height="17" rx="1.5"/><line x1="9" y1="9" x2="14" y2="9"/><line x1="9" y1="13" x2="14" y2="13"/></svg>
+            <span>Dnevnik</span>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- 2. PREGLED — empty (no plants) -->
+  <!-- ============================================ -->
+  <div class="phone-wrap">
+    <div class="phone-label">02 · Pregled — prazno<span class="desc">Empty state s ilustracijom (odluka #7). Voće-pomologijski motiv, jedna linija.</span></div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="di"></div>
+        <div class="status-bar light"><span>9:41</span><span class="right">●●●  ⌃  ▣</span></div>
+
+        <div class="app-top">
+          <div class="app-top-row">
+            <div class="app-top-title">Pregled</div>
+            <div class="app-top-actions">
+              <button class="app-top-btn" aria-label="Postavke">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scroll">
+          <div class="scroll-inner">
+            <p class="status-sentence" style="margin-bottom:20px">Dodaj voćku kako bi se prikazale sezonske radnje.</p>
+
+            <div class="empty-art" aria-hidden="true">
+              <svg viewBox="0 0 100 110">
+                <!-- abstract single-line branch, with one fruit in warm peach -->
+                <g stroke="#7a6a52" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M50 105 L50 70" />
+                  <path d="M50 70 Q42 60 30 56" />
+                  <path d="M50 70 Q58 58 72 52" />
+                  <path d="M50 78 Q40 72 32 70" />
+                  <path d="M50 78 Q60 72 70 70" />
+                  <path d="M72 42 Q74 38 78 40" />
+                </g>
+                <circle cx="72" cy="48" r="6.5" fill="#f0bb87" stroke="#b87b48" stroke-width="1.2" />
+              </svg>
+            </div>
+
+            <div class="action-row" style="margin-top:0">
+              <svg class="plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <div class="text">
+                <span class="label">Dodaj voćku</span>
+                <span class="helper">Prva voćka, krećemo.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav class="bottom-nav">
+          <div class="tab active">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="3"/><path d="M12 4v3M5 7.5l2 2M19 7.5l-2 2M3 13h2M19 13h2"/></svg>
+            <span>Pregled</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg>
+            <span>Kalendar</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><path d="M12 22V12M12 12c0-3 -2 -5 -4 -5c-1 0 -2.5 0.5 -3 2M12 12c0-3 2 -5 4 -5c1 0 2.5 0.5 3 2M9 17c-1.5 0 -2.5 -1 -3 -2.5M15 17c1.5 0 2.5 -1 3 -2.5"/></svg>
+            <span>Biljke</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><rect x="5" y="4" width="13" height="17" rx="1.5"/><line x1="9" y1="9" x2="14" y2="9"/><line x1="9" y1="13" x2="14" y2="13"/></svg>
+            <span>Dnevnik</span>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- 3. BILJKE — populated with inline action row -->
+  <!-- ============================================ -->
+  <div class="phone-wrap">
+    <div class="phone-label">03 · Biljke<span class="desc">Inline action row (Varijanta A) na vrhu. Plant cards s lijevim akcent-stripe-om.</span></div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="di"></div>
+        <div class="status-bar light"><span>9:41</span><span class="right">●●●  ⌃  ▣</span></div>
+
+        <div class="app-top">
+          <div class="app-top-row">
+            <div class="app-top-title">Biljke</div>
+          </div>
+        </div>
+
+        <div class="scroll">
+          <div class="scroll-inner">
+
+            <div class="action-row">
+              <svg class="plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <div class="text">
+                <span class="label">Dodaj voćku</span>
+              </div>
+            </div>
+
+            <div class="plant-card jabuka">
+              <div class="species-icon"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 13 Q14 13 11 18 Q9 23 12 29 Q16 35 20 34 Q24 35 28 29 Q31 23 29 18 Q26 13 20 13 Z" fill="#9aa849" stroke="#5a6a28" stroke-width="1.4" stroke-linejoin="round"/><path d="M20 13 L21 8" stroke="#5a4830" stroke-width="1.4" stroke-linecap="round" fill="none"/><path d="M21 10 Q25 8 28 11 Q26 14 22 13" fill="#7a9a3a" stroke="#5a7028" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+              <div class="body">
+                <p class="name">Jabuka — Fuji</p>
+                <p class="meta">Mm106 · posađeno 15.3.2026.</p>
+                <p class="live">Sada aktualno: Bakar — zimska zaštita</p>
+              </div>
+            </div>
+
+            <div class="plant-card jabuka">
+              <div class="species-icon"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 13 Q14 13 11 18 Q9 23 12 29 Q16 35 20 34 Q24 35 28 29 Q31 23 29 18 Q26 13 20 13 Z" fill="#b8493a" stroke="#7a2a20" stroke-width="1.4" stroke-linejoin="round"/><path d="M20 13 L21 8" stroke="#5a4830" stroke-width="1.4" stroke-linecap="round" fill="none"/><path d="M21 10 Q25 8 28 11 Q26 14 22 13" fill="#7a9a3a" stroke="#5a7028" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+              <div class="body">
+                <p class="name">Jabuka — Idared</p>
+                <p class="meta">Mm111 · posađeno 22.3.2024.</p>
+                <p class="live">Sada aktualno: Bakar — zimska zaštita</p>
+              </div>
+            </div>
+
+            <div class="plant-card sljiva">
+              <div class="species-icon"><svg viewBox="0 0 40 40" aria-hidden="true"><ellipse cx="20" cy="23" rx="9" ry="11" fill="#7a4e6b" stroke="#4a2a40" stroke-width="1.4"/><path d="M20 12 L20 7" stroke="#5a4830" stroke-width="1.4" stroke-linecap="round"/><path d="M14 19 Q14 15 17 14" stroke="#b89aae" stroke-width="1.4" fill="none" stroke-linecap="round"/><line x1="20" y1="14" x2="20" y2="33" stroke="#4a2a40" stroke-width="0.7" opacity="0.55"/></svg></div>
+              <div class="body">
+                <p class="name">Šljiva — Stanley</p>
+                <p class="meta">Mirobalan · posađeno 10.4.2023.</p>
+              </div>
+            </div>
+
+            <div class="plant-card tresnja">
+              <div class="species-icon"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="14" cy="27" r="6" fill="#b8554c" stroke="#7a2e26" stroke-width="1.4"/><circle cx="26" cy="29" r="6.5" fill="#b8554c" stroke="#7a2e26" stroke-width="1.4"/><path d="M14 21 Q15 12 22 8" stroke="#6a8a3a" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M26 22 Q24 14 22 8" stroke="#6a8a3a" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M22 8 Q28 6 32 10" stroke="#6a8a3a" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>
+              <div class="body">
+                <p class="name">Trešnja — Kordia</p>
+                <p class="meta">Gisela 5 · posađeno 12.3.2025.</p>
+                <p class="live">Sada aktualno: Bijelo mineralno ulje</p>
+              </div>
+            </div>
+
+            <div class="plant-card orah">
+              <div class="species-icon"><svg viewBox="0 0 40 40" aria-hidden="true"><ellipse cx="20" cy="22" rx="11" ry="10" fill="#a88a6c" stroke="#5a4530" stroke-width="1.4"/><line x1="20" y1="12" x2="20" y2="32" stroke="#5a4530" stroke-width="1.4"/><path d="M13 18 Q16 20 13 23 M27 18 Q24 20 27 23 M14 26 Q17 27 16 29 M26 26 Q23 27 24 29" stroke="#5a4530" stroke-width="0.9" fill="none" stroke-linecap="round"/></svg></div>
+              <div class="body">
+                <p class="name">Orah</p>
+                <p class="meta">Sjemenjak · posađeno 5.4.2022.</p>
+              </div>
+            </div>
+
+            <a class="archive-link" href="#">Prikaži arhivirane (2)</a>
+
+          </div>
+        </div>
+
+        <nav class="bottom-nav">
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="3"/><path d="M12 4v3M5 7.5l2 2M19 7.5l-2 2M3 13h2M19 13h2"/></svg>
+            <span>Pregled</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg>
+            <span>Kalendar</span>
+          </div>
+          <div class="tab active">
+            <svg viewBox="0 0 24 24"><path d="M12 22V12M12 12c0-3 -2 -5 -4 -5c-1 0 -2.5 0.5 -3 2M12 12c0-3 2 -5 4 -5c1 0 2.5 0.5 3 2M9 17c-1.5 0 -2.5 -1 -3 -2.5M15 17c1.5 0 2.5 -1 3 -2.5"/></svg>
+            <span>Biljke</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><rect x="5" y="4" width="13" height="17" rx="1.5"/><line x1="9" y1="9" x2="14" y2="9"/><line x1="9" y1="13" x2="14" y2="13"/></svg>
+            <span>Dnevnik</span>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- 4. PLANT DETAIL — top portion -->
+  <!-- ============================================ -->
+  <div class="phone-wrap">
+    <div class="phone-label">04 · Plant detail — gore<span class="desc">Hero plant name, Karton, Mlada voćka (kontekst-card), Trenutne sezonske radnje.</span></div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="di"></div>
+        <div class="status-bar light"><span>9:41</span><span class="right">●●●  ⌃  ▣</span></div>
+
+        <div class="app-top">
+          <div class="app-top-row">
+            <button class="app-top-back">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              Biljke
+            </button>
+            <div class="app-top-actions">
+              <button class="app-top-btn" aria-label="Više">
+                <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scroll">
+          <div class="scroll-inner">
+
+            <div class="plant-hero">
+              <div class="species-banner tresnja">
+                <svg viewBox="0 0 40 40" aria-hidden="true">
+                  <circle cx="14" cy="27" r="6" fill="#7a3933" stroke="#5a2520" stroke-width="1.4"/>
+                  <circle cx="26" cy="29" r="6.5" fill="#7a3933" stroke="#5a2520" stroke-width="1.4"/>
+                  <path d="M14 21 Q15 12 22 8" stroke="#4a6a20" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                  <path d="M26 22 Q24 14 22 8" stroke="#4a6a20" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                  <path d="M22 8 Q28 6 32 10" stroke="#4a6a20" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <h1>Trešnja — Kordia</h1>
+              <p class="meta">Gisela 5 · godina 2 od sadnje · AgroCar</p>
+            </div>
+
+            <h2 class="section-h2 first">Karton voćke</h2>
+            <div class="def-list">
+              <div class="def-row"><span class="label">Vrsta</span><span class="value">Trešnja</span></div>
+              <div class="def-row"><span class="label">Sorta</span><span class="value">Kordia</span></div>
+              <div class="def-row"><span class="label">Podloga</span><span class="value">Gisela 5</span></div>
+              <div class="def-row"><span class="label">Posađeno</span><span class="value">12.3.2025.</span></div>
+              <div class="def-row"><span class="label">Kupljeno</span><span class="value">10.3.2025.</span></div>
+              <div class="def-row"><span class="label">Izvor</span><span class="value">AgroCar</span></div>
+              <div class="def-row"><span class="label">Položaj</span><span class="value muted">nije upisano</span></div>
+              <div class="def-row"><span class="label">Bilješka</span><span class="value muted">nije upisano</span></div>
+            </div>
+
+            <div class="mlada-card">
+              <span class="label-uc">Mlada voćka</span>
+              <p>Kod mladih voćki plodonosne radnje nisu trenutni fokus. Sada su važnije uspostava, zdrav rast, formiranje krošnje i praćenje listova i izboja.</p>
+            </div>
+
+            <h2 class="section-h2">Trenutne sezonske radnje</h2>
+
+            <div class="card">
+              <div class="top-row">
+                <p class="title">Bijelo mineralno ulje</p>
+                <span class="chip chip-aktualno">Aktualno</span>
+              </div>
+              <p class="meta">Aktualno od 1.2. do 15.2.</p>
+              <p class="scope">Zimska i rana proljetna zaštita.</p>
+            </div>
+
+            <div class="card">
+              <div class="top-row">
+                <p class="title">Bakar — zimska zaštita</p>
+                <span class="chip chip-pri-kraju">Pri kraju</span>
+              </div>
+              <p class="meta">Aktualno do 28.2. — pri kraju.</p>
+            </div>
+
+          </div>
+        </div>
+
+        <nav class="bottom-nav">
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="3"/><path d="M12 4v3M5 7.5l2 2M19 7.5l-2 2M3 13h2M19 13h2"/></svg>
+            <span>Pregled</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg>
+            <span>Kalendar</span>
+          </div>
+          <div class="tab active">
+            <svg viewBox="0 0 24 24"><path d="M12 22V12M12 12c0-3 -2 -5 -4 -5c-1 0 -2.5 0.5 -3 2M12 12c0-3 2 -5 4 -5c1 0 2.5 0.5 3 2M9 17c-1.5 0 -2.5 -1 -3 -2.5M15 17c1.5 0 2.5 -1 3 -2.5"/></svg>
+            <span>Biljke</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><rect x="5" y="4" width="13" height="17" rx="1.5"/><line x1="9" y1="9" x2="14" y2="9"/><line x1="9" y1="13" x2="14" y2="13"/></svg>
+            <span>Dnevnik</span>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- 5. PLANT DETAIL — bottom portion (monitoring, scouting, dnevnik) -->
+  <!-- ============================================ -->
+  <div class="phone-wrap">
+    <div class="phone-label">05 · Plant detail — dolje<span class="desc">Klopke, Vizualni pregled, Što gledati, Opažanja, Dnevnik ove voćke. Različite kartice po vrsti sadržaja.</span></div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="di"></div>
+        <div class="status-bar light"><span>9:41</span><span class="right">●●●  ⌃  ▣</span></div>
+
+        <div class="app-top">
+          <div class="app-top-row">
+            <button class="app-top-back">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              Biljke
+            </button>
+            <div class="app-top-actions">
+              <button class="app-top-btn" aria-label="Više">
+                <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scroll">
+          <div class="scroll-inner">
+
+            <h2 class="section-h2 first">Klopke</h2>
+            <div class="trap-card">
+              <div class="top-row">
+                <h4>Trešnjina muha</h4>
+                <span class="last">Zadnji zapis: 15.6.2026.</span>
+              </div>
+              <p class="band">Ulov u zadnjih 7 dana: 3 — nizak ulov, nastavi pratiti.</p>
+            </div>
+
+            <h2 class="section-h2">Vizualni pregled</h2>
+            <div class="trap-card">
+              <p class="band" style="margin-bottom:10px">Zadnji zapis: nema. Otvori formu kad provjeriš stablo.</p>
+              <button class="btn-secondary">+ Zabilježi vizualni pregled</button>
+            </div>
+
+            <h2 class="section-h2">
+              Što gledati
+              <svg class="meta-glyph" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v0.1"/></svg>
+            </h2>
+            <div class="mon-card">
+              <h4>Monilija — mrki cvijetni i grančasti ožeg</h4>
+              <ul>
+                <li>Sušenje cvjetova i mladih grana nakon cvatnje.</li>
+                <li>Smećkasti, sluzavi rubovi na sušnim dijelovima.</li>
+                <li>Smola na ranama može pomoći u prepoznavanju.</li>
+              </ul>
+            </div>
+
+            <h2 class="section-h2">Opažanja</h2>
+            <div class="btn-pair" style="margin-bottom:14px">
+              <button class="btn-secondary">+ Dodaj opažanje</button>
+              <button class="btn-secondary">+ Dodaj fazu razvoja</button>
+            </div>
+
+            <h2 class="section-h2">Dnevnik ove voćke</h2>
+            <div class="card" style="cursor:default">
+              <p class="meta" style="font-size:13px">12.4.2026. · Faza razvoja</p>
+              <p class="title" style="font-size:15px;margin-top:2px">Cvatnja</p>
+            </div>
+            <a class="archive-link" href="#">Prikaži cijeli dnevnik voćke</a>
+
+          </div>
+        </div>
+
+        <nav class="bottom-nav">
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="3"/><path d="M12 4v3M5 7.5l2 2M19 7.5l-2 2M3 13h2M19 13h2"/></svg>
+            <span>Pregled</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg>
+            <span>Kalendar</span>
+          </div>
+          <div class="tab active">
+            <svg viewBox="0 0 24 24"><path d="M12 22V12M12 12c0-3 -2 -5 -4 -5c-1 0 -2.5 0.5 -3 2M12 12c0-3 2 -5 4 -5c1 0 2.5 0.5 3 2M9 17c-1.5 0 -2.5 -1 -3 -2.5M15 17c1.5 0 2.5 -1 3 -2.5"/></svg>
+            <span>Biljke</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><rect x="5" y="4" width="13" height="17" rx="1.5"/><line x1="9" y1="9" x2="14" y2="9"/><line x1="9" y1="13" x2="14" y2="13"/></svg>
+            <span>Dnevnik</span>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- 6. KALENDAR — vertical season timeline -->
+  <!-- ============================================ -->
+  <div class="phone-wrap">
+    <div class="phone-label">06 · Kalendar<span class="desc">Sezonski timeline (NE day-grid). Mjeseci kao Playfair sekcije, aktualni mjesec ima brand-green linija.</span></div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="di"></div>
+        <div class="status-bar light"><span>9:41</span><span class="right">●●●  ⌃  ▣</span></div>
+
+        <div class="app-top">
+          <div class="app-top-row">
+            <div class="app-top-title">Kalendar</div>
+          </div>
+        </div>
+
+        <div class="scroll">
+          <div class="scroll-inner">
+
+            <p class="label-uc" style="margin-bottom:14px">Sezona 2026.</p>
+
+            <div class="kal-month">
+              <div class="kal-month-head current">
+                <h3>Veljača</h3>
+                <span class="count">3 radnje</span>
+              </div>
+              <div class="card">
+                <div class="top-row">
+                  <p class="title">Bijelo mineralno ulje</p>
+                  <span class="chip chip-aktualno">Aktualno</span>
+                </div>
+                <p class="meta">1.2. – 15.2.</p>
+              </div>
+              <div class="card">
+                <div class="top-row">
+                  <p class="title">Bakar — zimska zaštita</p>
+                  <span class="chip chip-pri-kraju">Pri kraju</span>
+                </div>
+                <p class="meta">15.2. – 28.2.</p>
+              </div>
+            </div>
+
+            <div class="kal-month">
+              <div class="kal-month-head">
+                <h3>Ožujak</h3>
+                <span class="count">4 radnje</span>
+              </div>
+              <div class="card">
+                <div class="top-row">
+                  <p class="title">Bakar na rane nakon rezidbe</p>
+                  <span class="chip chip-uskoro">Uskoro</span>
+                </div>
+                <p class="meta">1.3. – 20.3.</p>
+              </div>
+              <div class="card">
+                <div class="top-row">
+                  <p class="title">Rana proljetna gnojidba</p>
+                  <span class="chip chip-uskoro">Uskoro</span>
+                </div>
+                <p class="meta">1.3. – 15.4.</p>
+              </div>
+            </div>
+
+            <div class="kal-month">
+              <div class="kal-month-head">
+                <h3>Travanj</h3>
+                <span class="count">2 radnje</span>
+              </div>
+              <div class="risk-card">
+                <h4>Rizik od mraza</h4>
+                <p>Aktualno od 1.4. do 30.4. Posebno važno za voćke u cvatnji i tek zametnute plodove.</p>
+              </div>
+            </div>
+
+            <div class="kal-month">
+              <div class="kal-month-head">
+                <h3>Svibanj</h3>
+                <span class="count">1 radnja</span>
+              </div>
+              <div class="card">
+                <div class="top-row">
+                  <p class="title">Post-bloom zaštita</p>
+                  <span class="chip chip-uskoro">Uskoro</span>
+                </div>
+                <p class="meta">10.4. – 10.5.</p>
+                <p class="scope">Krastavost i pepelnica.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <nav class="bottom-nav">
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="3"/><path d="M12 4v3M5 7.5l2 2M19 7.5l-2 2M3 13h2M19 13h2"/></svg>
+            <span>Pregled</span>
+          </div>
+          <div class="tab active">
+            <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg>
+            <span>Kalendar</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><path d="M12 22V12M12 12c0-3 -2 -5 -4 -5c-1 0 -2.5 0.5 -3 2M12 12c0-3 2 -5 4 -5c1 0 2.5 0.5 3 2M9 17c-1.5 0 -2.5 -1 -3 -2.5M15 17c1.5 0 2.5 -1 3 -2.5"/></svg>
+            <span>Biljke</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><rect x="5" y="4" width="13" height="17" rx="1.5"/><line x1="9" y1="9" x2="14" y2="9"/><line x1="9" y1="13" x2="14" y2="13"/></svg>
+            <span>Dnevnik</span>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- 7. DNEVNIK — sticky monthly timeline -->
+  <!-- ============================================ -->
+  <div class="phone-wrap">
+    <div class="phone-label">07 · Dnevnik<span class="desc">Vertikalni timeline. Mjeseci kao sticky headeri. Calm chips za status. Inline ispravljeno marker.</span></div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="di"></div>
+        <div class="status-bar light"><span>9:41</span><span class="right">●●●  ⌃  ▣</span></div>
+
+        <div class="app-top">
+          <div class="app-top-row">
+            <div class="app-top-title">Dnevnik</div>
+          </div>
+        </div>
+
+        <div class="scroll">
+          <div class="scroll-inner">
+
+            <div class="dnevnik-month">
+              <h3>Svibanj <span class="year">2026.</span></h3>
+            </div>
+
+            <div class="dnevnik-row">
+              <div class="rail"></div>
+              <div>
+                <p class="date">12.5.2026.</p>
+                <p class="event">Post-bloom zaštita</p>
+                <p class="second"><span class="chip chip-odradjeno">Odrađeno</span> · 3 voćke</p>
+              </div>
+            </div>
+
+            <div class="dnevnik-row">
+              <div class="rail"></div>
+              <div>
+                <p class="date">3.5.2026.</p>
+                <p class="event">Faza razvoja: Cvatnja</p>
+                <p class="second">Trešnja — Kordia · opažanje</p>
+              </div>
+            </div>
+
+            <div class="dnevnik-month">
+              <h3>Travanj <span class="year">2026.</span></h3>
+            </div>
+
+            <div class="dnevnik-row">
+              <div class="rail"></div>
+              <div>
+                <p class="date">10.4.2026.</p>
+                <p class="event">Bakar na rane nakon rezidbe</p>
+                <p class="second"><span class="chip chip-odradjeno">Odrađeno</span> · 6 voćki · <span class="marker">ispravljeno</span></p>
+              </div>
+            </div>
+
+            <div class="dnevnik-month">
+              <h3>Ožujak <span class="year">2026.</span></h3>
+            </div>
+
+            <div class="dnevnik-row">
+              <div class="rail"></div>
+              <div>
+                <p class="date">20.3.2026.</p>
+                <p class="event">Zimska rezidba</p>
+                <p class="second"><span class="chip chip-odradjeno">Odrađeno</span> · 8 voćki</p>
+              </div>
+            </div>
+
+            <div class="dnevnik-row">
+              <div class="rail"></div>
+              <div>
+                <p class="date">15.3.2026.</p>
+                <p class="event">Biljka dodana: Jabuka — Fuji</p>
+                <p class="second">Posađeno · Mm106</p>
+              </div>
+            </div>
+
+            <div class="dnevnik-month">
+              <h3>Veljača <span class="year">2026.</span></h3>
+            </div>
+
+            <div class="dnevnik-row">
+              <div class="rail"></div>
+              <div>
+                <p class="date">22.2.2026.</p>
+                <p class="event">Bijelo mineralno ulje</p>
+                <p class="second"><span class="chip chip-preskoceno">Preskočeno</span> · 1 voćka</p>
+              </div>
+            </div>
+
+            <div class="dnevnik-row">
+              <div class="rail"></div>
+              <div>
+                <p class="date">12.2.2026.</p>
+                <p class="event">Bakar — zimska zaštita</p>
+                <p class="second"><span class="chip chip-odradjeno">Odrađeno</span> · 8 voćki · <span class="marker">nakon razdoblja</span></p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <nav class="bottom-nav">
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="3"/><path d="M12 4v3M5 7.5l2 2M19 7.5l-2 2M3 13h2M19 13h2"/></svg>
+            <span>Pregled</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg>
+            <span>Kalendar</span>
+          </div>
+          <div class="tab">
+            <svg viewBox="0 0 24 24"><path d="M12 22V12M12 12c0-3 -2 -5 -4 -5c-1 0 -2.5 0.5 -3 2M12 12c0-3 2 -5 4 -5c1 0 2.5 0.5 3 2M9 17c-1.5 0 -2.5 -1 -3 -2.5M15 17c1.5 0 2.5 -1 3 -2.5"/></svg>
+            <span>Biljke</span>
+          </div>
+          <div class="tab active">
+            <svg viewBox="0 0 24 24"><rect x="5" y="4" width="13" height="17" rx="1.5"/><line x1="9" y1="9" x2="14" y2="9"/><line x1="9" y1="13" x2="14" y2="13"/></svg>
+            <span>Dnevnik</span>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================ -->
+  <!-- 8. POSTAVKE sheet — overlay -->
+  <!-- ============================================ -->
+  <div class="phone-wrap">
+    <div class="phone-label">08 · Postavke (sheet)<span class="desc">Slide-up sheet preko Pregleda. Backup, Arhiva, Dijagnostika collapsible, Napredno → legacy escape.</span></div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="di"></div>
+        <div class="status-bar light"><span>9:41</span><span class="right">●●●  ⌃  ▣</span></div>
+
+        <!-- Pregled underneath -->
+        <div class="app-top">
+          <div class="app-top-row">
+            <div class="app-top-title">Pregled</div>
+            <div class="app-top-actions">
+              <button class="app-top-btn"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/></svg></button>
+            </div>
+          </div>
+        </div>
+        <div class="scroll">
+          <div class="scroll-inner">
+            <p class="status-sentence">Trenutno su aktualne 3 sezonske radnje.</p>
+          </div>
+        </div>
+
+        <!-- Scrim -->
+        <div class="scrim"></div>
+
+        <!-- Sheet -->
+        <div class="sheet">
+          <div class="sheet-grab"></div>
+          <div class="sheet-head">
+            <h2>Postavke</h2>
+            <button class="sheet-done">Gotovo</button>
+          </div>
+          <div class="sheet-body">
+
+            <div class="sheet-group">
+              <p class="sheet-group-title">Podaci i sigurnost</p>
+              <div class="sheet-list">
+                <div class="sheet-row">
+                  Izvezi sigurnosnu kopiju
+                  <svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="sheet-row">
+                  Uvezi sigurnosnu kopiju
+                  <svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="sheet-group">
+              <p class="sheet-group-title">Voćnjak</p>
+              <div class="sheet-list">
+                <div class="sheet-row">
+                  Arhiva
+                  <span class="right">2 <svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="sheet-group">
+              <p class="sheet-group-title">O aplikaciji</p>
+              <div class="sheet-list">
+                <div class="sheet-row">
+                  Verzija
+                  <span class="right">V2 · cc22d24</span>
+                </div>
+                <div class="sheet-row">
+                  Dijagnostika
+                  <svg class="chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="sheet-group">
+              <p class="sheet-group-title">Napredno</p>
+              <div class="sheet-list">
+                <div class="sheet-row">
+                  Otvori staru verziju
+                  <svg class="chev" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- bottom nav hidden under sheet but technically still there -->
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

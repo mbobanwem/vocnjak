@@ -320,7 +320,7 @@ Stop and ask the owner before any work that would:
 
 - change runtime code;
 - change schema/model/storage/import-export;
-- edit `index.html`, `manifest.json`, `sw.js`, Plan Templates, plant catalog, architecture, UX model, domain model, archives, or `Claude-design/`;
+- edit `index.html`, `manifest.json`, `sw.js`, Plan Templates, plant catalog, architecture, UX model, domain model, archives, or archived design artifacts under `archive/design/Claude-design/`;
 - reopen V2 Done;
 - resume old V1 Sessions 20-26 directly;
 - treat archived docs as active authority;
