@@ -33,7 +33,7 @@ If any listed document is missing, stop and report.
 
 Historical / supporting reading only:
 
-- `V2_S3_CATALOG_AUDIT_EXECUTION_PLAN.md` — original S3 execution plan; S3.1–S3.8 are complete. Not active current-state guidance.
+- `archive/audits/V2_S3_CATALOG_AUDIT_EXECUTION_PLAN.md` — original S3 execution plan; S3.1–S3.8 are complete. Not active current-state guidance.
 - `archive/V2_S3_AUDIT_FINDINGS_DETAIL_2026-04.md` — detailed per-species audit evidence. Read only when consolidation evidence must be inspected.
 
 ---

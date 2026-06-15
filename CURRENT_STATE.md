@@ -113,7 +113,7 @@ Phase 1 S2 (content parity verifier) is complete and pushed at `799caae`. A read
 
 After V2 Done:
 
-- Revisit `V2_FUTURE_ROADMAP.md` under its promotion rule.
+- Revisit `archive/future/V2_FUTURE_ROADMAP.md` under its promotion rule.
 - Revisit parked V1/future store-readiness concepts as concept references only through `ROADMAP.md`.
 - Do not let parked future items block V2 Done or re-open S8 by implication.
 
@@ -329,7 +329,7 @@ LOW / polish:
 
 Post-V2 completion boundary (not next after S8):
 
-- AI-assisted image analysis (paid subscription) — see `V2_FUTURE_ROADMAP.md §4.11`. Concept already exists historically in `archive/v1/AI_STRATEGY_V1.md` and is connected to the existing subscription / paywall / multilingual concept references in `archive/future/STORE_READY_ROADMAP_V1.md` (Sessions 17, 18, 22, 23) per `CLAUDE.md` archive policy (historical reference only, not binding). Required wording: "AI-assisted image analysis belongs to a future paid/subscription capability discussion and must be reconciled with the existing store-readiness subscription/paywall/multilingual concept references before promotion into V2 core." This is post-V2 completion boundary, not next after S8. Hard boundaries: no AI diagnosis; no AI treatment instruction; no pesticide/product recommendation; no AI-authored action recommendation; no implementation now.
+- AI-assisted image analysis (paid subscription) — see `archive/future/V2_FUTURE_ROADMAP.md §4.11`. Concept already exists historically in `archive/v1/AI_STRATEGY_V1.md` and is connected to the existing subscription / paywall / multilingual concept references in `archive/future/STORE_READY_ROADMAP_V1.md` (Sessions 17, 18, 22, 23) per `CLAUDE.md` archive policy (historical reference only, not binding). Required wording: "AI-assisted image analysis belongs to a future paid/subscription capability discussion and must be reconciled with the existing store-readiness subscription/paywall/multilingual concept references before promotion into V2 core." This is post-V2 completion boundary, not next after S8. Hard boundaries: no AI diagnosis; no AI treatment instruction; no pesticide/product recommendation; no AI-authored action recommendation; no implementation now.
 - Any paid/subscription AI features — future paid/subscription capability discussion only; no implementation now.
 - Any diagnosis/treatment recommendation system — only if separately owner-approved in future with strict guardrails. No AI diagnosis, disease confirmation, pest confirmation, product recommendation, dose advice, `prskaj`, or `tretiraj` now.
 
@@ -1385,7 +1385,7 @@ Future dependency:
 Current documentation disposition:
 
 - `V2_S3_AUDIT_CONSOLIDATION.md` records the active S4 owner decision.
-- `V2_FUTURE_ROADMAP.md` records citrus reintroduction as future work.
+- `archive/future/V2_FUTURE_ROADMAP.md` records citrus reintroduction as future work.
 - `V2_PLANT_CATALOG.md` and `V2_ORCHARD_PLAN_TEMPLATES.md` still contain pre-S4 citrus input content and must be cleaned up in S5, not in this S4 decision-record task.
 
 #### S4 owner decision — Fig support scope
@@ -1415,7 +1415,7 @@ Future dependency:
 Current documentation disposition:
 
 - `V2_S3_AUDIT_CONSOLIDATION.md` records the active S4 owner decision.
-- `V2_FUTURE_ROADMAP.md` records fig reintroduction as future work.
+- `archive/future/V2_FUTURE_ROADMAP.md` records fig reintroduction as future work.
 - `V2_PLANT_CATALOG.md` and `V2_ORCHARD_PLAN_TEMPLATES.md` are targeted-cleaned so fig is no longer current supported V2 scope.
 
 ### S5 citrus / fig current-support cleanup
