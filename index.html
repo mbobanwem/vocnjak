@@ -2020,7 +2020,7 @@ const ORCHARD_PLAN_TEMPLATES = {
     { key: "e2", title: "Praćenje jabučnog savijača (feromonske klopke)", activityType: "monitoring", monthStart: 4, dayStart: 25, monthEnd: 8, dayEnd: 15, skipYear: 0, notes: "Jabučni savijač (Cydia pomonella) — crvi u plodovima jabuke.\nPostaviti feromonsku klopku na 1.5–2 m visine, u sjenu krošnje.\nTjedno pregledavati ulov.\nTretman insekticidom (Mospilan) samo ako ulov prijeđe prag štetnosti —\nnagli porast = tretman unutar 7–10 dana.\nZa mlada stabla god. 1–2 bez ploda: nije prioritet." },
     { key: "e3", title: "Prorjeđivanje plodova", activityType: "observation", monthStart: 5, dayStart: 15, monthEnd: 6, dayEnd: 15, skipYear: 0, notes: "Uklanjanje viška plodova radi bolje veličine i kvalitete uroda.\nOstaviti 1 plod na 10–15 cm grane. Ukloniti blizance i oštećene plodove.\nJabuka je sklona alternativnoj rodnosti — redovito prorjeđivanje smanjuje taj problem.\nZa mlada stabla god. 1–2 bez značajnog uroda: nije potrebno." },
     { key: "e4", title: "Mreža protiv ptica – jabuka", activityType: "observation", monthStart: 8, dayStart: 15, monthEnd: 10, dayEnd: 1, skipYear: 0, notes: "Jabuka Fuji i kasne sorte rijetko su intenzivno napadnute pticama dok su plodovi čvrsti.\nPostaviti mrežu samo ako postoji vidljiv pritisak ptica.\nZa rane i srednje sorte: pratiti i reagirati prema situaciji.\nZa mlada stabla god. 1–2 bez uroda: nije potrebno." },
-    { key: "e5", title: "Berba jabuke", activityType: "harvest", monthStart: 8, dayStart: 20, monthEnd: 10, dayEnd: 20, skipYear: 0, notes: "Termin berbe ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.\nPrimjeri: Gala (aug 20 – sep 10), Fuji / Idared (sep 25 – oct 15).\nBrati zakretanjem ploda — ne čupati, ne vući.\nTest zrelosti: plod lako otpada pri laganom zakretanju, sjemenke smeđe.\nFuji: čekati punu zrelost — prerano ubrana Fuji jabuka nema okusa.\nBrati po suhom, izbjegavati jutarnju rosu.\nNe ostavljati oštećene plodove — uzrokuju moniliju." }
+    { key: "e5", title: "Berba jabuke", activityType: "harvest", monthStart: 8, dayStart: 20, monthEnd: 10, dayEnd: 20, skipYear: 0, notes: "Termin berbe ovisi o sorti ili fallback grupi — vidi PLANT_CATALOG_V1.md za harvestWindow.\nPrimjeri: Gala (aug 20 – sep 10), Idared (oct 1 – oct 20), Fuji (oct 10 – nov 5).\nBrati zakretanjem ploda — ne čupati, ne vući.\nTest zrelosti: plod lako otpada pri laganom zakretanju, sjemenke smeđe.\nFuji: čekati punu zrelost — prerano ubrana Fuji jabuka nema okusa.\nBrati po suhom, izbjegavati jutarnju rosu.\nNe ostavljati oštećene plodove — uzrokuju moniliju." }
   ],
   pear: [
     { key: "e1", title: "Bakar – preventivna zaštita od vatrostuh", activityType: "spraying", monthStart: 3, dayStart: 15, monthEnd: 4, dayEnd: 10, skipYear: 0, notes: "Kruška je jedina standardna voćka s ozbiljnim rizikom vatrostuh (Erwinia amylovora).\nPrimijeniti bakar preventivno oko cvatnje.\nCvatnja kruške je ranije od jabuke — pratiti stanje pupova i prilagoditi termin.\nNE prskati direktno na otvorene cvjetove — oštećuje cvjetove i pčele.\nCuprablau Z 35 WG ili ekvivalent.\nRazmak od bijelog ulja: min. 7–10 dana.\nAko se pojave simptomi vatrostuh (tamnosmeđe uvenule grane): odmah rezati ispod vidljive zaraze,\ndezinficirati alat između rezova, spaliti rezani material." },
@@ -7112,10 +7112,10 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   var HARVEST_ACTION_WINDOW_NOTES = {
     apple: note([
       'Termin berbe ovisi o sorti ili fallback grupi - vidi V2_PLANT_CATALOG.md za harvestWindow.',
-      'Primjeri: Gala (aug 20 - sep 10), Fuji (sep 25 - oct 15), Idared (oct 1 - oct 20).',
+      'Primjeri: Gala (aug 20 - sep 10), Idared (oct 1 - oct 20), Fuji (oct 10 - nov 5).',
       'Prije berbe provjeriti zrelost na nekoliko plodova: osnovna boja prelazi iz zelene prema žutoj, okus više nije škrobast, sjemenke su smeđe, a plod se lako odvaja laganim podizanjem i zakretanjem.',
       'Ne brati sve odjednom ako dio plodova još nije zreo; isto stablo može trebati više prolaza.',
-      'Fuji: čekati punu zrelost - prerano ubrana Fuji jabuka nema okusa.',
+      'Fuji je kasna sorta - u kontinentalnim uvjetima berba je najčešće od sredine prema kraju listopada, ponekad i početkom studenog; beri prema stvarnoj zrelosti, prerano ubrana Fuji nema okusa.',
       'Brati po suhom, izbjegavati jutarnju rosu.',
       'Oštećene, trule i mumificirane plodove ukloniti iz krošnje i ispod stabla jer mogu održavati bolesti i štetnike.'
     ]),
@@ -7432,7 +7432,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
           "jonagold":         { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 15, "monthEnd": 10, "dayEnd": 5  } },
           "topaz":            { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 20, "monthEnd": 10, "dayEnd": 10 } },
           "elstar":           { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 10, "monthEnd": 9,  "dayEnd": 30 } },
-          "fuji":             { "timing": "late", "harvestWindow": { "monthStart": 9,  "dayStart": 25, "monthEnd": 10, "dayEnd": 15 } },
+          "fuji":             { "timing": "late", "harvestWindow": { "monthStart": 10, "dayStart": 10, "monthEnd": 11, "dayEnd": 5 } },
           "granny_smith":     { "timing": "late", "harvestWindow": { "monthStart": 10, "dayStart": 1,  "monthEnd": 10, "dayEnd": 20 } },
           "idared":           { "timing": "late", "harvestWindow": { "monthStart": 10, "dayStart": 1,  "monthEnd": 10, "dayEnd": 20 } }
         },
@@ -7507,7 +7507,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
         "varieties": {
           "caldesi_2000":  { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 20 } },
           "big_top":       { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 10, "monthEnd": 7, "dayEnd": 31 } },
-          "fantasia":      { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 20 } },
+          "fantasia":      { "timing": "late",  "harvestWindow": { "monthStart": 8, "dayStart": 10, "monthEnd": 9, "dayEnd": 5 } },
           "stark_redgold": { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 5,  "monthEnd": 8, "dayEnd": 25 } },
           "venus":         { "timing": "late",  "harvestWindow": { "monthStart": 8, "dayStart": 15, "monthEnd": 9, "dayEnd": 5  } }
         },

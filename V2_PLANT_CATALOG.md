@@ -234,7 +234,7 @@ Months are 1-indexed (1 = January).
 | Jonagold         | jonagold         | mid    | Sep 15 – Oct 5             | mid April          |
 | Topaz            | topaz            | mid    | Sep 20 – Oct 10            | mid April          |
 | Elstar           | elstar           | mid    | Sep 10 – Sep 30            | mid April          |
-| Fuji             | fuji             | late   | Sep 25 – Oct 15            | mid April          |
+| Fuji             | fuji             | late   | Oct 10 – Nov 5             | mid April          |
 | Granny Smith     | granny_smith     | late   | Oct 1 – Oct 20             | mid April          |
 | Idared           | idared           | late   | Oct 1 – Oct 20             | mid April          |
 
@@ -319,7 +319,7 @@ Months are 1-indexed (1 = January).
 |---------------|---------------|--------|-------------------------|------------------|
 | Caldesi 2000  | caldesi_2000  | early  | Jul 1 – Jul 20          | late March       |
 | Big Top       | big_top       | early  | Jul 10 – Jul 31         | late March       |
-| Fantasia      | fantasia      | mid    | Aug 1 – Aug 20          | early April      |
+| Fantasia      | fantasia      | late   | Aug 10 – Sep 5          | early April      |
 | Stark Redgold | stark_redgold | mid    | Aug 5 – Aug 25          | early April      |
 | Venus         | venus         | late   | Aug 15 – Sep 5          | mid April        |
 
@@ -603,7 +603,7 @@ The JSON below is the machine-readable form of the species tables and prose abov
       "jonagold":         { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 15, "monthEnd": 10, "dayEnd": 5  } },
       "topaz":            { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 20, "monthEnd": 10, "dayEnd": 10 } },
       "elstar":           { "timing": "mid",  "harvestWindow": { "monthStart": 9,  "dayStart": 10, "monthEnd": 9,  "dayEnd": 30 } },
-      "fuji":             { "timing": "late", "harvestWindow": { "monthStart": 9,  "dayStart": 25, "monthEnd": 10, "dayEnd": 15 } },
+      "fuji":             { "timing": "late", "harvestWindow": { "monthStart": 10, "dayStart": 10, "monthEnd": 11, "dayEnd": 5 } },
       "granny_smith":     { "timing": "late", "harvestWindow": { "monthStart": 10, "dayStart": 1,  "monthEnd": 10, "dayEnd": 20 } },
       "idared":           { "timing": "late", "harvestWindow": { "monthStart": 10, "dayStart": 1,  "monthEnd": 10, "dayEnd": 20 } }
     },
@@ -683,7 +683,7 @@ The JSON below is the machine-readable form of the species tables and prose abov
   "varieties": {
       "caldesi_2000":  { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 1,  "monthEnd": 7, "dayEnd": 20 } },
       "big_top":       { "timing": "early", "harvestWindow": { "monthStart": 7, "dayStart": 10, "monthEnd": 7, "dayEnd": 31 } },
-      "fantasia":      { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 1,  "monthEnd": 8, "dayEnd": 20 } },
+      "fantasia":      { "timing": "late",  "harvestWindow": { "monthStart": 8, "dayStart": 10, "monthEnd": 9, "dayEnd": 5 } },
       "stark_redgold": { "timing": "mid",   "harvestWindow": { "monthStart": 8, "dayStart": 5,  "monthEnd": 8, "dayEnd": 25 } },
       "venus":         { "timing": "late",  "harvestWindow": { "monthStart": 8, "dayStart": 15, "monthEnd": 9, "dayEnd": 5  } }
     },
