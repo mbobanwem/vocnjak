@@ -56,9 +56,11 @@ Post-V2 work must preserve:
 - V2 notification strategy is greenfield.
 - Legacy iCal may remain a bridge or fallback only if the owner approves it.
 - Regionalization and the current Zagreb/continental Croatia baseline are core product risks for multi-country launch.
-- Store/mobile architecture must avoid a thin remote WebView "skalamerija."
-- PWA-first, single-file V2 runtime remains the current baseline, but store/mobile packaging is an owner-gated architecture decision.
-- Capacitor-bundled, TWA, and native paths require later audit and current platform verification before selection.
+- Native/store distribution is decision-recorded in `DISTRIBUTION_DECISION_RECORD.md`.
+- Long-term public product target is a store-distributed iOS/Android native mobile app.
+- Web/PWA remains bridge/dev/verifier only, not a long-term public product channel.
+- Capacitor is the first native vehicle to prove in `CAP-SPIKE`, not production-approved by the decision record.
+- TWA is rejected as the planned path.
 - AI photo analysis is a long-term strategic feature, but it must be gated by safety, privacy, store, backend, and payment decisions.
 
 ## Retired V1 Sessions 20-26 mapping
@@ -107,12 +109,15 @@ Out of scope: broad regionalization, BBCH, hidden offsets, automatic treatment s
 
 Objective: make key product and architecture decisions before runtime work.
 
-Store/mobile architecture decision:
+Native/store distribution decision — DECIDED (STORE-D1):
 
-- Objective: choose the approved path for modern mobile/store readiness.
-- Why it matters: the app must feel modern, fast, offline-capable, and acceptable for App Store / Google Play without becoming a thin remote WebView wrapper.
-- Owner decisions: PWA-only for now, TWA, Capacitor-bundled, native shell, or native rewrite path; required offline baseline; native permissions; app metadata; store-review expectations.
-- Out of scope: implementation, payment code, broad refactor, or framework migration unless separately approved.
+- Detailed decision record: `DISTRIBUTION_DECISION_RECORD.md` (canonical). This roadmap keeps only this compact pointer.
+- Native/store distribution is decision-recorded but NOT implemented. No runtime changes are authorized by the record.
+- Long-term public product target is an iOS/Android native mobile app.
+- Web/PWA is bridge/dev/verifier, not a long-term public product channel.
+- Each STORE/CAP/CORE/LEGACY/APP-ID/NOTIF session opens only by explicit owner instruction naming the session id.
+- Session track: `STORE-D1` (done), `CAP-SPIKE`, `STORE-W1`, `CORE-AUDIT`, `LEGACY-D`, `APP-ID-D`, `REG-PACKS-D`, `LEGACY-R`, `CAP-BUILD`, `NOTIF-D`, `STORE-SUB`.
+- Hard rules (full list in the record): STORE-D1 authorizes no implementation; Capacitor is first vehicle to prove, not production-approved; canonical core must not be forked; no silent migration; no first uploaded store binary before `LEGACY-R`; no notifications, AI/photo, sync/cloud, monetization, accounts, or IAP without an approved owning session.
 
 Regionalization / Zagreb baseline decision — DECIDED (REG-D1):
 
@@ -171,18 +176,18 @@ Include:
 - no automatic treatment-window shifting;
 - no BBCH/climate engine unless separately researched and approved.
 
-### Phase 6 - Public PWA readiness
+### Phase 6 - Bridge/dev PWA correctness
 
-Objective: prepare public web/PWA release from the V2 baseline.
+Objective: keep the web/PWA bridge, dev, and verifier channel trustworthy until the native/store path replaces it. This is not public web-product investment.
 
 Include:
 
 - deployment verification;
-- manifest, service worker, and icon review;
-- privacy/legal/support materials;
-- export/import public-user testing;
+- manifest stale-copy cleanup, service worker cold-start correctness, and font self-hosting only if opened by `STORE-W1`;
+- privacy/support page stubs only if needed by store prerequisites;
+- export/import bridge testing;
 - storage/security review;
-- release checklist.
+- bridge/dev correctness checklist.
 
 ### Phase 7 - Mobile/store architecture implementation path
 
@@ -190,7 +195,13 @@ Objective: execute the approved mobile/store direction.
 
 Include:
 
-- PWA/TWA/Capacitor/native decision record;
+- `DISTRIBUTION_DECISION_RECORD.md`;
+- `CAP-SPIKE`;
+- `CORE-AUDIT`;
+- `APP-ID-D`;
+- `LEGACY-D` / `LEGACY-R`;
+- `CAP-BUILD`;
+- `STORE-SUB`;
 - modern 2026 app requirement;
 - explicit rejection of thin remote WebView packaging;
 - performance/offline expectations;
@@ -258,7 +269,7 @@ Owner decisions required before implementation:
 - regionalization model;
 - whether/when to add region/country field;
 - whether legacy iCal remains a fallback;
-- mobile/store architecture path;
+- native/store implementation gates after STORE-D1;
 - free tier guarantees;
 - AI photo scope and retention policy;
 - subscription/payment model;
@@ -270,7 +281,7 @@ Recommended sequence after this docs commit:
 
 1. Phase 1 content reliability / Plan Templates closeout.
 2. Regionalization decision: recorded in `REGIONALIZATION_DECISION_RECORD.md` (REG-D1 done); REG sessions remain owner-gated by session id.
-3. Phase 2 decision spike: store/mobile architecture — next strategic planning topic.
+3. Native/store distribution decision: recorded in `DISTRIBUTION_DECISION_RECORD.md` (STORE-D1 done); STORE/CAP/CORE/LEGACY/APP-ID/NOTIF sessions remain owner-gated by session id. The corrected order starts with `CAP-SPIKE`, and `STORE-W1` is parallel-safe with it but does not block it.
 
 Do not implement those in this roadmap session.
 

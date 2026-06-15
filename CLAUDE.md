@@ -31,6 +31,18 @@ Regionalization is decision-recorded, not implemented. `REGIONALIZATION_DECISION
 - Only live countries/regions may appear in UI; registered-but-not-live countries are hidden, never teased.
 - Do not edit `V2_ORCHARD_PLAN_TEMPLATES.md` for regional packs; regional source content lives in sibling per-pack dossiers.
 
+## DISTRIBUTION / NATIVE HARD STOP
+
+Native/store distribution is decision-recorded, not implemented. `DISTRIBUTION_DECISION_RECORD.md` is the canonical distribution/native decision record and session map. Distribution work must follow it exactly.
+
+- No STORE/CAP/CORE/LEGACY/APP-ID/NOTIF session may start unless the owner explicitly names the session id.
+- Native app is the long-term product target; PWA/web is bridge/dev/verifier only and is not retired now.
+- Capacitor is only the first proof vehicle until `CAP-SPIKE` passes; it is not production-approved by the record.
+- Canonical core must not be forked.
+- No silent migration from bridge/PWA localStorage.
+- No first store binary upload before `LEGACY-R`.
+- No notifications, AI/photo, sync/cloud, monetization, accounts, IAP, native shell project, store assets, or runtime distribution work without the approved owning session.
+
 ### LOCKED CORE
 
 - `PRODUCT_VISION.md`
