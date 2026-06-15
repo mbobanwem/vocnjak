@@ -95,7 +95,98 @@ The old numbering is retired. The table below preserves useful intent only. REG 
 | V1 Session 25 paywall UX | Later paywall design after value, safety, and free-tier decisions |
 | V1 Session 26 payments | Later platform/IAP/payment implementation |
 
-## Roadmap phases
+## Post-Phase-1 numbered roadmap lock
+
+The numbered sessions below are the owner-facing execution roadmap after Phase 1. These numbers are new Post-Phase-1 roadmap numbers and must not be confused with retired V1 Session 20-26 labels.
+
+Technical labels such as `REG-R1-D`, `CAP-SPIKE`, `STORE-W1`, `CORE-AUDIT`, `APP-ID-D`, `NOTIF-D`, and `STORE-SUB` remain binding sublabels/gates under the numbered sessions.
+
+This roadmap does not authorize implementation by itself. A session opens only when the owner explicitly approves that numbered session or explicitly names the technical sublabel/gate. The owner must explicitly approve any new numbered session, roadmap insertion, reorder, merge, split, or scope expansion. Agents must not add roadmap items because they "make sense."
+
+Locked `REG-D1` and `STORE-D1` decisions remain stronger than this overview. If this overview conflicts with `REGIONALIZATION_DECISION_RECORD.md` or `DISTRIBUTION_DECISION_RECORD.md`, the decision record wins.
+
+Archive documents are historical context only unless an active document explicitly points to them. Do not resume archived V1/concept sessions by number.
+
+Every session must preserve the standing quality gates: relevant verifier PASS, content/source parity, fail-closed import/export posture, safety/privacy/support discipline where relevant, clean git status, no unrelated files, no stray worktrees or branches, and no staged local/tooling junk.
+
+The next owner-facing session after Phase 1 closeout is Session 20 - Regionalization foundation. Within Session 20, the first technical substep is `REG-R1-D` unless the owner explicitly chooses a different numbered session.
+
+Numbering expresses preferred owner-facing roadmap order, not proof that every later session is blocked by every earlier session. Parallel-safe tracks may be opened only when their prerequisites and owner approval are explicit. Session 21 may proceed in parallel with regional pack work after owner approval. It is not a prerequisite for `REG-A-D`, but production native work remains blocked by its gates.
+
+| Session | Owner-facing name | Technical sublabels/gates | Classification | Locked boundaries |
+|---:|---|---|---|---|
+| 20 | Regionalization foundation | `REG-R1-D`, `REG-VER1`, `REG-R1-R`, `REG-CATF`, `REG-PACKS-D` | Mandatory before a second region/content pack; design first, then implementation gates; first owner-facing session after Phase 1. | No date offsets, formulas, or computed shifts. Every shipped regional date must be source-cited or intra-country byte-equal carry-forward where allowed. `catalog_v1` is permanent stored data and must never be renamed. `contentPack` is derived only; persisted version remains `catalog_version`. No persisted `contentPack` in plant records. No region switch that silently rewrites existing plant calendars/history. Unknown country/region/catalog imports fail closed. No second pack yet. No foreign region IDs before source-corpus sessions. Only live countries/regions appear in UI. |
+| 21 | Native app path / PWA bridge / portability proof | `CAP-SPIKE`, `STORE-W1`, `CORE-AUDIT`, `APP-ID-D`, `LEGACY-D` | Mandatory before public native/store release; parallel-safe lane after owner approval; not a universal blocker for Session 22 / `REG-A-D`; proof/design first. | Capacitor is proof only, not production approval. Canonical core must not fork. No native validator fork. Guided export/import only. No silent same-device localStorage migration. Validated V2 export/import remains the portability contract across native, monetization, and sync decisions. Platform backup is not sync. No accounts/cloud/sync in this session. No icon/splash/name/bundle work before `APP-ID-D`. PWA remains bridge/dev/preview/content-verification unless owner re-promotes it. `manifest.json` / `sw.js` edits only inside `STORE-W1` allowed scope or explicit owning session. |
+| 22 | First regional content pack - HR Adriatic | `REG-A-D`, `REG-A-R` | Mandatory before first new live pack; research/curation first, implementation later; validates the regional pack engine. | HR Adriatic / southern Croatia only unless owner changes target. `REG-A-D` is source dossier / ledger only. `REG-A-R` cannot start until Session 20 runtime/verifier/pack-delivery gates are complete and owner activates it. Requires complete source dossier, complete ledger, verifier PASS, and explicit owner activation. No foreign packs. No HR continental date offsets. No cross-country carry-forward. |
+| 23 | Existing-plant regional adoption | `REG-UPG-D`, `REG-UPG-R` | Mandatory before moving existing plant calendars to a different content pack; design first. | Explicit per-plant adoption only. No silent rewrite. No history mutation. Existing plant records keep current calendars until adopted. Migration/import rules remain fail-closed. |
+| 24 | User onboarding / first-run setup | `ONB-D`, `ONB-R` | Mandatory before public native/store release; design first; after regional foundation, first pack model, and adoption design. | Low-friction and iPhone-first. Minimal taps. Language, region, and content pack are distinct. Existing users are not forcibly reset. Onboarding must not invent regional precision or hardcode fields before Session 20/23 model decisions. First-run disclosure must state dates are calm reminders, not commands. |
+| 25 | Multilingual / i18n foundation | `REG-I18N-F`, optional `I18N-D` | Mandatory before localized foreign-market release; design/tooling first. | Language renders content; language never selects agronomic timing. Country, region, language, and `contentPack` remain distinct. No translations/runtime strings before i18n architecture and validation policy. Localized agronomic content requires source/translation validation. Content pack and UI language are related but not the same thing. |
+| 26 | Future country-region expansion | `REG-SI-F`, `REG-SI-D`, `REG-SI-R`, `REG-AT-F`, `REG-AT-D`, `REG-AT-R`, `REG-CTRY-*` | Mandatory per new country/content pack; repeatable source-corpus / design / runtime model. | No foreign country/region IDs before that country's source-corpus session. No cross-country carry-forward. First pack per country is country-sourced or absent. HR can donate methodology/taxonomy/verification structure, not foreign dates/legal/safety wording. |
+| 27 | Native release execution gates | `LEGACY-R`, `CAP-BUILD`, `STORE-SUB` | Mandatory before first store upload; serial gate bucket, not one approval; implementation only after prerequisite gates. | Session 27 is not one approval. `LEGACY-R`, `CAP-BUILD`, and `STORE-SUB` open separately and serially under their own gates. `STORE-SUB` means store submission / store readiness, not subscription/paywall/payment. Subscription/paywall belongs to Session 32. No legacy key deletion before `LEGACY-D/R`; protected legacy keys remain protected. No first binary upload before legacy gates are complete. Store readiness must preserve export/import portability and local-first posture. |
+| 28 | Notifications / reminders | `NOTIF-D`, later `NOTIF-R` only if approved | Owner-gated research/design first. | Wait for native/storage/onboarding decisions. Calm, opt-in reminders only. No overdue/compliance/nag copy. Local/on-device by default. No push/backend by default. No notification work before `NOTIF-D`. |
+| 29 | Tools / equipment context | `TOOLS-D` | Optional future slot; not strict critical path; owner-gated design first. | Context/readiness only. No ecommerce. No purchase funnel. No inventory implementation unless owner separately approves. No pesticide/product/dose recommendation. No treatment prescription. Orchard-first and safety-bounded. |
+| 30 | Scouting and recommendation safety | `SCOUT-D`, `REC-D` | Mandatory before recommendation/intelligence features; safety decision first. | No pressure/severity/recommendation state before safety decision. No pressure, severity, urgency, detect-to-treat, or treatment recommendation. No inference from missing or weak evidence. No invented pest/disease pressure. No treatment/product/dose advice. Safe deterministic context must be distinguished from forbidden diagnosis/treatment recommendation. |
+| 31 | AI / photo analysis | `AI-D`, `PHOTO-D`, later `AI-R` only if approved | Mandatory before any AI/photo implementation; research/design only first. | Photos/media never enter core JSON store. AI output descriptive only. AI output may only become user-confirmed Observation if later approved. No AI diagnosis. No treatment/product/dose recommendation. No AI-authored action recommendation. Privacy, storage, retention, cost, backend/provider, and safety boundaries must be decided before implementation. |
+| 32 | Subscription / paywall / payments | `SUB-D`, `PAY-D` | Mandatory before monetization. | Separate from `STORE-SUB`. No IAP/payment implementation before `SUB-D/PAY-D`. No paywall around core logging/history/export/import/basic calendar unless owner separately approves. Backup/export/import remain unpaywalled core unless owner separately approves. Free-tier boundaries must be decided before implementation. |
+| 33 | Sync / cloud / accounts decision only | `SYNC-D` | Explicitly not approved now; decision-only; owner decision only. | Decision-only: accounts/cloud/sync are not approved now. Local-first remains current. Export/import remains portability contract. Platform backup is not sync. Supabase/cloud backup is not V2 sync unless separately approved. No accounts/cloud/merge/conflict/privacy semantics until separately approved. Sync/cloud/accounts cannot be bundled into native path. |
+
+### Standing gate Q - Testing / verifier / content parity discipline
+
+Standing gate Q is mandatory across all sessions. It is not a one-time implementation session and does not authorize feature work.
+
+It contains the existing content parity verifier, the `REG-VER1` relationship, source/content/runtime parity checks, and clean git discipline. Relevant verifier PASS, content/source parity, catalog/runtime parity, fail-closed import/export posture, clean git status, no unrelated files, no `.DS_Store`, no `.claude`, no nested repos/submodules, no stray worktrees/branches, no untracked plan files, and targeted git add only are required where relevant.
+
+### Standing gate S - Safety / privacy / support discipline
+
+Standing gate S is mandatory where relevant. This gate blocks unsafe work; it is a gate only, not implementation approval.
+
+It covers privacy/support metadata, AI/photo privacy and retention boundaries, account/cloud privacy boundaries, payment/subscription safety boundaries, and store/support/privacy disclosure obligations. Safety/privacy/support requirements bind every relevant session, but no accounts, AI, payments, store assets, push/backend, or cloud work becomes approved through this gate alone.
+
+### Old-label mapping table
+
+| Old label | New placement | Notes |
+|---|---|---|
+| `REG-D1` | Completed decision record before Session 20 | Preserved in `REGIONALIZATION_DECISION_RECORD.md`; not implementation approval. |
+| `REG-R1-D` | Session 20 | First technical substep unless owner chooses a different numbered session. |
+| `REG-VER1` | Session 20 / Standing gate Q | Verifier/tooling relationship for REG parity discipline. |
+| `REG-R1-R` | Session 20 | Regional runtime foundation after design approval. |
+| `REG-CATF` | Session 20 | Catalog/content-pack foundation after design approval. |
+| `REG-PACKS-D` | Session 20 | Pack-delivery decision under REG-D1 and STORE-D1 constraints. |
+| `CAP-SPIKE` | Session 21 | Proof gate only; not production approval. |
+| `STORE-W1` | Session 21 | Bridge/dev correctness only; parallel-safe with `CAP-SPIKE`. |
+| `CORE-AUDIT` | Session 21 | Mandatory before native build/native-module/KMP evaluation. |
+| `APP-ID-D` | Session 21 | Mandatory before `CAP-BUILD`; no identity work before this gate. |
+| `LEGACY-D` | Session 21 | Docs-only legacy decision before `LEGACY-R`. |
+| `REG-A-D` | Session 22 | HR Adriatic source dossier / ledger only. |
+| `REG-A-R` | Session 22 | First live regional pack activation after Session 20 gates and owner activation. |
+| `REG-UPG-D` | Session 23 | Existing-plant regional adoption design. |
+| `REG-UPG-R` | Session 23 | Existing-plant adoption runtime after design approval. |
+| `REG-I18N-F` | Session 25 | i18n foundation for REG/language separation. |
+| `REG-SI-F` | Session 26 | Slovenia source-corpus foundation. |
+| `REG-SI-D` | Session 26 | Slovenia design gate. |
+| `REG-SI-R` | Session 26 | Slovenia runtime only after source/design approval. |
+| `REG-AT-F` | Session 26 | Austria source-corpus foundation. |
+| `REG-AT-D` | Session 26 | Austria design gate. |
+| `REG-AT-R` | Session 26 | Austria runtime only after source/design approval. |
+| `REG-CTRY-*` | Session 26 | Repeatable country expansion pattern. |
+| `NOTIF-D` | Session 28 | Notification/reminder design before any implementation. |
+| `SCOUT-D` | Session 30 | Scouting safety decision before broader scouting features. |
+| `REC-D` | Session 30 | Recommendation/intelligence safety decision before recommendation features. |
+| `AI-D` | Session 31 | AI decision before any AI implementation. |
+| `PHOTO-D` | Session 31 | Photo/media decision before any photo implementation. |
+| `SUB-D` | Session 32 | Subscription/free-tier/paywall strategy decision. |
+| `PAY-D` | Session 32 | Payment/IAP decision after monetization strategy. |
+| `SYNC-D` | Session 33 | Sync/cloud/accounts decision only; no implementation approval. |
+| `TOOLS-D` | Session 29 | Tools/equipment context design. |
+| `ONB-D` | Session 24 | Onboarding/first-run design. |
+| `ONB-R` | Session 24 | Onboarding runtime after design approval. |
+| `LEGACY-R` | Session 27 | Runtime removal/quarantine after `LEGACY-D`; before first binary upload. |
+| `CAP-BUILD` | Session 27 | Native build candidate only after prerequisite gates. |
+| `STORE-SUB` | Session 27 | Store submission/readiness; not subscription/paywall/payment. |
+
+## Detailed roadmap notes
+
+The numbered roadmap lock above is the owner-facing order after Phase 1. The detailed phase notes below preserve active track detail and historical translation context only; they do not override the numbered lock or the REG/STORE decision records.
 
 ### Phase 0 - Canonical roadmap baseline
 
@@ -119,7 +210,7 @@ Known candidates:
 - future catalog/content parity;
 - non-blocking visual/accessibility polish only if the owner prioritizes it.
 
-Phase 1 progress (content reliability): S1 apple + nectarine runtime parity restore is complete (`adb2b90`). Apple and stone-fruit post-bloom beginner clarity — apple scab / mildew, nectarine / peach / plum / apricot post-bloom monilia, plum pjegavost lista, apricot mraz-vs-monilija — is complete, with peach / nectarine leaf-curl recognition wording and shared spray-safety relevance filtering (`2ac3701`, `8fa4d58`, `4d06be5`, `f4951c3`, `4502f0c`); the beginner-clarity copy-ordering rule is active (`8846754`). The automated source/runtime content parity verifier is complete and pushed (`799caae`; run with `node tools/verify-content-parity.mjs`). S5-A is complete at `bcecdf0` — quince post-bloom fungicide projection, almond post-bloom fungicide projection, olive post-harvest pruning (Dec runtime + January note prose SAFE_TRANSFORM); verifier PASS. The Fuji / Fantasia harvest-timing correction (S6) is complete: Fuji 10.10.–05.11. (`late`), Fantasia 10.08.–05.09. (`late`). The hazelnut pollination and adult walnut summer pruning source-check flags (S5-B) are resolved in `V2_ORCHARD_PLAN_TEMPLATES.md` (docs-only). No specific Phase 1 content-reliability flags remain; only open-ended future catalog/content parity and optional non-blocking polish. Source-first discipline holds: Plan Templates remain source of truth and may stay fuller than the condensed runtime `Napomene` projection; no source-backed content is removed to match runtime.
+Phase 1 progress (content reliability): S1 apple + nectarine runtime parity restore is complete (`adb2b90`). Apple and stone-fruit post-bloom beginner clarity — apple scab / mildew, nectarine / peach / plum / apricot post-bloom monilia, plum pjegavost lista, apricot mraz-vs-monilija — is complete, with peach / nectarine leaf-curl recognition wording and shared spray-safety relevance filtering (`2ac3701`, `8fa4d58`, `4d06be5`, `f4951c3`, `4502f0c`); the beginner-clarity copy-ordering rule is active (`8846754`). The automated source/runtime content parity verifier is complete and pushed (`799caae`; run with `node tools/verify-content-parity.mjs`). S5-A is complete at `bcecdf0` — quince post-bloom fungicide projection, almond post-bloom fungicide projection, olive post-harvest pruning (Dec runtime + January note prose SAFE_TRANSFORM); verifier PASS. The Fuji / Fantasia harvest-timing correction (S6) is complete: Fuji 10.10.–05.11. (`late`), Fantasia 10.08.–05.09. (`late`). The hazelnut pollination and adult walnut summer pruning source-check flags (S5-B) are resolved in `V2_ORCHARD_PLAN_TEMPLATES.md` (docs-only). No specific Phase 1 content-reliability flags remain; only open-ended future catalog/content parity and optional non-blocking polish. Phase 1 is closed, and the next owner-facing session is Session 20 under the numbered roadmap lock. Source-first discipline holds: Plan Templates remain source of truth and may stay fuller than the condensed runtime `Napomene` projection; no source-backed content is removed to match runtime.
 
 Out of scope: broad regionalization, BBCH, hidden offsets, automatic treatment shifting, symptom diagnosis, or AI.
 
@@ -306,13 +397,13 @@ Roadmap content is grounded in:
 
 ## Immediate next sessions
 
-Recommended sequence after this authority cleanup:
+Phase 1 content reliability is closed. `REG-D1` and `STORE-D1` are recorded decision sessions, not implementation sessions.
 
-1. Phase 1 content reliability / Plan Templates closeout.
-2. Regionalization decision: recorded in `REGIONALIZATION_DECISION_RECORD.md` (REG-D1 done); REG sessions remain owner-gated by session id.
-3. Native/store distribution decision: recorded in `DISTRIBUTION_DECISION_RECORD.md` (STORE-D1 done); STORE/CAP/CORE/LEGACY/APP-ID/NOTIF sessions remain owner-gated by session id. The corrected order starts with `CAP-SPIKE`, and `STORE-W1` is parallel-safe with it but does not block it.
+The next owner-facing session after Phase 1 closeout is Session 20 - Regionalization foundation. Within Session 20, the first technical substep is `REG-R1-D` unless the owner explicitly chooses a different numbered session.
 
-Do not implement those in this roadmap session.
+Session 21 may proceed in parallel with regional pack work after owner approval. It is not a prerequisite for `REG-A-D`, but production native work remains blocked by its gates.
+
+Future numbered sessions and technical sublabels remain owner-gated. Do not implement them in this roadmap session.
 
 ## Stop conditions
 

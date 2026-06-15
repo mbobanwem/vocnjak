@@ -18,6 +18,8 @@ This file is a routing document only. It does not override locked source-of-trut
 
 V2 is Done. Use `ROADMAP.md` as the single active owner-gated roadmap and future session-order authority. Use `CURRENT_STATE.md` for chronological status/history. Do not resume old V1 Sessions 20-26 directly. Do not treat archived roadmaps as active implementation authority. Decision records govern their own tracks and do not authorize implementation by themselves. Post-V2 sessions require explicit owner approval before implementation.
 
+Use the `ROADMAP.md` Post-Phase-1 numbered roadmap lock when discussing what comes next: owner-facing Sessions 20-33 are the top-level sequence, while technical labels such as `REG-R1-D`, `CAP-SPIKE`, `STORE-W1`, `CORE-AUDIT`, `APP-ID-D`, `NOTIF-D`, and `STORE-SUB` are substeps/gates. Do not add, reorder, merge, split, or expand numbered sessions without explicit owner approval.
+
 ## REGIONALIZATION HARD STOP
 
 Regionalization is decision-recorded, not implemented. `REGIONALIZATION_DECISION_RECORD.md` is the canonical regionalization decision record and REG session map. Regionalization work must follow it exactly.
