@@ -2909,7 +2909,7 @@ Kalendarski prozori za Zagreb / kontinentalne uvjete su baseline podsjetnici. U 
 
 *S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
 
-Orah može jače ispuštati sok/krvariti kod rezidbe u mirovanju — ljetni termin je sigurniji/preporučeni prozor za veće rezove; točan termin ostaje S3 audit item.
+Orah može jače ispuštati sok/krvariti kod rezidbe u mirovanju — ljetni termin (otprilike od sredine ljeta do rane jeseni) je sigurniji/preporučeni prozor za veće rezove.
 Standardni spray program NE primjenjuje se.
 Shared block NE primjenjuje se.
 Classified under `nut`. The Block 6 template below is the full work plan for this species — the species-specific block is authoritative. S3 may refine the group name; the template below is independent of that decision.
@@ -2926,7 +2926,7 @@ Classified under `nut`. The Block 6 template below is the full work plan for thi
   dayEnd: 15
   notes: >
     Orah može jače ispuštati sok/krvariti kod rezidbe u mirovanju.
-    Izbjegavati velike rezove u mirovanju; ljetni termin je sigurniji/preporučeni prozor za smanjenje rizika krvarenja, ali točan termin ostaje S3 audit item.
+    Izbjegavati velike rezove u mirovanju; ljetni termin je sigurniji/preporučeni prozor za smanjenje rizika krvarenja.
     Ukloniti križajuće i suhe grane.
     Za mlada stabla god. 1–3: formirati niski stablašić postupno; manji korektivni rezovi su sigurniji od velikih rezova.
 
@@ -3085,7 +3085,7 @@ Neke sorte lijeske bolje odgovaraju kontinentalnim uvjetima, a neke toplijim ili
 
 *S3 audit item: verify this timing / pest / disease claim against regional sources before promotion.*
 
-Cvate izrazito rano (veljača), oprašivanje vjetrom; sortna kompatibilnost i samooplodnost ostaju S3 audit item.
+Cvate izrazito rano (veljača) i oprašuje se vjetrom. Lijeska se uglavnom ne oplođuje vlastitim polenom, pa za pouzdaniji rod obično treba barem još jedna kompatibilna sorta čija se cvatnja vremenski preklapa; točne sorte oprašivače potvrditi lokalno.
 Standardni spray program NE primjenjuje se.
 Shared block NE primjenjuje se.
 Classified under `nut`. The Block 6 template below is the full work plan for this species — the species-specific block is authoritative. S3 may refine the group name; the template below is independent of that decision.
