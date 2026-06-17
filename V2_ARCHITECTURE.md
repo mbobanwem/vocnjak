@@ -693,6 +693,42 @@ Later-session boundaries:
 - Session 25 owns language / i18n.
 - Session 21, Session 27, and Session 33 own native/store/sync-related work.
 
+### 1.23b REG-PACKS-D pack delivery / retention contract
+
+REG-PACKS-D is a docs-only pack delivery decision. It does not implement runtime behavior, create pack files, edit `index.html`, edit `manifest.json`, edit `sw.js`, activate HR Adriatic, add a second catalog, or open native/store work.
+
+Pack meaning:
+
+- A regional content pack is a curated delivery unit consisting of source dossier, complete regional ledger, canonical runtime catalog version(s), and rendered guidance metadata for one regional catalog lineage.
+- A pack is not a persisted user object and is not a new root store entity.
+- Runtime persists retained `catalogs`, per-record/per-plant `catalog_version`, `settings.country`, and `settings.region`.
+- `contentPack` remains derived only from the live country/region/catalog lineage registry and MUST NOT be persisted.
+- `pack_version` MUST NOT be introduced.
+
+Delivery model:
+
+- Future regional packs MUST be repo-owned bundled static pack assets.
+- The canonical pack data heart MUST be strict JSON-compatible catalog data: no functions, computed offsets, runtime formulas, generated regional shifts, arithmetic date shifting, or AI-generated agronomic pack content.
+- Remote fetch, CDN dependency, backend delivery, accounts/cloud/sync delivery, service-worker-as-authority, and native-only delivery are rejected for current/default REG pack delivery.
+- The current single-file PWA may keep `catalog_v1` inline until the first second-pack activation.
+- If future web/PWA constraints require a loader or JSON-in-JS shim, that wrapper is channel-specific only; the canonical pack data remains JSON-compatible and native-consumable.
+- Service worker and manifest are not pack authority. Pack availability MUST NOT depend on service-worker cache state.
+- Future native builds MUST bundle the same canonical JSON-compatible pack data and MUST NOT fork validators, catalog semantics, derived `contentPack` semantics, import/export semantics, or history semantics.
+
+Import/export and retention:
+
+- Export/import preserve retained `catalogs`, referenced `catalog_version` lineage, immutable history, `settings.country`, and `settings.region`.
+- Unknown country, unknown region, unknown catalog, unknown/future pack, persisted `contentPack`, or `pack_version` MUST fail closed.
+- Older app versions may lack newer bundled packs; they MUST reject unknown country/region/catalog values rather than substitute, merge, repair, or inertly accept them.
+- No silent existing-plant adoption is allowed. Existing plants keep their pinned `catalog_version` until Session 23 / REG-UPG explicitly changes that with owner-approved per-plant consent.
+
+Future-session gates:
+
+- `REG-A-D` owns source dossier and complete regional ledger only.
+- `REG-A-R` owns runtime activation only after REG-R1-R, REG-VER1, REG-CATF, REG-PACKS-D, REG-A-D, pack-aware verifier PASS, and explicit owner activation.
+- `REG-UPG-D/R` own existing-plant adoption after a second live pack exists.
+- Session 21 and later native/store sessions own native packaging proof, without changing the canonical pack data contract above.
+
 ### 1.24 S8 / S9 / S10 handoff
 
 | Topic | S8 owns | S9 owns | S10 / later owns |

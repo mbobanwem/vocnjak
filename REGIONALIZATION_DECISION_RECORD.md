@@ -119,6 +119,7 @@ Explicit statements:
 ## 7. Content pack / catalog lineage model
 
 - Content pack = the distribution-level name for one regional catalog lineage plus the rendered guidance metadata (read-only seasonal monitoring/risk context and guidance shown by the app).
+- A regional content pack is the curated delivery unit consisting of the source dossier, complete regional ledger, canonical runtime catalog version(s), and rendered guidance metadata for one regional catalog lineage.
 - Runtime stores catalogs, not pack objects.
 - The catalog lineage registry is docs (this record and per-pack dossiers) plus, later, runtime constants. It is never persisted user data.
 - Lineage contract — each lineage records:
@@ -179,9 +180,63 @@ Explicit statements:
 
 ---
 
+## 9a. REG-PACKS-D pack delivery decision
+
+REG-PACKS-D is docs-only. It creates no pack files, edits no runtime, activates no second catalog, and does not edit `manifest.json` or `sw.js`.
+
+Pack representation:
+
+- A pack is a curated delivery unit: source dossier + complete regional ledger + canonical runtime catalog version(s) + rendered guidance metadata for one regional catalog lineage.
+- A pack is not a persisted user object.
+- Runtime persists `catalogs`, `catalog_version`, `settings.country`, and `settings.region`.
+- Runtime MUST NOT persist `contentPack` or `pack_version`.
+- `contentPack` remains a derived relationship from the live `(country, region) -> lineage -> current catalog_version` registry.
+- The pack data heart MUST be strict JSON-compatible catalog data: no functions, computed offsets, runtime formulas, generated regional shifts, arithmetic date shifting, or AI-generated agronomic content.
+- Every shipped regional date MUST be source-cited or explicitly byte-equal intra-country carry-forward where allowed by §8.
+
+Delivery model:
+
+- Future regional packs MUST be repo-owned bundled static pack assets.
+- Remote fetch, CDN dependency, backend delivery, accounts/cloud/sync delivery, service-worker-as-authority, and native-only delivery are rejected for current/default REG delivery.
+- Future PWA/dev and native channels MUST bundle the same canonical JSON-compatible pack data per app version.
+- Channel-specific loaders may exist later only if needed by the owning implementation session; they MUST NOT fork pack data, validators, catalog semantics, derived `contentPack` semantics, import/export semantics, or history semantics.
+- If pack files are introduced, canonical data filenames SHOULD be stable and lineage/version keyed, e.g. `packs/catalog.<country>.<region>.v<N>.json`. A no-build web wrapper may be added only as a channel loader around the same JSON-compatible data if the owning implementation session proves it is needed.
+
+Current web/PWA behavior:
+
+- The current app remains a single-file PWA with registry-of-one (`hr`, `hr.continental`, `catalog_v1`).
+- `catalog_v1` may remain inline until the first second-pack activation.
+- REG-PACKS-D MUST NOT extract `catalog_v1`, create pack files, edit `index.html`, edit `manifest.json`, or edit `sw.js`.
+
+Service worker / manifest:
+
+- Service worker and manifest are not pack authority.
+- Pack availability MUST NOT depend on service-worker cache state.
+- Future cache entries may improve web/dev offline availability only inside an owning session such as `STORE-W1`, `REG-A-R` with explicit cache scope, or another explicit owner-approved session.
+- No `sw.js` or `manifest.json` edits are authorized by REG-PACKS-D.
+
+Backup/import/retention:
+
+- Export/import retain `catalogs`, referenced `catalog_version` lineage, `settings.country`, and `settings.region`.
+- Unknown country, unknown region, unknown catalog, unknown/future pack, persisted `contentPack`, and `pack_version` MUST fail closed.
+- Older app versions may lack newer bundled packs; in that case the unknown country/region/catalog remains invalid and import MUST fail closed.
+- No tolerant substitution, merge, auto-fix, inert acceptance, or silent adoption is allowed.
+
+Future gates:
+
+- `REG-A-D` is source dossier and regional ledger only; no runtime activation, no pack files, no `index.html`, no `manifest.json`, no `sw.js`.
+- `REG-A-R` may activate HR Adriatic only after REG-R1-R, REG-VER1, REG-CATF, REG-PACKS-D, REG-A-D, pack-aware verifier PASS, and explicit owner activation approval.
+- `REG-UPG-D` may design existing-plant adoption only after a second live pack exists.
+- `REG-UPG-R` requires explicit per-plant consent only; no silent repinning or history rewrite.
+- Session 21 / native work must consume the same canonical JSON-compatible pack data and must not fork validators or semantics.
+
+REG-PACKS-D explicitly does not implement HR Adriatic content, HR Adriatic activation, a second catalog, foreign country/region ids, pack files, source dossiers, regional date research, existing-plant adoption, UI picker, baseline disclosure UI, i18n/language, native bridge, `manifest.json`, `sw.js`, sync/cloud/accounts, remote fetch/backend, payment/subscription, or notifications.
+
+---
+
 ## 10. Required REG session roadmap
 
-Status of every session below except `REG-D1`: not opened. Each opens only by explicit owner instruction naming the session id.
+Original session map and gate definitions. Current completion status is tracked in `CURRENT_STATE.md`. Each future session opens only by explicit owner instruction naming the session id.
 
 | Order | Session id | Type | Mandatory? | Purpose | Does | Does NOT | Prerequisites | Likely files | Stop conditions |
 |---:|---|---|---|---|---|---|---|---|---|
@@ -190,9 +245,9 @@ Status of every session below except `REG-D1`: not opened. Each opens only by ex
 | 3 | REG-VER1 | tooling | Mandatory before any second live pack | Pack-aware verifier | Per-pack config (dossier path, ledger, runtime target, baseline lineage or none, forbidden-string list); checks: ledger completeness + dichotomy (every window byte-matches its country baseline or matches a sourced ledger row with anchors present), intra-country carry-forward byte-equality + provenance marking, runtime anchors, forbidden strings; warn-level (never failing) foreign-vs-HR date-equality report; HR continental registered as pack #1; dossier-only lint mode for pre-runtime curation | No `index.html` edit; no Plan Templates edit; no content authoring; no ledger-format invention beyond this record | REG-D1 (parallel-safe with REG-R1-D/R) | `tools/`, `CURRENT_STATE.md` | Existing verifier PASS weakened; any runtime edit |
 | 4 | REG-R1-R | runtime foundation | Mandatory before REG-CATF | Implement the REG-R1-D contract | `settings` root key; format v2 + deterministic upgrade; generalized validators with a registry of one (only `catalog_v1` known); Postavke region picker (HR live only); baseline disclosure copy; export/import with settings | No second catalog; no per-plant resolution refactor; `plan_instances`/`plan_overlays`/`review_state` stay enforced-empty; no content/date change; no non-live country anywhere in code; no `manifest.json`/`sw.js`/Plan Templates/legacy-key changes | REG-R1-D | `index.html`, `CURRENT_STATE.md` | Validator loosening beyond contract; unknown catalog keys accepted; scope drift into REG-CATF; unexpected files |
 | 5 | REG-CATF | runtime foundation | Mandatory before any second live pack | Behavior-identical per-plant catalog resolution | Store loader stops returning the single hardwired catalog; snapshot and all consumers resolve each plant via `plant.catalog_version` through the known-catalog lookup; canonical refresh branches generalized per known canonical; history/Dnevnik resolution uses the referenced catalog; registry still of one | No second catalog; no validator change; no UI/copy change; no behavior/output change for existing data | REG-R1-R | `index.html`, `CURRENT_STATE.md` | Any behavior difference with one catalog; scope drift into activation |
-| 6 | REG-PACKS-D | docs-only (architecture decision) | Mandatory before REG-A-R | Decide pack delivery mechanics | Decides inline-in-`index.html` vs external static pack files (`packs/*.js`); offline/cache (`sw.js` ASSETS, cache versioning) and update semantics; `file://` verification compatibility; rollout semantics for pack data | No pack files created; no runtime edit; no `sw.js`/`manifest.json` edit; deciding-by-implementing forbidden | REG-D1 (parallel-safe with the R1 track) | `ROADMAP.md` or addendum to this record, `CURRENT_STATE.md` | Any file creation or runtime edit |
+| 6 | REG-PACKS-D | docs-only (architecture decision) | Mandatory before REG-A-R | Decide pack delivery mechanics | Locks repo-owned bundled static pack assets; strict JSON-compatible pack data heart; current inline `catalog_v1` allowed until first second-pack activation; service worker/manifest not pack authority; fail-closed backup/import retention; future native consumes same canonical pack data | No pack files created; no runtime edit; no `sw.js`/`manifest.json` edit; no HR Adriatic activation/content; no Session 21/22 implementation; deciding-by-implementing forbidden | REG-D1 + STORE-D1 (parallel-safe with the R1 track) | `REGIONALIZATION_DECISION_RECORD.md`, `DISTRIBUTION_DECISION_RECORD.md`, `V2_ARCHITECTURE.md`, `CURRENT_STATE.md` | Any file creation or runtime edit; remote/backend delivery proposed as default |
 | 7 | REG-A-D | source research + content curation | Mandatory before REG-A-R | HR Adriatic source dossier and ledger | Owner approves Adriatic Tier-A corpus; sibling dossier doc: band definition + display label, minimum seasonal skeleton, complete regional ledger covering every window and the rendered monitoring/risk guidance rows, delta source content with runtime anchors; species order olive + pomegranate → stone fruit → pome | No runtime edits; no `index.html`; no Plan Templates edit; no verifier edit; no date without Tier-A citation or byte-equal carry-forward; no drafting offsets committed; no region ids beyond `hr.adriatic` | REG-D1; corpus approval gate inside the session | new HR Adriatic dossier doc, `CURRENT_STATE.md` | Unclassifiable window without owner decision; any invented date |
-| 8 | REG-A-R | runtime activation | Owner-gated | HR Adriatic goes live | `catalog.hr.adriatic.v1` projected from the dossier per the REG-PACKS-D delivery decision; registry-of-two runtime constants; picker gains the Adriatic region; NEW plants pin per selected region; existing plants untouched plus calm copy stating they keep their current calendar; two-catalog export/import round-trip | No existing-plant re-pin; no `plan_instances` opening; no foreign country; no schema or validator-semantics change (constants widen only) | REG-R1-R + REG-VER1 + REG-CATF + REG-PACKS-D + REG-A-D verified + explicit owner activation | `index.html`, `packs/` (if external), `sw.js` only if REG-PACKS-D requires an ASSETS entry, verifier config, `CURRENT_STATE.md` | Any existing-plant calendar movement; any unsourced date discovered; verifier fail |
+| 8 | REG-A-R | runtime activation | Owner-gated | HR Adriatic goes live | `catalog.hr.adriatic.v1` projected from the dossier per the REG-PACKS-D delivery decision; registry-of-two runtime constants; picker gains the Adriatic region; NEW plants pin per selected region; existing plants untouched plus calm copy stating they keep their current calendar; two-catalog export/import round-trip; verifier proves bundled pack data matches the dossier/ledger | No existing-plant re-pin; no `plan_instances` opening; no foreign country; no schema or validator-semantics change (constants widen only); no remote/backend pack delivery; no service-worker-as-authority | REG-R1-R + REG-VER1 + REG-CATF + REG-PACKS-D + REG-A-D verified + explicit owner activation | `index.html`, `packs/` if externalized, verifier config, `CURRENT_STATE.md`; `sw.js` only in an explicit owning cache/offline scope | Any existing-plant calendar movement; any unsourced date discovered; verifier fail; pack availability depends on service-worker cache state |
 | 9 | REG-UPG-D | UX decision (docs-only) | Mandatory before any existing-plant adoption | Choose the existing-plant adoption mechanism | Decides minimal per-plant re-pin consent flow (window-diff display per region-stable ids, explicit consent, audit-trail question, archived-plant handling) vs full plan-upgrade review runtime (would open `plan_instances`/`review_state`); docs-lock of the chosen UX in `V2_UX_MODEL.md` | No implementation; no assumption either option is pre-approved; no bulk/silent apply design; no compliance/pressure copy | REG-A-R live (a second catalog must exist to adopt) | `ROADMAP.md` or addendum, `V2_UX_MODEL.md` docs-lock, `CURRENT_STATE.md` | Designing automatic migration |
 | 10 | REG-UPG-R | runtime activation | Owner-gated | Implement the chosen adoption flow | Exactly the REG-UPG-D-approved variant; per-plant explicit consent; window-diff display against region-stable ids; history untouched | Anything beyond the approved variant; no bulk apply; no urgency copy; no unapproved model opening | REG-UPG-D | `index.html`, `CURRENT_STATE.md` | Any calendar change without explicit per-plant consent |
 | 11 | REG-SI-F | source research | Mandatory before any SI pack | Slovenia feasibility / corpus / taxonomy / language gate | Tier-A feasibility scan and corpus approval; SI region taxonomy decided and ids fixed (frozen at live); minimum seasonal skeleton; rendering-language gate decision (`sl`); variety-candidate mapping from the candidate matrix | No curation content; no runtime; no dates | REG-D1 (recommended after REG-A-R proves the pipeline) | new SI dossier skeleton doc, `CURRENT_STATE.md` | Curation started before corpus + language approval |
@@ -223,6 +278,7 @@ Parallelism notes: REG-VER1 and REG-PACKS-D are parallel-safe with the R1 track;
 - `plan_instances`, `plan_overlays`, and `review_state` stay validator-enforced empty until an owner-approved session explicitly opens them.
 - New records always write the active catalog version; records validate only against known canonical versions present in the store.
 - Settings enums are live-gated; a non-live country/region can never be selected or stored.
+- Regional pack delivery is repo-owned bundled static pack data by default; no remote/backend pack fetch, no service-worker-as-authority, and no native-only pack delivery.
 - Region ids freeze once live; `window_def_id` is region-stable only for identical orchard meaning.
 - Protected legacy storage keys stay byte-identical through every REG session.
 - No AI-generated agronomic content; no diagnosis/treatment/product/dose content in any pack.
@@ -236,7 +292,7 @@ Parallelism notes: REG-VER1 and REG-PACKS-D are parallel-safe with the R1 track;
 - This file is the canonical detailed regionalization decision record.
 - `ROADMAP.md` contains the compact pointer and session list only.
 - `CLAUDE.md` contains only a short regionalization hard-stop block.
-- `V2_ARCHITECTURE.md`, `V2_DOMAIN_MODEL.md`, and `V2_UX_MODEL.md` are updated only in their owning sessions (`REG-R1-D`, `REG-UPG-D`, `REG-I18N-F` docs-locks). They are not edited by REG-D1.
+- `V2_ARCHITECTURE.md` is updated only in its owning docs-lock sessions, including `REG-R1-D` and `REG-PACKS-D`. `V2_DOMAIN_MODEL.md` and `V2_UX_MODEL.md` are updated only in their owning sessions (`REG-R1-D`, `REG-UPG-D`, `REG-I18N-F` docs-locks where applicable). They are not edited by REG-D1.
 - `V2_ORCHARD_PLAN_TEMPLATES.md` is not regionalized directly and is never edited for regional packs; regional source content lives in sibling per-pack dossiers.
 - Per-pack dossiers are sibling docs (naming convention to be confirmed; recommended `V2_PACK_<CC>_<REGION>.md`, e.g. `V2_PACK_HR_ADRIATIC.md`).
 

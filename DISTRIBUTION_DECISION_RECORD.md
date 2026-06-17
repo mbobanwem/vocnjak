@@ -202,13 +202,16 @@ STORE-D1 binding constraints for `REG-PACKS-D`:
 - pack data heart must be native-consumable JSON
 - service-worker caching of packs is web/dev-channel only
 
-Deferred to `REG-PACKS-D`:
+REG-PACKS-D resolution:
 
-- inline-until-second-pack vs split timing
-- pure JSON + loader vs JSON-in-JS shim
-- file naming
-- cache versioning
-- parity verifier integration
+- Current `catalog_v1` may remain inline in `index.html` until first second-pack activation.
+- Future regional packs are repo-owned bundled static pack assets.
+- The canonical pack data heart MUST be strict JSON-compatible catalog data: no functions, computed offsets, runtime formulas, generated regional shifts, arithmetic date shifting, or AI-generated agronomic content.
+- Pure JSON-compatible canonical data is the required pack data shape. A channel-specific loader or JSON-in-JS shim may exist later only as an implementation wrapper if an owning session proves it is needed; it MUST NOT fork the canonical data.
+- Future pack filenames SHOULD be stable and lineage/version keyed, e.g. `packs/catalog.<country>.<region>.v<N>.json`, if pack files are introduced.
+- Service-worker cache entries are never pack authority. Cache versioning belongs only to an owning web/dev/offline session and MUST NOT determine pack validity or availability.
+- Parity verifier integration is required before activation: the verifier must prove bundled pack data matches the approved dossier/ledger, remains JSON-compatible/native-consumable, preserves fail-closed import/export behavior, and does not introduce forbidden remote/backend or service-worker authority.
+- REG-PACKS-D itself creates no pack files, edits no runtime, and edits neither `manifest.json` nor `sw.js`.
 
 ---
 
