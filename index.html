@@ -7649,6 +7649,12 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     configurable: false
   });
 
+  // REG-CATF: known canonical catalog registry (registry-of-one). Maps each
+  // known catalog_version to its in-memory canonical definition. Used only to
+  // drive seed/refresh selection off meta.active_catalog_version instead of a
+  // hardwired catalog_v1 literal; the live registry remains one catalog only.
+  var KNOWN_CANONICAL_CATALOGS = { catalog_v1: CATALOG_V1 };
+
   var EXPECTED_SPECIES = [
     'apple','sweet_cherry','sour_cherry','plum','peach','nectarine',
     'pear','quince','apricot','almond','walnut','hazelnut',
@@ -8054,11 +8060,17 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
   if (!validateStoreShape(parsed)) return;
 
+  // REG-CATF: resolve the active catalog's canonical via the known-canonical
+  // registry instead of a hardwired catalog_v1 literal. Under registry-of-one
+  // activeCanonical is truthy only for catalog_v1, so behavior is identical.
+  var activeVersion = parsed.meta.active_catalog_version;
+  var activeCanonical = hasOwnKey(KNOWN_CANONICAL_CATALOGS, activeVersion) ? KNOWN_CANONICAL_CATALOGS[activeVersion] : null;
+
   if (
-    parsed.meta.active_catalog_version === 'catalog_v1' &&
+    activeCanonical &&
     parsed.catalogs &&
-    parsed.catalogs.catalog_v1 &&
-    isValidCatalogV1(parsed.catalogs.catalog_v1)
+    parsed.catalogs[activeVersion] &&
+    isValidCatalogV1(parsed.catalogs[activeVersion])
   ) {
     setCatalogStatus('Slice 2 — katalog je već učitan.');
     console.log('vocnjak: catalog already loaded; active_catalog_version=catalog_v1');
@@ -8066,12 +8078,12 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   }
 
   if (
-    parsed.meta.active_catalog_version === 'catalog_v1' &&
+    activeCanonical &&
     parsed.catalogs &&
-    parsed.catalogs.catalog_v1 &&
-    isB1RefreshableCatalogV1(parsed.catalogs.catalog_v1)
+    parsed.catalogs[activeVersion] &&
+    isB1RefreshableCatalogV1(parsed.catalogs[activeVersion])
   ) {
-    parsed.catalogs.catalog_v1 = CATALOG_V1;
+    parsed.catalogs[activeVersion] = activeCanonical;
     try {
       localStorage.setItem('vocnjak_v2', JSON.stringify(parsed));
       setCatalogStatus('Slice 2 — katalog je osvježen B1 bilješkama.');
@@ -8084,17 +8096,17 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   }
 
   if (
-    parsed.meta.active_catalog_version === 'catalog_v1' &&
+    activeCanonical &&
     parsed.catalogs &&
-    parsed.catalogs.catalog_v1 &&
-    isFoundationCatalogV1(parsed.catalogs.catalog_v1)
+    parsed.catalogs[activeVersion] &&
+    isFoundationCatalogV1(parsed.catalogs[activeVersion])
   ) {
     if (!canUpgradeFoundationStore(parsed)) {
       setCatalogStatus('Slice 2 — postoje V2 podaci koje ne smijem automatski nadograditi. Bez izmjena.');
       console.warn('vocnjak: foundation catalog upgrade blocked; store left unchanged');
       return;
     }
-    parsed.catalogs.catalog_v1 = CATALOG_V1;
+    parsed.catalogs[activeVersion] = activeCanonical;
     try {
       localStorage.setItem('vocnjak_v2', JSON.stringify(parsed));
       setCatalogStatus('Slice 2 — katalog je nadograđen.');
@@ -8107,12 +8119,12 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   }
 
   if (
-    parsed.meta.active_catalog_version === 'catalog_v1' &&
+    activeCanonical &&
     parsed.catalogs &&
-    (!parsed.catalogs.catalog_v1 ||
-     !catalogDeepEquals(parsed.catalogs.catalog_v1, CATALOG_V1))
+    (!parsed.catalogs[activeVersion] ||
+     !catalogDeepEquals(parsed.catalogs[activeVersion], activeCanonical))
   ) {
-    parsed.catalogs.catalog_v1 = CATALOG_V1;
+    parsed.catalogs[activeVersion] = activeCanonical;
     try {
       localStorage.setItem('vocnjak_v2', JSON.stringify(parsed));
       setCatalogStatus('Slice 2 — katalog je osvježen na kanonski catalog_v1.');
@@ -9593,6 +9605,10 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
   window.v2ValidateForBackup = validateForBackup;
   window.v2PrepareStoreForCurrentRuntime = prepareStoreForCurrentRuntime;
+  // REG-CATF: read-only per-version catalog resolver for the PLANTS runtime and
+  // verifier. Returns the retained catalog for a known/live catalog_version, or
+  // null (fail-closed) for unknown/non-live/missing references. Never mutates.
+  window.v2RetainedCatalogForVersion = retainedCatalogForVersion;
   migrateStoredLocalStoreForCurrentRuntime();
   window.v2ActivityHelpers = {
     speciesFromWindowId: speciesFromWindowId,
@@ -10683,6 +10699,20 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return { name: 'list' };
   }
 
+  // REG-CATF: resolve a catalog by referenced catalog_version through the
+  // known/live registry (fail-closed null for unknown/non-live/missing). All
+  // per-plant and per-record runtime catalog lookups funnel through here so the
+  // runtime never assumes the single active catalog for stored records. Under
+  // registry-of-one every reference resolves to catalog_v1, so output is identical.
+  function catalogForVersion(store, catalogVersion) {
+    if (typeof window.v2RetainedCatalogForVersion !== 'function') return null;
+    return window.v2RetainedCatalogForVersion(store, catalogVersion);
+  }
+
+  function catalogForRecord(store, record) {
+    return catalogForVersion(store, record && record.catalog_version);
+  }
+
   function readValidStore() {
     var raw = localStorage.getItem('vocnjak_v2');
     if (raw === null) return { ok: false, error: 'Pohrana nije inicijalizirana.' };
@@ -10697,7 +10727,10 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     if (!observationHelpers) return { ok: false, error: 'Pomoćne provjere opažanja nisu dostupne.' };
     var errors = window.v2ValidateForBackup(parsed);
     if (errors.length > 0) return { ok: false, error: 'Pohrana ne prolazi validaciju: ' + errors[0] + '.' };
-    return { ok: true, store: parsed, catalog: parsed.catalogs.catalog_v1 };
+    // result.catalog = the resolved active catalog, used only by capture/add/edit
+    // affordances (new records pin the active catalog). Historical/seasonal read
+    // paths resolve each plant/record via its own catalog_version (catalogForRecord).
+    return { ok: true, store: parsed, catalog: catalogForVersion(parsed, parsed.meta.active_catalog_version) };
   }
 
   function findPlant(plants, plantId) {
@@ -12900,17 +12933,24 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     var plants = activePlants(store.plants).sort(function (a, b) { return a.stable_order - b.stable_order; });
     var entries = effectiveActivityEntries(store, catalog);
     var occurrences = [];
-    for (var d = 0; d < catalog.action_window_definitions.length; d++) {
-      var def = catalog.action_window_definitions[d];
-      var dates = seasonalWindowDates(def, todayYear);
-      for (var p = 0; p < plants.length; p++) {
-        var plant = plants[p];
-        if (!activityHelpers.isWindowApplicableToPlant(def, plant, catalog)) continue;
+    // REG-CATF: resolve each plant's catalog via its own catalog_version instead
+    // of assuming the single active catalog. Under registry-of-one every plant
+    // resolves to catalog_v1 (== the active catalog), so the (plant, def) set,
+    // windows, labels, and dates are identical; group/per-plant consumers re-sort.
+    for (var p = 0; p < plants.length; p++) {
+      var plant = plants[p];
+      var plantCatalog = catalogForRecord(store, plant);
+      if (!plantCatalog || !Array.isArray(plantCatalog.action_window_definitions)) continue;
+      for (var d = 0; d < plantCatalog.action_window_definitions.length; d++) {
+        var def = plantCatalog.action_window_definitions[d];
+        if (!activityHelpers.isWindowApplicableToPlant(def, plant, plantCatalog)) continue;
+        var dates = seasonalWindowDates(def, todayYear);
         var occurrence = {
           occurrence_id: plant.plant_id + '|' + def.window_def_id + '|' + todayYear,
           plant_id: plant.plant_id,
           plant: plant,
           def: def,
+          catalog: plantCatalog,
           window_def_id: def.window_def_id,
           catalog_version: def.catalog_id,
           action_type: def.action_type,
@@ -12952,7 +12992,9 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
         byKey[key] = {
           key: key,
           def: o.def,
-          catalog: catalog,
+          // REG-CATF: a group is keyed by catalog_version, so every member shares
+          // one resolved catalog; carry it from the occurrence (not the active catalog).
+          catalog: o.catalog,
           window_def_id: o.window_def_id,
           catalog_version: o.catalog_version,
           cycle_year: o.cycle_year,
@@ -12966,7 +13008,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     var groups = Object.keys(byKey).map(function (key) { return byKey[key]; });
     groups.sort(function (a, b) {
       if (a.effective_open !== b.effective_open) return a.effective_open.localeCompare(b.effective_open);
-      return actionWindowLabel(a.def, catalog).localeCompare(actionWindowLabel(b.def, catalog), 'hr');
+      return actionWindowLabel(a.def, a.catalog).localeCompare(actionWindowLabel(b.def, b.catalog), 'hr');
     });
     return groups;
   }
@@ -13142,7 +13184,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
         return b.effective_close.localeCompare(a.effective_close);
       }
       if (a.effective_open !== b.effective_open) return a.effective_open.localeCompare(b.effective_open);
-      return actionWindowLabel(a.def, catalog).localeCompare(actionWindowLabel(b.def, catalog), 'hr');
+      return actionWindowLabel(a.def, a.catalog).localeCompare(actionWindowLabel(b.def, b.catalog), 'hr');
     });
     return occurrences;
   }
@@ -13177,7 +13219,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     var node = makeEl('button', 'v2-seasonal-card-button');
     node.type = 'button';
     node.addEventListener('click', function () { location.hash = seasonalActionRoute(occurrence); });
-    node.appendChild(makeEl('p', 'v2-seasonal-card-title', actionWindowLabel(occurrence.def, catalog)));
+    node.appendChild(makeEl('p', 'v2-seasonal-card-title', actionWindowLabel(occurrence.def, occurrence.catalog)));
     var status = plantOccurrenceStatusLabel(occurrence);
     if (status) node.appendChild(makeEl('span', 'v2-seasonal-status', status));
     node.appendChild(makeEl('span', 'v2-seasonal-meta', plantOccurrenceDateLine(occurrence, snapshot)));
@@ -13784,11 +13826,15 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       return;
     }
 
-    appendSeasonalDetailTitle(seasonalActionView, actionWindowLabel(found.def, result.catalog));
+    // REG-CATF: this is a historical/seasonal read for an existing group, so
+    // resolve labels and spray-safety notes via the group's own catalog (its
+    // catalog_version) rather than the active catalog.
+    var foundCatalog = found.catalog || result.catalog;
+    appendSeasonalDetailTitle(seasonalActionView, actionWindowLabel(found.def, foundCatalog));
 
     appendCanonicalTextSection(seasonalActionView, 'Napomene', canonicalTextLines(found.def.notes));
-    if (isSprayActionType(found.def.action_type) && Array.isArray(result.catalog.spray_safety_notes)) {
-      appendCanonicalTextSection(seasonalActionView, 'Sigurnost prskanja', spraySafetyNotesForWindow(found.def, result.catalog.spray_safety_notes));
+    if (isSprayActionType(found.def.action_type) && foundCatalog && Array.isArray(foundCatalog.spray_safety_notes)) {
+      appendCanonicalTextSection(seasonalActionView, 'Sigurnost prskanja', spraySafetyNotesForWindow(found.def, foundCatalog.spray_safety_notes));
     }
 
     var timing = makeEl('section', 'v2-seasonal-section');
@@ -13880,9 +13926,12 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   function appendDiaryGroupCard(parent, group, result, options) {
     var showCorrectionActions = !options || options.showCorrectionActions !== false;
     var sample = group[0].effective;
-    var def = findActionWindow(result.catalog, sample.window_def_id);
+    // REG-CATF: resolve the activity's window/label via its own catalog_version
+    // (historical record), not the active catalog.
+    var sampleCatalog = catalogForRecord(result.store, sample);
+    var def = findActionWindow(sampleCatalog, sample.window_def_id);
     var card = makeEl('article', 'v2-diary-card');
-    var title = makeEl('p', 'v2-diary-title', formatDateYmd(sample.occurred_on) + ' · ' + actionWindowLabel(def, result.catalog));
+    var title = makeEl('p', 'v2-diary-title', formatDateYmd(sample.occurred_on) + ' · ' + actionWindowLabel(def, sampleCatalog));
     if (group.some(function (entry) { return entry.corrected; })) title.appendChild(makeEl('span', 'v2-diary-corrected', 'ispravljeno'));
     card.appendChild(title);
     var plantNames = group.map(function (entry) {
@@ -13901,8 +13950,9 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     if (hasOwnKey(sample, 'notes')) card.appendChild(makeEl('span', 'v2-diary-note', 'Bilješka: ' + sample.notes));
     var estimated = group.some(function (entry) {
       var plant = findPlant(result.store.plants, entry.effective.plant_id);
-      var activityDef = findActionWindow(result.catalog, entry.effective.window_def_id);
-      return plant && activityDef && usesEstimatedMidFallback(plant, activityDef, result.catalog);
+      var entryCatalog = catalogForRecord(result.store, entry.effective);
+      var activityDef = findActionWindow(entryCatalog, entry.effective.window_def_id);
+      return plant && activityDef && usesEstimatedMidFallback(plant, activityDef, entryCatalog);
     });
     if (estimated) card.appendChild(makeEl('small', 'v2-diary-meta', ESTIMATED_MID_FALLBACK_TEXT));
     if (showCorrectionActions) {
@@ -14305,8 +14355,13 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     }
     var effective = entry.effective;
     var effectivePlant = findPlant(result.store.plants, effective.plant_id);
-    var effectiveDef = findActionWindow(result.catalog, effective.window_def_id);
-    correctionForm.appendChild(makeEl('p', 'v2-diary-meta', formatDateYmd(effective.occurred_on) + ' · ' + actionWindowLabel(effectiveDef, result.catalog) + ' · ' + (effectivePlant ? plantTitleWithArchiveMarker(effectivePlant) : '')));
+    // REG-CATF: the header describes the existing record being corrected, so
+    // resolve its label via the record's own catalog_version. The selectable
+    // window list below (refreshWindowOptions) stays on the active catalog,
+    // because a correction can only re-point to active-catalog windows.
+    var effectiveCatalog = catalogForRecord(result.store, effective);
+    var effectiveDef = findActionWindow(effectiveCatalog, effective.window_def_id);
+    correctionForm.appendChild(makeEl('p', 'v2-diary-meta', formatDateYmd(effective.occurred_on) + ' · ' + actionWindowLabel(effectiveDef, effectiveCatalog) + ' · ' + (effectivePlant ? plantTitleWithArchiveMarker(effectivePlant) : '')));
 
     function addCorrectionCheck(labelText) {
       var label = makeEl('label', 'v2-plants-check');

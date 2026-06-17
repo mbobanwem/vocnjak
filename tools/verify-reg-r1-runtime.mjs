@@ -40,6 +40,11 @@ function sliceBetween(text, startNeedle, endNeedle) {
 
 const regRuntimeSource = sliceBetween(html, '// BEGIN V2 STORE', '// END V2 BACKUP');
 const postavkeMarkup = sliceBetween(html, '<!-- BEGIN V2 POSTAVKE', '<!-- END V2 POSTAVKE');
+// REG-CATF: the PLANTS render slice is not executed by this VM harness (it is
+// DOM/render-heavy), so its per-plant/per-record resolution wiring is checked by
+// static source anchors below. The resolution PRIMITIVE it funnels through
+// (window.v2RetainedCatalogForVersion) is checked behaviorally.
+const plantsSource = sliceBetween(html, '// BEGIN V2 PLANTS', '// END V2 PLANTS');
 
 class FakeClassList {
   constructor() {
@@ -549,6 +554,92 @@ check('20', 'No manifest/service-worker/native/sync/i18n/adoption/pack-delivery 
     expect(html.indexOf(token) === -1, 'index.html contains later-scope token: ' + token);
   }
   return 'aux files and runtime contain no REG pack/i18n/adoption/native leakage tokens';
+});
+
+// ---------------------------------------------------------------------------
+// REG-CATF: behavior-identical per-plant / per-record catalog lookup foundation.
+// Behavioral checks exercise the exposed resolution primitive; static-source
+// anchors guard the PLANTS-slice wiring that this harness does not execute.
+// ---------------------------------------------------------------------------
+
+check('21', 'Per-version resolver returns the retained catalog_v1', () => {
+  const harness = boot();
+  expect(typeof harness.context.window.v2RetainedCatalogForVersion === 'function', 'v2RetainedCatalogForVersion not exposed');
+  const store = contextJson(harness, validStore());
+  const resolved = harness.context.window.v2RetainedCatalogForVersion(store, 'catalog_v1');
+  expect(resolved === store.catalogs.catalog_v1, 'resolver did not return the retained catalog_v1 object');
+  expect(resolved && resolved.catalog_version === 'catalog_v1', 'resolved catalog is not catalog_v1');
+  return 'v2RetainedCatalogForVersion(store, "catalog_v1") returns the retained catalog object';
+});
+
+check('22', 'Per-version resolver fails closed for a missing referenced catalog', () => {
+  const harness = boot();
+  const store = contextJson(harness, validStore());
+  expect(harness.context.window.v2RetainedCatalogForVersion(store, 'catalog_missing') === null, 'missing referenced catalog did not resolve to null');
+  expect(harness.context.window.v2RetainedCatalogForVersion(store, '') === null, 'empty catalog_version did not resolve to null');
+  return 'unknown / empty referenced catalog_version resolves to null (fail-closed)';
+});
+
+check('23', 'Per-version resolver fails closed for a non-live catalog key even if present', () => {
+  const harness = boot();
+  const injected = mutate(validStore(), (draft) => {
+    draft.catalogs.catalog_v2 = clone(draft.catalogs.catalog_v1);
+  });
+  const store = contextJson(harness, injected);
+  expect(harness.context.window.v2RetainedCatalogForVersion(store, 'catalog_v2') === null, 'non-live catalog_v2 resolved instead of null');
+  expect(harness.context.window.v2RetainedCatalogForVersion(store, 'catalog_v1') === store.catalogs.catalog_v1, 'live catalog_v1 did not resolve');
+  return 'non-live catalog key resolves to null; only live catalog_v1 resolves';
+});
+
+check('24', 'Canonical refresh/seed is generalized via the known-canonical registry', () => {
+  expect(regRuntimeSource.indexOf('var KNOWN_CANONICAL_CATALOGS = { catalog_v1: CATALOG_V1 };') !== -1, 'KNOWN_CANONICAL_CATALOGS registry-of-one missing');
+  expect(regRuntimeSource.indexOf('hasOwnKey(KNOWN_CANONICAL_CATALOGS, activeVersion)') !== -1, 'active canonical not resolved via the registry');
+  expect(regRuntimeSource.indexOf('parsed.catalogs[activeVersion] = activeCanonical;') !== -1, 'refresh does not write parsed.catalogs[activeVersion]');
+  const seeded = validStore();
+  expect(seeded.meta.active_catalog_version === 'catalog_v1' && !!seeded.catalogs.catalog_v1, 'fresh boot did not seed catalog_v1 active+present');
+  return 'refresh/seed keyed off meta.active_catalog_version through the known-canonical map; seed still produces catalog_v1';
+});
+
+check('25', 'readValidStore no longer hardwires parsed.catalogs.catalog_v1', () => {
+  expect(plantsSource.indexOf('catalog: parsed.catalogs.catalog_v1') === -1, 'readValidStore still hardwires parsed.catalogs.catalog_v1');
+  expect(plantsSource.indexOf('catalog: catalogForVersion(parsed, parsed.meta.active_catalog_version)') !== -1, 'readValidStore does not resolve the active catalog via catalogForVersion');
+  expect(plantsSource.indexOf('function catalogForRecord(store, record)') !== -1, 'catalogForRecord wrapper missing');
+  return 'readValidStore returns the resolved active catalog; catalogForRecord wrapper present';
+});
+
+check('26', 'Seasonal snapshot resolves each plant via its catalog_version and stamps occurrence.catalog', () => {
+  const snapshotStart = plantsSource.indexOf('function buildSeasonalSnapshot(store, catalog, today)');
+  expect(snapshotStart !== -1, 'buildSeasonalSnapshot not found');
+  const snapshotBody = plantsSource.slice(snapshotStart, snapshotStart + 2500);
+  expect(snapshotBody.indexOf('var plantCatalog = catalogForRecord(store, plant);') !== -1, 'snapshot does not resolve plantCatalog per plant');
+  expect(snapshotBody.indexOf('plantCatalog.action_window_definitions') !== -1, 'snapshot does not iterate the plant catalog definitions');
+  expect(snapshotBody.indexOf('isWindowApplicableToPlant(def, plant, plantCatalog)') !== -1, 'applicability not evaluated against the resolved plant catalog');
+  expect(snapshotBody.indexOf('catalog: plantCatalog,') !== -1, 'occurrence does not carry the resolved catalog');
+  return 'buildSeasonalSnapshot is plant-major, per-plant catalog-resolved, and stamps occurrence.catalog';
+});
+
+check('27', 'Dnevnik and correction labels resolve via the record catalog_version', () => {
+  expect(plantsSource.indexOf('var sampleCatalog = catalogForRecord(result.store, sample);') !== -1, 'Dnevnik activity label does not resolve via record catalog');
+  expect(plantsSource.indexOf('var entryCatalog = catalogForRecord(result.store, entry.effective);') !== -1, 'Dnevnik estimated-fallback does not resolve via record catalog');
+  expect(plantsSource.indexOf('var effectiveCatalog = catalogForRecord(result.store, effective);') !== -1, 'correction display label does not resolve via record catalog');
+  return 'Dnevnik and correction display resolve action-window labels through each record catalog_version';
+});
+
+check('28', 'Group and seasonal detail carry the resolved catalog (not the active catalog)', () => {
+  const groupStart = plantsSource.indexOf('function groupSeasonalOccurrences(occurrences, catalog)');
+  expect(groupStart !== -1, 'groupSeasonalOccurrences not found');
+  const groupBody = plantsSource.slice(groupStart, groupStart + 1500);
+  expect(groupBody.indexOf('catalog: o.catalog,') !== -1, 'group does not carry the occurrence-resolved catalog');
+  expect(plantsSource.indexOf('var foundCatalog = found.catalog || result.catalog;') !== -1, 'seasonal action detail does not use the group-resolved catalog');
+  return 'seasonal groups and seasonal detail resolve labels/spray notes via the group catalog';
+});
+
+check('29', 'No second live catalog introduced; resolver is read-only and exposed', () => {
+  expect(regRuntimeSource.indexOf('window.v2RetainedCatalogForVersion = retainedCatalogForVersion;') !== -1, 'resolution primitive not exposed read-only');
+  expect(html.indexOf('catalog_v2') === -1, 'runtime introduces a second catalog token catalog_v2');
+  expect(html.indexOf('catalog.hr.adriatic') === -1 && html.indexOf('catalog_hr_adriatic') === -1, 'runtime introduces a regional catalog lineage');
+  expect(countOccurrences(regRuntimeSource, 'LIVE_CATALOGS = { catalog_v1: true }') === 1, 'LIVE_CATALOGS is no longer registry-of-one');
+  return 'registry remains one live catalog; v2RetainedCatalogForVersion exposed as the read-only resolver';
 });
 
 console.log('Vocnjak REG-R1 runtime verifier (read-only)');
