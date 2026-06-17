@@ -631,6 +631,68 @@ Validation must fail when:
 
 No auto-repair, auto-merge, relinking, substitution, or cleanup is defined in S8.
 
+### 1.23a REG-R1-D regionalization store / validation contract
+
+REG-R1-D is a docs-only contract for future regionalization foundation. It does not implement runtime behavior, does not edit `index.html`, does not create a second catalog, and does not open `plan_instances`, `plan_overlays`, or `review_state`.
+
+Current baseline:
+
+- `catalog_v1` is the permanent stored catalog id for the HR continental / continental Croatia baseline.
+- `catalog_v1` MUST NOT be renamed.
+- No alias may replace `catalog_v1` as stored data.
+- Persisted lineage remains `catalog_version`.
+- `contentPack` is derived only and MUST NOT be persisted in Plants, Activities, Observations, plan data, snapshots, exports, or imports.
+- `pack_version` MUST NOT be introduced.
+
+Future REG-R1-R store target:
+
+```text
+meta.store_format_version = 2
+settings.country = null | live country id
+settings.region = null | live region id
+```
+
+Rules:
+
+- `settings.country` and `settings.region` are allowed by this contract, nullable, and live-gated.
+- `settings.language` is not part of REG-R1-D; language and i18n remain later-session work.
+- REG-R1 has exactly one schema migration: v1 -> v2.
+- The v1 -> v2 migration MUST be deterministic and additive.
+- The v1 -> v2 migration MUST apply to existing local stores and imported v1 backups before replacement.
+- Later regional activations MUST be additive runtime/content constants only and MUST NOT require additional schema migrations.
+
+Registry and validation:
+
+- The current live/selectable set is registry-of-one: HR continental plus `catalog_v1`.
+- HR Adriatic may be referenced only as planned/future where already authorized by the regionalization decision record. It MUST NOT be stored, selected, shipped, activated, or exposed as live by REG-R1-D.
+- REG-R1-D MUST NOT introduce foreign region ids or runtime-visible foreign country/region values.
+- Future REG-R1-R validation MUST generalize over known canonical catalogs without weakening fail-closed behavior.
+- Active catalog version MUST be known, live, and present in `catalogs`.
+- Every referenced `catalog_version` MUST be present in retained catalogs.
+- Records MUST validate against their referenced catalog, not a substituted active catalog.
+- Unknown country, region, catalog, or future pack values MUST fail closed.
+- Import remains full validation before replacement: no merge, no auto-fix, no tolerant substitution, no inert acceptance, and no partial import.
+- Export/import MUST preserve `settings`, retained catalogs, referenced `catalog_version` lineage, immutable history, and all existing S8 full-state collections.
+
+Existing plants and history:
+
+- Introducing settings MUST NOT move existing plants.
+- Existing plants keep their current pinned `catalog_version`.
+- Existing plant calendar/history rewrite is forbidden.
+- Historical records resolve through write-time `catalog_version` forever.
+- Explicit existing-plant regional adoption belongs to Session 23 / REG-UPG, not REG-R1-D or REG-R1-R.
+
+Later-session boundaries:
+
+- REG-R1-R owns runtime settings, format v2 upgrade, generalized validator, and import/export implementation.
+- REG-VER1 owns pack-aware verifier work.
+- REG-CATF owns behavior-identical per-plant catalog lookup.
+- REG-PACKS-D owns pack delivery mechanics.
+- Session 22 / REG-A-D owns HR Adriatic source dossier and content.
+- Session 23 / REG-UPG owns existing-plant regional adoption.
+- Session 25 owns language / i18n.
+- Session 21, Session 27, and Session 33 own native/store/sync-related work.
+
 ### 1.24 S8 / S9 / S10 handoff
 
 | Topic | S8 owns | S9 owns | S10 / later owns |

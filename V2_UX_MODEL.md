@@ -5756,3 +5756,61 @@ void
 override
 v1
 ```
+
+## 18. REG-R1-D regional settings and baseline disclosure
+
+Owner: REG-R1-D docs-only contract. Runtime implementation belongs to REG-R1-R.
+
+### 18.1 Purpose and boundary
+
+REG-R1-D locks the future UX contract for regional settings and baseline disclosure. It does not implement UI, does not change current private PWA behavior, does not expose a region picker now, and does not add regional content.
+
+The current app remains a private/single-user PWA. No user-facing baseline disclosure is required or shown during the private PWA phase.
+
+Before public, multi-user, or App Store / Google Play distribution where non-owner users rely on calendar timing, the app MUST show or otherwise expose this disclosure:
+
+```text
+Datumi su okvirni podsjetnici za kontinentalnu Hrvatsku. Stvarno stanje voćke, lokalni uvjeti i upute na etiketi uvijek imaju prednost.
+```
+
+English semantic reference for future i18n only:
+
+```text
+Dates are approximate reminders for continental Croatia. The actual condition of the tree, local conditions, and label instructions always take priority.
+```
+
+Disclosure rules:
+
+- The disclosure MUST NOT imply automatic offsets, computed earlier/later shifts, urgency, commands, or future regional availability.
+- The disclosure MUST NOT use "coming soon" or teaser copy for non-live regions.
+- The disclosure MUST preserve calendar windows as planning reminders, not execution authority.
+- Plant state, local conditions, weather judgment, safety constraints, and product-label instructions remain ahead of calendar dates.
+
+### 18.2 Future settings UX contract
+
+Future REG-R1-R may add Postavke controls for:
+
+- `settings.country`
+- `settings.region`
+
+Rules:
+
+- Both fields are nullable and live-gated.
+- Only live countries/regions may be selectable.
+- The current live/selectable set is registry-of-one: HR continental plus `catalog_v1`.
+- HR Adriatic may be mentioned only as planned/future in docs already authorized by the regionalization decision record; it MUST NOT be selectable, stored, activated, or exposed as live now.
+- Registered-but-not-live countries/regions MUST be hidden, not disabled.
+- UX MUST NOT introduce `settings.language` in REG-R1-D or REG-R1-R; language/i18n belongs to later sessions.
+- UX MUST NOT present `contentPack`, `pack_version`, `catalog_version`, `catalog_v1`, `window_def_id`, or other technical lineage ids as user-facing choices.
+
+### 18.3 Existing plants and history UX boundary
+
+Introducing country/region settings MUST NOT silently move existing plants to a different calendar.
+
+Existing plants keep their current pinned `catalog_version` until a later owner-approved adoption flow says otherwise. No existing Activity, Observation, Correction, Dnevnik row, or historical marker may be rewritten by a settings change.
+
+Explicit existing-plant regional adoption belongs to Session 23 / REG-UPG, not REG-R1-D or REG-R1-R.
+
+### 18.4 Later-session boundaries
+
+REG-R1-R owns runtime settings and disclosure implementation. REG-VER1 owns verifier behavior. REG-CATF owns per-plant catalog lookup. REG-PACKS-D owns pack delivery. Session 22 / REG-A-D owns HR Adriatic source dossier and content. Session 23 / REG-UPG owns existing-plant adoption. Session 25 owns language / i18n. Native/store/sync work belongs to Session 21, Session 27, and Session 33 as applicable.
