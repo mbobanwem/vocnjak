@@ -4988,8 +4988,9 @@ if ('serviceWorker' in navigator) {
 (function () {
   if (!document.documentElement.classList.contains('v2-active')) return;
 
-  var EMPTY_STORE_V1 = {
-    meta: { store_format_version: 1, active_catalog_version: null },
+  var EMPTY_STORE_V2 = {
+    meta: { store_format_version: 2, active_catalog_version: null },
+    settings: { country: null, region: null },
     catalogs: {},
     plants: [],
     plan_instances: [],
@@ -5009,17 +5010,36 @@ if ('serviceWorker' in navigator) {
     return v !== null && typeof v === 'object' && !Array.isArray(v);
   }
 
-  function validateV2StoreV1(parsed) {
+  function validateV2StoreShape(parsed) {
     var errors = [];
     if (!isPlainObject(parsed)) { errors.push('root not a plain object'); return { ok: false, errors: errors }; }
-    var expected = ['meta','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
+    if (!isPlainObject(parsed.meta)) {
+      errors.push('meta not a plain object');
+      return { ok: false, errors: errors };
+    }
+    var formatVersion = parsed.meta.store_format_version;
+    if (formatVersion !== 1 && formatVersion !== 2) {
+      errors.push('meta.store_format_version must be 1 or 2 (got ' + formatVersion + ')');
+      return { ok: false, errors: errors };
+    }
+    var expected = formatVersion === 1 ?
+      ['meta','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'] :
+      ['meta','settings','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
     expected.forEach(function (k) { if (!(k in parsed)) errors.push('missing key: ' + k); });
     Object.keys(parsed).forEach(function (k) { if (expected.indexOf(k) === -1) errors.push('unexpected root key: ' + k); });
-    if (!isPlainObject(parsed.meta)) errors.push('meta not a plain object');
-    else {
-      if (parsed.meta.store_format_version !== 1) errors.push('meta.store_format_version !== 1 (got ' + parsed.meta.store_format_version + ')');
-      var acv = parsed.meta.active_catalog_version;
-      if (!(acv === null || (typeof acv === 'string' && acv.length > 0))) errors.push('meta.active_catalog_version must be null or non-empty string');
+    var acv = parsed.meta.active_catalog_version;
+    if (!(acv === null || (typeof acv === 'string' && acv.length > 0))) errors.push('meta.active_catalog_version must be null or non-empty string');
+    if (formatVersion === 2) {
+      if (!isPlainObject(parsed.settings)) {
+        errors.push('settings not a plain object');
+      } else {
+        var settingsKeys = Object.keys(parsed.settings);
+        if (settingsKeys.length !== 2 || settingsKeys.indexOf('country') === -1 || settingsKeys.indexOf('region') === -1) {
+          errors.push('settings keys must equal [country,region]');
+        }
+        if (!(parsed.settings.country === null || typeof parsed.settings.country === 'string')) errors.push('settings.country must be null or string');
+        if (!(parsed.settings.region === null || typeof parsed.settings.region === 'string')) errors.push('settings.region must be null or string');
+      }
     }
     if (!isPlainObject(parsed.catalogs)) errors.push('catalogs not a plain object');
     ['plants','plan_instances','plan_overlays','activities','observations','corrections'].forEach(function (k) {
@@ -5033,9 +5053,9 @@ if ('serviceWorker' in navigator) {
 
   if (raw === null) {
     try {
-      localStorage.setItem('vocnjak_v2', JSON.stringify(EMPTY_STORE_V1));
+      localStorage.setItem('vocnjak_v2', JSON.stringify(EMPTY_STORE_V2));
       setStatus('Slice 1 — V2 pohrana je inicijalizirana (prazna).');
-      console.log('vocnjak: V2 store initialized empty (clean start; no migration)');
+      console.log('vocnjak: V2 store initialized empty (format v2; clean start; no migration)');
     } catch (e) {
       setStatus('Slice 1 — V2 pohranu nije moguće zapisati. Vrati se u staru aplikaciju.');
       console.error('vocnjak: V2 store init failed:', e && e.message ? e.message : e);
@@ -5052,7 +5072,7 @@ if ('serviceWorker' in navigator) {
     return;
   }
 
-  var validation = validateV2StoreV1(parsed);
+  var validation = validateV2StoreShape(parsed);
   if (!validation.ok) {
     setStatus('Slice 1 — V2 pohrana je neispravna. Vrati se u staru aplikaciju.');
     console.error('vocnjak: V2 store invalid:', validation.errors);
@@ -5060,7 +5080,7 @@ if ('serviceWorker' in navigator) {
   }
 
   setStatus('Slice 1 — V2 pohrana je učitana.');
-  console.log('vocnjak: V2 store loaded; format v1');
+  console.log('vocnjak: V2 store loaded; format ' + parsed.meta.store_format_version);
 })();
 // END V2 STORE — Slice 1
 
@@ -7886,12 +7906,22 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
   function validateStoreShape(parsed) {
     if (!isPlainObject(parsed)) return false;
-    var expected = ['meta','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
-    for (var i = 0; i < expected.length; i++) if (!hasOwnKey(parsed, expected[i])) return false;
     if (!isPlainObject(parsed.meta)) return false;
-    if (parsed.meta.store_format_version !== 1) return false;
+    var formatVersion = parsed.meta.store_format_version;
+    if (formatVersion !== 1 && formatVersion !== 2) return false;
+    var expected = formatVersion === 1 ?
+      ['meta','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'] :
+      ['meta','settings','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
+    for (var i = 0; i < expected.length; i++) if (!hasOwnKey(parsed, expected[i])) return false;
     var acv = parsed.meta.active_catalog_version;
     if (!(acv === null || (typeof acv === 'string' && acv.length > 0))) return false;
+    if (formatVersion === 2) {
+      if (!isPlainObject(parsed.settings)) return false;
+      var settingsKeys = Object.keys(parsed.settings);
+      if (settingsKeys.length !== 2 || settingsKeys.indexOf('country') === -1 || settingsKeys.indexOf('region') === -1) return false;
+      if (!(parsed.settings.country === null || typeof parsed.settings.country === 'string')) return false;
+      if (!(parsed.settings.region === null || typeof parsed.settings.region === 'string')) return false;
+    }
     if (!isPlainObject(parsed.catalogs)) return false;
     var arrKeys = ['plants','plan_instances','plan_overlays','activities','observations','corrections'];
     for (var j = 0; j < arrKeys.length; j++) if (!Array.isArray(parsed[arrKeys[j]])) return false;
@@ -8121,10 +8151,15 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 (function () {
   if (!document.documentElement.classList.contains('v2-active')) return;
 
-  var EXPECTED_ROOT_KEYS = ['meta','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
+  var EXPECTED_ROOT_KEYS = ['meta','settings','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
+  var LEGACY_V1_ROOT_KEYS = ['meta','catalogs','plants','plan_instances','plan_overlays','activities','observations','corrections','review_state'];
   var EXPECTED_META_KEYS = ['store_format_version','active_catalog_version'];
+  var EXPECTED_SETTINGS_KEYS = ['country','region'];
   var EMPTY_ARRAY_KEYS = ['plan_instances','plan_overlays'];
   var MAX_FILE_SIZE = 1024 * 1024;
+  var LIVE_COUNTRIES = { hr: true };
+  var LIVE_REGIONS = { 'hr.continental': { country: 'hr', catalog_version: 'catalog_v1' } };
+  var LIVE_CATALOGS = { catalog_v1: true };
   var ALLOWED_PLANT_KEYS = [
     'plant_id','catalog_version','stable_order','species','variety','ripening_fallback',
     'display_label','rootstock','planted_at','purchased_at',
@@ -8276,6 +8311,110 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     if (el) el.textContent = text;
   }
 
+  function pathJoin(path, key) {
+    return path ? path + '.' + key : key;
+  }
+
+  function findForbiddenRegionalKey(value, path) {
+    if (Array.isArray(value)) {
+      for (var i = 0; i < value.length; i++) {
+        var arrayHit = findForbiddenRegionalKey(value[i], path + '[' + i + ']');
+        if (arrayHit) return arrayHit;
+      }
+      return null;
+    }
+    if (!isPlainObject(value)) return null;
+    var keys = Object.keys(value);
+    for (var j = 0; j < keys.length; j++) {
+      var key = keys[j];
+      var keyPath = pathJoin(path, key);
+      if (key === 'contentPack' || key === 'pack_version') return keyPath;
+      var childHit = findForbiddenRegionalKey(value[key], keyPath);
+      if (childHit) return childHit;
+    }
+    return null;
+  }
+
+  function validateSettings(settings) {
+    if (!isPlainObject(settings)) return ['settings not a plain object'];
+    var keys = Object.keys(settings);
+    for (var i = 0; i < keys.length; i++) {
+      if (EXPECTED_SETTINGS_KEYS.indexOf(keys[i]) === -1) return ['unexpected settings key: ' + keys[i]];
+    }
+    for (var j = 0; j < EXPECTED_SETTINGS_KEYS.length; j++) {
+      if (keys.indexOf(EXPECTED_SETTINGS_KEYS[j]) === -1) return ['missing settings key: ' + EXPECTED_SETTINGS_KEYS[j]];
+    }
+    if (!(settings.country === null || typeof settings.country === 'string')) return ['settings.country must be null or live country id'];
+    if (!(settings.region === null || typeof settings.region === 'string')) return ['settings.region must be null or live region id'];
+    if (settings.country === null && settings.region === null) return [];
+    if (settings.country === null || settings.region === null) return ['settings.country and settings.region must both be null or both be live values'];
+    if (!hasOwnKey(LIVE_COUNTRIES, settings.country)) return ['settings.country unknown or not live'];
+    if (!hasOwnKey(LIVE_REGIONS, settings.region)) return ['settings.region unknown or not live'];
+    if (LIVE_REGIONS[settings.region].country !== settings.country) return ['settings.region does not belong to settings.country'];
+    return [];
+  }
+
+  function retainedCatalogForVersion(parsed, catalogVersion) {
+    if (typeof catalogVersion !== 'string' || !hasOwnKey(LIVE_CATALOGS, catalogVersion)) return null;
+    if (!isPlainObject(parsed.catalogs) || !hasOwnKey(parsed.catalogs, catalogVersion)) return null;
+    return parsed.catalogs[catalogVersion];
+  }
+
+  function isStoreFormatV1Candidate(parsed) {
+    if (!isPlainObject(parsed)) return false;
+    var rootKeys = Object.keys(parsed);
+    for (var i = 0; i < rootKeys.length; i++) {
+      if (LEGACY_V1_ROOT_KEYS.indexOf(rootKeys[i]) === -1) return false;
+    }
+    for (var j = 0; j < LEGACY_V1_ROOT_KEYS.length; j++) {
+      if (rootKeys.indexOf(LEGACY_V1_ROOT_KEYS[j]) === -1) return false;
+    }
+    if (!isPlainObject(parsed.meta)) return false;
+    var metaKeys = Object.keys(parsed.meta);
+    if (metaKeys.length !== EXPECTED_META_KEYS.length) return false;
+    for (var m = 0; m < EXPECTED_META_KEYS.length; m++) {
+      if (metaKeys.indexOf(EXPECTED_META_KEYS[m]) === -1) return false;
+    }
+    if (parsed.meta.store_format_version !== 1) return false;
+    return parsed.meta.active_catalog_version === 'catalog_v1';
+  }
+
+  function upgradeStoreV1ToV2(parsed) {
+    return {
+      meta: {
+        store_format_version: 2,
+        active_catalog_version: parsed.meta.active_catalog_version
+      },
+      settings: {
+        country: null,
+        region: null
+      },
+      catalogs: parsed.catalogs,
+      plants: parsed.plants,
+      plan_instances: parsed.plan_instances,
+      plan_overlays: parsed.plan_overlays,
+      activities: parsed.activities,
+      observations: parsed.observations,
+      corrections: parsed.corrections,
+      review_state: parsed.review_state
+    };
+  }
+
+  function prepareStoreForCurrentRuntime(parsed) {
+    var normalized = normalizeStoreCatalogForCurrentCanonical(parsed);
+    var store = normalized.store;
+    var migrated = false;
+    if (isStoreFormatV1Candidate(store)) {
+      store = upgradeStoreV1ToV2(store);
+      migrated = true;
+    }
+    return {
+      store: store,
+      refreshed: normalized.refreshed,
+      migrated: migrated
+    };
+  }
+
   function compareKeySets(actual, canonical, path) {
     var actualKeys = Object.keys(actual);
     var canonicalKeys = Object.keys(canonical);
@@ -8348,6 +8487,10 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
   function normalizeStoreCatalogForCurrentCanonical(parsed) {
     if (!isPlainObject(parsed) || !isPlainObject(parsed.catalogs) || !hasOwnKey(parsed.catalogs, 'catalog_v1')) {
+      return { store: parsed, refreshed: false };
+    }
+    var catalogKeys = Object.keys(parsed.catalogs);
+    if (catalogKeys.length !== 1 || catalogKeys[0] !== 'catalog_v1') {
       return { store: parsed, refreshed: false };
     }
     if (!isB1RefreshableCatalogV1(parsed.catalogs.catalog_v1)) return { store: parsed, refreshed: false };
@@ -8618,11 +8761,11 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return compareCanonicalCatalogNode(c, canonical, 'catalog_v1');
   }
 
-  function validateAllPlants(plants, catalog) {
+  function validateAllPlants(plants, parsed) {
     var seenIds = Object.create(null);
     var seenOrders = Object.create(null);
     for (var i = 0; i < plants.length; i++) {
-      var errs = validatePlant(plants[i], catalog);
+      var errs = validatePlant(plants[i], parsed);
       if (errs.length > 0) return errs;
       var pid = plants[i].plant_id;
       var order = String(plants[i].stable_order);
@@ -8634,7 +8777,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return [];
   }
 
-  function validatePlant(p, catalog) {
+  function validatePlant(p, parsed) {
     if (!isPlainObject(p)) return ['plant not a plain object'];
     var keys = Object.keys(p);
     for (var i = 0; i < keys.length; i++) {
@@ -8644,7 +8787,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       if (keys.indexOf(REQUIRED_PLANT_KEYS[j]) === -1) return ['plant: missing key: ' + REQUIRED_PLANT_KEYS[j]];
     }
     if (typeof p.plant_id !== 'string' || !PLANT_ID_RE.test(p.plant_id)) return ['plant.plant_id must match plant_<iso>_<5hex>'];
-    if (p.catalog_version !== 'catalog_v1') return ['plant.' + p.plant_id + '.catalog_version must be "catalog_v1"'];
+    var catalog = retainedCatalogForVersion(parsed, p.catalog_version);
+    if (!catalog) return ['plant.' + p.plant_id + '.catalog_version must reference a known retained catalog'];
     if (typeof p.stable_order !== 'number' || !isFinite(p.stable_order) || Math.floor(p.stable_order) !== p.stable_order || p.stable_order < 0) return ['plant.' + p.plant_id + '.stable_order must be non-negative integer'];
     if (typeof p.species !== 'string' || !catalog || !catalog.species || !hasOwnKey(catalog.species, p.species)) return ['plant.' + p.plant_id + '.species not in catalog'];
 
@@ -8719,17 +8863,19 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return [];
   }
 
-  function validateActivityCore(activity, parsed, catalog, path) {
+  function validateActivityCore(activity, parsed, path) {
     if (typeof activity.activity_id !== 'string' || activity.activity_id.trim().length === 0) return [path + '.activity_id required'];
     if (typeof activity.plant_id !== 'string' || activity.plant_id.trim().length === 0) return [path + '.plant_id required'];
     var plant = findPlantById(parsed.plants, activity.plant_id);
     if (!plant) return [path + '.plant_id must reference an existing plant'];
 
     if (typeof activity.window_def_id !== 'string' || activity.window_def_id.trim().length === 0) return [path + '.window_def_id required'];
+    var catalog = retainedCatalogForVersion(parsed, activity.catalog_version);
+    if (!catalog) return [path + '.catalog_version must reference a known retained catalog'];
     var def = findActionWindowById(catalog, activity.window_def_id);
-    if (!def) return [path + '.window_def_id must reference catalog_v1.action_window_definitions'];
+    if (!def) return [path + '.window_def_id must reference retained catalog action_window_definitions'];
     if (!isSlice5ActivityWindow(def)) return [path + '.window_def_id is out of scope for Slice 5 Activity capture'];
-    if (activity.catalog_version !== def.catalog_id || activity.catalog_version !== parsed.meta.active_catalog_version) return [path + '.catalog_version must match the canonical action window'];
+    if (activity.catalog_version !== def.catalog_id) return [path + '.catalog_version must match the canonical action window'];
     if (activity.action_type !== def.action_type) return [path + '.action_type must match the canonical action window'];
 
     if (typeof activity.status !== 'string' || !hasOwnKey(ACTIVITY_STATUSES, activity.status)) return [path + '.status must be done or skipped'];
@@ -8745,7 +8891,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return [];
   }
 
-  function validateActivity(activity, parsed, catalog, path) {
+  function validateActivity(activity, parsed, path) {
     if (!isPlainObject(activity)) return [path + ' not a plain object'];
     var keys = Object.keys(activity);
     for (var i = 0; i < keys.length; i++) {
@@ -8754,16 +8900,16 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     for (var j = 0; j < REQUIRED_ACTIVITY_KEYS.length; j++) {
       if (keys.indexOf(REQUIRED_ACTIVITY_KEYS[j]) === -1) return [path + ' missing key: ' + REQUIRED_ACTIVITY_KEYS[j]];
     }
-    return validateActivityCore(activity, parsed, catalog, path);
+    return validateActivityCore(activity, parsed, path);
   }
 
-  function validateAllActivities(activities, parsed, catalog) {
+  function validateAllActivities(activities, parsed) {
     if (!Array.isArray(activities)) return ['activities not an array'];
     var seenIds = Object.create(null);
     var groups = Object.create(null);
     for (var i = 0; i < activities.length; i++) {
       var path = 'activities[' + i + ']';
-      var errs = validateActivity(activities[i], parsed, catalog, path);
+      var errs = validateActivity(activities[i], parsed, path);
       if (errs.length > 0) return errs;
       var activityId = activities[i].activity_id;
       if (seenIds[activityId]) return ['duplicate activity_id: ' + activityId];
@@ -8901,7 +9047,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     if (typeof observation.plant_id !== 'string' || observation.plant_id.trim().length === 0) return [path + '.plant_id required'];
     var plant = findPlantById(parsed.plants, observation.plant_id);
     if (!plant) return [path + '.plant_id must reference an existing plant'];
-    if (observation.catalog_version !== parsed.meta.active_catalog_version || observation.catalog_version !== 'catalog_v1') return [path + '.catalog_version must match active catalog'];
+    var catalog = retainedCatalogForVersion(parsed, observation.catalog_version);
+    if (!catalog) return [path + '.catalog_version must reference a known retained catalog'];
     if (observation.kind !== 'note' && observation.kind !== 'trap' && observation.kind !== 'stage_obs' && observation.kind !== 'scouting') return [path + '.kind unsupported'];
     if (hasOwnKey(observation, 'observation_group_id')) {
       if (typeof observation.observation_group_id !== 'string' || observation.observation_group_id.trim().length === 0) return [path + '.observation_group_id must be a non-empty string'];
@@ -9032,7 +9179,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return [];
   }
 
-  function validateActivityCorrection(correction, parsed, catalog, activityById, path) {
+  function validateActivityCorrection(correction, parsed, activityById, path) {
     if (!activityById[correction.original_record_id]) return [path + '.original_record_id must target an original Activity'];
     if (!Array.isArray(correction.correction_types) || correction.correction_types.length === 0) return [path + '.correction_types must be a non-empty array'];
     var seenTypes = Object.create(null);
@@ -9051,10 +9198,12 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     }
     if (seenTypes.plant && !findPlantById(parsed.plants, cv.plant_id)) return [path + '.corrected_values.plant_id must reference an existing plant'];
     if (seenTypes.window) {
+      var catalog = retainedCatalogForVersion(parsed, cv.catalog_version);
+      if (!catalog) return [path + '.corrected_values.catalog_version must reference a known retained catalog'];
       var def = findActionWindowById(catalog, cv.window_def_id);
-      if (!def) return [path + '.corrected_values.window_def_id must reference catalog_v1.action_window_definitions'];
+      if (!def) return [path + '.corrected_values.window_def_id must reference retained catalog action_window_definitions'];
       if (!isSlice5ActivityWindow(def)) return [path + '.corrected_values.window_def_id is out of scope for Slice 5 Activity capture'];
-      if (cv.catalog_version !== def.catalog_id || cv.catalog_version !== parsed.meta.active_catalog_version) return [path + '.corrected_values.catalog_version must match the canonical action window'];
+      if (cv.catalog_version !== def.catalog_id) return [path + '.corrected_values.catalog_version must match the canonical action window'];
       if (cv.action_type !== def.action_type) return [path + '.corrected_values.action_type must match the canonical action window'];
     }
     if (seenTypes.status && (typeof cv.status !== 'string' || !hasOwnKey(ACTIVITY_STATUSES, cv.status))) return [path + '.corrected_values.status must be done or skipped'];
@@ -9117,7 +9266,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return [];
   }
 
-  function validateCorrection(correction, parsed, catalog, activityById, observationById, path) {
+  function validateCorrection(correction, parsed, activityById, observationById, path) {
     if (!isPlainObject(correction)) return [path + ' not a plain object'];
     var keys = Object.keys(correction);
     for (var i = 0; i < keys.length; i++) {
@@ -9130,7 +9279,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     if (typeof correction.original_record_id !== 'string' || correction.original_record_id.trim().length === 0) return [path + '.original_record_id required'];
     var typedErrs;
     if (correction.original_record_type === 'activity') {
-      typedErrs = validateActivityCorrection(correction, parsed, catalog, activityById, path);
+      typedErrs = validateActivityCorrection(correction, parsed, activityById, path);
     } else if (correction.original_record_type === 'observation') {
       typedErrs = validateObservationCorrection(correction, parsed, observationById, path);
     } else {
@@ -9285,7 +9434,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return [];
   }
 
-  function validateAllCorrections(corrections, parsed, catalog) {
+  function validateAllCorrections(corrections, parsed) {
     if (!Array.isArray(corrections)) return ['corrections not an array'];
     var activityById = Object.create(null);
     var observationById = Object.create(null);
@@ -9307,7 +9456,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     var seenCorrectionIds = Object.create(null);
     for (var i = 0; i < corrections.length; i++) {
       var path = 'corrections[' + i + ']';
-      var errs = validateCorrection(corrections[i], parsed, catalog, activityById, observationById, path);
+      var errs = validateCorrection(corrections[i], parsed, activityById, observationById, path);
       if (errs.length > 0) return errs;
       var correctionId = corrections[i].correction_id;
       if (seenCorrectionIds[correctionId]) return ['duplicate correction_id: ' + correctionId];
@@ -9337,7 +9486,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     for (var c = 0; c < activityIds.length; c++) {
       var original = activityById[activityIds[c]];
       var effective = composeEffectiveActivity(original, correctionsByActivity[activityIds[c]]);
-      var effectiveErrs = validateActivityCore(effective, parsed, catalog, 'effective activity ' + activityIds[c]);
+      var effectiveErrs = validateActivityCore(effective, parsed, 'effective activity ' + activityIds[c]);
       if (effectiveErrs.length > 0) return effectiveErrs;
     }
     var batchErrs = validateGroupedObservationCorrectionBatches(groupedCorrectionBatches, observationGroups);
@@ -9358,6 +9507,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
   function validateForBackup(parsed) {
     if (!isPlainObject(parsed)) return ['root not a plain object'];
+    var forbiddenRegionalKey = findForbiddenRegionalKey(parsed, '');
+    if (forbiddenRegionalKey) return [forbiddenRegionalKey + ' is forbidden'];
     var rootKeys = Object.keys(parsed);
     for (var i = 0; i < rootKeys.length; i++) {
       if (EXPECTED_ROOT_KEYS.indexOf(rootKeys[i]) === -1) return ['unexpected root key: ' + rootKeys[i]];
@@ -9373,25 +9524,31 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     for (var n = 0; n < EXPECTED_META_KEYS.length; n++) {
       if (metaKeys.indexOf(EXPECTED_META_KEYS[n]) === -1) return ['missing meta key: ' + EXPECTED_META_KEYS[n]];
     }
-    if (parsed.meta.store_format_version !== 1) return ['meta.store_format_version must be 1'];
-    if (parsed.meta.active_catalog_version !== 'catalog_v1') return ['meta.active_catalog_version must be "catalog_v1"'];
+    if (parsed.meta.store_format_version !== 2) return ['meta.store_format_version must be 2'];
+    if (!hasOwnKey(LIVE_CATALOGS, parsed.meta.active_catalog_version)) return ['meta.active_catalog_version unknown or not live'];
     if (!isPlainObject(parsed.catalogs)) return ['catalogs not a plain object'];
     var catKeys = Object.keys(parsed.catalogs);
-    if (catKeys.length !== 1 || catKeys[0] !== 'catalog_v1') return ['catalogs keys must equal [catalog_v1]'];
+    if (catKeys.length === 0) return ['catalogs must contain at least one known catalog'];
+    for (var ck = 0; ck < catKeys.length; ck++) {
+      if (!hasOwnKey(LIVE_CATALOGS, catKeys[ck])) return ['catalogs contains unknown catalog: ' + catKeys[ck]];
+    }
+    if (!hasOwnKey(parsed.catalogs, parsed.meta.active_catalog_version)) return ['meta.active_catalog_version must be present in catalogs'];
+    var settingsErrs = validateSettings(parsed.settings);
+    if (settingsErrs.length > 0) return settingsErrs;
     parsed = normalizeStoreCatalogForCurrentCanonical(parsed).store;
     var catErrs = validateCatalogV1(parsed.catalogs.catalog_v1);
     if (catErrs.length > 0) return catErrs;
     if (!Array.isArray(parsed.plants)) return ['plants not an array'];
-    var plantErrs = validateAllPlants(parsed.plants, parsed.catalogs.catalog_v1);
+    var plantErrs = validateAllPlants(parsed.plants, parsed);
     if (plantErrs.length > 0) return plantErrs;
     if (!Array.isArray(parsed.activities)) return ['activities not an array'];
-    var activityErrs = validateAllActivities(parsed.activities, parsed, parsed.catalogs.catalog_v1);
+    var activityErrs = validateAllActivities(parsed.activities, parsed);
     if (activityErrs.length > 0) return activityErrs;
     if (!Array.isArray(parsed.observations)) return ['observations not an array'];
     var observationErrs = validateAllObservations(parsed.observations, parsed, parsed.catalogs.catalog_v1);
     if (observationErrs.length > 0) return observationErrs;
     if (!Array.isArray(parsed.corrections)) return ['corrections not an array'];
-    var correctionErrs = validateAllCorrections(parsed.corrections, parsed, parsed.catalogs.catalog_v1);
+    var correctionErrs = validateAllCorrections(parsed.corrections, parsed);
     if (correctionErrs.length > 0) return correctionErrs;
     for (var p = 0; p < EMPTY_ARRAY_KEYS.length; p++) {
       var ek = EMPTY_ARRAY_KEYS[p];
@@ -9403,7 +9560,40 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     return [];
   }
 
+  function migrateStoredLocalStoreForCurrentRuntime() {
+    var raw = localStorage.getItem('vocnjak_v2');
+    if (raw === null) return;
+    var parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (e) {
+      return;
+    }
+    var prepared = prepareStoreForCurrentRuntime(parsed);
+    if (!prepared.migrated && !prepared.refreshed) return;
+    var errors = validateForBackup(prepared.store);
+    if (errors.length > 0) {
+      setStatus('Pohrana ne prolazi provjeru migracije: ' + errors[0] + '.');
+      console.error('vocnjak: REG-R1-R store migration validation failed:', errors);
+      return;
+    }
+    try {
+      localStorage.setItem('vocnjak_v2', JSON.stringify(prepared.store));
+      if (prepared.migrated) {
+        setStatus('REG-R1-R — pohrana je migrirana na format v2.');
+        console.log('vocnjak: REG-R1-R migrated local store v1 -> v2');
+      } else {
+        console.log('vocnjak: REG-R1-R persisted canonical catalog refresh');
+      }
+    } catch (e) {
+      setStatus('Pohranu nije moguće migrirati na format v2.');
+      console.error('vocnjak: REG-R1-R store migration write failed:', e && e.message ? e.message : e);
+    }
+  }
+
   window.v2ValidateForBackup = validateForBackup;
+  window.v2PrepareStoreForCurrentRuntime = prepareStoreForCurrentRuntime;
+  migrateStoredLocalStoreForCurrentRuntime();
   window.v2ActivityHelpers = {
     speciesFromWindowId: speciesFromWindowId,
     isSlice5ActivityWindow: isSlice5ActivityWindow,
@@ -9431,20 +9621,20 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
       console.error('vocnjak: V2 export parse failed:', e && e.message ? e.message : e);
       return;
     }
-    var normalizedForExport = normalizeStoreCatalogForCurrentCanonical(parsed);
-    parsed = normalizedForExport.store;
+    var preparedForExport = prepareStoreForCurrentRuntime(parsed);
+    parsed = preparedForExport.store;
     var errors = validateForBackup(parsed);
     if (errors.length > 0) {
       setStatus('Podaci ne prolaze provjeru: ' + errors[0] + '.');
       console.error('vocnjak: V2 export validation failed:', errors);
       return;
     }
-    if (normalizedForExport.refreshed) {
+    if (preparedForExport.refreshed || preparedForExport.migrated) {
       try {
         localStorage.setItem('vocnjak_v2', JSON.stringify(parsed));
-        console.log('vocnjak: V2 export refreshed catalog_v1 with B1 notes before backup');
+        console.log('vocnjak: V2 export persisted current v2 backup shape before download');
       } catch (e) {
-        console.warn('vocnjak: V2 export could not persist B1 catalog refresh before backup:', e && e.message ? e.message : e);
+        console.warn('vocnjak: V2 export could not persist current backup shape before download:', e && e.message ? e.message : e);
       }
     }
     var iso = new Date().toISOString();
@@ -9515,8 +9705,8 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
         clearImportConfirm();
         return;
       }
-      var normalizedForImport = normalizeStoreCatalogForCurrentCanonical(parsed);
-      parsed = normalizedForImport.store;
+      var preparedForImport = prepareStoreForCurrentRuntime(parsed);
+      parsed = preparedForImport.store;
       var errors = validateForBackup(parsed);
       if (errors.length > 0) {
         setStatus('Uvoz ne prolazi provjeru: ' + errors[0] + '.');
@@ -11274,6 +11464,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
     var nextStore = {
       meta: current.store.meta,
+      settings: current.store.settings,
       catalogs: current.store.catalogs,
       plants: nextPlants,
       plan_instances: current.store.plan_instances,
@@ -11798,6 +11989,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
 
     var nextStore = {
       meta: current.store.meta,
+      settings: current.store.settings,
       catalogs: current.store.catalogs,
       plants: current.store.plants.concat([built.plant]),
       plan_instances: current.store.plan_instances,
@@ -11839,6 +12031,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   function activityStoreCandidate(current, nextActivities, nextCorrections) {
     return {
       meta: current.store.meta,
+      settings: current.store.settings,
       catalogs: current.store.catalogs,
       plants: current.store.plants,
       plan_instances: current.store.plan_instances,
@@ -11899,6 +12092,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
   function noteObservationStoreCandidate(current, nextObservations) {
     return {
       meta: current.store.meta,
+      settings: current.store.settings,
       catalogs: current.store.catalogs,
       plants: current.store.plants,
       plan_instances: current.store.plan_instances,
