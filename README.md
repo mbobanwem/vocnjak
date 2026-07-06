@@ -20,7 +20,7 @@ Orchard-first PWA for managing fruit trees, activities, and seasonal plans.
 
 The project is in a V2 reset. Active documentation (repo root):
 
-- `ROADMAP.md` — single active owner-gated roadmap, future session-order authority, and CORE-AUDIT execution mapping
+- `ROADMAP.md` — single active owner-gated roadmap, future session-order authority, CORE-AUDIT execution mapping, and European seasonal timing delivery architecture
 - `CURRENT_STATE.md` — chronological state/history record
 - `REGIONALIZATION_DECISION_RECORD.md` — detailed REG regionalization decision record
 - `DISTRIBUTION_DECISION_RECORD.md` — detailed STORE/CAP/native distribution decision record

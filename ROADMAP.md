@@ -142,6 +142,341 @@ Standing gate S is mandatory where relevant. This gate blocks unsafe work; it is
 
 It covers privacy/support metadata, AI/photo privacy and retention boundaries, account/cloud privacy boundaries, payment/subscription safety boundaries, and store/support/privacy disclosure obligations. Safety/privacy/support requirements bind every relevant session, but no accounts, AI, payments, store assets, push/backend, or cloud work becomes approved through this gate alone.
 
+### European seasonal timing delivery architecture lock
+
+Status: locked documentation and execution mapping. This section closes the European seasonal-timing architecture question for future implementation sessions. It does not authorize runtime work, does not create foreign region ids, does not edit pack content, does not track the external evidence corpus as a committed source, and does not supersede locked decision records. If a locked decision record conflicts with this section, the decision record wins; if this section adds executable consequences, this roadmap is the execution authority.
+
+Decision token: `EUROPEAN_TIMING_DELIVERY_ARCHITECTURE_LOCKED_AND_EXECUTION_MAPPED`.
+
+Final architecture: `country + user-facing area + internal timing abstraction + source-maintenance geography + catalog lineage`, with calendar windows used as approximate planning / attention surfaces and plant-state plus local conditions used as execution context. This chooses the evidence-supported hybrid of:
+
+- country/source boundary;
+- coarse beginner-selectable user-facing regions where a region is live;
+- source-maintenance geography kept separate from user-facing geography;
+- no computed offsets, formulas, hidden date shifts, GPS, postcode, altitude sliders, free-text microclimate, or automatic location inference;
+- calendar planning baseline plus plant-state / local-condition execution context.
+
+The architecture rejects a pure country-only baseline for fragmented countries, rejects administrative regions as the universal user-facing model, rejects climate formulas, and rejects a phenology-only product. It permits a simple one-region country only when source evidence and user value justify it. It permits more than three regions only after a country source-corpus session proves that a smaller beginner-readable model would be dishonest or unusable.
+
+#### Country and region meaning
+
+COUNTRY OWNS:
+
+- source-provenance boundary: the first pack of a country is sourced inside that country or absent;
+- legal/safety wording boundary: country-specific safety, referral, legal, label, and advisory wording must not be borrowed across countries;
+- content availability boundary: species, varieties, action windows, rendered monitoring/risk guidance, and safety notes ship only when supported for that country/pack;
+- regional registry namespace: live regions and future region ids are scoped inside the country;
+- catalog-lineage namespace: country/region resolves to one current catalog lineage for new plant writes;
+- source-corpus and pack dossier ownership;
+- national baseline identity only when that country's evidence supports one.
+
+COUNTRY DOES NOT OWN:
+
+- UI language by itself; language renders content and never selects agronomic timing;
+- exact calendar timing directly when sub-country evidence is required;
+- current-year weather, local field conditions, plant state, or microclimate;
+- persisted `contentPack`, `pack_version`, or a second versioning system;
+- cross-country carry-forward. Croatian dates, Croatian safety wording, and Croatian referral language never enter a foreign pack.
+
+REGION OWNS:
+
+- the persisted beginner-facing delivery choice in `settings.region`, scoped by `settings.country`;
+- the key that resolves new plants to a live regional catalog lineage/current `catalog_version`;
+- the user-visible area label and baseline disclosure for that live choice;
+- the timing-area abstraction used for planning windows when evidence supports it;
+- the fail-closed import/export enum value.
+
+REGION DOES NOT OWN:
+
+- raw source jurisdiction. Source geography can be Land, canton, DRAAF/BSV region, province, plant-health region, production basin, station/model area, language area, altitude/topography layer, or several of these;
+- UI language;
+- exact local microclimate, current weather, orchard exposure, or altitude precision;
+- source authority by itself;
+- existing plant calendars or history after a settings change;
+- canonical timing changes from weather, missing observations, or nearby-region assumptions.
+
+One persisted `region` field remains mechanically sufficient. The conceptual layers behind it are:
+
+| Layer | Stored? | User-visible? | Owner |
+|---|---|---|---|
+| `settings.country` | yes | yes | Session 20 / REG-R1 |
+| `settings.region` | yes | yes | Session 20 / REG-R1 |
+| user-facing area label | no, registry/rendered | yes | owning pack/session |
+| timing area | derived from live registry | no by default | REG dossier / Session 26 country design |
+| source-maintenance geography | dossier/ledger only | no by default; sources may be cited | REG dossier / verifier |
+| catalog lineage/current version | derived registry + retained catalogs | no technical ids | REG-CATF / pack activation |
+| content pack | derived only | no as a choice | REG-PACKS-D |
+
+#### Deterministic delivery contract
+
+For a resolved live `country X + region Y`, Vocnjak delivers:
+
+1. the live country record for X from the country registry;
+2. the live user-facing region/area choice Y, or the only live region if onboarding explicitly selects/defaults it under the owning session;
+3. an internal registry resolution from `(X, Y)` to one catalog lineage and one current `catalog_version`;
+4. new Plants pinned to that resolved active catalog version at write time;
+5. only the species, varieties, fallback timing groups, action windows, monitoring/risk guidance, and safety notes present in that lineage;
+6. recurring planning windows that are present only when the pack ledger classifies them as source-backed, byte-equal same-country carry-forward where allowed, or explicitly broad/coarse with evidence;
+7. source provenance in the pack dossier / ledger / verifier config, not as user-burdening raw research;
+8. display confidence as copy/absence/content classification, not a new persisted per-window confidence schema;
+9. execution cues from source-backed notes, plant-state observations, action detail, monitoring/risk guidance, and local-condition reminders;
+10. user-recorded plant state as factual evidence and execution context only;
+11. unknown plant state as unknown: it does not prove a stage happened, does not prove it did not happen, and does not force a warning;
+12. weather/current local conditions as advisory display only;
+13. no canonical timing change from weather, missing observations, language, device location, nearby regions, or source gaps;
+14. a later region settings change affects the active lineage for newly created plants only;
+15. existing Plants and historical records continue resolving through their write-time/pinned `catalog_version` until explicit Session 23 adoption;
+16. insufficient evidence as fail-closed absence/unresolved status, not guessed dates;
+17. boundary/complex-geography caveats as user-facing honesty, not automatic blending;
+18. no inference of country, region, source jurisdiction, plant stage, pest pressure, or action suitability from data the app does not have.
+
+The delivery path is:
+
+```text
+user
+-> country selection/context
+-> user-facing region/area selection/context
+-> live `(country, region)` registry
+-> internal timing area + source-maintenance corpus
+-> catalog lineage/current catalog_version
+-> available species/content/guidance
+-> recurring planning windows
+-> plant-state execution context
+-> current local-condition/weather advisory
+-> displayed UX
+```
+
+Failure behavior:
+
+- unresolved country/region means no new regional delivery is selected;
+- non-live registered countries/regions are hidden, not disabled or teased;
+- unknown country/region/catalog/future pack in import fails closed;
+- source gaps leave windows absent/unresolved or block pack activation;
+- complex countries launch only the subset that can be sourced and explained honestly.
+
+#### Evidence policy for recurring planning windows
+
+Strong recurring evidence means durable public or recognized authority evidence that supports a repeatable planning abstraction for the same country/region/species/action, such as annual official guidance, stable extension manuals, recurring bulletin systems with archives, source-backed calendar/phenology periods, or multiple consistent seasonal bulletins that justify only the breadth being shipped.
+
+Supporting evidence means material that can support source structure, source authority, plant-state cues, local-condition cues, species relevance, or execution guidance but does not by itself prove a recurring calendar window. A single seasonal snapshot proves that an issue/stage/action was relevant in that place and season; it does not prove a recurring date range. Multiple seasonal snapshots may support a coarse recurring planning abstraction only when the same source family, geography, species/action, and timing pattern are consistent enough that the shipped breadth does not invent precision.
+
+Stable reference material can support source hierarchy and evergreen execution guidance. If it lacks timing, it cannot create dates. Seasonal snapshots and warning systems can support current-year/local context and, with repeated consistency, broad windows. They must not be normalized into narrow exact windows unless the sources themselves support that precision.
+
+Planning-window classifications:
+
+| Classification | Product behavior |
+|---|---|
+| content not relevant | exclude the action/species/row; record `REGION_NOT_APPLICABLE` or equivalent ledger disposition |
+| unsupported by evidence | do not ship the content/window |
+| content supported, timing unresolved | show only safe source-backed execution/read-only guidance where an approved surface exists; no recurring calendar window |
+| supported with coarse planning timing | ship a broad seasonal period with copy that it is approximate and condition-dependent |
+| supported with strong planning timing | ship the source-backed planning window |
+| exact | use only if the source defines exact fixed timing; still present it as a planning reminder, never an execution command |
+
+No numeric scoring algorithm is introduced. Pack ledgers and verifier configs carry classifications; runtime persists catalog/content versions, not confidence fields.
+
+#### Timing, plant state, and weather roles
+
+Calendar timing means approximate planning / attention surface. It answers when the user should start paying attention, prepare materials, read the action detail, and inspect the tree. It is not execution truth, not exact authority, not a command, and not a substitute for plant state, safety wording, product label, local advice, or actual field conditions.
+
+Plant-state role:
+
+| Question | Answer |
+|---|---|
+| affects visibility? | YES, only through approved read-time rules such as phenology-anchored occurrences, open-condition display, and the sanctioned year-1/2 fruit-only relevance exception |
+| affects priority/display? | YES, as factual execution context and calm display guidance |
+| affects execution guidance? | YES, when source-backed notes or recorded observations exist |
+| affects window activation? | YES only for catalog-defined phenology anchors/open conditions that consume real recorded observations |
+| suppresses windows? | NO by default; only approved not-applicable/content-relevance rules may suppress primary surfaces |
+| changes canonical timing? | NO |
+| rewrites history? | NO |
+| creates notifications? | DEFERRED to Session 28 and must respect this contract |
+| missing state inferred? | NEVER |
+
+Weather/local-condition role:
+
+| Question | Answer |
+|---|---|
+| change stored windows? | NO |
+| change canonical regional windows? | NO |
+| move window dates? | NO |
+| change derived seasonal state? | NO |
+| change priority/display? | YES, neutral advisory display on already visible relevant near-term content |
+| add advisory text? | YES |
+| hide actions? | NO |
+| create new actions? | NO |
+| become notification trigger? | DEFERRED; no weather-derived command or authority is allowed |
+
+#### Display confidence and uncertainty
+
+The architecture does not add persisted confidence fields. It uses content-level classifications, pack-level disclosure, action-level notes, and absence. User-facing behavior:
+
+- well-supported: normal planning window plus source-backed action detail;
+- coarse: broad period and copy such as approximate / varies locally / check plant state;
+- regionally variable: region caveat and, if not safely reducible, no live window until split or exclusion is decided;
+- condition-dependent: window remains visible as planning context; action detail states plant-state/local-condition cues;
+- unsupported: no window or content is shown; no disabled teaser;
+- timing unavailable: if safe content exists, show guidance only on an approved non-calendar surface; otherwise omit.
+
+#### Boundary and complex-geography behavior
+
+Boundary users select the live beginner-readable area that best matches their orchard. The app may show examples or a bounded helper list only if the owning session defines it; it must not store or infer GPS, postcode, altitude, exact coordinates, or free-text microclimate. If the user remains unsure, onboarding must let them choose the coarsest honest live area or leave regional delivery unresolved; it must not guess.
+
+Mountain, altitude, island, coastal/inland transition, and unusual local areas get a caveat: planning dates are approximate for the selected live area and actual plant state/local conditions/local advice win. The app does not automatically blend neighboring regions, split administrative areas, or adjust dates. Future source-corpus sessions may create additional live regions only when sourceability plus user value justify the split.
+
+For large or fragmented countries, source-maintenance geography can be more detailed than the user-facing region. Several source jurisdictions may feed one user-facing timing area when the dossier proves that abstraction is honest. One administrative area may map to different timing areas only if the source corpus and UI contract define a beginner-safe selection path. If no responsible simple launch abstraction exists, the country or sub-region remains non-live or launches with a narrower scoped region.
+
+#### Worked examples
+
+Example 1, simple centralized country: the user selects Country A and its single live area. Stored state is `(country=A, region=A.default)`. Internal resolution maps to `catalog.A.default.v1`. New Plants pin that catalog version. Country-wide source references support most planning windows. Plant-state notes explain execution cues; weather remains advisory. Existing history resolves through its write-time catalog.
+
+Example 2, fragmented country: the user selects Country B and a beginner-facing area such as "Northern production areas" only after the country source session proves that label. The dossier may maintain Land/region/province/station source rows internally. Several source jurisdictions can feed the area. New Plants receive that area's lineage. Unsupported species or unresolved actions are absent, not guessed.
+
+Example 3, high-altitude/complex area: the user selects the closest live area. The app delivers that area's coarse planning windows with a caveat that altitude/local exposure may differ. It does not shift dates. Plant-state cues and local advice are emphasized. If the source session cannot support the area honestly, it remains non-live.
+
+Example 4, boundary user: the user chooses one live side of the boundary. The app stores only that choice, delivers one lineage, and does not blend catalogs. The caveat says boundary/microclimate may differ and actual plant state wins.
+
+Example 5, region change after creating plants: settings may change for future new Plants. Existing Plants keep their pinned `catalog_version`; Dnevnik/history remains unchanged. Explicit per-plant adoption belongs only to Session 23.
+
+Example 6, evidence exists for execution cues but not calendar timing: the pack may include source-backed detail guidance on approved surfaces, but the recurring calendar window remains absent/unresolved. The app must not create a broad date from the cue alone.
+
+#### Seasonal timing execution mapping
+
+Session 20 / Regionalization foundation:
+
+- PURPOSE: store and validate live country/region selection, derived lineage, pack delivery, and fail-closed import/export foundations.
+- ENTRY CONDITIONS: owner opens the relevant REG sublabel; locked REG-D1 and this section are read.
+- EXACT SCOPE: `settings.country`, `settings.region`, store format, known-canonical catalog registry, per-plant catalog lookup, pack-aware verifier, and repo-owned bundled pack delivery decisions.
+- FORBIDDEN SCOPE: second-pack content, foreign region ids, offsets, formulas, weather/plant-state timing engines, persisted `contentPack`, persisted `pack_version`, service-worker-as-pack-authority, schema migrations after REG-R1 for later regional activations.
+- INPUTS: `REGIONALIZATION_DECISION_RECORD.md`, this roadmap section, `CORE_AUDIT.md` where native/core boundaries matter.
+- IMPLEMENTATION CONTRACT: `(country, region)` resolves only through live constants to lineage/current `catalog_version`; current registry can remain one live lineage until activation sessions widen it.
+- DATA/STATE RULES: `settings.country` and `settings.region` are persisted and live-gated; `contentPack` is derived; `catalog_version` remains the content-version system.
+- USER-VISIBLE BEHAVIOR: only live choices appear; non-live registered choices are hidden.
+- ACCEPTANCE CRITERIA: unknown country/region/catalog/future pack/import values fail closed; old valid stores migrate deterministically; existing plants keep pins.
+- VALIDATION/VERIFIER COVERAGE: REG verifier proves live gating, import/export retention, no persisted pack fields, no non-live ids, no silent adoption.
+- STOP CONDITIONS: any inferred location, formula shift, tolerance import, non-live UI, or existing-plant movement.
+- DEPENDENCIES: REG-D1; Session 23 for adoption; Session 26 for foreign country definitions.
+
+Session 22 / HR Adriatic:
+
+- PURPOSE: create and activate the first same-country regional proof pack only when the dossier can prove delivery honestly.
+- ENTRY CONDITIONS: `REG-A-D` for dossier/ledger; `REG-A-R` only after Session 20 gates, pack-aware verifier PASS, complete dossier/ledger, explicit owner activation, and KD-2 resolution.
+- EXACT SCOPE: HR Adriatic / southern Croatia only; source dossier, complete regional ledger, unresolved-row disposition, and later activation of `hr.adriatic` only.
+- FORBIDDEN SCOPE: foreign packs, HR continental offsets, copied continental dates without proof, formulas, unresolved rows entering runtime, existing-plant movement, service-worker-as-authority, schema migration, native/sync work.
+- INPUTS: `V2_PACK_HR_ADRIATIC.md`, current HR baseline catalog, approved Croatian sources, this evidence policy.
+- IMPLEMENTATION CONTRACT: every date-bearing row is source-backed, owner-approved broad/coarse from evidence, or byte-equal same-country carry-forward where proven; otherwise absent/unresolved. Execution cues can ship only when source-backed and routed to an approved surface.
+- DATA/STATE RULES: new Plants in HR Adriatic after activation pin the active HR Adriatic catalog; existing Plants remain pinned until Session 23.
+- USER-VISIBLE BEHAVIOR: HR Adriatic appears only when live; unresolved species/actions are hidden/absent, not disabled promises.
+- ACCEPTANCE CRITERIA: no unresolved runtime rows; pack has complete ledger; broad planning periods are explicitly classified; source corpus supports every shipped row; KD-2 fixed before first second-catalog activation.
+- VALIDATION/VERIFIER COVERAGE: verifier expands every ledger family to runtime anchors; proves source/carry-forward disposition, JSON-compatible pack data, fail-closed imports, no forbidden strings, no offsets/formulas/AI content.
+- STOP CONDITIONS: unsourced date, unresolved required row, owner split-risk unresolved for activation scope, verifier fail, or any existing-plant calendar movement.
+- DEPENDENCIES: Session 20; `REG-A-D`; owner activation for `REG-A-R`; Session 23 for adoption.
+
+Session 23 / Existing-plant regional adoption:
+
+- PURPOSE: design and later implement explicit per-plant adoption from one live lineage to another.
+- ENTRY CONDITIONS: a second live pack exists; owner opens `REG-UPG-D` then `REG-UPG-R`.
+- EXACT SCOPE: explicit consent flow, per-plant diff/meaning review, adoption of future plan/catalog context only.
+- FORBIDDEN SCOPE: silent settings-driven adoption, bulk default repinning, history mutation, Activity/Observation/Correction rewrite, use of adoption to fix KD-2, compliance/pressure copy.
+- INPUTS: old and candidate catalog lineages, retained catalogs, region-stable id ledger, this delivery contract.
+- IMPLEMENTATION CONTRACT: adoption changes only the plant's future pinned lineage/current plan context as approved; historical records keep write-time `catalog_version`.
+- DATA/STATE RULES: previous catalogs remain retained; old Dnevnik rows resolve forever; adoption is not a migration of history.
+- USER-VISIBLE BEHAVIOR: user sees that existing records stay unchanged and future seasonal guidance may change.
+- ACCEPTANCE CRITERIA: no existing plant changes without explicit per-plant consent; history renders before/after; import/export preserves both lineages.
+- VALIDATION/VERIFIER COVERAGE: adoption verifier proves explicit consent, retained historical resolution, no bulk rewrite, no hidden movement on settings change.
+- STOP CONDITIONS: automatic adoption, history mutation, unresolved id meaning, or missing retained catalog.
+- DEPENDENCIES: Session 22 activation or later second live pack.
+
+Session 24 / Onboarding:
+
+- PURPOSE: let a beginner set live country/area with minimal friction and honest disclosure.
+- ENTRY CONDITIONS: Session 20 foundations; at least one live region; adoption design boundaries known for existing users before public release.
+- EXACT SCOPE: country picker, user-facing area picker, optional bounded helper examples, unsure/boundary copy, first-run disclosure, one-live-region behavior.
+- FORBIDDEN SCOPE: GPS, postcode, altitude, automatic location, free-text microclimate, source-jurisdiction UI burden, non-live teasers, language-as-timing, hidden precision.
+- INPUTS: live registry, user-facing region labels, boundary caveats, disclosure copy, Session 23 existing-user behavior.
+- IMPLEMENTATION CONTRACT: user selects country and beginner-readable area; if only one live area exists, onboarding may preselect or simplify only under the owning UX decision, while still making the baseline disclosure available.
+- DATA/STATE RULES: store only `settings.country` and `settings.region`; no administrative place, coordinates, altitude, helper choice, or source geography is persisted unless a future owner decision reopens storage.
+- USER-VISIBLE BEHAVIOR: if unsure, the user gets plain examples and may choose the closest live area or leave setup unresolved; boundary users see that plant state/local conditions win.
+- ACCEPTANCE CRITERIA: no non-live options; no precision promises; existing users not reset; settings changes do not move existing plants.
+- VALIDATION/VERIFIER COVERAGE: UI/verifier proves only live options, hidden non-live countries, no forbidden location fields, settings persistence, disclosure presence where required.
+- STOP CONDITIONS: automatic inference, map/postcode/GPS/elevation proposal, disabled "coming soon" regions, or settings changing existing plant calendars.
+- DEPENDENCIES: Session 20; Session 23; i18n from Session 25 where localized.
+
+Session 25 / i18n:
+
+- PURPOSE: render UI and pack content in approved languages without changing agronomic delivery.
+- ENTRY CONDITIONS: owner opens i18n foundation or country language gate.
+- EXACT SCOPE: UI-string architecture, translated pack rendering, native-level agronomic copy review where required.
+- FORBIDDEN SCOPE: language selecting timing, language changing region, translated Croatian legal/safety wording reused in foreign packs, unsourced translation changes to agronomic meaning.
+- INPUTS: pack source language, target language, country legal/safety wording, this country/region separation.
+- IMPLEMENTATION CONTRACT: language is a rendering layer; country/region/catalog lineage selects content/timing.
+- DATA/STATE RULES: no `settings.language` through REG-R1; if later added, it remains separate from country/region.
+- USER-VISIBLE BEHAVIOR: user can read localized content only when translation validation exists; no hidden timing switch by language.
+- ACCEPTANCE CRITERIA: same `(country, region)` delivery in all UI languages; forbidden country wording does not cross borders.
+- VALIDATION/VERIFIER COVERAGE: translation/source review and forbidden-string checks for foreign packs.
+- STOP CONDITIONS: language-as-region, automatic pack switch by language, or untranslated/unsafe agronomic content shipped.
+- DEPENDENCIES: country pack dossier and language gate.
+
+Session 26 / Future country-region expansion:
+
+- PURPOSE: repeat a deterministic process for every new country so no agent invents country/region delivery architecture.
+- ENTRY CONDITIONS: owner opens the country source-corpus session (`REG-<CC>-F`) in approved priority order or explicitly changes priority.
+- EXACT SCOPE:
+  1. map authoritative source structure;
+  2. determine user-facing regional abstraction;
+  3. determine source-maintenance geography;
+  4. decide number of launch regions;
+  5. establish country-specific corpus;
+  6. establish allowed timing evidence;
+  7. decide species/content availability;
+  8. build regional catalog lineage/dossier/ledger;
+  9. verify planning-window honesty;
+  10. define unresolved/absent behavior;
+  11. prove the user-delivery contract with examples;
+  12. activate only when all gates pass.
+- FORBIDDEN SCOPE: foreign ids before F, cross-country carry-forward, Croatian dates/safety wording, one-country baseline by assumption, administrative regions by assumption, formulas, offsets, AI-generated agronomy, unsupported species, disabled non-live options.
+- INPUTS: country source corpus, external evidence, source matrix, target species/candidate matrix, this roadmap, REG decision record, pack verifier.
+- IMPLEMENTATION CONTRACT: choose 1, 2, 3, or more launch regions from evidence and user value. One region is allowed only when country-wide abstraction is source-honest. Split when sources show materially different planning windows or legal/advisory source ownership and a beginner can choose the split. Do not split when evidence is weak, user selection would be confusing, or the split would create fake precision. If a country is too complex, launch a narrower sourced region or keep the country non-live.
+- DATA/STATE RULES: no schema change per country; only additive live registry/constants/catalogs after REG-R1. First pack per country is country-sourced or absent. Later same-country carry-forward must be byte-equal/proven.
+- USER-VISIBLE BEHAVIOR: only live country/regions appear; species/actions unsupported in that region are absent; coarse or variable timing is disclosed.
+- ACCEPTANCE CRITERIA: country can answer "a user in X/Y receives exactly this"; every shipped row has classification; unresolved rows do not enter runtime; source-maintenance geography is documented separately from user-facing areas.
+- VALIDATION/VERIFIER COVERAGE: per-country pack verifier config covers source dossier, ledger completeness, forbidden strings, cross-country date equality warnings, fail-closed import/export, JSON-compatible bundled pack data, and no non-live leakage.
+- STOP CONDITIONS: evidence gap that prevents honest delivery, unresolved region count, impossible beginner selection, legal/safety wording uncertainty, verifier fail, or pressure to ship unsupported rows.
+- DEPENDENCIES: Session 20 foundations; Session 25 language gate where needed; per-country owner approval.
+
+Evidence implications by country from the current corpus:
+
+- Slovenia may support a cleaner national/plant-health-region model, but still needs source-backed timing rows.
+- Austria likely needs Land/model-aware curation; simple country-only timing risks loss of source granularity.
+- Germany, Italy, and France require source-aware regional maintenance below country level; simple country-only baselines are not acceptable by default.
+- Switzerland requires federal plus canton/language/station/altitude awareness in the dossier; user-facing abstraction must not pretend altitude/station precision unless selected and supported.
+
+Session 28 / Notifications:
+
+- PURPOSE: design calm opt-in reminders that respect timing semantics.
+- ENTRY CONDITIONS: owner opens `NOTIF-D`; native/storage/onboarding decisions are available.
+- EXACT SCOPE: notification semantics only after design approval.
+- FORBIDDEN SCOPE: notifications as execution commands, overdue/compliance/nag copy, weather-derived authoritative timing, missing-observation nudges, pest-pressure inference, automatic treatment reminders, hidden regional shifts.
+- INPUTS: this timing contract, visible planning windows, plant-state/condition notes, notification platform evidence.
+- IMPLEMENTATION CONTRACT: calendar windows may generate attention/reminder candidates only as planning reminders. Plant state/local conditions remain execution context. Missing observations cannot create reminders that imply failure or action need.
+- DATA/STATE RULES: no persisted urgency/pressure/compliance; notification scheduling must not rewrite windows or plan state.
+- USER-VISIBLE BEHAVIOR: reminders say roughly "a planning period is near/open" and route to detail; they do not say "do it now."
+- ACCEPTANCE CRITERIA: copy is calm, opt-in, non-commanding, and region-aware only through the selected lineage.
+- VALIDATION/VERIFIER COVERAGE: copy audit, scheduling audit, no weather/window mutation, no missing-observation trigger.
+- STOP CONDITIONS: due/overdue language, weather as authority, action suitability claims, or stage inference from missing data.
+- DEPENDENCIES: Session 24 onboarding, native/storage notification feasibility, live lineage behavior.
+
+Session 21 / 27 / 33 preservation notes:
+
+- Session 21 and Session 27 native/store work must preserve `settings.country`, `settings.region`, retained catalogs, `catalog_version`, fail-closed import/export, and the same bundled canonical pack data. Native must not fork pack data, validators, catalog semantics, lineage resolution, or history semantics.
+- Session 33 sync/cloud/accounts remains decision-only. If ever opened, sync/merge semantics must preserve country/region/catalog lineage, reject unknown/future values fail-closed until an explicit compatibility model exists, and must never silently adopt plants to another region.
+
+Standalone-contract audit result:
+
+- CORE-AUDIT executable obligations are already mapped in the "CORE-AUDIT execution mapping lock" below; no duplication is needed.
+- Seasonal timing obligations formerly present only in evidence/synthesis context are now mapped in this section to Sessions 20, 22, 23, 24, 25, 26, 28, and preservation notes for 21/27/33.
+- The evidence corpus remains research evidence only. Future implementation agents should not need to read the raw corpus or Fable/Codex research transcripts to know what to build.
+
 ### Old-label mapping table
 
 | Old label | New placement | Notes |
@@ -485,10 +820,9 @@ Include:
 
 Owner decisions required before implementation:
 
-- target countries and launch order;
+- any change to the registered target countries or owner-approved launch priority;
 - first languages;
-- regionalization model;
-- whether/when to add region/country field;
+- per-country source corpus approval, launch region count, supported species/content scope, and activation decision at the relevant REG gate;
 - whether legacy iCal remains a fallback;
 - native/store implementation gates after STORE-D1;
 - free tier guarantees;
