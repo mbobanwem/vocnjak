@@ -262,6 +262,33 @@ function makePlant(overrides = {}) {
   };
 }
 
+function makeNoteObservation(overrides = {}) {
+  return {
+    observation_id: 'observation_2026-06-17T08-01-00-000Z_abcde',
+    plant_id: 'plant_2026-06-17T08-00-00-000Z_abcde',
+    catalog_version: 'catalog_v1',
+    kind: 'note',
+    observed_on: '2026-06-17',
+    recorded_at: '2026-06-17T08:01:00.000Z',
+    payload: { text: 'Original note' },
+    program_id: null,
+    provenance: { source: 'user' },
+    ...overrides
+  };
+}
+
+function makeObservationCorrection(observationId, overrides = {}) {
+  return {
+    correction_id: 'correction_2026-06-17T08-02-00-000Z_abcde',
+    original_record_id: observationId,
+    original_record_type: 'observation',
+    correction_types: ['note_text'],
+    corrected_values: { text: 'Corrected note' },
+    created_at: '2026-06-17T08:02:00.000Z',
+    ...overrides
+  };
+}
+
 function makeV1Store({ withPlant = false } = {}) {
   const store = validStore();
   store.meta.store_format_version = 1;
@@ -279,6 +306,14 @@ function validateInFreshRuntime(store) {
   const harness = boot();
   const parsed = contextJson(harness, store);
   return harness.context.window.v2ValidateForBackup(parsed);
+}
+
+function validateNoThrow(store) {
+  try {
+    return validateInFreshRuntime(store);
+  } catch (error) {
+    throw new Error('validator threw instead of returning an error array: ' + (error && error.message ? error.message : error));
+  }
 }
 
 function prepareInHarness(harness, store) {
@@ -640,6 +675,67 @@ check('29', 'No second live catalog introduced; resolver is read-only and expose
   expect(html.indexOf('catalog.hr.adriatic') === -1 && html.indexOf('catalog_hr_adriatic') === -1, 'runtime introduces a regional catalog lineage');
   expect(countOccurrences(regRuntimeSource, 'LIVE_CATALOGS = { catalog_v1: true }') === 1, 'LIVE_CATALOGS is no longer registry-of-one');
   return 'registry remains one live catalog; v2RetainedCatalogForVersion exposed as the read-only resolver';
+});
+
+check('30', 'Valid single Observation correction validates without throwing', () => {
+  const plant = makePlant();
+  const observation = makeNoteObservation({ plant_id: plant.plant_id });
+  const store = mutate(validStore(), (draft) => {
+    draft.plants.push(plant);
+    draft.observations.push(observation);
+    draft.corrections.push(makeObservationCorrection(observation.observation_id));
+  });
+  expectValid(validateNoThrow(store));
+  return 'valid note Observation plus note_text correction returns []';
+});
+
+check('31', 'Invalid Observation correction fails closed without throwing', () => {
+  const plant = makePlant();
+  const observation = makeNoteObservation({ plant_id: plant.plant_id });
+  const store = mutate(validStore(), (draft) => {
+    draft.plants.push(plant);
+    draft.observations.push(observation);
+    draft.corrections.push(makeObservationCorrection(observation.observation_id, {
+      corrected_values: { text: '' }
+    }));
+  });
+  expectError(validateNoThrow(store), '.corrected_values.text required');
+  return 'invalid note_text correction returns an error array';
+});
+
+check('32', 'Valid grouped Observation correction batch validates without throwing', () => {
+  const groupId = 'observation_group_2026-06-17T08-01-00-000Z_abcde';
+  const plantA = makePlant();
+  const plantB = makePlant({
+    plant_id: 'plant_2026-06-17T08-00-00-001Z_bcdef',
+    stable_order: 1000
+  });
+  const observationA = makeNoteObservation({
+    observation_id: 'observation_2026-06-17T08-01-00-000Z_abcde',
+    plant_id: plantA.plant_id,
+    observation_group_id: groupId
+  });
+  const observationB = makeNoteObservation({
+    observation_id: 'observation_2026-06-17T08-01-00-001Z_bcdef',
+    plant_id: plantB.plant_id,
+    observation_group_id: groupId
+  });
+  const store = mutate(validStore(), (draft) => {
+    draft.plants.push(plantA, plantB);
+    draft.observations.push(observationA, observationB);
+    draft.corrections.push(
+      makeObservationCorrection(observationA.observation_id, {
+        correction_id: 'correction_2026-06-17T08-02-00-000Z_abcde',
+        created_at: '2026-06-17T08:02:00.000Z'
+      }),
+      makeObservationCorrection(observationB.observation_id, {
+        correction_id: 'correction_2026-06-17T08-02-00-001Z_bcdef',
+        created_at: '2026-06-17T08:02:00.000Z'
+      })
+    );
+  });
+  expectValid(validateNoThrow(store));
+  return 'complete grouped note Observation correction batch returns []';
 });
 
 console.log('Vocnjak REG-R1 runtime verifier (read-only)');

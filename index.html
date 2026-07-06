@@ -9508,7 +9508,7 @@ const V2_STAGE_DIARY_PRIVATE = Object.create(null);
     for (var e = 0; e < observationIds.length; e++) {
       var originalObs = observationById[observationIds[e]];
       var effectiveObs = composeEffectiveObservation(originalObs, correctionsByObservation[observationIds[e]]);
-      var effectiveObsErrs = validateObservation(effectiveObs, parsed, catalog, 'effective observation ' + observationIds[e]);
+      var effectiveObsErrs = validateObservation(effectiveObs, parsed, null, 'effective observation ' + observationIds[e]);
       if (effectiveObsErrs.length > 0) return effectiveObsErrs;
       effectiveByObservationId[observationIds[e]] = effectiveObs;
     }
