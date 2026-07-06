@@ -2,9 +2,11 @@
 
 Session: Session 21 - Native app path / PWA bridge / portability proof
 Substep: CORE-AUDIT
-Status: final documentation lock at `cf3a51f Fix observation correction validation regression`
+Status: final documentation lock at `993d153 Lock corrected CORE-AUDIT specification`; KD-1 runtime fix at `cf3a51f Fix observation correction validation regression`
 
 This document is the durable repository record of the corrected CORE-AUDIT result. It does not create a new authority tier, does not authorize runtime work, and does not supersede `ROADMAP.md`, `DISTRIBUTION_DECISION_RECORD.md`, `REGIONALIZATION_DECISION_RECORD.md`, or the locked V2 product/model/architecture documents.
+
+`ROADMAP.md` is the execution authority for this audit contract. This document preserves the deep boundary/evidence record; the roadmap maps executable obligations to numbered sessions and gates.
 
 ## 1. Authority Boundary
 
@@ -154,7 +156,25 @@ FUTURE GATE - KD-2 must be fixed before/within `REG-A-R` with REG-VER1 coverage 
 
 FACT - KD-1 no longer blocks `REG-A-R`.
 
-## 14. Stop Conditions
+## 14. Durable Detail Inventory
+
+FACT - The canonical-core inventory preserved by CORE-AUDIT includes the frozen `CATALOG_V1` contract, species/action-window definitions, note/spray-safety/provenance content, B2 projection boundary, trap capture sources, scouting capture sources, trap advisory sources, stage diary vocabulary, young-tree context definitions, Croatian label tables, retained-catalog lookup, ID generation, boot store initialization, catalog seed/refresh gates, preparation/migration, validation, effective-record composition, seasonal occurrence/evidence/state/grouping derivation, candidate builders, read gate, and import/export logic halves.
+
+FACT - Explicitly non-core items include DOM rendering, routing, Postavke presentation, browser file transports, service worker, manifest, fonts, icons, `vocnjak_kalendar_puni_v2.ics`, legacy V1/V3/V4 application code, legacy export/import, and legacy external integrations.
+
+FACT - The write-path taxonomy is preserved as a contract summary: boot initialization and catalog seed/refresh/upgrade paths use their narrow shape/catalog gates; migration, export-side prepare/re-persist, import confirm, archive, Plant creation, Observation creation, Activity creation, Activity correction, and Observation correction paths use the full canonical validator on the complete candidate. Export re-persist and absence of V2 pre-import backup remain current behavior until D2 is decided.
+
+LOCKED CONTRACT - `validateForBackup` remains the only full-store validator. `validateV2StoreShape` and the Slice 2 catalog-gate family are supporting boot/catalog gates only, not second validators; they must not drift from the full validator and must not be used as an import/export/native schema substitute.
+
+LOCKED CONTRACT - The validator is not physically extractable without its content-table dependencies. Observation payload validation depends on the B2/trap/scouting/stage private tables captured from the page; a future extraction/interface session must move validator and dependent content tables as one contract.
+
+FACT - Legacy discovery preserved for `LEGACY-D`: code-observed legacy/config keys include `vocnjak_v3`, `vocnjak_v3_alerts`, `vocnjak_v3_premigration`, `vocnjak_v4`, `vocnjak_v4_preimport_backup`, `vocnjak_v4_last_supabase_backup`, `vocnjak_user_key`, `vocnjak_gh_token`, `vocnjak_gh_repo`, `vocnjak_sb_url`, and `vocnjak_sb_key`. Related legacy identifiers include Supabase table `vocnjak_data`, GitHub/iCal file `vocnjak_kalendar_puni_v2.ics`, crypto salt `vocnjak_salt_2026`, and service-worker cache `vocnjak-v1`.
+
+FACT - Legacy side effects deferred to `LEGACY-D` include unconditional legacy INIT even in V2 mode, possible `vocnjak_v4` creation, possible secure-key rewriting from plaintext GitHub/Supabase credentials into AES-GCM form, unconditional Open-Meteo fetch, legacy alert writes, legacy v4 import backup writes, and Supabase backup stamp writes.
+
+FACT - Device evidence deferred to `CAP-SPIKE` includes WebView storage lifetime/quota/eviction, app-owned JSON storage feasibility, temp+rename or equivalent resilience, file/share/import/export transport, timezone-sensitive validator round-trip, offline bundled boot, large-store parse/stringify and import-cap sizing, update survival, platform backup/restore, `crypto.getRandomValues`, App Group feasibility, local notifications, owner iPhone quality, VoiceOver/Dynamic Type, no-build-step proof, and App Store 4.2 defense.
+
+## 15. Stop Conditions
 
 Stop if a future agent:
 

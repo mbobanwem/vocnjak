@@ -184,6 +184,118 @@ It covers privacy/support metadata, AI/photo privacy and retention boundaries, a
 | `CAP-BUILD` | Session 27 | Native build candidate only after prerequisite gates. |
 | `STORE-SUB` | Session 27 | Store submission/readiness; not subscription/paywall/payment. |
 
+### CORE-AUDIT execution mapping lock
+
+Session 21 / `CORE-AUDIT` is complete. The deep technical evidence lives in `CORE_AUDIT.md`; this roadmap is the execution authority that maps that contract to owners, numbered sessions, preconditions, exact work, allowed scope, forbidden scope, verification, and next gates.
+
+Baseline: `993d153 Lock corrected CORE-AUDIT specification` plus later documentation-only mapping updates. KD-1 is a historical resolved defect fixed by `cf3a51f Fix observation correction validation regression`; `tools/verify-reg-r1-runtime.mjs` now includes REG-VER1 checks 30-32 and the expected current result is `RESULT: PASS (32/32)`. KD-1 no longer blocks `CAP-BUILD`, `REG-A-R`, or CAP-SPIKE validator round-trip evidence. KD-2 remains unresolved: Plant creation still hardcodes `catalog_version: 'catalog_v1'`; that is behavior-identical while the registry is one live catalog, but it blocks first second-catalog activation until the REG track fixes it with REG-VER1 coverage.
+
+This mapping creates no new numbered session, opens no implementation work, and authorizes no runtime, tooling, manifest, service-worker, pack, native, sync/cloud, legacy, or catalog-content change by itself.
+
+#### Session 21 / CORE-AUDIT - complete contract lock
+
+- Owner/session: Session 21, substep `CORE-AUDIT`.
+- Preconditions: `STORE-D1` distribution record and current numbered roadmap authority.
+- Exact completed work: canonical core/native-boundary audit, current runtime surface inventory, reachability rule, KD-1/KD-2 status, deferred-decision ownership, and future gate implications are recorded in `CORE_AUDIT.md`.
+- Locked outcome: one canonical JavaScript core; native consumes it and must not fork it. The single full-store validator is `validateForBackup`. There is one derivation path per concern. Derived state is never persisted. Current `window.v2*` wiring is page-level wiring, not a complete future API.
+- Allowed future use: future sessions read `CORE_AUDIT.md` for deep evidence and this roadmap section for execution mapping.
+- Forbidden: treating CORE-AUDIT as runtime authorization; reopening KD-1 as a live blocker; fixing KD-2 inside CORE-AUDIT; creating globals, modules, build steps, native validators, or extraction work by implication.
+- Verification/next gate: relevant future sessions must cite both this roadmap mapping and `CORE_AUDIT.md`; no future agent should have to derive an execution plan from the external audit artifact.
+
+#### Session 21 / CAP-SPIKE - native portability proof
+
+- Owner/session: Session 21, substep `CAP-SPIKE`.
+- Status: proof gate only; not production approval; not restarted by this mapping. If device/tooling access blocks evidence, report the exact blocked item instead of substituting assumptions.
+- Preconditions: owner explicitly opens `CAP-SPIKE`; `STORE-D1` and CORE-AUDIT contract are read. `LEGACY-R` is not required for scratch spike work.
+- Exact work: prove or disprove the Capacitor path on real devices, including WebView localStorage lifetime/eviction/quota; app-owned JSON file feasibility; temp+rename or equivalent atomic write resilience; file export/import/share transport; validator round-trip across devices; timezone-sensitive round-trip evidence for D1; offline boot with bundled assets/fonts; synthetic large-store parse/stringify and import-size-cap evidence for D3; app update survival; platform backup/restore behavior; `crypto.getRandomValues` availability; App Group/shared-container feasibility report; local notification feasibility report with killed/offline app cases; owner iPhone quality bar; VoiceOver/Dynamic Type path; proof that no build step is imposed on the canonical core; and App Store 4.2 defense evidence.
+- Allowed scope: scratch/tooling evidence, prototype shell proof, real-device reports, and pass/fail findings needed to choose the native path.
+- Forbidden: committing a production native app; forking validators, derivation, catalog resolution, export/import semantics, or content packs; changing runtime/docs without a separately approved session; treating platform backup as sync; adding accounts/cloud/sync, payments, AI/photo, store assets, or notification implementation.
+- Verification/next gate: CAP-SPIKE evidence feeds `CAP-BUILD` entry, D1, D3, and the native storage/transport design. It is not a substitute for `APP-ID-D`, `LEGACY-D/R`, `STORE-W1`, or `CAP-BUILD`.
+
+#### Session 21 / STORE-W1 - bridge/dev correctness
+
+- Owner/session: Session 21, substep `STORE-W1`.
+- Preconditions: owner explicitly opens `STORE-W1`; `DISTRIBUTION_DECISION_RECORD.md` §10 and CORE-AUDIT shell boundary are read.
+- Exact work allowed: offline cold-start fix in `sw.js`; preserve Safari-redirect rationale; `navigator.storage.persist()`; font self-hosting/bundling; `manifest.json` stale-copy cleanup; owner-iPhone Safari export/import round-trip evidence; privacy/support page stubs. D2 evidence responsibility includes the bridge-channel export/import round-trip and any observed need for pre-import backup or export re-persist policy clarification.
+- Forbidden: visual polish, install-promotion UX, icon redesign, feature work, schema/model/storage semantics, validator changes, canonical import/export semantic changes, timezone rule changes, catalog/content changes, native shell work, public web-product investment, and any change outside `STORE-W1` allowed scope.
+- Verification/next gate: run relevant verifiers; demonstrate bridge offline/export/import behavior; preserve canonical V2 JSON semantics; feed D2 evidence into `CAP-BUILD` plan approval. `STORE-W1` does not decide D1, D3, native storage, or CAP-BUILD architecture.
+
+#### Session 21 / APP-ID-D - identity and store prerequisites
+
+- Owner/session: Session 21, substep `APP-ID-D`.
+- Preconditions: owner explicitly opens `APP-ID-D`; no identity work happens before this gate.
+- Exact work: app display name, store-name availability, bundle id, signing team/certificates/provisioning, Apple/Google developer account plan, icon/splash asset plan, privacy/support URL hosting decision, and store metadata prerequisite checklist.
+- CORE-AUDIT impact: no additional executable obligation beyond confirming `APP-ID-D` is complete before `CAP-BUILD`.
+- Forbidden: creating native binaries, store uploads, production assets, runtime changes, or identity choices inside any other session by implication.
+- Verification/next gate: required before `CAP-BUILD`; store upload remains gated by later Session 27 work.
+
+#### Session 21 / LEGACY-D - legacy disposition decision
+
+- Owner/session: Session 21, substep `LEGACY-D`; execution later belongs to Session 27 / `LEGACY-R`.
+- Preconditions: owner explicitly opens `LEGACY-D`; CORE-AUDIT legacy boundary is read.
+- Exact work: complete observed legacy/config key inventory, including `vocnjak_v3`, `vocnjak_v3_alerts`, `vocnjak_v3_premigration`, `vocnjak_v4`, `vocnjak_v4_preimport_backup`, `vocnjak_v4_last_supabase_backup`, `vocnjak_user_key`, `vocnjak_gh_token`, `vocnjak_gh_repo`, `vocnjak_sb_url`, and `vocnjak_sb_key`; decide per-key removal/quarantine/preservation; resolve the current active-authority enumeration gap; decide the V2-mode legacy INIT side effects, including possible `vocnjak_v4` creation, possible secure-key rewriting, unconditional Open-Meteo fetch, and CSS-hidden legacy boot; inventory legacy external integrations, including GitHub iCal (`vocnjak_kalendar_puni_v2.ics`), Supabase `vocnjak_data`, AES-GCM `vocnjak_salt_2026`, Open-Meteo, and clipboard; define credential/privacy posture; define byte-equality verification that accounts for legitimate legacy self-writes.
+- Allowed scope: documentation decision and verification protocol only.
+- Forbidden: deleting, rewriting, normalizing, quarantining, or touching legacy runtime/keys; changing V2 storage; changing import/export semantics; uploading a first binary before `LEGACY-R`.
+- Verification/next gate: `LEGACY-D` must leave `LEGACY-R` with an exact executable plan and byte-equality protocol. `LEGACY-R` remains mandatory before first App Store Connect or Play Console upload, including internal testing tracks.
+
+#### Session 22 / REG-A-R - first second-catalog activation and KD-2
+
+- Owner/session: Session 22, substep `REG-A-R`.
+- Preconditions: `REG-R1-R`, `REG-VER1`, `REG-CATF`, `REG-PACKS-D`, `REG-A-D`, pack-aware verifier PASS, explicit owner activation, and KD-2 resolution.
+- Exact CORE-AUDIT work item: before first second-catalog activation, resolve KD-2 by changing Plant creation away from the hardcoded `catalog_version: 'catalog_v1'` literal so new Plants write the active catalog version required by `REGIONALIZATION_DECISION_RECORD.md` §11. Add exact REG-VER1 coverage proving record creation has no hardwired catalog id where active-catalog pinning is required.
+- Blocking conclusion: KD-2 blocks first second-catalog activation (`REG-A-R`), not the current registry-of-one runtime and not `CAP-BUILD` while there is one live catalog.
+- Allowed scope when opened: HR Adriatic activation only as approved by the REG gates, constants/pack delivery per REG-PACKS-D, picker widening, two-catalog export/import proof, and the KD-2 fix/coverage if not already closed by an owner-approved REG substep.
+- Forbidden: fixing KD-2 before owner-approved REG scope; existing-plant calendar movement; foreign packs; hidden offsets/formulas; service-worker-as-pack-authority; schema migration; native/store/sync work; Session 23 adoption work.
+- Verification/next gate: REG verifier must prove pack parity, fail-closed import/export, two-catalog behavior, and the KD-2 no-hardwire creation path before activation is considered complete.
+
+#### Session 23 / REG-UPG-D/R - existing-plant adoption
+
+- Owner/session: Session 23, substeps `REG-UPG-D` then `REG-UPG-R`.
+- Preconditions: a second live pack exists after `REG-A-R`; owner explicitly opens the adoption session.
+- CORE-AUDIT impact: no new execution obligation, but the adoption path must preserve the canonical history/correction/catalog-lineage contract.
+- Exact work when opened: design and later implement explicit per-plant adoption only; existing Plants keep their pinned `catalog_version` until the approved adoption flow changes it; history remains untouched.
+- Forbidden: silent calendar rewrite, bulk repinning by default, history mutation, or using adoption to patch KD-2.
+- Verification/next gate: adoption verifier/proof must show explicit consent and preserved historical resolution.
+
+#### Session 27 / LEGACY-R - legacy execution before upload
+
+- Owner/session: Session 27, substep `LEGACY-R`.
+- Preconditions: completed `LEGACY-D` decision; owner explicitly opens `LEGACY-R`.
+- Exact work: execute only the approved removal/quarantine/preservation strategy from `LEGACY-D`; preserve protected legacy keys byte-identically except for explicitly accounted legitimate legacy self-writes; verify legacy external integrations and credentials are handled according to `LEGACY-D`.
+- Forbidden: inventing a new legacy strategy during execution; touching protected keys without byte proof; changing V2 canonical core, validators, storage semantics, import/export semantics, packs, or native shell architecture.
+- Verification/next gate: `LEGACY-R` must complete before any first binary upload, including TestFlight/internal testing tracks.
+
+#### Session 27 / CAP-BUILD - native build candidate
+
+- Owner/session: Session 27, substep `CAP-BUILD`.
+- Preconditions: successful `CAP-SPIKE`; complete CORE-AUDIT and this mapping; complete `APP-ID-D`; D1 resolved at CAP-BUILD entry for guided migration/storage design; D2 and D3 named explicitly in the approved CAP-BUILD plan. `LEGACY-R` is required before first upload even if shell construction starts earlier.
+- Canonical-core input: consume the in-document canonical JavaScript core for the first Capacitor vehicle. The current page-level `window.v2*` surface is not a full API. New global, cross-slice, bridge-visible, or native-facing exposure is allowed only if named in the owner-approved CAP-BUILD plan. If an out-of-document consumer is proposed (native module, KMP/native evaluation, second JS runtime, or standalone core package), stop and require a separate owner-approved extraction/interface session.
+- Allowed scope: shell/environment replacements that preserve semantics, including approved native storage capability; storage read/validate/replace behavior; clock/timezone/randomness/status-sink capabilities after D1; file ingress/egress/share transport; confirmation presentation; navigation/apply/refresh mechanics; and owner-approved in-document exposure items.
+- Forbidden forks: native data model, Swift/Kotlin/second JavaScript validator, shell validation rules, import-only/export-only validators, second seasonal engine, second catalog resolver, duplicated correction/effective-record logic, persisted derived state, forked pack data, forked import/export semantics, silent same-device localStorage migration, merge import, cloud/sync/accounts, and any shell rewrite of canonical preparation/migration/validation/derivation.
+- Proof obligations: both verifiers PASS; CAP-SPIKE evidence incorporated; validated V2 export/import remains portability contract; platform backup is not sync; no build step imposed on canonical core unless separately approved; native behavior preserves fail-closed import/export and local-first data ownership.
+- Stop conditions: missing D1/D2/D3 decision, proposed new exposure absent from the approved plan, out-of-document consumption, validator/derivation fork, unproven storage resilience, or attempt to upload before `LEGACY-R`.
+
+#### Session 27 / STORE-SUB - store submission/readiness
+
+- CORE-AUDIT impact: no direct new technical work, but submission is blocked until the native candidate preserves the CORE-AUDIT contract and `LEGACY-R` is complete.
+- Forbidden: treating `STORE-SUB` as subscription/paywall work; uploading with unresolved legacy/privacy ambiguity, unproven storage portability, or unauthorized native/core forks.
+
+#### Session 33 / SYNC-D - sync/cloud/accounts decision only
+
+- CORE-AUDIT impact: platform backup/restore evidence from `CAP-SPIKE` is not sync and must not be reclassified as sync. Validated export/import remains the portability contract until an owner-approved sync/cloud/accounts decision says otherwise.
+- Allowed scope when opened: decision-only account/cloud/sync policy, privacy, merge/conflict semantics, and product boundaries.
+- Forbidden: bundling accounts/cloud/sync into `CAP-SPIKE`, `STORE-W1`, `CAP-BUILD`, platform backup, or native storage work.
+
+#### D1-D5 execution mapping
+
+| Decision | Evidence owner | Decision gate | Implementation owner if behavior changes | Current blocking status |
+|---|---|---|---|---|
+| D1 clock/timezone portability | `CAP-SPIKE` validator round-trip across devices/timezones | `CAP-BUILD` entry | owner-approved canonical-runtime substep of Session 21 with docs + validator changes | Partially blocks CAP-BUILD migration-flow design; does not block CAP-SPIKE or STORE-W1 |
+| D2 pre-import backup + export re-persist | `CAP-SPIKE` backup/restore + `STORE-W1` owner-iPhone export/import round-trip | CAP-BUILD plan approval | bridge-side owner-approved Session 21 substep; native-side inside approved CAP-BUILD plan | Not blocking, but mandatory named CAP-BUILD plan item |
+| D3 import size cap | `CAP-SPIKE` synthetic large-store scale; earlier only if STORE-W1 testing trips the cap | `CAP-BUILD` entry | owner-approved Session 21 substep because the constant is outside STORE-W1 scope | Not blocking |
+| D4 single-writer / cross-tab | none unless owner overrides | ratified default single-writer stance | none unless owner-approved runtime session overrides | Not blocking |
+| D5 non-catalog content-table pack boundary | REG track | relevant REG pack/dossier/activation gate | REG-PACKS-D/REG-A-R or later REG owner-approved session | Does not block CAP-BUILD under registry-of-one |
+
 ## Detailed roadmap notes
 
 The numbered roadmap lock above is the owner-facing order after Phase 1. The detailed phase notes below preserve active track detail and historical translation context only; they do not override the numbered lock or the REG/STORE decision records.
