@@ -24,6 +24,7 @@ The project is in a V2 reset. Active documentation (repo root):
 - `CURRENT_STATE.md` — chronological state/history record
 - `REGIONALIZATION_DECISION_RECORD.md` — detailed REG regionalization decision record
 - `DISTRIBUTION_DECISION_RECORD.md` — detailed STORE/CAP/native distribution decision record
+- `CORE_AUDIT.md` — Session 21 CORE-AUDIT final canonical-core/native-boundary lock
 - `V2_PRINCIPLES.md` — product identity and locked principles
 - `V2_DOMAIN_MODEL.md` — schemas, vocabulary, enums
 - `V2_UX_MODEL.md` — surfaces and flows
