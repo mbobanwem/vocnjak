@@ -32,6 +32,7 @@ The project is in a V2 reset. Active documentation (repo root):
 - `V2_CATALOG_AUDIT.md` — catalog v1.0 audit status
 - `V2_PLANT_CATALOG.md` — plant catalog content (input to audit)
 - `V2_ORCHARD_PLAN_TEMPLATES.md` — action templates (input to audit)
+- `vocnjak-seasonal-pass-a-evidence.md` — external European timing research evidence/audit trail, not execution authority
 
 ---
 

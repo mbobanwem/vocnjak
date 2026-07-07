@@ -406,15 +406,15 @@ Session 25 / i18n:
 
 - PURPOSE: render UI and pack content in approved languages without changing agronomic delivery.
 - ENTRY CONDITIONS: owner opens i18n foundation or country language gate.
-- EXACT SCOPE: UI-string architecture, translated pack rendering, native-level agronomic copy review where required.
+- EXACT SCOPE: UI-string architecture, translated pack rendering, native-level agronomic copy review where required, and the explicit language-state decision described below.
 - FORBIDDEN SCOPE: language selecting timing, language changing region, translated Croatian legal/safety wording reused in foreign packs, unsourced translation changes to agronomic meaning.
 - INPUTS: pack source language, target language, country legal/safety wording, this country/region separation.
-- IMPLEMENTATION CONTRACT: language is a rendering layer; country/region/catalog lineage selects content/timing.
-- DATA/STATE RULES: no `settings.language` through REG-R1; if later added, it remains separate from country/region.
+- IMPLEMENTATION CONTRACT: language is a rendering layer; country/region/catalog lineage selects content/timing. `REG-I18N-F` must explicitly decide whether language is persisted at all before runtime strings or translated pack rendering ship. If persisted, the decision must name the exact store location, store-format/version impact, migration path, backward compatibility behavior, validator/import-export changes, fail-closed behavior, separation from country/region/derived `contentPack`, and verifier coverage. If not persisted, the decision must name the deterministic runtime language source and how rendering stays stable across boot, export/import, and native/web channels.
+- DATA/STATE RULES: no `settings.language` through REG-R1. Session 25 must not add any language field silently; any persisted language state remains separate from country/region and cannot select timing or pack lineage.
 - USER-VISIBLE BEHAVIOR: user can read localized content only when translation validation exists; no hidden timing switch by language.
-- ACCEPTANCE CRITERIA: same `(country, region)` delivery in all UI languages; forbidden country wording does not cross borders.
-- VALIDATION/VERIFIER COVERAGE: translation/source review and forbidden-string checks for foreign packs.
-- STOP CONDITIONS: language-as-region, automatic pack switch by language, or untranslated/unsafe agronomic content shipped.
+- ACCEPTANCE CRITERIA: same `(country, region)` delivery in all UI languages; forbidden country wording does not cross borders; the persisted-vs-runtime-only language decision and its store/rendering consequences are closed in the owning docs before runtime implementation.
+- VALIDATION/VERIFIER COVERAGE: translation/source review and forbidden-string checks for foreign packs; if language is persisted, verifier coverage proves migration/backward compatibility, validator/import-export fail-closed behavior, and separation from country/region; if not persisted, verifier or documented tests prove deterministic runtime language selection and rendering.
+- STOP CONDITIONS: language-as-region, automatic pack switch by language, untranslated/unsafe agronomic content shipped, `settings.language` or equivalent persisted state added without the required store-format/validator/migration/fail-closed/backward-compatibility/verifier contract, or runtime language source left undefined.
 - DEPENDENCIES: country pack dossier and language gate.
 
 Session 26 / Future country-region expansion:
