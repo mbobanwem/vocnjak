@@ -1,8 +1,21 @@
-const CACHE_NAME = 'vocnjak-v1';
+const CACHE_NAME = 'vocnjak-store-w1-v2';
 const ASSETS = [
   './',
   './index.html',
+  './privacy.html',
+  './support.html',
   './manifest.json',
+  './fonts/fonts.css',
+  './fonts/dm-sans-latin-ext.woff2',
+  './fonts/dm-sans-latin.woff2',
+  './fonts/playfair-display-latin-ext.woff2',
+  './fonts/playfair-display-latin.woff2',
+  './fonts/playfair-display-italic-latin-ext.woff2',
+  './fonts/playfair-display-italic-latin.woff2',
+  './fonts/fraunces-latin-ext.woff2',
+  './fonts/fraunces-latin.woff2',
+  './fonts/fraunces-italic-latin-ext.woff2',
+  './fonts/fraunces-italic-latin.woff2',
   './icons/icon-192.png',
   './icons/icon-512.png',
 ];
@@ -25,32 +38,36 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Fetch — cache-first for local assets, network-first for fonts
+function cacheableRequest(request) {
+  return request.method === 'GET';
+}
+
+function cacheResponse(request, response) {
+  if (!response || response.status !== 200 || response.type === 'opaque') return response;
+  const clone = response.clone();
+  caches.open(CACHE_NAME).then(cache => cache.put(request, clone)).catch(() => {});
+  return response;
+}
+
+// Fetch — local app shell first, with network-first navigation for Safari safety
 self.addEventListener('fetch', e => {
+  if (!cacheableRequest(e.request)) return;
   const url = new URL(e.request.url);
 
-  // Navigation requests — always go to network (avoids redirect errors in Safari)
+  // Navigation requests stay network-first to avoid Safari redirect handling issues.
+  // If the bridge is offline, fall back to the bundled app shell cached at install.
   if (e.request.mode === 'navigate') {
-    e.respondWith(fetch(e.request));
-    return;
-  }
-
-  // Google Fonts — network first, fallback to cache
-  if (url.hostname.includes('googleapis.com') || url.hostname.includes('gstatic.com')) {
     e.respondWith(
       fetch(e.request)
-        .then(res => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
-          return res;
-        })
-        .catch(() => caches.match(e.request))
+        .catch(() => caches.match(e.request).then(cached => cached || caches.match('./index.html')))
     );
     return;
   }
 
   // Local assets — cache first
-  e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
-  );
+  if (url.origin === self.location.origin) {
+    e.respondWith(
+      caches.match(e.request).then(cached => cached || fetch(e.request).then(res => cacheResponse(e.request, res)))
+    );
+  }
 });

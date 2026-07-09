@@ -1,7 +1,7 @@
 {
   "name": "Dnevnik Voćnjaka",
   "short_name": "Voćnjak",
-  "description": "Dnevnik vrta – praćenje biljki, zadataka i tretmana",
+  "description": "Sezonski vodič za voćke, evidenciju i povijest rada u voćnjaku.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f5f2eb",

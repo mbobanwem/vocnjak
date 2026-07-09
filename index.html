@@ -11,10 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>Dnevnik Voćnjaka</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fonts/fonts.css">
 <style>
   :root {
     --green-deep: #1a3320;
@@ -4968,6 +4965,39 @@ function formatDate(d) {
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
+
+// ── STORAGE PERSISTENCE HINT ──
+function requestPersistentStorage() {
+  if (!('storage' in navigator) || typeof navigator.storage.persist !== 'function') {
+    console.log('vocnjak: persistent storage is not supported in this browser');
+    return;
+  }
+  var requestPersist = function () {
+    navigator.storage.persist()
+      .then(function (granted) {
+        console.log('vocnjak: persistent storage ' + (granted ? 'granted' : 'not granted'));
+      })
+      .catch(function (err) {
+        console.warn('vocnjak: persistent storage request failed:', err && err.message ? err.message : err);
+      });
+  };
+  if (typeof navigator.storage.persisted === 'function') {
+    navigator.storage.persisted()
+      .then(function (persisted) {
+        if (persisted) {
+          console.log('vocnjak: persistent storage already granted');
+          return;
+        }
+        requestPersist();
+      })
+      .catch(function () {
+        requestPersist();
+      });
+    return;
+  }
+  requestPersist();
+}
+requestPersistentStorage();
 
 // BEGIN V2 SHELL — Slice 0
 (function () {
