@@ -2,6 +2,23 @@
 
 ---
 
+## REPOSITORY / GIT ACCOUNT (ADMINISTRATIVE — READ FIRST)
+
+On 2026-09-06 this repository was moved off the owner's business GitHub account.
+
+- Old location: `github.com/mbobanwem/vocnjak` (business account, commits signed `mate.boban@wem.hr`)
+- New location (current, canonical): `github.com/mboban-byte/vocnjak` (owner's private/personal account)
+- Method: GitHub repo transfer (not a new repo) — issues/PRs/stars preserved, old URL permanently redirects to the new one. `git remote -v` in the working tree points to the new URL.
+- Git history was rewritten with `git filter-repo --mailmap` to change author/committer email on all 449 commits that had `mate.boban@wem.hr` to `mate.boban@icloud.com`. Commits authored as `Claude <noreply@anthropic.com>` (59 of them) were left untouched. Commit count is unchanged (508 before and after). History was force-pushed to the new repo location.
+- Global and local git identity (`user.name`/`user.email`) is `Mate Boban <mate.boban@icloud.com>`.
+- A pre-rewrite mirror backup exists locally at `../vocnjak-backup-prije-prepisivanja.git` (sibling of the project directory, not inside the repo).
+- `index.html` had 4 hardcoded fallback references to the old `mbobanwem/vocnjak` repo (used as the default GitHub target for the app's own iCal-export/backup feature, keys `vocnjak_gh_repo` / `ghRepo`). These were updated to `mboban-byte/vocnjak` so that feature keeps working against the new repo.
+- Known residual, accepted risk (not fixable via git): the repo's one closed PR (`#1`) lives on a GitHub-managed `refs/pull/1/head` ref that is not reachable or deletable via normal git push/force-push. Its old commit (pre-rewrite SHA, wem.hr email) may remain visible on that PR's page indefinitely. This was a conscious tradeoff, not an oversight — the PR was closed/never merged and contains no secrets, only the old email address.
+- Do not re-add or reference `mbobanwem` as a live remote/owner anywhere in code or docs going forward.
+- **Lesson for any future git host/account migration:** an `wem.hr`/email-only search is not enough. `index.html` hardcodes the GitHub owner/repo string itself as a fallback default (`vocnjak_gh_repo` / `ghRepo`, used by the app's own iCal-export/backup feature) — this was missed by the initial email-only audit and only found by a separate `git grep` for the old GitHub username. Next time: `git grep -i '<old-username>'` across tracked files in addition to checking for the old email, before considering a migration complete.
+
+---
+
 ## SOURCE OF TRUTH (READ FIRST — ALWAYS)
 
 Documents are not equal. Use the classes below exactly.
